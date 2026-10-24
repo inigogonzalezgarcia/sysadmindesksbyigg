@@ -2,6 +2,8 @@
 
 Practise real IT support tickets in a simulated console. Each desk is a ticket from a fictional company: read it, investigate with the commands you would use at work, fix the cause (not only the symptom), prove it works and write the work note. A score and an example note tell you how you did.
 
+**Live: [sysadmindesksbyigg.pages.dev](https://sysadmindesksbyigg.pages.dev)**
+
 Free, no sign-up, English and Spanish. Progress is kept only in the browser. Every desk links to the matching guide on [inigogonzalezgarcia.github.io](https://inigogonzalezgarcia.github.io/guias.html).
 
 ## Desks (v0.1)
@@ -32,6 +34,8 @@ npm run serve            # http://localhost:8080
 ```
 
 ## Deploy (Cloudflare Pages)
+
+The live site is deployed by Cloudflare Pages on every push to `main`. To deploy your own copy:
 
 1. In Cloudflare: Workers & Pages → Create → Pages → Connect to Git → this repository.
 2. Build settings: framework preset **None**, build command empty, build output directory **`public`**.
