@@ -41,4 +41,11 @@ Phase 1 has no back end. Ideas for later: optional accounts with Cloudflare D1, 
 
 ## Status
 
-Private while in development. Fictional company (Contoso) and people; no real systems or data.
+Version 0.1, in development: more desks are coming. Fictional company (Contoso) and people; no real systems or data.
+
+## Contact
+
+Ideas for a desk, or want one adapted to your team's tickets?
+
+- Website (contact form): [inigogonzalezgarcia.github.io](https://inigogonzalezgarcia.github.io/about.html#contacto)
+- LinkedIn: [linkedin.com/in/igonzalez93](https://www.linkedin.com/in/igonzalez93)
