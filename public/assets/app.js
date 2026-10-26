@@ -51,6 +51,9 @@
   }
 
   let lang = load("lang", (navigator.language || "en").toLowerCase().startsWith("es") ? "es" : "en");
+  // links from the guides on the website say which language to open in: ?lang=es or ?lang=en
+  const asked = new URLSearchParams(location.search).get("lang");
+  if (asked === "es" || asked === "en") { lang = asked; save("lang", lang); }
   let progress = load("progress", {});
   let current = null;   // {sc, sess, ...} while on a desk
 
