@@ -1,11 +1,12 @@
 {
   "name": "sysadmindesksbyigg",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "SysAdmin Desks by IGG: practise IT support tickets in a simulated console.",
+  "description": "SysAdmin Desks by IGG: practise IT support tickets in a simulated console, with optional accounts.",
   "scripts": {
-    "test": "node --test tests/scenarios.test.js",
+    "test": "node --test --no-warnings tests/scenarios.test.js tests/auth.test.mjs",
+    "dev": "node --no-warnings scripts/dev-server.mjs",
     "serve": "python3 -m http.server 8080 -d public"
   },
-  "engines": { "node": ">=18" }
+  "engines": { "node": ">=22" }
 }
