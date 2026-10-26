@@ -4,9 +4,9 @@ Practise real IT support tickets in a simulated console. Each desk is a ticket f
 
 **Live: [sysadmindesksbyigg.pages.dev](https://sysadmindesksbyigg.pages.dev)**
 
-Free, no sign-up, English and Spanish. Progress is kept only in the browser. Every desk links to the matching guide on [inigogonzalezgarcia.github.io](https://inigogonzalezgarcia.github.io/guias.html).
+Free, in English and Spanish. The start page lets you clock in with an account (email and password, or Google) so your progress follows you to any device, or try it without one and keep the progress in the browser. Every desk links to the matching guide on [inigogonzalezgarcia.github.io](https://inigogonzalezgarcia.github.io/guias.html), and the guides link back to their desk.
 
-## Desks (v0.1)
+## Desks
 
 | # | Desk | Topic | Level |
 |---|---|---|---|
@@ -19,6 +19,24 @@ Free, no sign-up, English and Spanish. Progress is kept only in the browser. Eve
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 
+## Accounts
+
+- **Start page:** sign in or create an account with a technician name, one of eight avatars, email and password (8+ characters, a capital letter and a number, checked as you type), or continue with Google. "Try it without an account" keeps everything in the browser.
+- **Backend:** Cloudflare Pages Functions in `functions/api` with a D1 database bound as `DB`. The tables are created on first use.
+  - `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`;
+  - `GET /api/me` (who is signed in, and their progress), `DELETE /api/me` (delete the account and everything in it);
+  - `PUT /api/progress` (keeps the best result per desk);
+  - `GET /api/auth/google` and its callback.
+- **Security:**
+  - passwords stored only as salted PBKDF2-SHA256 hashes (100,000 iterations);
+  - sessions are a random token in an `HttpOnly`, `Secure`, `SameSite=Lax` cookie, and only its SHA-256 is stored;
+  - state-changing requests must come from the site's own origin;
+  - failed sign-ins are limited per email and per IP (8 in 15 minutes);
+  - Google sign-in uses a `state` cookie and only accepts verified emails;
+  - the same strict CSP as before, with no third-party scripts.
+- **Progress:** when you sign in, anything better in the browser is added to the account.
+- **Privacy:** [public/privacy.html](public/privacy.html) explains what is stored and why; the account page deletes everything.
+
 ## How it is built
 
 - Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/scenarios.js` (the desks as data) and `assets/style.css`.
@@ -29,8 +47,9 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 ## Run it locally
 
 ```bash
-npm test                 # 10 tests, Node 18+
-npm run serve            # http://localhost:8080
+npm test                 # 16 tests: the desks, and the accounts against an in-memory database (Node 22+)
+npm run dev              # http://localhost:8788 with accounts, in-memory database
+npm run serve            # http://localhost:8080, static only (no accounts)
 ```
 
 ## Deploy (Cloudflare Pages)
@@ -39,13 +58,15 @@ The live site is deployed by Cloudflare Pages on every push to `main`. To deploy
 
 1. In Cloudflare: Workers & Pages → Create → Pages → Connect to Git → this repository.
 2. Build settings: framework preset **None**, build command empty, build output directory **`public`**.
-3. Deploy. `public/_headers` adds the security headers (CSP, frame-ancestors, nosniff, referrer and permissions policies).
+3. Deploy. `public/_headers` adds the security headers (CSP, frame-ancestors, nosniff, referrer and permissions policies). `functions/` is deployed with the site.
+4. Accounts: create a D1 database (Workers & Pages → D1) and bind it to the Pages project as `DB` (Settings → Bindings → D1 database), then redeploy.
+5. Google (optional): create an OAuth client of type "Web application" in Google Cloud with the redirect URI `https://<your-site>/api/auth/google/callback`. In the Pages project, add `GOOGLE_CLIENT_ID` as a variable and `GOOGLE_CLIENT_SECRET` as a secret (Settings → Variables and Secrets). Without them, the Google button says it is not ready.
 
-Phase 1 has no back end. Ideas for later: optional accounts with Cloudflare D1, a ticket requester that answers questions (Workers AI), team mode and more desks per guide topic.
+Ideas for later: password reset by email, a ticket queue with SLA and a ticket page, a simulated directory, a personal knowledge base from your work notes, and more desks per guide topic.
 
 ## Status
 
-Version 0.1, in development: more desks are coming. Fictional company (Contoso) and people; no real systems or data.
+Version 0.2, in development: start page and accounts. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 
