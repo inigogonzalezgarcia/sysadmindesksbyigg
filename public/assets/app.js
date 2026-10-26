@@ -7,19 +7,14 @@
 
   const UI = {
     en: {
-      heroTitle: "Practise real IT support tickets in a simulated console",
-      heroText: "Each desk is a ticket from a fictional company. Investigate with the commands you would use at work, fix the cause, check it and write the work note.",
-      how: [["1 · Read", "the ticket and what you have"], ["2 · Investigate", "in the console, like on a real machine"], ["3 · Fix and check", "the cause, not only the symptom"], ["4 · Write the note", "the next engineer will thank you"]],
       progress: (d, n, s) => `${d} of ${n} desks solved · ${s} stars`,
-      start: "Start", again: "Play again", level: "Level", min: "min", back: "← All desks",
+      level: "Level", back: "← Ticket queue",
       ticket: "Ticket", context: "What you have", stages: "Progress", hint: "Hint", restart: "Restart",
       guide: "Read the guide", termHelp: "Type help for the basics. ↑/↓ repeat commands.",
-      noteTitle: "Work note", noteText: "Write the note you would leave in the ticket: cause, what you changed, how you checked it and any follow-up.",
-      submit: "Close the ticket", result: "Ticket closed", points: "points",
-      found: "Your note covers", missing: "Your note is missing", sample: "An example note", solution: "One way to solve it",
-      next: "Next desk", home: "All desks", noteEmpty: "Write a few lines first.",
+      points: "points",
+      found: "Your note covers", sample: "An example note", solution: "One way to solve it",
+      next: "Next ticket", home: "Ticket queue", noteEmpty: "Write a few lines first.",
       hintsUsed: (h) => `Hints used: ${h}`, guides: "Guides",
-      foot: "Fictional company and people. Your progress is stored only in this browser.",
       welcome: "Connected to {host} as {user}. Type help if you need it.",
       langBtn: "ES", langLabel: "Español", notFound: "That desk does not exist.",
       startTag: "Help desk · morning shift", startTitle: "Clock in and start your support shift",
@@ -46,6 +41,34 @@
       accConfirm: "Yes, delete everything", accCancel: "Cancel", accDeleted: "Your account has been deleted.",
       footUser: "Fictional company and people. Your progress is saved in your account.", privacy: "Privacy",
       footAnon: "Fictional company and people.", backHome: "← Back to the home page",
+      navLabel: "Help desk", deskName: "Contoso help desk", navTickets: "Tickets", navProgress: "Progress", navGuides: "Guides", navAccount: "My account", navTour: "Take the tour",
+      qTitle: "Ticket queue", shift: "Morning shift · on duty", tabOpen: "Open", tabClosed: "Closed",
+      colTicket: "Ticket", colSubject: "Subject", colRequester: "Requester", colPriority: "Priority", colStatus: "Status", colAssignee: "Assigned to",
+      colResult: "Result", colPoints: "Score", colDate: "Closed on", colTopic: "Topic", colBest: "Best result",
+      status: { new: "New", progress: "In progress", closed: "Closed" }, unassigned: "Unassigned", replay: "Replay",
+      lvl: { resolved: "Resolved", observations: "Resolved with observations", unresolved: "Not resolved" },
+      slaTarget: (m) => `${m} min`, slaLeft: (m) => `${m} left`, slaOver: (m) => `${m} min over`,
+      emptyOpen: "No open tickets. Good shift! You can replay any of them from Closed.", emptyClosed: "You have not closed any ticket yet.",
+      console: "Console", assign: "Assign to me", assignedTo: "Assigned to",
+      lockedTitle: "Assign the ticket to yourself to start", lockedText: (m, p) => `The SLA starts when you take it: ${m} minutes for a ${p}.`,
+      requester: "Requester", fUser: "User", fLocation: "Location", fDevice: "Device", actionsT: "Actions", guiRan: "[ticket page]",
+      readyMsg: "Ready to close: choose the resolution code and write the work note below.",
+      resTitle: "Resolve the ticket", resText: "Choose the resolution code and write the work note: cause, what you changed, how you checked it and the follow-up. Close it when you think it is fixed; if it is not, it comes back.",
+      resCode: "Resolution code", resPick: "Choose a code", resNote: "Work note", resPlaceholder: "Cause: …  Change: …  Check: …  Follow-up: …",
+      resolveBtn: "Resolve", needCode: "Choose a resolution code.",
+      unresolvedTitle: "The ticket is not fixed yet", unresolvedText: "The user would call back within the hour. The ticket stays open and the SLA keeps running; closing it unfixed costs 10 points.",
+      whyT: "What is missing", obsT: "Observations", keepWorking: "Back to the ticket", queueBtn: "Ticket queue",
+      timeUsed: (m, l) => `Time: ${m} of ${l} min`, codeUsed: (c) => `Code: ${c}`,
+      pTitle: "Your progress", pSub: "Your best result on each ticket, saved in your account.", tClosed: "Tickets closed", tStars: "Stars", tPoints: "Points", tAvg: "Average score", notYet: "Not yet",
+      tour: [
+        ["Welcome to the Contoso help desk", "You are the technician on the morning shift. In two minutes: where the tickets are, how the SLA works and how a ticket is closed."],
+        ["Your ticket queue", "Every row is a ticket from a user of the fictional company, with its priority and status. Open shows what is waiting; Closed, what you have solved and how."],
+        ["The SLA", "The clock starts when you assign a ticket to yourself: 20 minutes for a P1, 30 for a P2, 45 for a P3. Closing in time counts."],
+        ["Open a ticket", "On the ticket page, press Assign to me and the console comes alive. Investigate, fix the cause, prove it works, then choose the resolution code and write the note."],
+        ["Your progress", "Points and stars for your best result on each ticket, saved in your account and on any device."],
+        ["Take the tour again", "This button shows the tour whenever you want. Each ticket also links to its step-by-step guide. Good shift!"],
+      ],
+      tourNext: "Next", tourBack: "Back", tourSkip: "Skip the tour", tourDone: "Start the shift", tourStep: (i, n) => `${i} of ${n}`,
       land: {
         tag: "IT support simulator · free", title: "SysAdmin Desks",
         lead: "Practise the job of a support technician in your browser. Take a ticket from a fictional company, investigate in a console that answers like a real machine, fix the cause, prove it works and write the work note. Free, with your own account and nothing to install.",
@@ -76,19 +99,14 @@
       },
     },
     es: {
-      heroTitle: "Practica tickets reales de soporte IT en una consola simulada",
-      heroText: "Cada puesto es un ticket de una empresa ficticia. Investiga con los comandos que usarías en el trabajo, arregla la causa, compruébalo y escribe la nota de trabajo.",
-      how: [["1 · Lee", "el ticket y lo que tienes"], ["2 · Investiga", "en la consola, como en un equipo real"], ["3 · Arregla y comprueba", "la causa, no solo el síntoma"], ["4 · Escribe la nota", "el siguiente técnico te lo agradecerá"]],
       progress: (d, n, s) => `${d} de ${n} puestos resueltos · ${s} estrellas`,
-      start: "Empezar", again: "Repetir", level: "Nivel", min: "min", back: "← Todos los puestos",
+      level: "Nivel", back: "← Cola de tickets",
       ticket: "Ticket", context: "Lo que tienes", stages: "Progreso", hint: "Pista", restart: "Reiniciar",
       guide: "Leer la guía", termHelp: "Escribe help para lo básico. ↑/↓ repiten comandos.",
-      noteTitle: "Nota de trabajo", noteText: "Escribe la nota que dejarías en el ticket: causa, qué cambiaste, cómo lo comprobaste y el seguimiento.",
-      submit: "Cerrar el ticket", result: "Ticket cerrado", points: "puntos",
-      found: "Tu nota incluye", missing: "A tu nota le falta", sample: "Una nota de ejemplo", solution: "Una forma de resolverlo",
-      next: "Siguiente puesto", home: "Todos los puestos", noteEmpty: "Escribe unas líneas primero.",
+      points: "puntos",
+      found: "Tu nota incluye", sample: "Una nota de ejemplo", solution: "Una forma de resolverlo",
+      next: "Siguiente ticket", home: "Cola de tickets", noteEmpty: "Escribe unas líneas primero.",
       hintsUsed: (h) => `Pistas usadas: ${h}`, guides: "Guías",
-      foot: "Empresa y personas ficticias. Tu progreso se guarda solo en este navegador.",
       welcome: "Conectado a {host} como {user}. Escribe help si lo necesitas.",
       langBtn: "EN", langLabel: "English", notFound: "Ese puesto no existe.",
       startTag: "Mesa de soporte · turno de mañana", startTitle: "Ficha y empieza tu turno de soporte",
@@ -115,6 +133,34 @@
       accConfirm: "Sí, borrar todo", accCancel: "Cancelar", accDeleted: "Tu cuenta se ha borrado.",
       footUser: "Empresa y personas ficticias. Tu progreso se guarda en tu cuenta.", privacy: "Privacidad",
       footAnon: "Empresa y personas ficticias.", backHome: "← Volver a la portada",
+      navLabel: "Mesa de soporte", deskName: "Mesa de soporte de Contoso", navTickets: "Tickets", navProgress: "Progreso", navGuides: "Guías", navAccount: "Mi cuenta", navTour: "Ver el tour",
+      qTitle: "Cola de tickets", shift: "Turno de mañana · de guardia", tabOpen: "Abiertos", tabClosed: "Cerrados",
+      colTicket: "Ticket", colSubject: "Asunto", colRequester: "Solicitante", colPriority: "Prioridad", colStatus: "Estado", colAssignee: "Asignado a",
+      colResult: "Resultado", colPoints: "Puntuación", colDate: "Cerrado el", colTopic: "Tema", colBest: "Mejor resultado",
+      status: { new: "Nuevo", progress: "En curso", closed: "Cerrado" }, unassigned: "Sin asignar", replay: "Repetir",
+      lvl: { resolved: "Resuelto", observations: "Resuelto con observaciones", unresolved: "No resuelto" },
+      slaTarget: (m) => `${m} min`, slaLeft: (m) => `quedan ${m}`, slaOver: (m) => `vencido hace ${m} min`,
+      emptyOpen: "No quedan tickets abiertos. ¡Buen turno! Puedes repetir cualquiera desde Cerrados.", emptyClosed: "Aún no has cerrado ningún ticket.",
+      console: "Consola", assign: "Asignarme", assignedTo: "Asignado a",
+      lockedTitle: "Asígnate el ticket para empezar", lockedText: (m, p) => `El SLA empieza a contar cuando lo coges: ${m} minutos para una ${p}.`,
+      requester: "Solicitante", fUser: "Usuario", fLocation: "Ubicación", fDevice: "Equipo", actionsT: "Acciones", guiRan: "[ficha del ticket]",
+      readyMsg: "Listo para cerrar: elige el código de resolución y escribe la nota de trabajo abajo.",
+      resTitle: "Resolver el ticket", resText: "Elige el código de resolución y escribe la nota de trabajo: causa, qué cambiaste, cómo lo comprobaste y el seguimiento. Ciérralo cuando creas que está arreglado; si no lo está, vuelve.",
+      resCode: "Código de resolución", resPick: "Elige un código", resNote: "Nota de trabajo", resPlaceholder: "Causa: …  Cambio: …  Comprobación: …  Seguimiento: …",
+      resolveBtn: "Resolver", needCode: "Elige un código de resolución.",
+      unresolvedTitle: "El ticket aún no está arreglado", unresolvedText: "El usuario volvería a llamar antes de una hora. El ticket sigue abierto y el SLA sigue corriendo; cerrarlo sin arreglar resta 10 puntos.",
+      whyT: "Qué falta", obsT: "Observaciones", keepWorking: "Volver al ticket", queueBtn: "Cola de tickets",
+      timeUsed: (m, l) => `Tiempo: ${m} de ${l} min`, codeUsed: (c) => `Código: ${c}`,
+      pTitle: "Tu progreso", pSub: "Tu mejor resultado en cada ticket, guardado en tu cuenta.", tClosed: "Tickets cerrados", tStars: "Estrellas", tPoints: "Puntos", tAvg: "Puntuación media", notYet: "Aún no",
+      tour: [
+        ["Bienvenido a la mesa de soporte de Contoso", "Eres el técnico del turno de mañana. En dos minutos: dónde están los tickets, cómo funciona el SLA y cómo se cierra un ticket."],
+        ["Tu cola de tickets", "Cada fila es un ticket de un usuario de la empresa ficticia, con su prioridad y su estado. En Abiertos ves lo que espera; en Cerrados, lo que has resuelto y cómo."],
+        ["El SLA", "El reloj empieza cuando te asignas un ticket: 20 minutos para una P1, 30 para una P2 y 45 para una P3. Cerrar a tiempo cuenta."],
+        ["Abre un ticket", "En la ficha, pulsa Asignarme y la consola se activa. Investiga, arregla la causa, demuestra que funciona y después elige el código de resolución y escribe la nota."],
+        ["Tu progreso", "Puntos y estrellas de tu mejor resultado en cada ticket, guardados en tu cuenta y en cualquier equipo."],
+        ["Repite el tour", "Este botón vuelve a mostrar el tour cuando quieras. Cada ticket enlaza también con su guía paso a paso. ¡Buen turno!"],
+      ],
+      tourNext: "Siguiente", tourBack: "Atrás", tourSkip: "Saltar el tour", tourDone: "Empezar el turno", tourStep: (i, n) => `${i} de ${n}`,
       land: {
         tag: "Simulador de soporte IT · gratis", title: "SysAdmin Desks",
         lead: "Practica el trabajo de un técnico de soporte en el navegador. Coge un ticket de una empresa ficticia, investiga en una consola que responde como un equipo de verdad, arregla la causa, demuestra que funciona y escribe la nota de trabajo. Gratis, con tu propia cuenta y sin instalar nada.",
@@ -159,7 +205,6 @@
   const asked = new URLSearchParams(location.search).get("lang");
   if (asked === "es" || asked === "en") { lang = asked; save("lang", lang); }
   let progress = load("progress", {});
-  let current = null;   // {sc, sess, ...} while on a desk
   let user = null;      // signed-in technician {name, email, avatar, google, password}
   let afterLogin = null;  // the page someone asked for before signing in (a desk linked from a guide)
   const AVATARS = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"];
@@ -183,7 +228,9 @@
     const server = data.progress || {};
     const better = {};
     Object.entries(progress).forEach(([id, p]) => { if (!server[id] || p.points > server[id].points) better[id] = { points: p.points, stars: p.stars }; });
+    const local = progress;
     progress = Object.assign({}, server);
+    Object.keys(progress).forEach((id) => { if (local[id] && local[id].level && local[id].points === progress[id].points) progress[id].level = local[id].level; });
     if (Object.keys(better).length) {
       const r = await api("/api/progress", "PUT", { results: better });
       if (r.ok) progress = r.data.progress;
@@ -228,55 +275,200 @@
       : el("a", { class: "who signin", href: "#/start", text: L().signIn }));
   }
 
-  /* ---------- home */
-  function home() {
-    current = null;
-    const app = document.getElementById("app");
-    app.replaceChildren();
-    document.title = "SysAdmin Desks by IGG · " + (lang === "es" ? "práctica de soporte IT" : "IT support practice");
-    const solved = SCENARIOS.filter((s) => progress[s.id]).length;
-    const totalStars = SCENARIOS.reduce((a, s) => a + ((progress[s.id] || {}).stars || 0), 0);
-    app.append(
-      el("section", { class: "hero" }, el("h1", { text: L().heroTitle }), el("p", { text: L().heroText }),
-        user ? el("p", { class: "hello" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: L().hello(user.name) })) : null),
-      el("ul", { class: "how" }, L().how.map(([a, b]) => el("li", {}, el("b", { text: a }), b))),
-      el("p", { class: "progress-line", text: L().progress(solved, SCENARIOS.length, totalStars) }),
-      el("div", { class: "grid" }, SCENARIOS.map((sc) => {
-        const p = progress[sc.id];
-        return el("article", { class: "card" },
-          el("div", { class: "meta" }, el("span", { class: "chip topic", text: t(sc.topic, lang) }),
-            el("span", { class: "chip", text: `${L().level} ${sc.level}` }), el("span", { class: "chip", text: `~${sc.minutes} ${L().min}` })),
-          el("h2", { text: t(sc.title, lang) }),
-          el("p", { class: "from", text: `${sc.ticket.id} · ${sc.ticket.from}` }),
-          el("div", { class: "foot-row" }, p ? stars(p.stars) : el("span", { class: "chip", text: sc.ticket.priority }),
-            el("a", { class: "btn", href: "#/desk/" + sc.id, text: p ? L().again : L().start })));
-      })));
-    app.focus();
+  /* ---------- tickets in progress: when each one was assigned (this browser), and the live console of each one (this page) */
+  let ticker = null;      // updates the SLA counters every second
+  let queueTab = "open";
+  const live = {};        // deskId -> {sess, log: [{text, kind}], hist: [], pos: 0, closed: false, result: null}
+  function work() { return load("work", {}); }
+  function setWork(id, value) {
+    const w = work();
+    if (value) w[id] = value; else delete w[id];
+    save("work", w);
+  }
+  function liveOf(id, sc) {
+    if (!live[id]) live[id] = { sess: E.createSession(sc, lang), log: [], hist: [], pos: 0, closed: false, result: null };
+    return live[id];
+  }
+  function minutesOn(id) {
+    const w = work()[id];
+    return w ? Math.max(0, (Date.now() - w.startedAt) / 60000) : 0;
+  }
+  // {text, tone} for the SLA of a ticket; long: mm:ss for the ticket page
+  function slaInfo(sc, long) {
+    const limit = E.sla(sc);
+    const w = work()[sc.id];
+    if (!w) return { text: L().slaTarget(limit), tone: "" };
+    const left = limit - minutesOn(sc.id);
+    if (left < 0) return { text: L().slaOver(Math.ceil(-left)), tone: "bad" };
+    const mmss = Math.floor(left) + ":" + String(Math.floor((left % 1) * 60)).padStart(2, "0");
+    return { text: L().slaLeft(long ? mmss : Math.ceil(left) + " min"), tone: left < limit / 4 ? "warn" : "ok" };
+  }
+  function tick() {
+    document.querySelectorAll("[data-sla]").forEach((n) => {
+      const sc = SCENARIOS.find((s) => s.id === n.getAttribute("data-sla"));
+      if (!sc) return;
+      const info = slaInfo(sc, n.hasAttribute("data-long"));
+      n.textContent = info.text;
+      n.className = "sla " + info.tone;
+    });
+  }
+  function isOpen(sc) { return !progress[sc.id] || Boolean(work()[sc.id]); }
+  function statusOf(sc) { return work()[sc.id] ? "progress" : progress[sc.id] ? "closed" : "new"; }
+  function pill(cls, text) { return el("span", { class: "pill " + cls, text }); }
+  function prioPill(p) { return el("span", { class: "prio " + p, text: p }); }
+
+  function refreshBadge() {
+    const n = SCENARIOS.filter(isOpen).length;
+    const item = document.getElementById("nav-tickets");
+    if (!item) return;
+    let badge = item.querySelector(".badge");
+    if (!n) { if (badge) badge.remove(); return; }
+    if (!badge) { badge = el("span", { class: "badge" }); item.append(badge); }
+    badge.textContent = String(n);
   }
 
-  /* ---------- desk */
-  function desk(id) {
-    const sc = SCENARIOS.find((s) => s.id === id);
+  /* ---------- the signed-in shell: sidebar + view */
+  function shell(active) {
     const app = document.getElementById("app");
     app.replaceChildren();
-    if (!sc) { app.append(el("p", { text: L().notFound }), el("a", { class: "btn", href: "#/", text: L().home })); return; }
-    const sess = E.createSession(sc, lang);
-    current = { sc, sess, hist: [], pos: 0 };
-    document.title = t(sc.title, lang) + " · SysAdmin Desks";
+    const open = SCENARIOS.filter(isOpen).length;
+    const item = (href, icon, text, key, extra) => el("a", { href, class: "side-item" + (active === key ? " on" : ""), id: "nav-" + key,
+      "aria-current": active === key ? "page" : null }, el("span", { class: "side-ico", "aria-hidden": "true", text: icon }), el("span", { text }), extra || null);
+    const nav = el("nav", { class: "side", "aria-label": L().navLabel },
+      el("p", { class: "side-h", text: L().deskName }),
+      item("#/", "▤", L().navTickets, "tickets", open ? el("span", { class: "badge", text: String(open) }) : null),
+      item("#/progress", "★", L().navProgress, "progress"),
+      el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer" },
+        el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { text: L().navGuides })),
+      item("#/account", "●", L().navAccount, "account"),
+      el("button", { type: "button", class: "side-item side-tour", id: "nav-tour", onclick: () => { if (location.hash !== "#/" && location.hash !== "") { location.hash = "#/"; setTimeout(() => tour(0), 50); } else tour(0); } },
+        el("span", { class: "side-ico", "aria-hidden": "true", text: "?" }), el("span", { text: L().navTour })));
+    const view = el("section", { class: "view" });
+    app.append(el("div", { class: "shell" }, nav, view));
+    return view;
+  }
+
+  /* ---------- ticket queue */
+  function queue() {
+    const view = shell("tickets");
+    document.title = L().qTitle + " · SysAdmin Desks";
+    const w = work();
+    const open = SCENARIOS.filter(isOpen).sort((a, b) => (w[b.id] ? 1 : 0) - (w[a.id] ? 1 : 0) || a.ticket.priority.localeCompare(b.ticket.priority));
+    const closed = SCENARIOS.filter((s) => progress[s.id] && !w[s.id]);
+    const tabs = el("div", { class: "qtabs", role: "tablist" }, [["open", L().tabOpen, open.length], ["closed", L().tabClosed, closed.length]].map(([k, text, n]) =>
+      el("button", { type: "button", role: "tab", class: "qtab" + (queueTab === k ? " on" : ""), "aria-selected": queueTab === k ? "true" : "false",
+        onclick: () => { queueTab = k; queue(); } }, text + " ", el("span", { class: "count", text: String(n) }))));
+    const th = (text, id) => el("th", { scope: "col", id: id || null, text });
+    let table;
+    if (queueTab === "open") {
+      table = open.length ? el("table", { class: "qtable", id: "tour-queue" },
+        el("thead", {}, el("tr", {}, th(L().colTicket), th(L().colSubject), th(L().colRequester), th(L().colPriority), th("SLA", "tour-sla"), th(L().colStatus), th(L().colAssignee))),
+        el("tbody", {}, open.map((sc, i) => {
+          const st = statusOf(sc);
+          const sla = slaInfo(sc, false);
+          return el("tr", { id: i === 0 ? "tour-row" : null, class: st === "progress" ? "active" : "" },
+            el("td", { class: "mono", "data-label": L().colTicket, text: sc.ticket.id }),
+            el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/desk/" + sc.id, text: t(sc.title, lang) }),
+              el("span", { class: "sub" }, `${t(sc.topic, lang)} · ${L().level} ${sc.level}`)),
+            el("td", { "data-label": L().colRequester, text: t(sc.requester.name, lang) }),
+            el("td", { "data-label": L().colPriority }, prioPill(sc.ticket.priority)),
+            el("td", { "data-label": "SLA" }, el("span", { class: "sla " + sla.tone, "data-sla": sc.id, text: sla.text })),
+            el("td", { "data-label": L().colStatus }, pill(st, L().status[st])),
+            el("td", { "data-label": L().colAssignee }, w[sc.id] && user ? el("span", { class: "assignee" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
+              : el("span", { class: "muted", text: L().unassigned })));
+        }))) : el("p", { class: "empty", text: L().emptyOpen });
+    } else {
+      table = closed.length ? el("table", { class: "qtable" },
+        el("thead", {}, el("tr", {}, th(L().colTicket), th(L().colSubject), th(L().colResult), th(L().colPoints), th(L().colDate), th(""))),
+        el("tbody", {}, closed.map((sc) => {
+          const p = progress[sc.id];
+          const lvl = p.level || (p.stars === 3 ? "resolved" : "observations");
+          return el("tr", {},
+            el("td", { class: "mono", "data-label": L().colTicket, text: sc.ticket.id }),
+            el("td", { class: "subj", "data-label": L().colSubject }, el("span", { class: "strong", text: t(sc.title, lang) }), el("span", { class: "sub", text: t(sc.topic, lang) })),
+            el("td", { "data-label": L().colResult }, pill(lvl, L().lvl[lvl])),
+            el("td", { "data-label": L().colPoints }, stars(p.stars), " ", el("span", { text: String(p.points) })),
+            el("td", { "data-label": L().colDate, text: p.date || "" }),
+            el("td", {}, el("a", { class: "btn ghost sm", href: "#/desk/" + sc.id, text: L().replay, onclick: () => { delete live[sc.id]; } })));
+        }))) : el("p", { class: "empty", text: L().emptyClosed });
+    }
+    view.append(
+      el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().qTitle }), el("p", { class: "sub", text: user ? L().hello(user.name) : "" })),
+        el("p", { class: "shift" }, el("span", { class: "dot", "aria-hidden": "true" }), L().shift)),
+      tabs, el("div", { class: "qwrap" }, table));
+    if (!load("tourDone", false) && queueTab === "open") setTimeout(() => { if (document.getElementById("tour-queue") && !document.querySelector(".tour")) tour(0); }, 400);
+  }
+
+  /* ---------- ticket page */
+  function desk(id) {
+    const sc = SCENARIOS.find((s) => s.id === id);
+    const view = shell("tickets");
+    if (!sc) { view.append(el("p", { text: L().notFound }), el("a", { class: "btn", href: "#/", text: L().home })); return; }
+    const lv = liveOf(id, sc);
+    const sess = lv.sess;
+    sess.lang = lang;   // the narration and the cards follow the language switch
+    document.title = sc.ticket.id + " · " + t(sc.title, lang) + " · SysAdmin Desks";
+    const assigned = () => Boolean(work()[id]);
 
     const out = el("div", { class: "out", "aria-live": "polite" });
-    const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": "Console" });
-    const form = el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } },
-      el("span", { class: "ps", text: E.prompt(sess) }), input);
+    const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": L().console });
+    const form = el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, el("span", { class: "ps", text: E.prompt(sess) }), input);
     const term = el("div", { class: "term", onclick: () => { if (!window.getSelection().toString()) input.focus(); } }, out, form);
+    const termBox = el("div", { class: "term-box" }, term);
     const stagesList = el("ul", { class: "stages" });
-    const hintBtn = el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { exec("hint"); input.focus(); } });
-    const noteBox = el("div");
+    const assetBox = el("div");
+    const headBox = el("div", { class: "tbar" });
+    const resolveBox = el("div");
+    const resultBox = el("div");
 
-    function print(text, kind) { out.append(el("div", { class: "line " + (kind || "out"), text: text })); }
+    function print(text, kind, keep) {
+      out.append(el("div", { class: "line " + (kind || "out"), text }));
+      if (keep !== false) lv.log.push({ text, kind });
+    }
     function renderStages() {
       stagesList.replaceChildren(...E.stages(sess).map((s) =>
         el("li", { class: s.done ? "done" : "" }, el("span", { class: "box", "aria-hidden": "true", text: s.done ? "✓" : "" }), el("span", { text: t(s.label, lang) }))));
+    }
+    function renderAsset() {
+      const c = E.cards(sess);
+      const actions = c.actions.filter((a) => a.enabled);
+      assetBox.replaceChildren(el("section", { class: "panel asset" }, el("h2", { text: c.asset.title }),
+        el("dl", { class: "fields" }, c.asset.fields.map((f) => [el("dt", { text: f.label }),
+          el("dd", { class: f.tone ? "tone " + f.tone : "" }, f.tone ? el("span", { class: "tdot", "aria-hidden": "true" }) : null, el("span", { text: f.value }))])),
+        actions.length && assigned() && !lv.closed ? el("div", { class: "acts" }, el("p", { class: "acts-h", text: L().actionsT }),
+          actions.map((a) => el("button", { type: "button", class: "btn ghost sm", text: a.label, onclick: () => gui(a.id, a.label) }))) : null));
+    }
+    function renderHead() {
+      const st = lv.closed ? "closed" : statusOf(sc) === "progress" ? "progress" : "new";
+      const sla = slaInfo(sc, true);
+      headBox.replaceChildren(...[
+        el("span", { class: "mono strong", text: sc.ticket.id }), prioPill(sc.ticket.priority), pill(st, L().status[st]),
+        lv.closed ? null : el("span", { class: "sla-wrap" }, el("span", { class: "muted", text: "SLA " }),
+          el("span", { class: "sla " + sla.tone, "data-sla": sc.id, "data-long": "", text: sla.text })),
+        el("span", { class: "grow" }),
+        assigned() || lv.closed ? el("span", { class: "assignee" }, el("span", { class: "muted", text: L().assignedTo + " " }), avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
+          : el("button", { type: "button", class: "btn", id: "assign", text: L().assign, onclick: assign })].filter(Boolean));
+    }
+    function lockConsole() {
+      termBox.querySelectorAll(".term-lock").forEach((n) => n.remove());
+      input.disabled = !assigned() || lv.closed;
+      if (!assigned() && !lv.closed) {
+        termBox.append(el("div", { class: "term-lock" }, el("p", { class: "strong", text: L().lockedTitle }),
+          el("p", { text: L().lockedText(E.sla(sc), sc.ticket.priority) }), el("button", { type: "button", class: "btn", text: L().assign, onclick: assign })));
+      }
+    }
+    function assign() {
+      if (!assigned()) setWork(id, { startedAt: Date.now() });
+      renderHead(); renderAsset(); lockConsole(); renderResolve(); tick();
+      input.focus();
+    }
+    function after(r) {
+      if (r.clear) { out.replaceChildren(); lv.log = []; }
+      if (r.ticket) ticketLines();
+      r.lines.forEach((l) => print(l.text, l.kind));
+      renderStages(); renderAsset();
+      if (r.resolvedNow) { print(L().readyMsg, "ok"); const ta = resolveBox.querySelector("textarea"); if (ta) ta.scrollIntoView({ behavior: "smooth", block: "center" }); }
+      term.scrollTop = term.scrollHeight;
     }
     function ticketLines() {
       print(`[${sc.ticket.id}] ${sc.ticket.priority} · ${sc.ticket.from}`, "dim");
@@ -284,74 +476,177 @@
       print(t(sc.ticket.body, lang), "dim");
     }
     function exec(cmd) {
-      if (!cmd.trim()) return;
-      current.hist.push(cmd); current.pos = current.hist.length;
+      if (!cmd.trim() || !assigned() || lv.closed) return;
+      lv.hist.push(cmd); lv.pos = lv.hist.length;
       print(E.prompt(sess) + cmd, "cmd");
-      const r = E.run(sess, cmd);
-      if (r.clear) out.replaceChildren();
-      if (r.ticket) ticketLines();
-      r.lines.forEach((l) => print(l.text, l.kind));
-      renderStages();
-      if (r.resolvedNow) showNote();
-      term.scrollTop = term.scrollHeight;
+      after(E.run(sess, cmd));
+    }
+    function gui(actionId, label) {
+      const r = E.act(sess, actionId);
+      if (!r) return;
+      print(`${L().guiRan} ${label} → ${r.command}`, "dim");
+      after(r);
     }
     input.addEventListener("keydown", (ev) => {
-      if (ev.key === "ArrowUp" && current.pos > 0) { current.pos -= 1; input.value = current.hist[current.pos]; ev.preventDefault(); }
-      else if (ev.key === "ArrowDown") { current.pos = Math.min(current.hist.length, current.pos + 1); input.value = current.hist[current.pos] || ""; ev.preventDefault(); }
+      if (ev.key === "ArrowUp" && lv.pos > 0) { lv.pos -= 1; input.value = lv.hist[lv.pos]; ev.preventDefault(); }
+      else if (ev.key === "ArrowDown") { lv.pos = Math.min(lv.hist.length, lv.pos + 1); input.value = lv.hist[lv.pos] || ""; ev.preventDefault(); }
     });
 
-    function showNote() {
-      const ta = el("textarea", { "aria-label": L().noteTitle, maxlength: "2000" });
-      const msg = el("p", { class: "msg" });
-      noteBox.replaceChildren(el("section", { class: "panel note" }, el("h2", { text: L().noteTitle }), el("p", { text: L().noteText }), ta, msg,
-        el("div", { class: "row" }, el("button", { type: "button", class: "btn", text: L().submit, onclick: () => {
+    function renderResolve() {
+      if (!assigned() || lv.closed) { resolveBox.replaceChildren(); return; }
+      const code = el("select", { "aria-label": L().resCode },
+        el("option", { value: "", text: L().resPick }), E.CODES.map((c) => el("option", { value: c.id, text: t(c.label, lang) })));
+      const ta = el("textarea", { "aria-label": L().resNote, maxlength: "2000", placeholder: L().resPlaceholder });
+      if (lv.draft) { ta.value = lv.draft.note; code.value = lv.draft.code; }
+      const keep = () => { lv.draft = { note: ta.value, code: code.value }; };
+      ta.addEventListener("input", keep); code.addEventListener("change", keep);
+      const msg = el("p", { class: "form-msg", role: "alert" });
+      resolveBox.replaceChildren(el("section", { class: "panel note" }, el("h2", { text: L().resTitle }), el("p", { text: L().resText }),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().resCode }), code),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().resNote }), ta), msg,
+        el("div", { class: "row" }, el("button", { type: "button", class: "btn", text: L().resolveBtn, onclick: () => {
+          if (!code.value) { msg.textContent = L().needCode; code.focus(); return; }
           if (ta.value.trim().length < 10) { msg.textContent = L().noteEmpty; ta.focus(); return; }
-          showResult(ta.value);
+          close(code.value, ta.value);
         } }))));
-      ta.focus();
     }
 
-    function showResult(text) {
+    function close(codeId, text) {
       const note = E.checkNote(sc, text, lang);
-      const sc2 = E.score(sess, note);
-      const prev = progress[sc.id];
-      if (!prev || sc2.points >= prev.points) { progress[sc.id] = { points: sc2.points, stars: sc2.stars, date: new Date().toISOString().slice(0, 10) }; save("progress", progress); }
-      if (user) api("/api/progress", "PUT", { results: { [sc.id]: { points: sc2.points, stars: sc2.stars } } });
-      const idx = SCENARIOS.indexOf(sc);
-      const nextSc = SCENARIOS[(idx + 1) % SCENARIOS.length];
-      noteBox.replaceChildren(el("section", { class: "panel result" },
-        el("h2", { text: L().result }),
-        el("div", { class: "big-stars" }, "★".repeat(sc2.stars), el("span", { class: "off", text: "★".repeat(3 - sc2.stars) })),
-        el("h3", { text: `${sc2.points} ${L().points}` }),
-        el("p", { text: L().hintsUsed(sess.hints) }),
-        note.found.length ? el("div", {}, el("b", { text: L().found }), el("ul", { class: "found" }, note.found.map((x) => el("li", { text: x })))) : null,
-        note.missing.length ? el("div", {}, el("b", { text: L().missing }), el("ul", { class: "missing" }, note.missing.map((x) => el("li", { text: x })))) : null,
+      const minutes = minutesOn(id);
+      const v = E.verdict(sess, note, { code: codeId, minutes });
+      lv.result = { v, note, minutes, code: codeId };
+      if (v.level !== "unresolved") {
+        lv.closed = true;
+        const prev = progress[sc.id];
+        if (!prev || v.points >= prev.points) {
+          progress[sc.id] = { points: v.points, stars: v.stars, date: new Date().toISOString().slice(0, 10), level: v.level };
+          save("progress", progress);
+        }
+        api("/api/progress", "PUT", { results: { [sc.id]: { points: v.points, stars: v.stars } } });
+        setWork(id, null);
+        lv.draft = null;
+        refreshBadge();
+      }
+      renderHead(); renderAsset(); lockConsole(); renderResolve(); showResult();
+      resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function showResult() {
+      if (!lv.result) { resultBox.replaceChildren(); return; }
+      const { v, note, minutes, code } = lv.result;
+      const nextSc = SCENARIOS.find((s) => s.id !== sc.id && isOpen(s));
+      const list = (title, items, cls) => items.length ? el("div", {}, el("b", { text: title }), el("ul", { class: cls }, items.map((x) => el("li", { text: x })))) : null;
+      if (v.level === "unresolved") {
+        resultBox.replaceChildren(el("section", { class: "panel result lvl-unresolved" },
+          el("p", { class: "lvl" }, pill("unresolved", L().lvl.unresolved)), el("h3", { text: L().unresolvedTitle }), el("p", { text: L().unresolvedText }),
+          list(L().whyT, v.reasons, "missing"),
+          el("details", {}, el("summary", { text: L().solution }), el("div", { class: "solution", text: sc.solution.join("\n") })),
+          el("div", { class: "row" }, el("button", { type: "button", class: "btn", text: L().keepWorking, onclick: () => {
+            lv.result = null; showResult(); input.focus(); term.scrollIntoView({ behavior: "smooth", block: "start" });
+          } }), el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))));
+        return;
+      }
+      resultBox.replaceChildren(el("section", { class: "panel result lvl-" + v.level },
+        el("p", { class: "lvl" }, pill(v.level, L().lvl[v.level])),
+        el("div", { class: "big-stars" }, "★".repeat(v.stars), el("span", { class: "off", text: "★".repeat(3 - v.stars) })),
+        el("h3", { text: `${v.points} ${L().points}` }),
+        el("p", { class: "facts" }, el("span", { text: L().timeUsed(Math.ceil(minutes), E.sla(sc)) }), el("span", { text: L().codeUsed(E.codeLabel(code, lang)) }),
+          el("span", { text: L().hintsUsed(sess.hints) })),
+        list(L().obsT, v.reasons, "missing"),
+        list(L().found, note.found, "found"),
         el("details", {}, el("summary", { text: L().sample }), el("blockquote", { text: t(sc.sampleNote, lang) })),
         el("details", {}, el("summary", { text: L().solution }), el("div", { class: "solution", text: sc.solution.join("\n") })),
-        el("div", { class: "row" }, el("a", { class: "btn", href: "#/desk/" + nextSc.id, text: L().next }),
-          el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }),
-          el("a", { class: "btn ghost", href: "#/", text: L().home }))));
-      noteBox.scrollIntoView({ behavior: "smooth", block: "start" });
+        el("div", { class: "row" }, nextSc ? el("a", { class: "btn", href: "#/desk/" + nextSc.id, text: L().next }) : null,
+          el("a", { class: "btn ghost", href: "#/", text: L().queueBtn }),
+          el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))));
     }
 
-    app.append(
+    const c = E.cards(sess);
+    const r = c.requester;
+    view.append(
       el("div", { class: "desk-bar" }, el("a", { href: "#/", text: L().back }), el("h1", { text: t(sc.title, lang) })),
+      headBox,
       el("div", { class: "desk" },
         el("aside", {},
           el("section", { class: "panel" }, el("h2", { text: L().ticket }),
-            el("div", { class: "ticket-head" }, el("span", { text: `${sc.ticket.id} · ${sc.ticket.from}` }), el("span", { class: "prio " + sc.ticket.priority, text: sc.ticket.priority })),
             el("p", { class: "ticket-subject", text: t(sc.ticket.subject, lang) }), el("p", { class: "ticket-body", text: t(sc.ticket.body, lang) })),
+          el("section", { class: "panel" }, el("h2", { text: L().requester }),
+            el("p", { class: "req-name" }, el("span", { class: "initials", "aria-hidden": "true", text: r.name.split(" ").map((x) => x[0]).join("").slice(0, 2) }),
+              el("span", {}, el("b", { text: r.name }), el("span", { class: "sub", text: r.team }))),
+            el("dl", { class: "fields" }, el("dt", { text: L().fUser }), el("dd", { class: "mono", text: r.user }),
+              el("dt", { text: L().fLocation }), el("dd", { text: r.location }), el("dt", { text: L().fDevice }), el("dd", { class: "mono", text: r.device }))),
+          assetBox,
           el("section", { class: "panel" }, el("h2", { text: L().context }), el("p", { class: "intro", text: t(sc.intro, lang) })),
           el("section", { class: "panel" }, el("h2", { text: L().stages }), stagesList),
-          el("section", { class: "panel tools" }, hintBtn,
-            el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => desk(id) }),
+          el("section", { class: "panel tools" },
+            el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { if (assigned() && !lv.closed) { exec("hint"); input.focus(); } } }),
+            el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => { delete live[id]; desk(id); } }),
             el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))),
-        el("div", {}, term, el("p", { class: "term-help", text: L().termHelp }), noteBox)));
+        el("div", {}, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
 
-    print(L().welcome.replace("{host}", sc.machine.host).replace("{user}", sc.machine.domain + "\\" + sc.machine.user), "dim");
-    print("", "out");
-    renderStages();
-    input.focus();
+    if (!lv.log.length) {
+      print(L().welcome.replace("{host}", sc.machine.host).replace("{user}", sc.machine.domain + "\\" + sc.machine.user), "dim");
+      print("", "out");
+    } else lv.log.forEach((l) => print(l.text, l.kind, false));
+    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); showResult();
+    term.scrollTop = term.scrollHeight;
+    if (assigned() && !lv.closed) input.focus();
+  }
+
+  /* ---------- progress */
+  function progressPage() {
+    const view = shell("progress");
+    document.title = L().pTitle + " · SysAdmin Desks";
+    const done = SCENARIOS.filter((s) => progress[s.id]);
+    const starsSum = done.reduce((a, s) => a + progress[s.id].stars, 0);
+    const pointsSum = done.reduce((a, s) => a + progress[s.id].points, 0);
+    const tile = (n, label) => el("div", { class: "tile" }, el("p", { class: "tile-n", text: n }), el("p", { class: "tile-l", text: label }));
+    view.append(
+      el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().pTitle }), el("p", { class: "sub", text: L().pSub }))),
+      el("div", { class: "tiles" }, tile(`${done.length}/${SCENARIOS.length}`, L().tClosed), tile(`${starsSum}/${SCENARIOS.length * 3}`, L().tStars),
+        tile(String(pointsSum), L().tPoints), tile(done.length ? String(Math.round(pointsSum / done.length)) : "–", L().tAvg)),
+      el("div", { class: "qwrap" }, el("table", { class: "qtable" },
+        el("thead", {}, el("tr", {}, ["", L().colSubject, L().colTopic, L().colBest, L().colDate, ""].map((x) => el("th", { scope: "col", text: x })))),
+        el("tbody", {}, SCENARIOS.map((sc) => {
+          const p = progress[sc.id];
+          return el("tr", {},
+            el("td", { class: "mono", "data-label": L().colTicket, text: sc.ticket.id }),
+            el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/desk/" + sc.id, text: t(sc.title, lang) })),
+            el("td", { "data-label": L().colTopic, text: t(sc.topic, lang) }),
+            el("td", { "data-label": L().colBest }, p ? [stars(p.stars), " ", el("span", { text: String(p.points) })] : el("span", { class: "muted", text: L().notYet })),
+            el("td", { "data-label": L().colDate, text: p ? p.date || "" : "" }),
+            el("td", {}, el("a", { class: "link", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide })));
+        })))));
+  }
+
+  /* ---------- welcome tour: a card at the bottom and the element it talks about highlighted; skip it or take it again from the sidebar */
+  function closeTour(done) {
+    document.querySelectorAll(".tour").forEach((n) => n.remove());
+    document.querySelectorAll(".tour-focus").forEach((n) => n.classList.remove("tour-focus"));
+    document.removeEventListener("keydown", tourKeys);
+    if (done) save("tourDone", true);
+  }
+  function tourKeys(ev) { if (ev.key === "Escape") closeTour(true); }
+  function tour(i) {
+    closeTour(false);
+    const steps = L().tour;
+    const targets = [null, "tour-queue", "tour-sla", "tour-row", "nav-progress", "nav-tour"];
+    const step = steps[i];
+    const target = targets[i] && document.getElementById(targets[i]);
+    if (target) { target.classList.add("tour-focus"); target.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    const last = i === steps.length - 1;
+    const card = el("div", { class: "tour", role: "dialog", "aria-labelledby": "tour-h" },
+      el("p", { class: "tour-step", text: L().tourStep(i + 1, steps.length) }),
+      el("h2", { id: "tour-h", text: step[0] }), el("p", { text: step[1] }),
+      el("div", { class: "row" },
+        el("button", { type: "button", class: "link-btn", text: L().tourSkip, onclick: () => closeTour(true) }),
+        el("span", { class: "grow" }),
+        i ? el("button", { type: "button", class: "btn ghost sm", text: L().tourBack, onclick: () => tour(i - 1) }) : null,
+        el("button", { type: "button", class: "btn sm", text: last ? L().tourDone : L().tourNext, onclick: () => last ? closeTour(true) : tour(i + 1) })));
+    document.body.append(card);
+    document.addEventListener("keydown", tourKeys);
+    card.querySelector(".btn.sm:last-child").focus();
   }
 
 
@@ -371,7 +666,6 @@
     return el("div", { class: "mini-term" }, lines.map(([k, t]) => el("div", { class: "mt-line " + k, text: t })), el("div", { class: "mt-line cur", text: "PS C:\\> " }));
   }
   function landing() {
-    current = null;
     const app = document.getElementById("app");
     app.replaceChildren();
     const T = L().land;
@@ -433,7 +727,6 @@
 
   /* ---------- start page: sign in or create an account */
   function start(mode, notice) {
-    current = null;
     const app = document.getElementById("app");
     app.replaceChildren();
     document.title = "SysAdmin Desks by IGG · " + (lang === "es" ? "acceso" : "sign in");
@@ -549,10 +842,9 @@
 
   /* ---------- account */
   function account() {
-    current = null;
-    const app = document.getElementById("app");
-    app.replaceChildren();
     if (!user) { start("login"); return; }
+    const app = document.getElementById("app");
+    const view = shell("account");
     document.title = L().accTitle + " · SysAdmin Desks";
     const solved = Object.keys(progress).length;
     const totalStars = Object.values(progress).reduce((a, p) => a + (p.stars || 0), 0);
@@ -563,7 +855,8 @@
         el("button", { type: "button", class: "btn danger-btn", text: L().accConfirm, onclick: async () => {
           const r = await api("/api/me", "DELETE");
           if (!r.ok) { msg.textContent = L().errors[r.data.error] || L().errors.server; return; }
-          user = null; progress = {}; save("progress", progress);
+          user = null; progress = {}; save("progress", progress); save("work", {});
+          document.body.classList.remove("shell-on");
           chrome();
           app.replaceChildren(el("section", { class: "panel account" }, el("p", { text: L().accDeleted }), el("a", { class: "btn", href: "#/start", text: L().signIn })));
         } }),
@@ -571,14 +864,15 @@
     }
     function idle() { zone.replaceChildren(el("button", { type: "button", class: "btn ghost", text: L().accDelete, onclick: ask })); }
     idle();
-    app.append(el("section", { class: "panel account" },
+    view.append(el("section", { class: "panel account" },
       el("div", { class: "acc-head" }, avatarImg(user.avatar, "avatar lg"), el("div", {}, el("h1", { text: user.name }), el("p", { class: "from", text: user.email }))),
       el("p", { text: L().progress(solved, SCENARIOS.length, totalStars) }),
       el("p", { class: "fine", text: (user.google ? L().accGoogle : L().accPassword) + " · " + L().accSynced }),
       el("div", { class: "row" }, el("a", { class: "btn", href: "#/", text: L().home }),
         el("button", { type: "button", class: "btn ghost", text: L().signOut, onclick: async () => {
           await api("/api/auth/logout", "POST");
-          user = null; progress = {}; save("progress", progress);
+          user = null; progress = {}; save("progress", progress); save("work", {});
+          Object.keys(live).forEach((k) => delete live[k]);
           location.hash = "#/start"; route();
         } })),
       msg, zone));
@@ -587,16 +881,22 @@
   /* ---------- routing */
   function route(notice) {
     chrome();
-    const h = location.hash;
+    clearInterval(ticker);
+    closeTour(false);
+    let h = location.hash;
+    if (user && (h === "#/start" || h === "#/register")) { history.replaceState(null, "", location.pathname + location.search + "#/"); h = "#/"; }
     const m = h.match(/^#\/desk\/([a-z0-9-]+)$/);
     document.body.classList.toggle("landing-on", !user && (h === "" || h === "#/"));
+    document.body.classList.toggle("shell-on", Boolean(user));
     if (m && user) desk(m[1]);
     else if (m) { afterLogin = h; start("login", notice || "need_login"); }
     else if (h === "#/start") start("login", notice);
     else if (h === "#/register") start("register", notice);
     else if (h === "#/account") account();
-    else if (user) home();
+    else if (h === "#/progress" && user) progressPage();
+    else if (user) queue();
     else landing();
+    if (user) ticker = setInterval(tick, 1000);
     window.scrollTo(0, 0);
   }
   document.getElementById("lang").addEventListener("click", () => {

@@ -29,6 +29,25 @@
       en: "You are on your admin workstation with the Active Directory module (RSAT). The domain controllers are DC01 (PDC emulator) and DC02.",
       es: "Estás en tu equipo de administración con el módulo de Active Directory (RSAT). Los controladores de dominio son DC01 (emulador de PDC) y DC02.",
     },
+    requester: { name: "Marta García", team: { en: "Finance", es: "Finanzas" }, user: "mgarcia", location: { en: "Head office, 2nd floor", es: "Oficina central, 2ª planta" }, device: "PC-FIN-021" },
+    asset: {
+      title: { en: "User account · mgarcia", es: "Cuenta de usuario · mgarcia" },
+      fields: [
+        { label: { en: "Account", es: "Cuenta" }, states: [
+          { when: { locked: true }, value: { en: "Locked", es: "Bloqueada" }, tone: "bad" },
+          { value: { en: "Unlocked", es: "Desbloqueada" }, tone: "ok" }] },
+        { label: { en: "Lockout source", es: "Origen de los bloqueos" }, states: [
+          { when: { sourceFound: false }, value: { en: "Unknown", es: "Desconocido" }, tone: "warn" },
+          { value: "FS-SCAN01" }] },
+        { label: { en: "Task ScanToFinance", es: "Tarea ScanToFinance" }, states: [
+          { when: { taskFound: false }, value: { en: "Not reviewed", es: "Sin revisar" }, tone: "muted" },
+          { when: { taskDisabled: false }, value: { en: "Ready, with her old password", es: "Activa, con su contraseña antigua" }, tone: "bad" },
+          { value: { en: "Disabled", es: "Deshabilitada" }, tone: "ok" }] },
+        { label: { en: "Password last set", es: "Último cambio de contraseña" }, value: "19/10/2026 08:12" },
+      ],
+    },
+    actions: [{ id: "unlock", label: { en: "Unlock account", es: "Desbloquear cuenta" }, cmd: "Unlock-ADAccount mgarcia", when: { locked: true } }],
+    codes: ["cause-removed"],
     state: { locked: true, inspected: false, sourceFound: false, taskFound: false, taskDisabled: false, relock: false, verified: false },
     events: [{
       when: { relock: true },
@@ -171,6 +190,24 @@
       en: "You are connected to Javier's laptop with remote assistance, in an elevated PowerShell. The intranet server is 10.20.1.15; the office DNS servers are the domain controllers (10.20.1.10 and 10.20.1.11), handed out by DHCP.",
       es: "Estás conectado al portátil de Javier con asistencia remota, en un PowerShell elevado. El servidor de la intranet es 10.20.1.15; los DNS de la oficina son los controladores de dominio (10.20.1.10 y 10.20.1.11), entregados por DHCP.",
     },
+    requester: { name: "Javier Ruiz", team: { en: "Sales", es: "Ventas" }, user: "jruiz", location: { en: "Head office, Sales area", es: "Oficina central, zona de Ventas" }, device: "LAPTOP-0217" },
+    asset: {
+      title: { en: "Device · LAPTOP-0217", es: "Equipo · LAPTOP-0217" },
+      fields: [
+        { label: { en: "DNS servers", es: "Servidores DNS" }, states: [
+          { when: { dnsStatic: true }, value: { en: "8.8.8.8, 1.1.1.1 (set by hand)", es: "8.8.8.8, 1.1.1.1 (puestos a mano)" }, tone: "bad" },
+          { value: "10.20.1.10, 10.20.1.11 (DHCP)", tone: "ok" }] },
+        { label: { en: "DNS cache", es: "Caché DNS" }, states: [
+          { when: { flushed: true }, value: { en: "Flushed", es: "Vaciada" }, tone: "ok" },
+          { value: { en: "Not flushed", es: "Sin vaciar" }, tone: "muted" }] },
+        { label: { en: "Intranet by name", es: "Intranet por nombre" }, states: [
+          { when: { verified: true }, value: { en: "Answers", es: "Responde" }, tone: "ok" },
+          { value: { en: "Not found", es: "No se encuentra" }, tone: "bad" }] },
+        { label: { en: "Network", es: "Red" }, value: { en: "Office Ethernet", es: "Ethernet de la oficina" } },
+      ],
+    },
+    actions: [{ id: "flush", label: { en: "Flush DNS cache", es: "Vaciar caché DNS" }, cmd: "ipconfig /flushdns" }],
+    codes: ["config-fixed"],
     state: { dnsStatic: true, foundDns: false, flushed: false, verified: false },
     commands: [
       { id: "ipall", match: /^ipconfig\s+\/all\b/, when: { dnsStatic: true }, set: { foundDns: true }, out: [
@@ -276,6 +313,25 @@
       en: "You are on Laura's PC with an elevated PowerShell. The disk is 128 GB. Do not delete user documents.",
       es: "Estás en el equipo de Laura con un PowerShell elevado. El disco es de 128 GB. No borres documentos del usuario.",
     },
+    requester: { name: "Laura Pérez", team: { en: "Accounting", es: "Contabilidad" }, user: "lperez", location: { en: "Head office, 3rd floor", es: "Oficina central, 3ª planta" }, device: "PC-FIN-033" },
+    asset: {
+      title: { en: "Device · PC-FIN-033", es: "Equipo · PC-FIN-033" },
+      fields: [
+        { label: { en: "Free space on C:", es: "Espacio libre en C:" }, states: [
+          { when: { tempClean: true, wuClean: true }, value: { en: "18.4 GB of 128 GB", es: "18,4 GB de 128 GB" }, tone: "ok" },
+          { when: { tempClean: true }, value: { en: "12.2 GB of 128 GB", es: "12,2 GB de 128 GB" }, tone: "warn" },
+          { when: { wuClean: true }, value: { en: "6.6 GB of 128 GB", es: "6,6 GB de 128 GB" }, tone: "warn" },
+          { value: { en: "0.4 GB of 128 GB", es: "0,4 GB de 128 GB" }, tone: "bad" }] },
+        { label: { en: "User temp folder", es: "Carpeta temporal del usuario" }, states: [
+          { when: { tempClean: true }, value: { en: "Emptied", es: "Vaciada" }, tone: "ok" },
+          { value: { en: "Not reviewed", es: "Sin revisar" }, tone: "muted" }] },
+        { label: { en: "Windows Update service", es: "Servicio Windows Update" }, states: [
+          { when: { wuRunning: true }, value: { en: "Running", es: "En ejecución" }, tone: "ok" },
+          { value: { en: "Stopped", es: "Detenido" }, tone: "warn" }] },
+      ],
+    },
+    actions: [{ id: "wu-start", label: { en: "Start Windows Update", es: "Arrancar Windows Update" }, cmd: "Start-Service wuauserv", when: { wuRunning: false } }],
+    codes: ["capacity"],
     state: { foundBig: false, tempClean: false, wuRunning: true, wuClean: false, verified: false },
     commands: [
       { id: "free-0", match: /^(get-psdrive\b.*\bc\b|get-volume\b|fsutil\s+volume\s+diskfree|wmic\s+logicaldisk|gdr\b.*\bc\b)/, when: { tempClean: false, wuClean: false }, out: [
@@ -366,6 +422,23 @@
       en: "You are on the print server PRT-SRV01. It hosts 22 queues for the head office; stopping the spooler pauses all of them for a minute.",
       es: "Estás en el servidor de impresión PRT-SRV01. Tiene 22 colas de la sede; parar el spooler detiene todas durante un minuto.",
     },
+    requester: { name: { en: "Reception", es: "Recepción" }, team: { en: "Head office", es: "Oficina central" }, user: "recepcion", location: { en: "Ground floor", es: "Planta baja" }, device: "RECEPCION-MFP" },
+    asset: {
+      title: { en: "Print queue · RECEPCION-MFP", es: "Cola de impresión · RECEPCION-MFP" },
+      fields: [
+        { label: { en: "Queue", es: "Cola" }, states: [
+          { when: { cleared: true }, value: { en: "Empty", es: "Vacía" }, tone: "ok" },
+          { value: { en: "14 jobs, job 312 'Deleting'", es: "14 trabajos, el 312 en 'Eliminando'" }, tone: "bad" }] },
+        { label: { en: "Spooler on PRT-SRV01", es: "Spooler en PRT-SRV01" }, states: [
+          { when: { spooler: "running" }, value: { en: "Running", es: "En ejecución" }, tone: "ok" },
+          { value: { en: "Stopped (22 queues paused)", es: "Parado (22 colas en pausa)" }, tone: "warn" }] },
+        { label: { en: "Test page", es: "Página de prueba" }, states: [
+          { when: { verified: true }, value: { en: "Printed", es: "Impresa" }, tone: "ok" },
+          { value: { en: "Pending", es: "Pendiente" }, tone: "muted" }] },
+      ],
+    },
+    actions: [{ id: "restart", label: { en: "Restart the spooler", es: "Reiniciar el spooler" }, cmd: "Restart-Service Spooler", when: { spooler: "running" } }],
+    codes: ["cause-removed"],
     state: { looked: false, spooler: "running", cleared: false, verified: false },
     commands: [
       { id: "spooler-down", match: /^(get-printjob|get-printer)\b/, when: { spooler: "stopped" }, error: true,
@@ -454,6 +527,24 @@
       en: "You are on your admin workstation with the ExchangeOnlineManagement module installed. Carlos has a Microsoft 365 E3 licence (50 GB mailbox, archiving included).",
       es: "Estás en tu equipo de administración con el módulo ExchangeOnlineManagement instalado. Carlos tiene licencia Microsoft 365 E3 (buzón de 50 GB, archivo incluido).",
     },
+    requester: { name: "Carlos Martín", team: { en: "Sales Director", es: "Director comercial" }, user: "cmartin", location: { en: "Head office, 5th floor (VIP)", es: "Oficina central, 5ª planta (VIP)" }, device: "LAPTOP-0102" },
+    asset: {
+      title: { en: "Mailbox · cmartin@contoso.com", es: "Buzón · cmartin@contoso.com" },
+      fields: [
+        { label: { en: "Mailbox size", es: "Tamaño del buzón" }, states: [
+          { when: { mfa: true }, value: { en: "28.41 GB of 50 GB", es: "28,41 GB de 50 GB" }, tone: "ok" },
+          { value: { en: "49.98 GB of 50 GB", es: "49,98 GB de 50 GB" }, tone: "bad" }] },
+        { label: { en: "Archive", es: "Archivo" }, states: [
+          { when: { archive: true }, value: { en: "Enabled", es: "Activado" }, tone: "ok" },
+          { value: { en: "Not enabled", es: "Sin activar" }, tone: "warn" }] },
+        { label: "Managed Folder Assistant", states: [
+          { when: { mfa: true }, value: { en: "Processed", es: "Procesado" }, tone: "ok" },
+          { value: { en: "Pending", es: "Pendiente" }, tone: "muted" }] },
+        { label: { en: "Licence", es: "Licencia" }, value: "Microsoft 365 E3" },
+      ],
+    },
+    actions: [{ id: "archive", label: { en: "Enable archive", es: "Activar el archivo" }, cmd: "Enable-Mailbox cmartin -Archive", when: { connected: true, archive: false } }],
+    codes: ["capacity"],
     state: { connected: false, sizeChecked: false, causeFound: false, archive: false, mfa: false, verified: false },
     commands: [
       { id: "connect", match: /^connect-exchangeonline\b/, set: { connected: true }, out: [
@@ -539,6 +630,26 @@
       en: "You are on Ana's laptop with an elevated PowerShell (remote assistance). The compliance policy requires BitLocker; Conditional Access blocks Microsoft 365 apps on non-compliant devices.",
       es: "Estás en el portátil de Ana con un PowerShell elevado (asistencia remota). La directiva de cumplimiento exige BitLocker; el acceso condicional bloquea las apps de Microsoft 365 en dispositivos que no cumplen.",
     },
+    requester: { name: "Ana Ortiz", team: { en: "Legal", es: "Legal" }, user: "aortiz", location: { en: "Head office, 4th floor", es: "Oficina central, 4ª planta" }, device: "LAPTOP-0388" },
+    asset: {
+      title: { en: "Device · LAPTOP-0388", es: "Dispositivo · LAPTOP-0388" },
+      fields: [
+        { label: { en: "Compliance", es: "Cumplimiento" }, states: [
+          { when: { verified: true }, value: { en: "Compliant", es: "Cumple" }, tone: "ok" },
+          { value: { en: "Not compliant", es: "No cumple" }, tone: "bad" }] },
+        { label: "BitLocker", states: [
+          { when: { encrypted: true }, value: { en: "On (XtsAes256)", es: "Activado (XtsAes256)" }, tone: "ok" },
+          { value: { en: "Off", es: "Desactivado" }, tone: "bad" }] },
+        { label: { en: "Recovery key in Entra ID", es: "Clave de recuperación en Entra ID" }, states: [
+          { when: { escrowed: true }, value: { en: "Stored", es: "Guardada" }, tone: "ok" },
+          { value: { en: "Missing", es: "No guardada" }, tone: "bad" }] },
+        { label: { en: "Last Intune sync", es: "Última sincronización con Intune" }, states: [
+          { when: { synced: true }, value: { en: "Just now", es: "Ahora mismo" }, tone: "ok" },
+          { value: "25/10/2026 08:02" }] },
+      ],
+    },
+    actions: [{ id: "sync", label: { en: "Sync with Intune", es: "Sincronizar con Intune" }, cmd: "Get-ScheduledTask | ? TaskName -eq PushLaunch | Start-ScheduledTask" }],
+    codes: ["compliance"],
     state: { joinChecked: false, blChecked: false, encrypted: false, recoveryPw: false, escrowed: false, synced: false, verified: false },
     commands: [
       { id: "dsreg", match: /^dsregcmd\s+\/status\b/, set: { joinChecked: true }, out: [
