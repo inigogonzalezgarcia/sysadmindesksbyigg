@@ -23,6 +23,10 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 | `note` | Elements a good work note must contain: `label {en, es}` and `any` (keywords in English or Spanish, accents ignored) |
 | `solution` | A reference path; the tests play it and expect the ticket to be resolved exactly at the last command |
 | `sampleNote` | An example work note `{en, es}`; the tests expect it to cover every note element |
+| `requester` | The person on the ticket: `name`, `team`, `location` (text or `{en, es}`), `user` and `device` |
+| `asset` | The card for what the ticket is about: `title {en, es}` and `fields` (see below) |
+| `actions` | Buttons on the ticket page: `id`, `label {en, es}`, `cmd` (the console command it runs) and an optional `when` |
+| `codes` | The resolution codes that fit this ticket (ids from `CODES` in the engine); the first one is suggested when another is chosen |
 
 ## Command rules
 
@@ -39,9 +43,34 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 
 Built-in commands: `help`, `hint`, `clear` / `cls`, `ticket`. Anything that matches no rule shows the shell's "not recognised" message and counts as an unknown command (2 points each after the first three).
 
+## Asset card and actions
+
+```js
+asset: { title: { en: "User account · mgarcia", es: "Cuenta de usuario · mgarcia" }, fields: [
+  { label: { en: "Account", es: "Cuenta" }, states: [
+    { when: { locked: true }, value: { en: "Locked", es: "Bloqueada" }, tone: "bad" },
+    { value: { en: "Unlocked", es: "Desbloqueada" }, tone: "ok" }] },
+  { label: { en: "Password last set", es: "Último cambio de contraseña" }, value: "19/10/2026 08:12" },
+] },
+actions: [{ id: "unlock", label: { en: "Unlock account", es: "Desbloquear cuenta" }, cmd: "Unlock-ADAccount mgarcia", when: { locked: true } }],
+```
+
+- A field is a fixed `value`, or `states`: the first whose `when` matches the session is shown, and the last one (without `when`) is the default. `tone` is `ok`, `warn`, `bad` or `muted`.
+- The tests expect at least one `bad` field at the start and none once the reference solution has run, so the card shows the fix.
+- An action runs its `cmd` through the engine, so the button and the command always give the same result (including the traps: unlocking from the card before removing the cause locks the account again). The tests check every action is understood whenever it is offered.
+
+## Closing a ticket
+
+- **SLA:** it starts when the user assigns the ticket: 20 minutes for P1, 30 for P2 and 45 for P3.
+- **Resolution codes:** root cause removed, configuration corrected, space or quota freed, device brought into compliance, workaround, user guidance, no fault found.
+- **Result** (`verdict` in the engine), in three levels:
+  - *Not resolved* when the goal is not met: it lists the stages not done, the ticket stays open and each early close costs 10 points later.
+  - *Resolved with observations* when it is fixed but the note misses something, the code does not fit, the SLA was missed or it was closed early before.
+  - *Resolved* when none of that happened.
+
 ## Scoring
 
-100 points, minus 10 per hint, minus 2 per unknown command after the first three, minus 10 per note element missing and minus 10 for a note under 15 words. 90+ is three stars, 70+ two, 40+ one.
+100 points, minus 10 per hint, minus 2 per unknown command after the first three, minus 10 per note element missing and minus 10 for a note under 15 words. On the ticket page, also minus 10 for a resolution code that does not fit, minus 10 outside the SLA and minus 10 per time it was closed before it was fixed. 90+ is three stars, 70+ two, 40+ one.
 
 ## Writing a good desk
 
