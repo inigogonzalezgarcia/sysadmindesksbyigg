@@ -48,6 +48,8 @@
       unknown: 0,
       resolved: false,
       resolvedAt: null,
+      gui: 0,            // actions run from the ticket page instead of the console
+      failedCloses: 0,   // times the ticket was closed before it was fixed
     };
   }
 
@@ -169,6 +171,87 @@
     return { points: s, stars: s >= 90 ? 3 : s >= 70 ? 2 : s >= 40 ? 1 : 0 };
   }
 
+  /* ---------- the ticket page (v0.2): SLA, resolution codes, requester and asset cards, actions, three-level result */
+
+  // minutes from "Assign to me" to closing the ticket
+  const SLA = { P1: 20, P2: 30, P3: 45 };
+  function sla(sc) { return SLA[sc.ticket.priority] || 45; }
+
+  const CODES = [
+    { id: "cause-removed", label: { en: "Root cause removed", es: "Causa raíz eliminada" } },
+    { id: "config-fixed", label: { en: "Configuration corrected", es: "Configuración corregida" } },
+    { id: "capacity", label: { en: "Space or quota freed", es: "Espacio o cuota liberados" } },
+    { id: "compliance", label: { en: "Device brought into compliance", es: "Dispositivo puesto en cumplimiento" } },
+    { id: "workaround", label: { en: "Workaround applied", es: "Solución temporal aplicada" } },
+    { id: "user-guidance", label: { en: "User guidance", es: "Orientación al usuario" } },
+    { id: "no-fault", label: { en: "No fault found", es: "Sin incidencia" } },
+  ];
+  function codeLabel(id, lang) {
+    const c = CODES.find((x) => x.id === id);
+    return c ? t(c.label, lang) : "";
+  }
+
+  // a card field is a fixed value, or the first of its states whose flags match the session
+  function field(f, state, lang) {
+    if (!f.states) return { label: t(f.label, lang), value: t(f.value, lang), tone: f.tone || "" };
+    const st = f.states.find((x) => when(x.when, state, false)) || f.states[f.states.length - 1];
+    return { label: t(f.label, lang), value: t(st.value, lang), tone: st.tone || "" };
+  }
+  function cards(sess) {
+    const sc = sess.sc;
+    const lang = sess.lang;
+    const r = sc.requester || {};
+    const a = sc.asset || { fields: [] };
+    return {
+      requester: { name: t(r.name, lang), team: t(r.team, lang), user: r.user || "", location: t(r.location, lang), device: r.device || "" },
+      asset: { title: t(a.title, lang), fields: a.fields.map((f) => field(f, sess.state, lang)) },
+      actions: (sc.actions || []).map((x) => ({ id: x.id, label: t(x.label, lang), enabled: when(x.when, sess.state, false) })),
+    };
+  }
+
+  // an action on the ticket page does exactly what its command does in the console
+  function act(sess, id) {
+    const x = (sess.sc.actions || []).find((a) => a.id === id);
+    if (!x || !when(x.when, sess.state, false)) return null;
+    sess.gui += 1;
+    const res = run(sess, x.cmd);
+    res.command = x.cmd;
+    return res;
+  }
+
+  /* Closing the ticket: "resolved", "observations" (fixed, but the note, the code or the SLA need work) or "unresolved".
+     opts: { code, minutes } (minutes since the ticket was assigned). Closing it unresolved counts against the next close. */
+  function verdict(sess, note, opts) {
+    const sc = sess.sc;
+    const lang = sess.lang;
+    const es = lang === "es";
+    const o = opts || {};
+    const limit = sla(sc);
+    if (!sess.resolved) {
+      sess.failedCloses += 1;
+      const pending = stages(sess).filter((s) => !s.done).map((s) => t(s.label, lang));
+      return { level: "unresolved", points: 0, stars: 0, codeOk: false, slaOk: true, pending: pending,
+        reasons: pending.map((p) => (es ? "Sin hacer: " : "Not done: ") + p.charAt(0).toLowerCase() + p.slice(1)) };
+    }
+    const codeOk = (sc.codes || []).indexOf(o.code) !== -1;
+    const minutes = Math.max(0, Number(o.minutes) || 0);
+    const slaOk = minutes <= limit;
+    const reasons = [];
+    if (note) {
+      note.missing.forEach((m) => reasons.push((es ? "A la nota le falta " : "The note is missing ") + m));
+      if (note.words < 15) reasons.push(es ? "La nota es muy corta (menos de 15 palabras)" : "The note is very short (under 15 words)");
+    }
+    if (!codeOk) reasons.push((es ? "Código de resolución: mejor «" : "Resolution code: better “") + codeLabel((sc.codes || [])[0], lang) + (es ? "»" : "”"));
+    if (!slaOk) reasons.push(es ? `Cerrado fuera del SLA (${Math.ceil(minutes)} de ${limit} min)` : `Closed outside the SLA (${Math.ceil(minutes)} of ${limit} min)`);
+    const n = sess.failedCloses;
+    if (n) reasons.push(es ? (n === 1 ? "Se cerró una vez sin estar arreglado" : `Se cerró ${n} veces sin estar arreglado`)
+      : (n === 1 ? "Closed once before it was fixed" : `Closed ${n} times before it was fixed`));
+    let points = score(sess, note).points - (codeOk ? 0 : 10) - (slaOk ? 0 : 10) - 10 * sess.failedCloses;
+    points = Math.max(0, Math.min(100, points));
+    return { level: reasons.length ? "observations" : "resolved", points: points, stars: points >= 90 ? 3 : points >= 70 ? 2 : points >= 40 ? 1 : 0,
+      codeOk: codeOk, slaOk: slaOk, pending: [], reasons: reasons };
+  }
+
   return { norm: norm, fold: fold, t: t, createSession: createSession, prompt: prompt, run: run, goalMet: goalMet, stages: stages,
-           checkNote: checkNote, score: score };
+           checkNote: checkNote, score: score, SLA: SLA, sla: sla, CODES: CODES, codeLabel: codeLabel, cards: cards, act: act, verdict: verdict };
 });
