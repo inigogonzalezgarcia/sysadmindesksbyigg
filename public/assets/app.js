@@ -8,7 +8,7 @@
   const UI = {
     en: {
       heroTitle: "Practise real IT support tickets in a simulated console",
-      heroText: "Each desk is a ticket from a fictional company. Investigate with the commands you would use at work, fix the cause, check it and write the work note. No sign-up: your progress stays in this browser.",
+      heroText: "Each desk is a ticket from a fictional company. Investigate with the commands you would use at work, fix the cause, check it and write the work note.",
       how: [["1 · Read", "the ticket and what you have"], ["2 · Investigate", "in the console, like on a real machine"], ["3 · Fix and check", "the cause, not only the symptom"], ["4 · Write the note", "the next engineer will thank you"]],
       progress: (d, n, s) => `${d} of ${n} desks solved · ${s} stars`,
       start: "Start", again: "Play again", level: "Level", min: "min", back: "← All desks",
@@ -22,10 +22,33 @@
       foot: "Fictional company and people. Your progress is stored only in this browser.",
       welcome: "Connected to {host} as {user}. Type help if you need it.",
       langBtn: "ES", langLabel: "Español", notFound: "That desk does not exist.",
+      startTag: "Help desk · morning shift", startTitle: "Clock in and start your support shift",
+      startText: "SysAdmin Desks puts you at the help desk of a fictional company. Real tickets, a console that answers like a real machine, and a work note that is scored when you close the ticket.",
+      startPoints: ["6 tickets: Active Directory, DNS, Windows, printers, Exchange Online and Intune", "Hints when you are stuck, and the tempting fix that does not solve it", "Each desk links to its step-by-step guide", "With an account, your progress is saved and follows you to any device"],
+      deskHost: "CONTOSO-HD-07", deskDomain: "contoso.local", cardTitle: "Contoso help desk · technician sign-in",
+      tabLogin: "Sign in", tabRegister: "Create account", fName: "Technician name", fAvatar: "Avatar", fEmail: "Email", fPassword: "Password",
+      phName: "Alex Moreno", phEmail: "you@example.com", show: "Show password", hide: "Hide password",
+      rules: { length: "8 characters or more", capital: "One capital letter", number: "One number" },
+      consentA: "I have read the ", consentLink: "privacy policy", consentB: ".",
+      btnLogin: "Clock in", btnRegister: "Create my account", or: "or", google: "Continue with Google",
+      googleNote: "If you continue with Google you accept the privacy policy.",
+      forgot: "Forgot your password?", forgotText: "Use Continue with Google if your account uses that email, or write to me from the contact form on my website and I will help you get back in.",
+      contact: "Contact form", guest: "Try it without an account →", guestNote: "Your progress will stay only in this browser.",
+      errors: { credentials: "Wrong email or password.", exists: "There is already an account with that email: sign in instead.",
+        name: "Write a name of 2 to 40 characters.", email: "Check the email address.", password: "The password needs 8 characters or more, a capital letter and a number.",
+        consent: "Accept the privacy policy to create the account.", locked: "Too many attempts. Wait 15 minutes and try again.",
+        google_only: "This account signs in with Google: use Continue with Google.", unavailable: "Accounts are not available right now. You can try without an account.",
+        server: "Something went wrong. Try again in a minute.", google_off: "Sign-in with Google is not ready yet. Use your email and password.",
+        google_error: "Sign-in with Google did not finish. Try again.", network: "No connection to the server.", origin: "Reload the page and try again.", bad_request: "Reload the page and try again." },
+      signIn: "Sign in", account: "My account", signOut: "Sign out", hello: (n) => `Hi, ${n}. Pick a ticket to start your shift.`,
+      accTitle: "My account", accSynced: "Your progress is saved in your account.", accGoogle: "Signs in with Google", accPassword: "Signs in with email and password",
+      accDelete: "Delete my account", accDeleteText: "This deletes your account, your sessions and your saved progress. It cannot be undone.",
+      accConfirm: "Yes, delete everything", accCancel: "Cancel", accDeleted: "Your account has been deleted.",
+      footUser: "Fictional company and people. Your progress is saved in your account.", privacy: "Privacy",
     },
     es: {
       heroTitle: "Practica tickets reales de soporte IT en una consola simulada",
-      heroText: "Cada puesto es un ticket de una empresa ficticia. Investiga con los comandos que usarías en el trabajo, arregla la causa, compruébalo y escribe la nota de trabajo. Sin registro: tu progreso se queda en este navegador.",
+      heroText: "Cada puesto es un ticket de una empresa ficticia. Investiga con los comandos que usarías en el trabajo, arregla la causa, compruébalo y escribe la nota de trabajo.",
       how: [["1 · Lee", "el ticket y lo que tienes"], ["2 · Investiga", "en la consola, como en un equipo real"], ["3 · Arregla y comprueba", "la causa, no solo el síntoma"], ["4 · Escribe la nota", "el siguiente técnico te lo agradecerá"]],
       progress: (d, n, s) => `${d} de ${n} puestos resueltos · ${s} estrellas`,
       start: "Empezar", again: "Repetir", level: "Nivel", min: "min", back: "← Todos los puestos",
@@ -39,6 +62,29 @@
       foot: "Empresa y personas ficticias. Tu progreso se guarda solo en este navegador.",
       welcome: "Conectado a {host} como {user}. Escribe help si lo necesitas.",
       langBtn: "EN", langLabel: "English", notFound: "Ese puesto no existe.",
+      startTag: "Mesa de soporte · turno de mañana", startTitle: "Ficha y empieza tu turno de soporte",
+      startText: "SysAdmin Desks te sienta en la mesa de soporte de una empresa ficticia. Tickets reales, una consola que responde como un equipo de verdad y una nota de trabajo que se puntúa al cerrar el ticket.",
+      startPoints: ["6 tickets: Active Directory, DNS, Windows, impresoras, Exchange Online e Intune", "Pistas cuando te atascas, y el arreglo tentador que no lo resuelve", "Cada puesto enlaza con su guía paso a paso", "Con cuenta, tu progreso se guarda y te sigue a cualquier equipo"],
+      deskHost: "CONTOSO-HD-07", deskDomain: "contoso.local", cardTitle: "Mesa de soporte de Contoso · acceso de técnicos",
+      tabLogin: "Entrar", tabRegister: "Crear cuenta", fName: "Nombre de técnico", fAvatar: "Avatar", fEmail: "Email", fPassword: "Contraseña",
+      phName: "Alex Moreno", phEmail: "tu@ejemplo.com", show: "Mostrar contraseña", hide: "Ocultar contraseña",
+      rules: { length: "8 caracteres o más", capital: "Una mayúscula", number: "Un número" },
+      consentA: "He leído la ", consentLink: "política de privacidad", consentB: ".",
+      btnLogin: "Fichar entrada", btnRegister: "Crear mi cuenta", or: "o", google: "Continuar con Google",
+      googleNote: "Si continúas con Google aceptas la política de privacidad.",
+      forgot: "¿Has olvidado la contraseña?", forgotText: "Usa Continuar con Google si tu cuenta usa ese email, o escríbeme desde el formulario de contacto de mi web y te ayudo a recuperar el acceso.",
+      contact: "Formulario de contacto", guest: "Probar sin cuenta →", guestNote: "Tu progreso se quedará solo en este navegador.",
+      errors: { credentials: "Email o contraseña incorrectos.", exists: "Ya hay una cuenta con ese email: entra con ella.",
+        name: "Escribe un nombre de 2 a 40 caracteres.", email: "Revisa el email.", password: "La contraseña necesita 8 caracteres o más, una mayúscula y un número.",
+        consent: "Acepta la política de privacidad para crear la cuenta.", locked: "Demasiados intentos. Espera 15 minutos y vuelve a probar.",
+        google_only: "Esta cuenta entra con Google: usa Continuar con Google.", unavailable: "Las cuentas no están disponibles ahora mismo. Puedes probar sin cuenta.",
+        server: "Algo ha fallado. Prueba de nuevo en un minuto.", google_off: "El acceso con Google aún no está listo. Usa tu email y contraseña.",
+        google_error: "El acceso con Google no terminó. Prueba otra vez.", network: "Sin conexión con el servidor.", origin: "Recarga la página y prueba otra vez.", bad_request: "Recarga la página y prueba otra vez." },
+      signIn: "Entrar", account: "Mi cuenta", signOut: "Salir", hello: (n) => `Hola, ${n}. Elige un ticket para empezar el turno.`,
+      accTitle: "Mi cuenta", accSynced: "Tu progreso se guarda en tu cuenta.", accGoogle: "Entra con Google", accPassword: "Entra con email y contraseña",
+      accDelete: "Borrar mi cuenta", accDeleteText: "Se borran tu cuenta, tus sesiones y tu progreso guardado. No se puede deshacer.",
+      accConfirm: "Sí, borrar todo", accCancel: "Cancelar", accDeleted: "Tu cuenta se ha borrado.",
+      footUser: "Empresa y personas ficticias. Tu progreso se guarda en tu cuenta.", privacy: "Privacidad",
     },
   };
 
@@ -56,6 +102,39 @@
   if (asked === "es" || asked === "en") { lang = asked; save("lang", lang); }
   let progress = load("progress", {});
   let current = null;   // {sc, sess, ...} while on a desk
+  let user = null;      // signed-in technician {name, email, avatar, google, password}
+  let guest = load("guest", false);
+  const AVATARS = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"];
+  const SITE = "https://inigogonzalezgarcia.github.io/";
+
+  /* ---------- accounts (Pages Functions under /api; the page still works if they are not there) */
+  async function api(path, method, body) {
+    try {
+      const r = await fetch(path, { method: method || "GET", credentials: "same-origin",
+        headers: body ? { "content-type": "application/json" } : {}, body: body ? JSON.stringify(body) : undefined });
+      let data = {};
+      try { data = await r.json(); } catch (e) { data = { error: r.status === 404 ? "unavailable" : "server" }; }
+      return { ok: r.ok, status: r.status, data };
+    } catch (e) {
+      return { ok: false, status: 0, data: { error: "network" } };
+    }
+  }
+  // the best of the browser's and the account's results; anything better in the browser is sent to the account
+  async function adopt(data) {
+    user = data.user;
+    const server = data.progress || {};
+    const better = {};
+    Object.entries(progress).forEach(([id, p]) => { if (!server[id] || p.points > server[id].points) better[id] = { points: p.points, stars: p.stars }; });
+    progress = Object.assign({}, server);
+    if (Object.keys(better).length) {
+      const r = await api("/api/progress", "PUT", { results: better });
+      if (r.ok) progress = r.data.progress;
+    }
+    save("progress", progress);
+  }
+  function avatarImg(id, cls) {
+    return el("img", { class: cls || "avatar", src: "assets/avatars/" + (AVATARS.includes(id) ? id : "a1") + ".svg", alt: "", width: "36", height: "36" });
+  }
 
   function L() { return UI[lang]; }
 
@@ -83,7 +162,12 @@
     b.textContent = L().langBtn;
     b.setAttribute("aria-label", L().langLabel);
     document.getElementById("nav-guides").textContent = L().guides;
-    document.getElementById("foot-text").textContent = L().foot;
+    document.getElementById("foot-text").textContent = user ? L().footUser : L().foot;
+    document.getElementById("foot-privacy").textContent = L().privacy;
+    const who = document.getElementById("who");
+    who.replaceChildren(user
+      ? el("a", { class: "who", href: "#/account", title: L().account }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
+      : el("a", { class: "who signin", href: "#/start", text: L().signIn }));
   }
 
   /* ---------- home */
@@ -95,7 +179,8 @@
     const solved = SCENARIOS.filter((s) => progress[s.id]).length;
     const totalStars = SCENARIOS.reduce((a, s) => a + ((progress[s.id] || {}).stars || 0), 0);
     app.append(
-      el("section", { class: "hero" }, el("h1", { text: L().heroTitle }), el("p", { text: L().heroText })),
+      el("section", { class: "hero" }, el("h1", { text: L().heroTitle }), el("p", { text: L().heroText }),
+        user ? el("p", { class: "hello" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: L().hello(user.name) })) : null),
       el("ul", { class: "how" }, L().how.map(([a, b]) => el("li", {}, el("b", { text: a }), b))),
       el("p", { class: "progress-line", text: L().progress(solved, SCENARIOS.length, totalStars) }),
       el("div", { class: "grid" }, SCENARIOS.map((sc) => {
@@ -173,6 +258,7 @@
       const sc2 = E.score(sess, note);
       const prev = progress[sc.id];
       if (!prev || sc2.points >= prev.points) { progress[sc.id] = { points: sc2.points, stars: sc2.stars, date: new Date().toISOString().slice(0, 10) }; save("progress", progress); }
+      if (user) api("/api/progress", "PUT", { results: { [sc.id]: { points: sc2.points, stars: sc2.stars } } });
       const idx = SCENARIOS.indexOf(sc);
       const nextSc = SCENARIOS[(idx + 1) % SCENARIOS.length];
       noteBox.replaceChildren(el("section", { class: "panel result" },
@@ -210,11 +296,171 @@
     input.focus();
   }
 
+
+  /* ---------- start page: sign in, create an account or try without one */
+  function start(mode, notice) {
+    current = null;
+    const app = document.getElementById("app");
+    app.replaceChildren();
+    document.title = "SysAdmin Desks by IGG · " + (lang === "es" ? "acceso" : "sign in");
+    let tab = mode || "login";
+    let avatar = AVATARS[0];
+    const msg = el("p", { class: "form-msg", role: "alert" });
+    if (notice) msg.textContent = L().errors[notice] || "";
+    const body = el("div", { class: "signin-body" });
+
+    function field(label, input, extra) {
+      return el("label", { class: "field" }, el("span", { class: "field-label", text: label }), input, extra || null);
+    }
+    function passwordField(withRules) {
+      const input = el("input", { type: "password", name: "password", required: true, maxlength: "128",
+        autocomplete: withRules ? "new-password" : "current-password" });
+      const eye = el("button", { type: "button", class: "eye", "aria-label": L().show, text: "👁" });
+      eye.addEventListener("click", () => {
+        const hidden = input.type === "password";
+        input.type = hidden ? "text" : "password";
+        eye.setAttribute("aria-label", hidden ? L().hide : L().show);
+      });
+      const wrap = el("span", { class: "pw" }, input, eye);
+      if (!withRules) return { input, node: field(L().fPassword, wrap) };
+      const items = Object.keys(L().rules).map((k) => el("li", { "data-rule": k, text: L().rules[k] }));
+      const list = el("ul", { class: "rules" }, items);
+      input.addEventListener("input", () => {
+        const v = input.value;
+        const ok = { length: v.length >= 8, capital: /[A-ZÁÉÍÓÚÑ]/.test(v), number: /[0-9]/.test(v) };
+        items.forEach((li) => li.classList.toggle("ok", ok[li.getAttribute("data-rule")]));
+      });
+      return { input, node: field(L().fPassword, wrap, list) };
+    }
+    function busy(btn, on) { btn.disabled = on; btn.classList.toggle("busy", on); }
+    async function done(r) {
+      if (!r.ok) { msg.textContent = L().errors[r.data.error] || L().errors.server; return; }
+      await adopt(r.data);
+      guest = false; save("guest", false);
+      location.hash = "#/";
+      route();
+    }
+
+    function render() {
+      const tabs = el("div", { class: "tabs", role: "tablist" },
+        ["login", "register"].map((k) => el("button", { type: "button", role: "tab", class: "tab" + (tab === k ? " on" : ""),
+          "aria-selected": tab === k ? "true" : "false", text: k === "login" ? L().tabLogin : L().tabRegister,
+          onclick: () => { tab = k; msg.textContent = ""; render(); } })));
+      const email = el("input", { type: "email", name: "email", required: true, maxlength: "254", autocomplete: "email", placeholder: L().phEmail });
+      let form;
+      if (tab === "login") {
+        const pw = passwordField(false);
+        const forgotText = el("p", { class: "forgot-text", hidden: true }, L().forgotText + " ",
+          el("a", { href: SITE + "about.html#contacto", target: "_blank", rel: "noopener noreferrer", text: L().contact }));
+        const submit = el("button", { type: "submit", class: "btn wide", text: L().btnLogin });
+        form = el("form", { class: "signin-form", novalidate: true, onsubmit: async (ev) => {
+          ev.preventDefault();
+          busy(submit, true);
+          const r = await api("/api/auth/login", "POST", { email: email.value, password: pw.input.value });
+          busy(submit, false);
+          await done(r);
+        } },
+          field(L().fEmail, email), pw.node,
+          el("button", { type: "button", class: "link-btn", text: L().forgot, onclick: () => { forgotText.hidden = !forgotText.hidden; } }), forgotText,
+          submit);
+      } else {
+        const name = el("input", { type: "text", name: "name", required: true, minlength: "2", maxlength: "40", autocomplete: "nickname", placeholder: L().phName });
+        const pics = el("div", { class: "avatars", role: "radiogroup", "aria-label": L().fAvatar }, AVATARS.map((a) =>
+          el("button", { type: "button", role: "radio", class: "pick" + (a === avatar ? " on" : ""), "aria-checked": a === avatar ? "true" : "false",
+            "aria-label": L().fAvatar + " " + a.slice(1), onclick: (ev) => {
+              avatar = a;
+              pics.querySelectorAll(".pick").forEach((b) => { b.classList.remove("on"); b.setAttribute("aria-checked", "false"); });
+              ev.currentTarget.classList.add("on"); ev.currentTarget.setAttribute("aria-checked", "true");
+            } }, avatarImg(a))));
+        const pw = passwordField(true);
+        const consent = el("input", { type: "checkbox", name: "consent" });
+        const submit = el("button", { type: "submit", class: "btn wide", text: L().btnRegister });
+        form = el("form", { class: "signin-form", novalidate: true, onsubmit: async (ev) => {
+          ev.preventDefault();
+          busy(submit, true);
+          const r = await api("/api/auth/register", "POST", { name: name.value, email: email.value, password: pw.input.value, avatar, consent: consent.checked });
+          busy(submit, false);
+          await done(r);
+        } },
+          field(L().fName, name), el("div", { class: "field" }, el("span", { class: "field-label", text: L().fAvatar }), pics),
+          field(L().fEmail, email), pw.node,
+          el("label", { class: "check" }, consent, el("span", {}, L().consentA,
+            el("a", { href: "privacy.html", target: "_blank", rel: "noopener noreferrer", text: L().consentLink }), L().consentB)),
+          submit);
+      }
+      body.replaceChildren(tabs, msg, form,
+        el("div", { class: "or" }, el("span", { text: L().or })),
+        el("a", { class: "btn google", href: "/api/auth/google" }, el("span", { class: "g", "aria-hidden": "true", text: "G" }), el("span", { text: L().google })),
+        el("p", { class: "fine", text: L().googleNote }));
+    }
+    render();
+
+    app.append(el("section", { class: "start" },
+      el("div", { class: "start-pitch" },
+        el("p", { class: "start-tag" }, el("span", { class: "dot", "aria-hidden": "true" }), L().startTag),
+        el("h1", { text: L().startTitle }),
+        el("p", { class: "start-text", text: L().startText }),
+        el("ul", { class: "start-points" }, L().startPoints.map((x) => el("li", { text: x }))),
+        el("p", { class: "guest" }, el("a", { href: "#/", class: "btn ghost", text: L().guest, onclick: (ev) => {
+          guest = true; save("guest", true);
+          if (location.hash === "#/") { ev.preventDefault(); route(); }
+        } }),
+          el("span", { class: "fine", text: L().guestNote }))),
+      el("div", { class: "signin" },
+        el("div", { class: "signin-bar" }, el("span", { text: "🖥 " + L().deskHost }), el("span", { text: L().deskDomain })),
+        el("div", { class: "signin-card" },
+          el("div", { class: "signin-head" }, el("span", { class: "lock", "aria-hidden": "true", text: "🔒" }), el("span", { text: L().cardTitle })),
+          body))));
+  }
+
+  /* ---------- account */
+  function account() {
+    current = null;
+    const app = document.getElementById("app");
+    app.replaceChildren();
+    if (!user) { start("login"); return; }
+    document.title = L().accTitle + " · SysAdmin Desks";
+    const solved = Object.keys(progress).length;
+    const totalStars = Object.values(progress).reduce((a, p) => a + (p.stars || 0), 0);
+    const zone = el("div", { class: "danger" });
+    const msg = el("p", { class: "form-msg", role: "alert" });
+    function ask() {
+      zone.replaceChildren(el("p", { text: L().accDeleteText }), el("div", { class: "row" },
+        el("button", { type: "button", class: "btn danger-btn", text: L().accConfirm, onclick: async () => {
+          const r = await api("/api/me", "DELETE");
+          if (!r.ok) { msg.textContent = L().errors[r.data.error] || L().errors.server; return; }
+          user = null; progress = {}; save("progress", progress);
+          chrome();
+          app.replaceChildren(el("section", { class: "panel account" }, el("p", { text: L().accDeleted }), el("a", { class: "btn", href: "#/start", text: L().signIn })));
+        } }),
+        el("button", { type: "button", class: "btn ghost", text: L().accCancel, onclick: idle })));
+    }
+    function idle() { zone.replaceChildren(el("button", { type: "button", class: "btn ghost", text: L().accDelete, onclick: ask })); }
+    idle();
+    app.append(el("section", { class: "panel account" },
+      el("div", { class: "acc-head" }, avatarImg(user.avatar, "avatar lg"), el("div", {}, el("h1", { text: user.name }), el("p", { class: "from", text: user.email }))),
+      el("p", { text: L().progress(solved, SCENARIOS.length, totalStars) }),
+      el("p", { class: "fine", text: (user.google ? L().accGoogle : L().accPassword) + " · " + L().accSynced }),
+      el("div", { class: "row" }, el("a", { class: "btn", href: "#/", text: L().home }),
+        el("button", { type: "button", class: "btn ghost", text: L().signOut, onclick: async () => {
+          await api("/api/auth/logout", "POST");
+          user = null; progress = {}; save("progress", progress);
+          location.hash = "#/start"; route();
+        } })),
+      msg, zone));
+  }
+
   /* ---------- routing */
-  function route() {
+  function route(notice) {
     chrome();
-    const m = location.hash.match(/^#\/desk\/([a-z0-9-]+)$/);
-    if (m) desk(m[1]); else home();
+    const h = location.hash;
+    const m = h.match(/^#\/desk\/([a-z0-9-]+)$/);
+    if (m) desk(m[1]);
+    else if (h === "#/start") start("login", notice);
+    else if (h === "#/register") start("register", notice);
+    else if (h === "#/account") account();
+    else if (user || guest) home();
+    else start("login", notice);
     window.scrollTo(0, 0);
   }
   document.getElementById("lang").addEventListener("click", () => {
@@ -222,6 +468,15 @@
     save("lang", lang);
     route();
   });
-  window.addEventListener("hashchange", route);
-  route();
+  window.addEventListener("hashchange", () => route());
+
+  // who is signed in, then the first view; ?auth=... comes back from the Google sign-in
+  (async function boot() {
+    const params = new URLSearchParams(location.search);
+    const notice = params.get("auth");
+    if (notice) history.replaceState(null, "", location.pathname + (asked ? "?lang=" + asked : "") + location.hash);
+    const r = await api("/api/me");
+    if (r.ok && r.data.user) { await adopt(r.data); guest = false; }
+    route(notice && notice !== "ok" ? notice : undefined);
+  })();
 })();
