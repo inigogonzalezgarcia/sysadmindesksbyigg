@@ -4,7 +4,7 @@ Practise real IT support tickets in a simulated console. Each desk is a ticket f
 
 **Live: [sysadmindesksbyigg.pages.dev](https://sysadmindesksbyigg.pages.dev)**
 
-Free, in English and Spanish. The start page lets you clock in with an account (email and password, or Google) so your progress follows you to any device, or try it without one and keep the progress in the browser. Every desk links to the matching guide on [inigogonzalezgarcia.github.io](https://inigogonzalezgarcia.github.io/guias.html), and the guides link back to their desk.
+Free, in English and Spanish. The home page explains how it works; you clock in with a free account (email and password, or Google) and your progress follows you to any device. Every desk links to the matching guide on [inigogonzalezgarcia.github.io](https://inigogonzalezgarcia.github.io/guias.html), and the guides link back to their desk.
 
 ## Desks
 
@@ -21,7 +21,7 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 
 ## Accounts
 
-- **Start page:** sign in or create an account with a technician name, one of eight avatars, email and password (8+ characters, a capital letter and a number, checked as you type), or continue with Google. "Try it without an account" keeps everything in the browser.
+- **Home page:** a landing page for signed-out visitors (what a desk looks like, the four steps of a ticket, and a call to start), then the sign-in page: create an account with a technician name, one of eight avatars, email and password (8+ characters, a capital letter and a number, checked as you type), or continue with Google. A desk linked from a guide opens right after signing in.
 - **Backend:** Cloudflare Pages Functions in `functions/api` with a D1 database bound as `DB`. The tables are created on first use.
   - `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`;
   - `GET /api/me` (who is signed in, and their progress), `DELETE /api/me` (delete the account and everything in it);
@@ -66,7 +66,7 @@ Ideas for later: password reset by email, a ticket queue with SLA and a ticket p
 
 ## Status
 
-Version 0.2, in development: start page and accounts. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
+Version 0.2, in development: landing page and accounts. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 
