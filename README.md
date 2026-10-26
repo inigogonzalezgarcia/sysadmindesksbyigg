@@ -19,6 +19,13 @@ Free, in English and Spanish. The home page explains how it works; you clock in 
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 
+## The help desk
+
+- **Ticket queue:** the desks are tickets in a table with ID, requester, priority, SLA, status and assignee; Open and Closed tabs.
+- **Ticket page:** press *Assign to me* and the SLA starts (20 min for P1, 30 for P2, 45 for P3) and the console unlocks. Cards for the requester and for the account, device, queue or mailbox update as you work ("Locked" turns into "Unlocked", the free space grows), and a few actions can be run from the card with the same effect as the command.
+- **Closing:** choose a resolution code and write the work note. The result has three levels: *Resolved*, *Resolved with observations* (note, code, SLA or an earlier early close) or *Not resolved* (what is still to do; the ticket stays open).
+- **Progress page** with your best result per ticket, and a 6-step **welcome tour** you can skip or take again from the sidebar.
+
 ## Accounts
 
 - **Home page:** a landing page for signed-out visitors (what a desk looks like, the four steps of a ticket, and a call to start), then the sign-in page: create an account with a technician name, one of eight avatars, email and password (8+ characters, a capital letter and a number, checked as you type), or continue with Google. A desk linked from a guide opens right after signing in.
@@ -47,7 +54,7 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 ## Run it locally
 
 ```bash
-npm test                 # 16 tests: the desks, and the accounts against an in-memory database (Node 22+)
+npm test                 # 21 tests: the desks, the ticket page and the accounts against an in-memory database (Node 22+)
 npm run dev              # http://localhost:8788 with accounts, in-memory database
 npm run serve            # http://localhost:8080, static only (no accounts)
 ```
@@ -62,11 +69,11 @@ The live site is deployed by Cloudflare Pages on every push to `main`. To deploy
 4. Accounts: create a D1 database (Workers & Pages → D1) and bind it to the Pages project as `DB` (Settings → Bindings → D1 database), then redeploy.
 5. Google (optional): create an OAuth client of type "Web application" in Google Cloud with the redirect URI `https://<your-site>/api/auth/google/callback`. In the Pages project, add `GOOGLE_CLIENT_ID` as a variable and `GOOGLE_CLIENT_SECRET` as a secret (Settings → Variables and Secrets). Without them, the Google button says it is not ready.
 
-Ideas for later: password reset by email, a ticket queue with SLA and a ticket page, a simulated directory, a personal knowledge base from your work notes, and more desks per guide topic.
+Ideas for later: password reset by email, a simulated directory, a personal knowledge base from your work notes, and more desks per guide topic.
 
 ## Status
 
-Version 0.2, in development: landing page and accounts. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
+Version 0.2: landing page, accounts, ticket queue with SLA, ticket page and three-level result. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 
