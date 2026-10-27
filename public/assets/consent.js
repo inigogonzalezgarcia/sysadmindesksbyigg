@@ -3,7 +3,7 @@
    The choice lives in localStorage (sd.consent) and is asked again after 6 months. No innerHTML: the banner is built with DOM nodes. */
 (function () {
   "use strict";
-  var GA_ID = ""; // Google Analytics 4 measurement ID (G-XXXXXXXXXX) of the sysadmindesksbyigg.pages.dev web stream
+  var GA_ID = "G-6K78979739"; // Google Analytics 4 measurement ID (G-XXXXXXXXXX) of the sysadmindesksbyigg.pages.dev web stream
   var KEY = "sd.consent";
   var MAX_AGE = 1000 * 60 * 60 * 24 * 180;
   var root = document.documentElement;
