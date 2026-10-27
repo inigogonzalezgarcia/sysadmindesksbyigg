@@ -26,6 +26,12 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 - **Closing:** choose a resolution code and write the work note. The result has three levels: *Resolved*, *Resolved with observations* (note, code, SLA or an earlier early close) or *Not resolved* (what is still to do; the ticket stays open).
 - **Progress page** with your best result per ticket, and a 6-step **welcome tour** you can skip or take again from the sidebar.
 
+## The tools
+
+- **Directory:** Contoso's Active Directory, simulated, with the same people and computers as the tickets. Browse the OUs, search, open a user, group or computer; unlock, reset a password (with "must change at next sign-in"), enable or disable, add to or remove from groups. Every button runs a PowerShell command and shows it in the console below, where the same commands can be typed (`Get-ADUser`, `Search-ADAccount -LockedOut`, `Add-ADGroupMember`...). Four practice requests (a locked-out user, VPN access, a password reset, a leaver) tick themselves when done either way. An account that belongs to an open ticket shows that ticket's state, and its commands go to the ticket.
+- **Go to the desk:** for the tickets on a user's machine (DNS, disk, BitLocker), a simulated desktop with apps such as Network settings, a browser, Storage, Services, BitLocker, Company Portal and the Event Viewer. Each button runs the same command as the console, so the traps are the same.
+- **Inventory:** servers and printers with role, IP, location, owner and status, linked to the tickets (the reception printer shows "Error" while its ticket is open).
+
 ## Accounts
 
 - **Home page:** a landing page for signed-out visitors (what a desk looks like, the four steps of a ticket, and a call to start), then the sign-in page: create an account with a technician name, one of eight avatars, email and password (8+ characters, a capital letter and a number, checked as you type), or continue with Google. A desk linked from a guide opens right after signing in.
@@ -46,7 +52,7 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 
 ## How it is built
 
-- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/scenarios.js` (the desks as data) and `assets/style.css`.
+- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/scenarios.js` (the desks as data), `assets/world.js` (the directory, its PowerShell and the inventory, no DOM) and `assets/style.css`.
 - No framework, no build step, no external requests. A strict Content Security Policy (no inline scripts or styles) in the page and in `public/_headers`, and no HTML strings: every text is set with `textContent`.
 - The engine and the scenarios are shared with the Node tests: `npm test` checks that every desk is complete in both languages, that the reference solution resolves it exactly at its last step, that the example note scores 100, and that the wrong paths do not resolve it.
 - [docs/scenario-format.md](docs/scenario-format.md) explains how to write a new desk.
@@ -54,7 +60,7 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 ## Run it locally
 
 ```bash
-npm test                 # 21 tests: the desks, the ticket page and the accounts against an in-memory database (Node 22+)
+npm test                 # 28 tests: the desks, the ticket page, the directory and desktops, and the accounts against an in-memory database (Node 22+)
 npm run dev              # http://localhost:8788 with accounts, in-memory database
 npm run serve            # http://localhost:8080, static only (no accounts)
 ```
@@ -69,11 +75,11 @@ The live site is deployed by Cloudflare Pages on every push to `main`. To deploy
 4. Accounts: create a D1 database (Workers & Pages → D1) and bind it to the Pages project as `DB` (Settings → Bindings → D1 database), then redeploy.
 5. Google (optional): create an OAuth client of type "Web application" in Google Cloud with the redirect URI `https://<your-site>/api/auth/google/callback`. In the Pages project, add `GOOGLE_CLIENT_ID` as a variable and `GOOGLE_CLIENT_SECRET` as a secret (Settings → Variables and Secrets). Without them, the Google button says it is not ready.
 
-Ideas for later: password reset by email, a simulated directory, a personal knowledge base from your work notes, and more desks per guide topic.
+Ideas for later: password reset by email, a personal knowledge base from your work notes, and more desks per guide topic.
 
 ## Status
 
-Version 0.2: landing page, accounts, ticket queue with SLA, ticket page and three-level result. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
+Version 0.3: landing page, accounts, ticket queue with SLA, ticket page with a three-level result, and the tools: directory, desktop and inventory. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 

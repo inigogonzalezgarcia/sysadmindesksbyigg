@@ -27,6 +27,8 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 | `asset` | The card for what the ticket is about: `title {en, es}` and `fields` (see below) |
 | `actions` | Buttons on the ticket page: `id`, `label {en, es}`, `cmd` (the console command it runs) and an optional `when` |
 | `codes` | The resolution codes that fit this ticket (ids from `CODES` in the engine); the first one is suggested when another is chosen |
+| `bind` | Optional: what the ticket changes in the shared directory and inventory while it is open (see below) |
+| `desktop` | Optional: the user's machine for "Go to the desk": apps and an event log (see below) |
 
 ## Command rules
 
@@ -58,6 +60,34 @@ actions: [{ id: "unlock", label: { en: "Unlock account", es: "Desbloquear cuenta
 - A field is a fixed `value`, or `states`: the first whose `when` matches the session is shown, and the last one (without `when`) is the default. `tone` is `ok`, `warn`, `bad` or `muted`.
 - The tests expect at least one `bad` field at the start and none once the reference solution has run, so the card shows the fix.
 - An action runs its `cmd` through the engine, so the button and the command always give the same result (including the traps: unlocking from the card before removing the cause locks the account again). The tests check every action is understood whenever it is offered.
+
+## The shared world: `bind`
+
+The directory and the inventory (`public/assets/world.js`) are shared by every desk. A desk says how its state shows there while the ticket is open:
+
+```js
+bind: [
+  { kind: "user", id: "mgarcia", states: [{ when: { locked: true }, set: { locked: true, badPwd: 5 } }, { set: { locked: false, badPwd: 0 } }] },
+  { kind: "printer", id: "RECEPCION-MFP", states: [{ when: { cleared: false }, set: { status: "bad", jobs: 14 }, note: { en: "...", es: "..." } }, { set: { status: "ok", jobs: 0 } }] },
+],
+```
+
+- `kind` is `user`, `server` or `printer`, and `id` must exist in the world. The first matching state wins; the last one, without `when`, is the default. `status` is `ok`, `warn` or `bad`.
+- While the ticket is assigned, a directory command for a bound user that the desk understands (for example `Unlock-ADAccount mgarcia`) is run by the ticket, so the directory and the console always agree, traps included. While it is not assigned, changes to that account wait for the ticket.
+
+## The desktop: `desktop`
+
+```js
+desktop: {
+  apps: [{ id: "network", icon: "⇄", title: { en, es }, look: "ipconfig /all", fields: [ /* like the asset card */ ],
+           actions: [{ id, label: { en, es }, cmd, when }], page: { url, states: [{ when, title, text, tone }] } }],
+  log: [{ when, level: "warning", time, source, id, text: { en, es } }],
+  logNote: { en, es },
+},
+```
+
+- Opening an app runs its `look` command (what you would type to see the same thing) and each button runs its `cmd`, all through the engine and shown in the console. The tests check that every one is understood whenever it is offered, that something shows as wrong at the start and nothing once solved.
+- `log` is the Event Viewer: realistic source and event IDs only. `logNote` explains an empty or unhelpful log.
 
 ## Closing a ticket
 
