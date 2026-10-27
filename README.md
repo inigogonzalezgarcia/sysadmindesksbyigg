@@ -48,7 +48,18 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
   - Google sign-in uses a `state` cookie and only accepts verified emails;
   - the same strict CSP as before, with no third-party scripts.
 - **Progress:** when you sign in, anything better in the browser is added to the account.
-- **Privacy:** [public/privacy.html](public/privacy.html) explains what is stored and why; the account page deletes everything.
+- **Privacy and terms:** [public/privacy.html](public/privacy.html) explains what is stored, why, for how long (including the minimum age of 14 and international transfers), and [public/terms.html](public/terms.html) sets the terms of use; the sign-up form links to both, and the account page deletes everything.
+
+## Help pages
+
+Static pages next to the app, in both languages (`assets/doc.js` shows the one picked in the simulator and adds the switch), with the same strict CSP:
+
+- [about.html](public/about.html): what SysAdmin Desks is, who it is for, how a ticket is checked, and what it is not (not work experience, not a real system, not affiliated with any vendor or certification body);
+- [help.html](public/help.html): getting started, a ticket from start to finish, how scoring works, each tool, and what to do if something goes wrong;
+- [faq.html](public/faq.html): twelve short questions and answers;
+- [terms.html](public/terms.html) and [privacy.html](public/privacy.html).
+
+Every page, the app footer, the sidebar and *My account* link to them and to **Report a problem**, which opens the contact form on my website with the subject filled in. `tests/pages.test.js` checks both languages, the CSP, that there is no inline code or email address, and that every local link exists.
 
 ## How it is built
 
@@ -79,7 +90,7 @@ Ideas for later: password reset by email, a personal knowledge base from your wo
 
 ## Status
 
-Version 0.3: landing page, accounts, ticket queue with SLA, ticket page with a three-level result, and the tools: directory, desktop and inventory. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
+Version 0.3.1: landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), and the about, help, FAQ, terms and privacy pages. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 
