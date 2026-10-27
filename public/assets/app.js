@@ -69,6 +69,28 @@
         ["Take the tour again", "This button shows the tour whenever you want. Each ticket also links to its step-by-step guide. Good shift!"],
       ],
       tourNext: "Next", tourBack: "Back", tourSkip: "Skip the tour", tourDone: "Start the shift", tourStep: (i, n) => `${i} of ${n}`,
+      navDirectory: "Directory", navInventory: "Inventory",
+      tabConsole: "Console", tabDesk: (h) => `Go to the desk · ${h}`, evTitle: "Event Viewer", terminal: "Terminal", deskRan: "[desk]", equivalent: "Same as typing:",
+      lvlNames: { error: "Error", warning: "Warning", information: "Information" }, evSource: "Source", evId: "Event ID",
+      dTitle: "Directory", dSub: "contoso.local · Active Directory (simulated). The same users and computers as the tickets.", dTree: "Organisational units",
+      dTasks: "Practice requests", dTasksSub: "Do them with the buttons or with PowerShell below: both run the same command.", dResetAll: "Reset the directory",
+      dResetDone: "Directory reset to how it was at the start of the shift.", dSearch: "Search by name or user", dObjects: (n) => `${n} objects`,
+      dUsers: "Users", dGroups: "Groups", dComputers: "Computers", dNone: "Nothing matches.", dPick: "Pick a user, group or computer to see its details.",
+      dEnabled: "Enabled", dDisabled: "Disabled", dLocked: "Locked out", dMustChangeShort: "Must change password",
+      dTicket: "Part of an open ticket:", dTitleF: "Job title", dDept: "Department", dPwdSet: "Password last set", dMustChange: "Change password at next sign-in",
+      yes: "Yes", no: "No", dLastLogon: "Last sign-in", dDevice: "Computer", dUnlock: "Unlock", dReset: "Reset password", dDisable: "Disable account", dEnable: "Enable account",
+      dGroupsT: "Member of", dRemove: (g) => `Remove from ${g}`, dAddGroup: "Add to a group", dChoose: "Choose a group", dAdd: "Add",
+      dResetTitle: "Reset password", dResetText: "A temporary password is set. Give it to the user by phone, never by email.", dResetMust: "User must change password at next sign-in",
+      dResetUnlock: "Unlock the user's account", dResetOk: "Reset", dCancel: "Cancel", dScope: "Scope", dScopeVal: "Global security group",
+      dMembers: "Members", dNoMembers: "No members.", dAssigned: "Assigned user", dNote: "Note", dInInventory: "Show in the inventory",
+      dConsole: "PowerShell · ActiveDirectory module", dConsoleHelp: "Type help for the commands. Every button shows the command it runs. ↑/↓ repeat commands.",
+      dWelcome: "Connected to ADM-WS01 as CONTOSO\\it.admin with the ActiveDirectory module. Type help if you need it.",
+      dRouted: (id) => `(Sent to ticket ${id}: the account belongs to an open ticket.)`,
+      dAssignFirst: (n, id) => `${n}'s account is part of ticket ${id}, still unassigned. Assign the ticket to yourself to work on it.`,
+      iTitle: "Inventory", iSub: "Servers and printers at head office. The status follows the open tickets.", iAll: "All", iServers: "Servers", iPrinters: "Printers", iProblems: "With an incident",
+      colName: "Name", colType: "Type", colRole: "Role / model", colLocation: "Location", colTickets: "Tickets", iServer: "Server", iPrinter: "Printer",
+      st: { ok: "OK", warn: "Warning", bad: "Error" }, iNoProblem: "Nothing to report.", iPick: "Pick a row to see the details.", iNoIssue: "Nothing to report.",
+      iOs: "Operating system", iOwner: "Owner", iPatched: "Last patched", iQueue: "Print server", iJobs: "Jobs in the queue", iNone: "No tickets.", iInDir: "Show in the directory",
       land: {
         tag: "IT support simulator · free", title: "SysAdmin Desks",
         lead: "Practise the job of a support technician in your browser. Take a ticket from a fictional company, investigate in a console that answers like a real machine, fix the cause, prove it works and write the work note. Free, with your own account and nothing to install.",
@@ -80,7 +102,7 @@
             chips: ["Active Directory", "Network / DNS", "Windows", "Printers", "Exchange Online", "Intune"] },
           { k: "02 · Investigate", h: "A console that answers\nlike a real machine.",
             p: "Type the commands you would use at work, in PowerShell or cmd: Get-ADUser, Get-WinEvent, ipconfig, nslookup, Get-Printer, Get-Mailbox and more. The output changes with what you do. Hints when you are stuck, and one tempting fix that looks right but does not solve the ticket.",
-            chips: ["PowerShell and cmd", "Hints", "The tempting fix"] },
+            chips: ["PowerShell and cmd", "Simulated directory and desktop", "Hints", "The tempting fix"] },
           { k: "03 · Fix and prove it", h: "Fix the cause,\nnot only the symptom.",
             p: "Each desk has a checklist: find the cause, fix it and check it stays fixed. The ticket only closes when you have proved it, like on a real shift, where unlocking an account again does not help if the old password is still saved somewhere.",
             chips: ["Investigate", "Fix", "Verify"] },
@@ -161,6 +183,28 @@
         ["Repite el tour", "Este botón vuelve a mostrar el tour cuando quieras. Cada ticket enlaza también con su guía paso a paso. ¡Buen turno!"],
       ],
       tourNext: "Siguiente", tourBack: "Atrás", tourSkip: "Saltar el tour", tourDone: "Empezar el turno", tourStep: (i, n) => `${i} de ${n}`,
+      navDirectory: "Directorio", navInventory: "Inventario",
+      tabConsole: "Consola", tabDesk: (h) => `Ir al puesto · ${h}`, evTitle: "Visor de eventos", terminal: "Terminal", deskRan: "[puesto]", equivalent: "Igual que escribir:",
+      lvlNames: { error: "Error", warning: "Advertencia", information: "Información" }, evSource: "Origen", evId: "Id. del evento",
+      dTitle: "Directorio", dSub: "contoso.local · Active Directory (simulado). Los mismos usuarios y equipos que los tickets.", dTree: "Unidades organizativas",
+      dTasks: "Peticiones de práctica", dTasksSub: "Hazlas con los botones o con PowerShell abajo: los dos ejecutan el mismo comando.", dResetAll: "Restablecer el directorio",
+      dResetDone: "Directorio restablecido a como estaba al empezar el turno.", dSearch: "Buscar por nombre o usuario", dObjects: (n) => `${n} objetos`,
+      dUsers: "Usuarios", dGroups: "Grupos", dComputers: "Equipos", dNone: "No hay resultados.", dPick: "Elige un usuario, grupo o equipo para ver sus datos.",
+      dEnabled: "Habilitada", dDisabled: "Deshabilitada", dLocked: "Bloqueada", dMustChangeShort: "Debe cambiar la contraseña",
+      dTicket: "Forma parte de un ticket abierto:", dTitleF: "Puesto", dDept: "Departamento", dPwdSet: "Último cambio de contraseña", dMustChange: "Cambiar la contraseña al iniciar sesión",
+      yes: "Sí", no: "No", dLastLogon: "Último inicio de sesión", dDevice: "Equipo", dUnlock: "Desbloquear", dReset: "Restablecer contraseña", dDisable: "Deshabilitar cuenta", dEnable: "Habilitar cuenta",
+      dGroupsT: "Miembro de", dRemove: (g) => `Quitar de ${g}`, dAddGroup: "Añadir a un grupo", dChoose: "Elige un grupo", dAdd: "Añadir",
+      dResetTitle: "Restablecer contraseña", dResetText: "Se pone una contraseña temporal. Dásela al usuario por teléfono, nunca por correo.", dResetMust: "El usuario debe cambiar la contraseña al iniciar sesión",
+      dResetUnlock: "Desbloquear la cuenta del usuario", dResetOk: "Restablecer", dCancel: "Cancelar", dScope: "Ámbito", dScopeVal: "Grupo de seguridad global",
+      dMembers: "Miembros", dNoMembers: "Sin miembros.", dAssigned: "Usuario asignado", dNote: "Nota", dInInventory: "Ver en el inventario",
+      dConsole: "PowerShell · módulo ActiveDirectory", dConsoleHelp: "Escribe help para ver los comandos. Cada botón muestra el comando que ejecuta. ↑/↓ repiten comandos.",
+      dWelcome: "Conectado a ADM-WS01 como CONTOSO\\it.admin con el módulo ActiveDirectory. Escribe help si lo necesitas.",
+      dRouted: (id) => `(Enviado al ticket ${id}: la cuenta forma parte de un ticket abierto.)`,
+      dAssignFirst: (n, id) => `La cuenta de ${n} forma parte del ticket ${id}, aún sin asignar. Asígnate el ticket para trabajar en ella.`,
+      iTitle: "Inventario", iSub: "Servidores e impresoras de la oficina central. El estado sigue a los tickets abiertos.", iAll: "Todo", iServers: "Servidores", iPrinters: "Impresoras", iProblems: "Con incidencia",
+      colName: "Nombre", colType: "Tipo", colRole: "Función / modelo", colLocation: "Ubicación", colTickets: "Tickets", iServer: "Servidor", iPrinter: "Impresora",
+      st: { ok: "Correcto", warn: "Aviso", bad: "Error" }, iNoProblem: "Nada que destacar.", iPick: "Elige una fila para ver el detalle.", iNoIssue: "Nada que destacar.",
+      iOs: "Sistema operativo", iOwner: "Responsable", iPatched: "Último parcheo", iQueue: "Servidor de impresión", iJobs: "Trabajos en cola", iNone: "Sin tickets.", iInDir: "Ver en el directorio",
       land: {
         tag: "Simulador de soporte IT · gratis", title: "SysAdmin Desks",
         lead: "Practica el trabajo de un técnico de soporte en el navegador. Coge un ticket de una empresa ficticia, investiga en una consola que responde como un equipo de verdad, arregla la causa, demuestra que funciona y escribe la nota de trabajo. Gratis, con tu propia cuenta y sin instalar nada.",
@@ -172,7 +216,7 @@
             chips: ["Active Directory", "Red / DNS", "Windows", "Impresoras", "Exchange Online", "Intune"] },
           { k: "02 · Investiga", h: "Una consola que responde\ncomo un equipo de verdad.",
             p: "Escribe los comandos que usarías en el trabajo, en PowerShell o cmd: Get-ADUser, Get-WinEvent, ipconfig, nslookup, Get-Printer, Get-Mailbox y más. La salida cambia según lo que haces. Pistas cuando te atascas, y un arreglo tentador que parece bueno pero no resuelve el ticket.",
-            chips: ["PowerShell y cmd", "Pistas", "El arreglo tentador"] },
+            chips: ["PowerShell y cmd", "Directorio y escritorio simulados", "Pistas", "El arreglo tentador"] },
           { k: "03 · Arregla y compruébalo", h: "Arregla la causa,\nno solo el síntoma.",
             p: "Cada puesto tiene su checklist: encontrar la causa, arreglarla y comprobar que sigue arreglado. El ticket solo se cierra cuando lo has demostrado, como en un turno real, donde desbloquear otra vez la cuenta no sirve si la contraseña antigua sigue guardada en algún sitio.",
             chips: ["Investigar", "Arreglar", "Verificar"] },
@@ -337,6 +381,8 @@
     const nav = el("nav", { class: "side", "aria-label": L().navLabel },
       el("p", { class: "side-h", text: L().deskName }),
       item("#/", "▤", L().navTickets, "tickets", open ? el("span", { class: "badge", text: String(open) }) : null),
+      item("#/directory", "◫", L().navDirectory, "directory"),
+      item("#/inventory", "▦", L().navInventory, "inventory"),
       item("#/progress", "★", L().navProgress, "progress"),
       el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer" },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { text: L().navGuides })),
@@ -414,7 +460,81 @@
     const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": L().console });
     const form = el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, el("span", { class: "ps", text: E.prompt(sess) }), input);
     const term = el("div", { class: "term", onclick: () => { if (!window.getSelection().toString()) input.focus(); } }, out, form);
-    const termBox = el("div", { class: "term-box" }, term);
+    const pc = el("div", { class: "pc", hidden: true });
+    const termBox = el("div", { class: "term-box" }, term, pc);
+    const hasDesk = Boolean(sc.desktop);
+    const tabsBox = el("div", { class: "desk-tabs", role: "tablist" });
+    function setView(v) {
+      lv.view = v;
+      term.hidden = v !== "console";
+      pc.hidden = v !== "desk";
+      renderTabs();
+      if (v === "desk") renderDesk(); else if (assigned() && !lv.closed) input.focus();
+    }
+    function renderTabs() {
+      if (!hasDesk) return;
+      const tab = (k, text) => el("button", { type: "button", role: "tab", class: "qtab" + ((lv.view || "console") === k ? " on" : ""), "aria-selected": (lv.view || "console") === k ? "true" : "false",
+        onclick: () => setView(k) }, text);
+      tabsBox.replaceChildren(el("div", { class: "qtabs" }, tab("console", ">_ " + L().tabConsole), tab("desk", "▣ " + L().tabDesk(sc.machine.host))));
+    }
+    function deskSay(appId, r) {
+      lv.deskMsg = { app: appId, lines: r.lines.filter((l) => ["say", "err", "ok", "event"].includes(l.kind)) };
+    }
+    function openApp(id) {
+      if (!assigned() || lv.closed) return;
+      lv.app = id;
+      lv.deskMsg = null;
+      const r = id === "log" ? null : E.deskOpen(sess, id);
+      if (r) {
+        const app = E.desktop(sess).apps.find((a) => a.id === id);
+        print(`${L().deskRan} ${app.title} → ${r.command}`, "dim");
+        after(r);
+      } else renderDesk();
+    }
+    function deskAction(appId, x) {
+      const r = E.deskAct(sess, appId, x.id);
+      if (!r) return;
+      print(`${L().deskRan} ${x.label} → ${r.command}`, "dim");
+      deskSay(appId, r);
+      after(r);
+    }
+    function renderDesk() {
+      if (!hasDesk || pc.hidden) return;
+      const d = E.desktop(sess);
+      const app = lv.app === "log" ? "log" : d.apps.find((a) => a.id === lv.app) || null;
+      const icon = (glyph, title, on, fn) => el("button", { type: "button", class: "pc-icon" + (on ? " on" : ""), onclick: fn },
+        el("span", { class: "pc-glyph", "aria-hidden": "true", text: glyph }), el("span", { text: title }));
+      const icons = el("div", { class: "pc-icons" }, d.apps.map((a) => icon(a.icon, a.title, app === a, () => openApp(a.id))),
+        icon("≡", L().evTitle, app === "log", () => openApp("log")), icon(">_", L().terminal, false, () => setView("console")));
+      let win = null;
+      if (app) {
+        const title = app === "log" ? L().evTitle : app.title;
+        let body;
+        if (app === "log") {
+          body = d.log.length ? el("ul", { class: "ev" }, d.log.map((e) => el("li", { class: "ev-" + e.level },
+            el("p", { class: "ev-head" }, el("span", { class: "ev-lvl", text: L().lvlNames[e.level] }), el("span", { text: e.time }),
+              el("span", { text: L().evSource + ": " + e.source }), el("span", { text: L().evId + ": " + e.id })), el("p", { text: e.text }))))
+            : el("p", { class: "sub", text: d.logNote });
+          if (d.log.length && d.logNote) body = el("div", {}, body, el("p", { class: "sub", text: d.logNote }));
+        } else {
+          const acts = app.actions.filter((x) => x.enabled);
+          const msg = lv.deskMsg && lv.deskMsg.app === app.id && lv.deskMsg.lines.length ? el("div", { class: "pc-msg" }, lv.deskMsg.lines.map((l) => el("p", { class: "line " + l.kind, text: l.text }))) : null;
+          body = el("div", {},
+            app.page ? el("div", { class: "pc-page" }, el("div", { class: "pc-url", text: app.page.url }),
+              el("div", { class: "pc-site " + app.page.tone }, el("h3", { text: app.page.title }), el("p", { text: app.page.text }))) : null,
+            app.fields.length ? fieldsDl(app.fields) : null,
+            acts.length && !lv.closed ? el("div", { class: "acts" }, acts.map((x) => el("button", { type: "button", class: "btn ghost sm", text: x.label, onclick: () => deskAction(app.id, x) }))) : null,
+            msg,
+            app.look ? el("p", { class: "pc-eq" }, el("span", { text: L().equivalent + " " }), el("code", { text: app.look })) : null);
+        }
+        win = el("div", { class: "pc-win", role: "dialog", "aria-label": title },
+          el("div", { class: "pc-title" }, el("span", { text: title }), el("button", { type: "button", class: "pc-x", "aria-label": L().accCancel, text: "×", onclick: () => { lv.app = null; renderDesk(); } })),
+          el("div", { class: "pc-body" }, body));
+      }
+      pc.replaceChildren(el("div", { class: "pc-screen" }, icons, win),
+        el("div", { class: "pc-bar" }, el("span", { class: "pc-brand", text: ">_ " + d.host }), app ? el("span", { class: "pc-task", text: app === "log" ? L().evTitle : app.title }) : null,
+          el("span", { class: "grow" }), el("span", { text: sc.machine.domain + "\\" + sc.machine.user }), el("span", { class: "pc-clock", text: "09:41" })));
+    }
     const stagesList = el("ul", { class: "stages" });
     const assetBox = el("div");
     const headBox = el("div", { class: "tbar" });
@@ -466,7 +586,7 @@
       if (r.clear) { out.replaceChildren(); lv.log = []; }
       if (r.ticket) ticketLines();
       r.lines.forEach((l) => print(l.text, l.kind));
-      renderStages(); renderAsset();
+      renderStages(); renderAsset(); renderDesk();
       if (r.resolvedNow) { print(L().readyMsg, "ok"); const ta = resolveBox.querySelector("textarea"); if (ta) ta.scrollIntoView({ behavior: "smooth", block: "center" }); }
       term.scrollTop = term.scrollHeight;
     }
@@ -583,13 +703,14 @@
             el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { if (assigned() && !lv.closed) { exec("hint"); input.focus(); } } }),
             el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => { delete live[id]; desk(id); } }),
             el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))),
-        el("div", {}, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
+        el("div", {}, tabsBox, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
 
     if (!lv.log.length) {
       print(L().welcome.replace("{host}", sc.machine.host).replace("{user}", sc.machine.domain + "\\" + sc.machine.user), "dim");
       print("", "out");
     } else lv.log.forEach((l) => print(l.text, l.kind, false));
     renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); showResult();
+    if (hasDesk) setView(lv.view || "console");
     term.scrollTop = term.scrollHeight;
     if (assigned() && !lv.closed) input.focus();
   }
@@ -618,6 +739,261 @@
             el("td", { "data-label": L().colDate, text: p ? p.date || "" : "" }),
             el("td", {}, el("a", { class: "link", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide })));
         })))));
+  }
+
+  /* ---------- v0.3: the shared world (directory and inventory) and what the open tickets say about it */
+  const Wd = window.SDWorld;
+  let world = Wd.restore(load("world", null));
+  let dirOu = "users";       // selected OU id (null = the whole domain)
+  let dirSel = null;         // {type: "user"|"group"|"computer", id}
+  let dirQuery = "";
+  let dirLog = [];           // the directory console, kept while the page is open
+  const dirHist = [];
+  let dirPos = 0;
+  let invFilter = "all";
+  let invSel = null;
+
+  // [{kind, id, set, note, sc, sess, live}] for every open ticket that touches the directory or the inventory
+  function bindings() {
+    const out = [];
+    SCENARIOS.forEach((sc) => {
+      if (!sc.bind || !isOpen(sc)) return;
+      const working = Boolean(work()[sc.id]);
+      const lv = working ? liveOf(sc.id, sc) : null;
+      const sess = lv ? lv.sess : E.createSession(sc, lang);
+      sess.lang = lang;
+      E.bound(sess).forEach((b) => out.push(Object.assign(b, { sc, sess, live: working && !lv.closed })));
+    });
+    return out;
+  }
+  // replaceChildren with arrays and empty slots (like el() accepts)
+  function put(node, ...kids) { node.replaceChildren(...kids.flat(Infinity).filter((k) => k != null && k !== false)); }
+  function syncOverlay() {
+    world.overlay = {};
+    bindings().filter((b) => b.kind === "user").forEach((b) => { world.overlay[b.id] = b.set; });
+  }
+  function saveWorld() { save("world", Wd.snapshot(world)); }
+  const ticketPill = (sc) => { const st = statusOf(sc); return el("a", { class: "tkt", href: "#/desk/" + sc.id }, el("span", { class: "mono", text: sc.ticket.id }), pill(st, L().status[st])); };
+  function fieldsDl(fields) {
+    return el("dl", { class: "fields" }, fields.map((f) => [el("dt", { text: f.label }),
+      el("dd", { class: f.tone ? "tone " + f.tone : "" }, f.tone ? el("span", { class: "tdot", "aria-hidden": "true" }) : null, el("span", { text: f.value }))]));
+  }
+
+  // a directory command for a user that belongs to an open ticket goes to that ticket, so both always agree
+  const MUTATING = /^(unlock-adaccount|set-adaccountpassword|enable-adaccount|disable-adaccount|set-aduser)$/;
+  function dirRoute(cmd, p) {
+    const sam = String(p.id || "").toLowerCase();
+    const b = bindings().find((x) => x.kind === "user" && x.id === sam);
+    if (!b) return null;
+    if (b.live) {
+      if (!E.matches(b.sess, cmd)) return null;
+      const r = E.run(b.sess, cmd);
+      const lv = live[b.sc.id];
+      lv.log.push({ text: E.prompt(b.sess) + cmd, kind: "cmd" });
+      r.lines.forEach((l) => lv.log.push({ text: l.text, kind: l.kind }));
+      if (r.resolvedNow) lv.log.push({ text: L().readyMsg, kind: "ok" });
+      r.lines.push({ text: L().dRouted(b.sc.ticket.id), kind: "dim" });
+      return { lines: r.lines, changed: false };
+    }
+    if (MUTATING.test(p.verb)) return { lines: [{ text: L().dAssignFirst(Wd.user(world, sam).name, b.sc.ticket.id), kind: "say" }], changed: false };
+    return null;
+  }
+
+  /* ---------- directory */
+  function directory() {
+    const view = shell("directory");
+    document.title = L().dTitle + " · SysAdmin Desks";
+    syncOverlay();
+    const out = el("div", { class: "out", "aria-live": "polite" });
+    const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": L().dConsole });
+    const ps = "PS C:\\Users\\it.admin> ";
+    const term = el("div", { class: "term dir-term", onclick: () => { if (!window.getSelection().toString()) input.focus(); } }, out,
+      el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, el("span", { class: "ps", text: ps }), input));
+    const tasksBox = el("section", { class: "panel dir-tasks" });
+    const treeBox = el("nav", { class: "panel dir-tree", "aria-label": L().dTree });
+    const listBox = el("section", { class: "panel dir-list" });
+    const detailBox = el("section", { class: "panel dir-detail" });
+
+    function print(text, kind, keep) {
+      out.append(el("div", { class: "line " + (kind || "out"), text }));
+      if (keep !== false) dirLog.push({ text, kind });
+      if (dirLog.length > 400) dirLog = dirLog.slice(-300);
+    }
+    function exec(cmd, quiet) {
+      cmd = String(cmd || "").trim();
+      if (!cmd) return;
+      if (!quiet) { dirHist.push(cmd); dirPos = dirHist.length; }
+      print(ps + cmd, "cmd");
+      syncOverlay();
+      const r = Wd.run(world, cmd, lang, dirRoute);
+      if (r.clear) { out.replaceChildren(); dirLog = []; }
+      r.lines.forEach((l) => print(l.text, l.kind));
+      if (r.changed) saveWorld();
+      syncOverlay();
+      renderAll();
+      term.scrollTop = term.scrollHeight;
+    }
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "ArrowUp" && dirPos > 0) { dirPos -= 1; input.value = dirHist[dirPos]; ev.preventDefault(); }
+      else if (ev.key === "ArrowDown") { dirPos = Math.min(dirHist.length, dirPos + 1); input.value = dirHist[dirPos] || ""; ev.preventDefault(); }
+    });
+
+    function renderTasks() {
+      const list = Wd.tasks(world, lang);
+      const done = list.filter((x) => x.done).length;
+      tasksBox.replaceChildren(el("div", { class: "row" }, el("h2", { text: L().dTasks }), el("span", { class: "count-pill", text: `${done}/${list.length}` }), el("span", { class: "grow" }),
+        el("button", { type: "button", class: "link-btn", text: L().dResetAll, onclick: () => { world = Wd.restore(null); saveWorld(); print(L().dResetDone, "say"); renderAll(); } })),
+        el("p", { class: "sub", text: L().dTasksSub }),
+        el("ul", { class: "stages" }, list.map((x) => el("li", { class: x.done ? "done" : "" }, el("span", { class: "box", "aria-hidden": "true", text: x.done ? "✓" : "" }), el("span", { text: x.label })))));
+    }
+    function renderTree() {
+      const item = (id, name, depth) => el("button", { type: "button", class: "ou" + (dirOu === id ? " on" : "") + " d" + depth, onclick: () => { dirOu = id; renderAll(); } },
+        el("span", { class: "ou-ico", "aria-hidden": "true", text: id ? "▸" : "◆" }), el("span", { text: name }));
+      const rows = [item(null, "contoso.local", 0)];
+      const walk = (parent, depth) => Wd.OUS.filter((o) => o.parent === parent).forEach((o) => { rows.push(item(o.id, o.name, depth)); walk(o.id, depth + 1); });
+      walk(null, 1);
+      put(treeBox, el("h2", { text: L().dTree }), rows);
+    }
+    function objects() {
+      const ous = dirOu ? Wd.under(dirOu) : null;
+      const q = E.fold(dirQuery.trim());
+      const inOu = (ou) => !ous || ous.includes(ou);
+      const hit = (...xs) => !q || xs.some((x) => E.fold(x).includes(q));
+      return {
+        users: world.users.filter((u) => inOu(u.ou) && hit(u.name, u.sam)).map((u) => Wd.view(world, u.sam)),
+        groups: Wd.GROUPS.filter((g) => inOu(g.ou) && hit(g.name)),
+        computers: Wd.allComputers().filter((c) => inOu(c.ou) && hit(c.name)),
+      };
+    }
+    function renderList() {
+      const o = objects();
+      const sel = (type, id) => dirSel && dirSel.type === type && dirSel.id === id;
+      const row = (type, id, icon, name, sub, badges) => el("button", { type: "button", class: "obj" + (sel(type, id) ? " on" : ""), onclick: () => { dirSel = { type, id }; renderAll(); } },
+        el("span", { class: "obj-ico", "aria-hidden": "true", text: icon }), el("span", { class: "obj-txt" }, el("b", { text: name }), el("span", { class: "sub", text: sub })), badges || null);
+      const search = el("input", { type: "search", class: "dir-search", placeholder: L().dSearch, "aria-label": L().dSearch, value: dirQuery });
+      search.addEventListener("input", () => { dirQuery = search.value; renderList(); const s = listBox.querySelector(".dir-search"); s.focus(); s.setSelectionRange(s.value.length, s.value.length); });
+      const total = o.users.length + o.groups.length + o.computers.length;
+      put(listBox, search, el("p", { class: "sub", text: L().dObjects(total) }),
+        o.users.length ? el("div", { class: "obj-group" }, el("h3", { text: L().dUsers }), o.users.map((u) => row("user", u.sam, "●", u.name, u.sam + " · " + Wd.t(u.title, lang),
+          [!u.enabled ? pill("unresolved", L().dDisabled) : null, u.locked ? pill("unresolved", L().dLocked) : null]))) : null,
+        o.groups.length ? el("div", { class: "obj-group" }, el("h3", { text: L().dGroups }), o.groups.map((g) => row("group", g.name, "◇", g.name, Wd.t(g.desc, lang)))) : null,
+        o.computers.length ? el("div", { class: "obj-group" }, el("h3", { text: L().dComputers }), o.computers.map((c) => row("computer", c.name, "▭", c.name, c.os))) : null,
+        total ? null : el("p", { class: "empty", text: L().dNone }));
+    }
+    function renderDetail() {
+      if (!dirSel) { put(detailBox, el("p", { class: "empty", text: L().dPick })); return; }
+      if (dirSel.type === "user") return userDetail(Wd.view(world, dirSel.id));
+      if (dirSel.type === "group") return groupDetail(Wd.group(dirSel.id));
+      return computerDetail(Wd.computer(dirSel.id));
+    }
+    function userDetail(u) {
+      const b = bindings().find((x) => x.kind === "user" && x.id === u.sam);
+      const groupsNotIn = Wd.GROUPS.filter((g) => !u.groups.includes(g.name));
+      const pick = el("select", { "aria-label": L().dAddGroup }, el("option", { value: "", text: L().dChoose }), groupsNotIn.map((g) => el("option", { value: g.name, text: g.name })));
+      const resetBox = el("div");
+      const must = el("input", { type: "checkbox", checked: true });
+      const unl = el("input", { type: "checkbox", checked: u.locked });
+      function resetForm() {
+        resetBox.replaceChildren(el("div", { class: "reset-form" }, el("b", { text: L().dResetTitle }), el("p", { class: "sub", text: L().dResetText }),
+          el("label", { class: "check" }, must, el("span", { text: L().dResetMust })),
+          u.locked ? el("label", { class: "check" }, unl, el("span", { text: L().dResetUnlock })) : null,
+          el("div", { class: "row" }, el("button", { type: "button", class: "btn sm", text: L().dResetOk, onclick: () => {
+            exec(Wd.CMD.reset(u.sam), true);
+            exec(Wd.CMD.mustChange(u.sam, must.checked), true);
+            if (u.locked && unl.checked) exec(Wd.CMD.unlock(u.sam), true);
+          } }), el("button", { type: "button", class: "btn ghost sm", text: L().dCancel, onclick: () => resetBox.replaceChildren() }))));
+      }
+      put(detailBox, 
+        el("div", { class: "req-name" }, el("span", { class: "initials", "aria-hidden": "true", text: u.name.split(" ").map((x) => x[0]).join("").slice(0, 2) }),
+          el("span", {}, el("b", { text: u.name }), el("span", { class: "sub", text: u.sam + "@contoso.com" }))),
+        el("p", { class: "pills" }, pill(u.enabled ? "resolved" : "unresolved", u.enabled ? L().dEnabled : L().dDisabled), u.locked ? pill("unresolved", L().dLocked) : null,
+          u.mustChange ? pill("progress", L().dMustChangeShort) : null),
+        b ? el("p", { class: "dir-ticket" }, el("span", { text: L().dTicket + " " }), ticketPill(b.sc)) : null,
+        fieldsDl([{ label: L().dTitleF, value: Wd.t(u.title, lang) }, { label: L().dDept, value: u.dept }, { label: L().dPwdSet, value: u.pwdLastSet },
+          { label: L().dMustChange, value: u.mustChange ? L().yes : L().no }, { label: L().dLastLogon, value: u.lastLogon }, { label: L().dDevice, value: u.device },
+          { label: "DN", value: Wd.userDn(u) }]),
+        el("div", { class: "acts" }, el("p", { class: "acts-h", text: L().actionsT }),
+          u.locked ? el("button", { type: "button", class: "btn sm", text: L().dUnlock, onclick: () => exec(Wd.CMD.unlock(u.sam), true) }) : null,
+          el("button", { type: "button", class: "btn ghost sm", text: L().dReset, onclick: resetForm }),
+          el("button", { type: "button", class: "btn ghost sm", text: u.enabled ? L().dDisable : L().dEnable, onclick: () => exec(u.enabled ? Wd.CMD.disable(u.sam) : Wd.CMD.enable(u.sam), true) })),
+        resetBox,
+        el("h3", { text: L().dGroupsT }),
+        el("ul", { class: "chips" }, u.groups.map((g) => el("li", {}, el("button", { type: "button", class: "chip-link", text: g, onclick: () => { dirSel = { type: "group", id: g }; renderAll(); } }),
+          el("button", { type: "button", class: "chip-x", "aria-label": L().dRemove(g), title: L().dRemove(g), text: "×", onclick: () => exec(Wd.CMD.removeGroup(u.sam, g), true) })))),
+        groupsNotIn.length ? el("div", { class: "row add-group" }, pick, el("button", { type: "button", class: "btn ghost sm", text: L().dAdd, onclick: () => { if (pick.value) exec(Wd.CMD.addGroup(u.sam, pick.value), true); } })) : null);
+    }
+    function groupDetail(g) {
+      const m = Wd.members(world, g);
+      put(detailBox, el("h3", { class: "dtitle", text: g.name }), el("p", { class: "sub", text: Wd.t(g.desc, lang) }),
+        fieldsDl([{ label: "DN", value: `CN=${g.name},${Wd.ouPath(g.ou)}` }, { label: L().dScope, value: L().dScopeVal }]),
+        el("h3", { text: `${L().dMembers} (${m.length})` }),
+        m.length ? el("ul", { class: "chips" }, m.map((u) => el("li", {}, el("button", { type: "button", class: "chip-link", text: u.name, onclick: () => { dirSel = { type: "user", id: u.sam }; renderAll(); } })))) : el("p", { class: "sub", text: L().dNoMembers }));
+    }
+    function computerDetail(c) {
+      const srv = Wd.SERVERS.find((s) => s.id === c.name);
+      const u = c.user && Wd.user(world, c.user);
+      put(detailBox, el("h3", { class: "dtitle", text: c.name }),
+        fieldsDl([{ label: L().iOs, value: c.os }, { label: "DN", value: `CN=${c.name},${Wd.ouPath(c.ou)}` },
+          u ? { label: L().dAssigned, value: u.name } : null, srv ? { label: L().colRole, value: Wd.t(srv.role, lang) } : null, srv ? { label: "IP", value: srv.ip } : null,
+          c.note ? { label: L().dNote, value: Wd.t(c.note, lang) } : null].filter(Boolean)),
+        srv ? el("p", {}, el("a", { href: "#/inventory", onclick: () => { invSel = srv.id; }, text: L().dInInventory })) : null);
+    }
+    function renderAll() { renderTasks(); renderTree(); renderList(); renderDetail(); }
+
+    view.append(
+      el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().dTitle }), el("p", { class: "sub", text: L().dSub }))),
+      tasksBox,
+      el("div", { class: "dir" }, treeBox, listBox, detailBox),
+      el("h2", { class: "dir-ps", text: L().dConsole }), term, el("p", { class: "term-help", text: L().dConsoleHelp }));
+    if (dirLog.length) dirLog.forEach((l) => print(l.text, l.kind, false));
+    else print(L().dWelcome, "dim");
+    renderAll();
+    term.scrollTop = term.scrollHeight;
+  }
+
+  /* ---------- inventory */
+  function inventory() {
+    const view = shell("inventory");
+    document.title = L().iTitle + " · SysAdmin Desks";
+    const binds = bindings();
+    const linked = (id) => SCENARIOS.filter((sc) => (sc.bind || []).some((b) => b.id === id));
+    const items = Wd.SERVERS.map((s) => ({ kind: "server", id: s.id, d: s })).concat(Wd.PRINTERS.map((p) => ({ kind: "printer", id: p.id, d: p }))).map((x) => {
+      const b = binds.filter((y) => y.kind === x.kind && y.id === x.id);
+      const status = b.map((y) => y.set.status).find((s) => s && s !== "ok") || "ok";
+      return Object.assign(x, { status, notes: b.map((y) => y.note).filter(Boolean), jobs: (b.find((y) => "jobs" in y.set) || { set: { jobs: 0 } }).set.jobs, tickets: linked(x.id) });
+    });
+    const shown = items.filter((x) => invFilter === "all" || (invFilter === "problems" ? x.status !== "ok" : x.kind === invFilter));
+    const chips = el("div", { class: "qtabs", role: "tablist" }, [["all", L().iAll], ["server", L().iServers], ["printer", L().iPrinters], ["problems", L().iProblems]].map(([k, text]) =>
+      el("button", { type: "button", role: "tab", class: "qtab" + (invFilter === k ? " on" : ""), "aria-selected": invFilter === k ? "true" : "false", onclick: () => { invFilter = k; inventory(); } },
+        text + " ", el("span", { class: "count", text: String(items.filter((x) => k === "all" || (k === "problems" ? x.status !== "ok" : x.kind === k)).length) }))));
+    const stPill = (s) => el("span", { class: "inv-st " + s }, el("span", { class: "tdot", "aria-hidden": "true" }), el("span", { text: L().st[s] }));
+    const table = shown.length ? el("table", { class: "qtable inv" },
+      el("thead", {}, el("tr", {}, [L().colStatus, L().colName, L().colType, L().colRole, "IP", L().colTickets].map((x) => el("th", { scope: "col", text: x })))),
+      el("tbody", {}, shown.map((x) => el("tr", { class: invSel === x.id ? "active" : "" },
+        el("td", { "data-label": L().colStatus }, stPill(x.status)),
+        el("td", { class: "subj", "data-label": L().colName }, el("button", { type: "button", class: "link-row", text: x.id, onclick: () => { invSel = x.id; inventory(); } })),
+        el("td", { "data-label": L().colType, text: x.kind === "server" ? L().iServer : L().iPrinter }),
+        el("td", { "data-label": L().colRole, text: Wd.t(x.kind === "server" ? x.d.role : x.d.model, lang) }),
+        el("td", { class: "mono", "data-label": "IP", text: x.d.ip }),
+        el("td", { "data-label": L().colTickets }, x.tickets.length ? x.tickets.map((sc) => el("a", { class: "tkt mono", href: "#/desk/" + sc.id, text: sc.ticket.id }))
+          : el("span", { class: "muted", text: "–" })))))) : el("p", { class: "empty", text: L().iNoProblem });
+    const sel = items.find((x) => x.id === invSel);
+    let detail = el("section", { class: "panel inv-detail" }, el("p", { class: "empty", text: L().iPick }));
+    if (sel) {
+      const d = sel.d;
+      detail = el("section", { class: "panel inv-detail" },
+        el("div", { class: "row" }, el("h2", { class: "dtitle", text: sel.id }), stPill(sel.status)),
+        sel.notes.length ? el("ul", { class: "inv-notes" }, sel.notes.map((n) => el("li", { text: n }))) : el("p", { class: "sub", text: L().iNoIssue }),
+        fieldsDl(sel.kind === "server" ? [{ label: L().colRole, value: Wd.t(d.role, lang) }, { label: L().iOs, value: d.os }, { label: "IP", value: d.ip },
+          { label: L().colLocation, value: Wd.t(d.location, lang) }, { label: L().iOwner, value: Wd.t(d.owner, lang) }, { label: L().iPatched, value: d.patched }]
+          : [{ label: L().colRole, value: Wd.t(d.model, lang) }, { label: "IP", value: d.ip }, { label: L().iQueue, value: d.queue },
+            { label: L().iJobs, value: String(sel.jobs), tone: sel.jobs ? "bad" : "" }, { label: L().colLocation, value: Wd.t(d.location, lang) }]),
+        el("h3", { text: L().colTickets }),
+        sel.tickets.length ? el("ul", { class: "inv-tickets" }, sel.tickets.map((sc) => el("li", {}, ticketPill(sc), el("span", { text: " " + t(sc.title, lang) })))) : el("p", { class: "sub", text: L().iNone }),
+        sel.kind === "server" ? el("p", {}, el("a", { href: "#/directory", onclick: () => { dirOu = "servers"; dirSel = { type: "computer", id: sel.id }; }, text: L().iInDir })) : null);
+    }
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().iTitle }), el("p", { class: "sub", text: L().iSub }))),
+      chips, el("div", { class: "inv-grid" }, el("div", { class: "qwrap" }, table), detail));
   }
 
   /* ---------- welcome tour: a card at the bottom and the element it talks about highlighted; skip it or take it again from the sidebar */
@@ -894,6 +1270,8 @@
     else if (h === "#/register") start("register", notice);
     else if (h === "#/account") account();
     else if (h === "#/progress" && user) progressPage();
+    else if (h === "#/directory" && user) directory();
+    else if (h === "#/inventory" && user) inventory();
     else if (user) queue();
     else landing();
     if (user) ticker = setInterval(tick, 1000);

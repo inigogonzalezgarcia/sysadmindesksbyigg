@@ -48,6 +48,13 @@
     },
     actions: [{ id: "unlock", label: { en: "Unlock account", es: "Desbloquear cuenta" }, cmd: "Unlock-ADAccount mgarcia", when: { locked: true } }],
     codes: ["cause-removed"],
+    bind: [
+      { kind: "user", id: "mgarcia", states: [{ when: { locked: true }, set: { locked: true, badPwd: 5 } }, { set: { locked: false, badPwd: 0 } }] },
+      { kind: "server", id: "FS-SCAN01", states: [
+        { when: { taskFound: true, taskDisabled: false }, set: { status: "warn" },
+          note: { en: "Task ScanToFinance runs as mgarcia with her old password", es: "La tarea ScanToFinance se ejecuta como mgarcia con su contraseña antigua" } },
+        { set: {} }] },
+    ],
     state: { locked: true, inspected: false, sourceFound: false, taskFound: false, taskDisabled: false, relock: false, verified: false },
     events: [{
       when: { relock: true },
@@ -208,6 +215,36 @@
     },
     actions: [{ id: "flush", label: { en: "Flush DNS cache", es: "Vaciar caché DNS" }, cmd: "ipconfig /flushdns" }],
     codes: ["config-fixed"],
+    desktop: {
+      apps: [
+        { id: "network", icon: "⇄", title: { en: "Network settings", es: "Configuración de red" }, look: "ipconfig /all",
+          fields: [
+            { label: { en: "Adapter", es: "Adaptador" }, value: { en: "Ethernet · connected", es: "Ethernet · conectado" } },
+            { label: { en: "IPv4 address", es: "Dirección IPv4" }, value: { en: "10.20.14.57 (automatic, DHCP)", es: "10.20.14.57 (automática, DHCP)" } },
+            { label: { en: "Default gateway", es: "Puerta de enlace" }, value: "10.20.14.1" },
+            { label: { en: "DNS server assignment", es: "Asignación de servidor DNS" }, states: [
+              { when: { dnsStatic: true }, value: { en: "Manual: 8.8.8.8, 1.1.1.1", es: "Manual: 8.8.8.8, 1.1.1.1" }, tone: "bad" },
+              { value: { en: "Automatic (DHCP): 10.20.1.10, 10.20.1.11", es: "Automática (DHCP): 10.20.1.10, 10.20.1.11" }, tone: "ok" }] },
+          ],
+          actions: [{ id: "dns-auto", label: { en: "Set DNS to automatic (DHCP)", es: "Poner los DNS en automático (DHCP)" },
+            cmd: "Set-DnsClientServerAddress -InterfaceAlias Ethernet -ResetServerAddresses", when: { dnsStatic: true } }] },
+        { id: "browser", icon: "◎", title: { en: "Browser", es: "Navegador" }, look: "Test-NetConnection intranet.contoso.local -Port 443",
+          page: { url: "https://intranet.contoso.local", states: [
+            { when: { verified: true }, title: { en: "Contoso intranet", es: "Intranet de Contoso" },
+              text: { en: "Welcome back, Javier. News · Holidays · IT requests · S: drive connected.", es: "Hola de nuevo, Javier. Noticias · Vacaciones · Peticiones a IT · Unidad S: conectada." }, tone: "ok" },
+            { title: { en: "This site can't be reached", es: "No se puede acceder a este sitio" },
+              text: { en: "intranet.contoso.local's server IP address could not be found. DNS_PROBE_FINISHED_NXDOMAIN", es: "No se ha encontrado la dirección IP del servidor de intranet.contoso.local. DNS_PROBE_FINISHED_NXDOMAIN" }, tone: "bad" }] },
+          actions: [{ id: "reload", label: { en: "Reload", es: "Recargar" }, cmd: "Test-NetConnection intranet.contoso.local -Port 443" }] },
+      ],
+      log: [
+        { level: "warning", time: "25/10/2026 08:49", source: "Microsoft-Windows-Time-Service", id: 129,
+          text: { en: "NtpClient was unable to set a domain peer to use as a time source because of discovery error.", es: "NtpClient no pudo establecer un mismo nivel del dominio para usarlo como origen de hora debido a un error de detección." } },
+        { level: "error", time: "25/10/2026 08:51", source: "Microsoft-Windows-GroupPolicy", id: 1129,
+          text: { en: "The processing of Group Policy failed because of lack of network connectivity to a domain controller.", es: "Error al procesar la directiva de grupo debido a la falta de conectividad de red con un controlador de dominio." } },
+        { when: { verified: true }, level: "information", time: "26/10/2026 09:41", source: "Microsoft-Windows-GroupPolicy", id: 1502,
+          text: { en: "The processing of Group Policy succeeded. Windows detected and applied new settings.", es: "El procesamiento de la directiva de grupo se realizó correctamente. Windows detectó y aplicó nuevas opciones de configuración." } },
+      ],
+    },
     state: { dnsStatic: true, foundDns: false, flushed: false, verified: false },
     commands: [
       { id: "ipall", match: /^ipconfig\s+\/all\b/, when: { dnsStatic: true }, set: { foundDns: true }, out: [
@@ -332,6 +369,44 @@
     },
     actions: [{ id: "wu-start", label: { en: "Start Windows Update", es: "Arrancar Windows Update" }, cmd: "Start-Service wuauserv", when: { wuRunning: false } }],
     codes: ["capacity"],
+    desktop: {
+      apps: [
+        { id: "storage", icon: "▤", title: { en: "Storage", es: "Almacenamiento" },
+          look: "Get-ChildItem C:\\Users,C:\\Windows -Directory -Recurse | Measure-Object -Sum Length",
+          fields: [
+            { label: { en: "Free space on C:", es: "Espacio libre en C:" }, states: [
+              { when: { tempClean: true, wuClean: true }, value: { en: "18.4 GB of 128 GB", es: "18,4 GB de 128 GB" }, tone: "ok" },
+              { when: { tempClean: true }, value: { en: "12.2 GB of 128 GB", es: "12,2 GB de 128 GB" }, tone: "warn" },
+              { when: { wuClean: true }, value: { en: "6.6 GB of 128 GB", es: "6,6 GB de 128 GB" }, tone: "warn" },
+              { value: { en: "0.4 GB of 128 GB", es: "0,4 GB de 128 GB" }, tone: "bad" }] },
+            { label: { en: "Temporary files (Laura)", es: "Archivos temporales (Laura)" }, states: [
+              { when: { tempClean: true }, value: "0.2 GB", tone: "ok" }, { value: "11.8 GB", tone: "warn" }] },
+            { label: { en: "Windows Update cache", es: "Caché de Windows Update" }, states: [
+              { when: { wuClean: true }, value: "0 GB", tone: "ok" }, { value: "6.2 GB", tone: "warn" }] },
+            { label: { en: "Documents", es: "Documentos" }, value: "4.1 GB" },
+          ],
+          actions: [
+            { id: "temp", label: { en: "Empty temporary files", es: "Vaciar archivos temporales" }, cmd: "Remove-Item $env:TEMP\\* -Recurse -Force", when: { tempClean: false } },
+            { id: "wu-cache", label: { en: "Empty the Windows Update cache", es: "Vaciar la caché de Windows Update" },
+              cmd: "Remove-Item C:\\Windows\\SoftwareDistribution\\Download\\* -Recurse -Force", when: { wuClean: false } },
+            { id: "refresh", label: { en: "Refresh free space", es: "Actualizar espacio libre" }, cmd: "Get-PSDrive C" }] },
+        { id: "services", icon: "⚙", title: { en: "Services", es: "Servicios" },
+          fields: [
+            { label: "Windows Update (wuauserv)", states: [
+              { when: { wuRunning: true }, value: { en: "Running", es: "En ejecución" }, tone: "ok" }, { value: { en: "Stopped", es: "Detenido" }, tone: "warn" }] },
+            { label: { en: "Startup type", es: "Tipo de inicio" }, value: { en: "Manual (trigger start)", es: "Manual (desencadenado)" } },
+          ],
+          actions: [
+            { id: "stop", label: { en: "Stop Windows Update", es: "Detener Windows Update" }, cmd: "Stop-Service wuauserv", when: { wuRunning: true } },
+            { id: "start", label: { en: "Start Windows Update", es: "Iniciar Windows Update" }, cmd: "Start-Service wuauserv", when: { wuRunning: false } }] },
+      ],
+      log: [
+        { level: "warning", time: "24/10/2026 17:12", source: "srv", id: 2013,
+          text: { en: "The C: disk is at or near capacity. You may need to delete some files.", es: "El disco C: está lleno o casi lleno. Puede que necesite eliminar algunos archivos." } },
+        { level: "warning", time: "25/10/2026 08:05", source: "srv", id: 2013,
+          text: { en: "The C: disk is at or near capacity. You may need to delete some files.", es: "El disco C: está lleno o casi lleno. Puede que necesite eliminar algunos archivos." } },
+      ],
+    },
     state: { foundBig: false, tempClean: false, wuRunning: true, wuClean: false, verified: false },
     commands: [
       { id: "free-0", match: /^(get-psdrive\b.*\bc\b|get-volume\b|fsutil\s+volume\s+diskfree|wmic\s+logicaldisk|gdr\b.*\bc\b)/, when: { tempClean: false, wuClean: false }, out: [
@@ -439,6 +514,16 @@
     },
     actions: [{ id: "restart", label: { en: "Restart the spooler", es: "Reiniciar el spooler" }, cmd: "Restart-Service Spooler", when: { spooler: "running" } }],
     codes: ["cause-removed"],
+    bind: [
+      { kind: "printer", id: "RECEPCION-MFP", states: [
+        { when: { cleared: false }, set: { status: "bad", jobs: 14 },
+          note: { en: "Error: job 312 stuck in 'Deleting', 14 jobs waiting", es: "Error: el trabajo 312 atascado en 'Eliminando', 14 trabajos en cola" } },
+        { set: { status: "ok", jobs: 0 } }] },
+      { kind: "server", id: "PRT-SRV01", states: [
+        { when: { spooler: "stopped" }, set: { status: "warn" },
+          note: { en: "Print Spooler stopped: the 22 queues are paused", es: "Cola de impresión parada: las 22 colas están en pausa" } },
+        { set: {} }] },
+    ],
     state: { looked: false, spooler: "running", cleared: false, verified: false },
     commands: [
       { id: "spooler-down", match: /^(get-printjob|get-printer)\b/, when: { spooler: "stopped" }, error: true,
@@ -650,6 +735,46 @@
     },
     actions: [{ id: "sync", label: { en: "Sync with Intune", es: "Sincronizar con Intune" }, cmd: "Get-ScheduledTask | ? TaskName -eq PushLaunch | Start-ScheduledTask" }],
     codes: ["compliance"],
+    desktop: {
+      apps: [
+        { id: "portal", icon: "◈", title: { en: "Company Portal", es: "Portal de empresa" },
+          look: "Get-MgDeviceManagementManagedDevice -Filter \"deviceName eq 'LAPTOP-0388'\"",
+          fields: [
+            { label: { en: "Device", es: "Dispositivo" }, value: "LAPTOP-0388" },
+            { label: { en: "Status", es: "Estado" }, states: [
+              { when: { verified: true }, value: { en: "Can access company resources", es: "Puede acceder a los recursos de la empresa" }, tone: "ok" },
+              { value: { en: "Cannot access company resources", es: "No puede acceder a los recursos de la empresa" }, tone: "bad" }] },
+            { label: { en: "What to fix", es: "Qué hay que arreglar" }, states: [
+              { when: { verified: true }, value: { en: "Nothing", es: "Nada" }, tone: "ok" },
+              { value: { en: "Encryption is required (BitLocker)", es: "Se requiere cifrado (BitLocker)" }, tone: "bad" }] },
+          ],
+          actions: [
+            { id: "sync", label: { en: "Sync this device", es: "Sincronizar este dispositivo" }, cmd: "Get-ScheduledTask | ? TaskName -eq PushLaunch | Start-ScheduledTask" },
+            { id: "check", label: { en: "Check status", es: "Comprobar estado" }, cmd: "Get-MgDeviceManagementManagedDevice -Filter \"deviceName eq 'LAPTOP-0388'\"" }] },
+        { id: "bitlocker", icon: "▣", title: { en: "BitLocker Drive Encryption", es: "Cifrado de unidad BitLocker" }, look: "Get-BitLockerVolume -MountPoint C:",
+          fields: [
+            { label: "C:", states: [
+              { when: { encrypted: true, recoveryPw: true }, value: { en: "Encrypting (TPM + recovery password)", es: "Cifrando (TPM + contraseña de recuperación)" }, tone: "ok" },
+              { when: { encrypted: true }, value: { en: "Encrypting (TPM only, no recovery password)", es: "Cifrando (solo TPM, sin contraseña de recuperación)" }, tone: "warn" },
+              { value: { en: "BitLocker off", es: "BitLocker desactivado" }, tone: "bad" }] },
+            { label: { en: "Recovery key in Entra ID", es: "Clave de recuperación en Entra ID" }, states: [
+              { when: { escrowed: true }, value: { en: "Backed up", es: "Guardada" }, tone: "ok" }, { value: { en: "Not backed up", es: "Sin guardar" }, tone: "bad" }] },
+          ],
+          actions: [
+            { id: "on", label: { en: "Turn on BitLocker", es: "Activar BitLocker" },
+              cmd: "Enable-BitLocker -MountPoint C: -EncryptionMethod XtsAes256 -UsedSpaceOnly -RecoveryPasswordProtector", when: { encrypted: false } },
+            { id: "add-rp", label: { en: "Add a recovery password", es: "Añadir contraseña de recuperación" }, cmd: "manage-bde -protectors -add C: -RecoveryPassword",
+              when: { encrypted: true, recoveryPw: false } },
+            { id: "backup", label: { en: "Back up the recovery key to Entra ID", es: "Guardar la clave de recuperación en Entra ID" },
+              cmd: "BackupToAAD-BitLockerKeyProtector -MountPoint C: -KeyProtectorId '{1A2B}'", when: { encrypted: true, escrowed: false } }] },
+      ],
+      log: [
+        { when: { escrowed: true }, level: "information", time: "26/10/2026 09:44", source: "Microsoft-Windows-BitLocker-API", id: 845,
+          text: { en: "BitLocker Drive Encryption recovery information for volume C: was backed up successfully to Entra ID.", es: "La información de recuperación del Cifrado de unidad BitLocker del volumen C: se guardó correctamente en Entra ID." } },
+      ],
+      logNote: { en: "No error about encryption: BitLocker being off is a setting, not a failure. Look at the BitLocker panel and the Company Portal.",
+                 es: "Ningún error sobre el cifrado: que BitLocker esté desactivado es una configuración, no un fallo. Mira el panel de BitLocker y el Portal de empresa." },
+    },
     state: { joinChecked: false, blChecked: false, encrypted: false, recoveryPw: false, escrowed: false, synced: false, verified: false },
     commands: [
       { id: "dsreg", match: /^dsregcmd\s+\/status\b/, set: { joinChecked: true }, out: [
