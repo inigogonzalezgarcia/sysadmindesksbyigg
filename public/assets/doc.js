@@ -17,6 +17,13 @@
     btn.setAttribute("aria-label", lang === "es" ? "English" : "Español");
     var h1 = document.querySelector("article." + lang + " h1");
     if (h1) document.title = h1.textContent + " · SysAdmin Desks by IGG";
+    // a link to a section (privacy.html#cookies) lands on that section in the language shown
+    var h = location.hash.slice(1);
+    if (h && h !== "en") {
+      var base = h.replace(/-en$/, ""), want = lang === "en" ? base + "-en" : base;
+      var t = document.getElementById(want);
+      if (t && want !== h) { history.replaceState(null, "", "#" + want); t.scrollIntoView(); }
+    }
   }
   btn.hidden = false;
   btn.addEventListener("click", function () { lang = lang === "es" ? "en" : "es"; save(lang); apply(); });
