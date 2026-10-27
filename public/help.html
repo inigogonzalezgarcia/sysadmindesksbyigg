@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Ayuda · Help · SysAdmin Desks by IGG</title>
+<meta name="description" content="SysAdmin Desks by IGG help: getting started, a ticket from start to finish, how scoring works, the tools and what to do if something goes wrong.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/doc.js" defer></script>
+</head>
+<body class="doc">
+<header class="top">
+  <a class="brand" href="./"><span class="mark" aria-hidden="true">&gt;_</span><span>SysAdmin Desks</span><small>by IGG</small></a>
+  <nav class="top-nav doc-nav">
+    <a href="about.html"><span class="es">Qué es</span><span class="en">About</span></a>
+    <a href="help.html" aria-current="page"><span class="es">Ayuda</span><span class="en">Help</span></a>
+    <a href="faq.html"><span class="es">Preguntas frecuentes</span><span class="en">FAQ</span></a>
+    <button type="button" id="doc-lang" class="lang" hidden>EN</button>
+  </nav>
+</header>
+<main class="legal">
+<article class="es" lang="es">
+<h1>Ayuda</h1>
+<nav class="doc-toc" aria-label="En esta página">
+  <a href="#empezar">Empezar</a> <a href="#ticket">Un ticket de principio a fin</a> <a href="#puntos">Cómo se puntúa</a> <a href="#herramientas">Las herramientas</a> <a href="#problemas">Si algo falla</a>
+</nav>
+
+<h2 id="empezar">Empezar</h2>
+<ol>
+  <li>Crea una cuenta gratuita con email y contraseña, o entra con Google. Elige un nombre de técnico y un avatar.</li>
+  <li>La primera vez verás un <strong>tour</strong> de dos minutos. Puedes repetirlo cuando quieras desde <em>Ver el tour</em>, en la barra lateral.</li>
+  <li>El botón <strong>ES / EN</strong> de arriba cambia el idioma de todo, también de los tickets.</li>
+</ol>
+
+<h2 id="ticket">Un ticket de principio a fin</h2>
+<ol>
+  <li><strong>Elige un ticket</strong> en la cola. Los abiertos están ordenados por prioridad.</li>
+  <li><strong>Asígnatelo</strong> con el botón <em>Asignarme</em>. En ese momento empieza a contar el SLA: 20 minutos para una P1, 30 para una P2 y 45 para una P3.</li>
+  <li><strong>Investiga</strong> en la consola o con las acciones de la ficha: los botones ejecutan el mismo comando que escribirías, y la consola lo muestra.</li>
+  <li><strong>Arregla la causa</strong>, no solo el síntoma, y <strong>compruébalo</strong>. El checklist de la ficha marca lo que ya has hecho.</li>
+  <li><strong>Cierra</strong>: elige el código de resolución y escribe la nota de trabajo con la causa, el cambio, la comprobación y el seguimiento.</li>
+  <li><strong>Revisa el resultado</strong>: lo que faltaba, una nota de ejemplo y una forma de resolverlo, con el enlace a la guía.</li>
+</ol>
+<p>Si cierras un ticket que aún no está arreglado, sigue abierto, el SLA sigue corriendo y te resta puntos: como un usuario que vuelve a llamar.</p>
+
+<h2 id="puntos">Cómo se puntúa</h2>
+<p>Cada ticket empieza con 100 puntos y resta por lo que haría peor el trabajo en un turno real:</p>
+<table class="doc-table">
+  <thead><tr><th>Qué</th><th>Resta</th></tr></thead>
+  <tbody>
+    <tr><td>Cada pista (<code>hint</code>)</td><td>10</td></tr>
+    <tr><td>Cada comando que no existe, a partir del cuarto</td><td>2</td></tr>
+    <tr><td>Cada elemento que falta en la nota (causa, cambio, comprobación, seguimiento)</td><td>10</td></tr>
+    <tr><td>Una nota de menos de 15 palabras</td><td>10</td></tr>
+    <tr><td>Un código de resolución que no es el adecuado</td><td>10</td></tr>
+    <tr><td>Cerrar fuera del SLA</td><td>10</td></tr>
+    <tr><td>Cada vez que lo cerraste sin estar arreglado</td><td>10</td></tr>
+  </tbody>
+</table>
+<p>Estrellas: tres desde 90 puntos, dos desde 70 y una desde 40. El resultado es <strong>resuelto</strong> si no hay nada que comentar, <strong>resuelto con observaciones</strong> si está arreglado pero algo de lo anterior se puede mejorar, y <strong>no resuelto</strong> si la causa sigue ahí.</p>
+
+<h2 id="herramientas">Las herramientas</h2>
+<h3>Cola de tickets</h3>
+<p>Pestañas <em>Abiertos</em> y <em>Cerrados</em>. Cada fila muestra el ticket, el solicitante, la prioridad, el SLA restante y el estado. Desde Cerrados puedes repetir cualquier ticket.</p>
+<h3>Ficha del ticket</h3>
+<p>Arriba, el texto del usuario. A los lados, el <strong>solicitante</strong> (usuario, ubicación, equipo) y el <strong>activo</strong> afectado, cuyos datos cambian cuando lo arreglas. Las <strong>acciones</strong> son atajos de los comandos más habituales del caso.</p>
+<h3>Consola</h3>
+<p>PowerShell o cmd según el ticket. <code>help</code> muestra lo básico, <code>hint</code> da la siguiente pista, <code>ticket</code> vuelve a mostrar el ticket y <code>cls</code> limpia la pantalla. Las flechas arriba y abajo repiten comandos. No distingue mayúsculas.</p>
+<h3>Ir al puesto</h3>
+<p>En algunos tickets, la pestaña <em>Ir al puesto</em> abre un escritorio simulado del equipo del usuario, con aplicaciones como la configuración de red, el almacenamiento, los servicios, BitLocker o el Portal de empresa, y el visor de eventos, donde suele estar la pista que no aparece en el ticket. Cada botón hace lo mismo que el comando equivalente en la consola.</p>
+<h3>Directorio</h3>
+<p>El Active Directory simulado de contoso.local: unidades organizativas, usuarios, grupos y equipos, los mismos de los tickets. Puedes desbloquear, restablecer contraseñas, habilitar o deshabilitar cuentas y cambiar grupos con botones o con PowerShell (<code>Get-ADUser</code>, <code>Search-ADAccount</code>, <code>Add-ADGroupMember</code>…). Tiene sus propias <strong>peticiones de práctica</strong> y un botón para dejarlo como al empezar el turno.</p>
+<h3>Inventario</h3>
+<p>Servidores e impresoras de la oficina central, con su estado, que sigue a los tickets abiertos: una impresora con la cola atascada aparece con incidencia hasta que la arreglas.</p>
+<h3>Progreso y Mi cuenta</h3>
+<p><em>Progreso</em> muestra tu mejor resultado en cada ticket. En <em>Mi cuenta</em> ves tus datos, cierras la sesión o borras la cuenta.</p>
+
+<h2 id="problemas">Si algo falla</h2>
+<ul>
+  <li><strong>He olvidado la contraseña.</strong> Si tu cuenta usa un email de Google, entra con <em>Continuar con Google</em>. Si no, <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">escríbeme</a> y te ayudo a recuperar el acceso.</li>
+  <li><strong>«Demasiados intentos».</strong> Tras varios intentos fallidos el acceso se bloquea 15 minutos para frenar ataques. Espera y vuelve a probar.</li>
+  <li><strong>No veo mi progreso en otro equipo.</strong> Comprueba que has entrado con la misma cuenta (el mismo email, o Google). El progreso se guarda al cerrar cada ticket.</li>
+  <li><strong>El directorio no está como lo dejé.</strong> Los cambios del directorio se guardan en el navegador: en otro equipo o en una ventana privada empieza de cero.</li>
+  <li><strong>Un comando que debería funcionar no funciona.</strong> Puede que no esté simulado todavía. <a href="https://inigogonzalezgarcia.github.io/about.html?tema=sysadmindesks#contacto" target="_blank" rel="noopener noreferrer">Cuéntamelo</a> con el ticket y el comando exacto.</li>
+</ul>
+<p>¿Más dudas? Mira las <a href="faq.html">preguntas frecuentes</a>.</p>
+</article>
+
+<article class="en" lang="en" id="en">
+<h1>Help</h1>
+<nav class="doc-toc" aria-label="On this page">
+  <a href="#start">Getting started</a> <a href="#ticket-en">A ticket from start to finish</a> <a href="#scoring">How scoring works</a> <a href="#tools">The tools</a> <a href="#trouble">If something goes wrong</a>
+</nav>
+
+<h2 id="start">Getting started</h2>
+<ol>
+  <li>Create a free account with email and password, or sign in with Google. Pick a technician name and an avatar.</li>
+  <li>The first time you will see a two-minute <strong>tour</strong>. Repeat it whenever you like from <em>Take the tour</em> in the sidebar.</li>
+  <li>The <strong>ES / EN</strong> button at the top switches the language of everything, tickets included.</li>
+</ol>
+
+<h2 id="ticket-en">A ticket from start to finish</h2>
+<ol>
+  <li><strong>Pick a ticket</strong> in the queue. Open tickets are sorted by priority.</li>
+  <li><strong>Assign it to yourself</strong> with <em>Assign to me</em>. The SLA starts counting then: 20 minutes for a P1, 30 for a P2 and 45 for a P3.</li>
+  <li><strong>Investigate</strong> in the console or with the actions on the ticket page: the buttons run the same command you would type, and the console shows it.</li>
+  <li><strong>Fix the cause</strong>, not just the symptom, and <strong>check it</strong>. The checklist on the ticket page ticks off what you have done.</li>
+  <li><strong>Close it</strong>: pick the resolution code and write the work note with the cause, the change, the check and the follow-up.</li>
+  <li><strong>Review the result</strong>: what was missing, an example note and one way to solve it, with the link to the guide.</li>
+</ol>
+<p>If you close a ticket that isn't fixed yet, it stays open, the SLA keeps running and it costs you points: like a user calling back.</p>
+
+<h2 id="scoring">How scoring works</h2>
+<p>Each ticket starts at 100 points and loses points for what would make the work worse on a real shift:</p>
+<table class="doc-table">
+  <thead><tr><th>What</th><th>Points off</th></tr></thead>
+  <tbody>
+    <tr><td>Each hint (<code>hint</code>)</td><td>10</td></tr>
+    <tr><td>Each command that doesn't exist, from the fourth on</td><td>2</td></tr>
+    <tr><td>Each element missing from the note (cause, change, check, follow-up)</td><td>10</td></tr>
+    <tr><td>A note under 15 words</td><td>10</td></tr>
+    <tr><td>A resolution code that isn't the right one</td><td>10</td></tr>
+    <tr><td>Closing outside the SLA</td><td>10</td></tr>
+    <tr><td>Each time you closed it before it was fixed</td><td>10</td></tr>
+  </tbody>
+</table>
+<p>Stars: three from 90 points, two from 70 and one from 40. The result is <strong>resolved</strong> when there is nothing to comment on, <strong>resolved with observations</strong> when it is fixed but something above can improve, and <strong>unresolved</strong> when the cause is still there.</p>
+
+<h2 id="tools">The tools</h2>
+<h3>Ticket queue</h3>
+<p><em>Open</em> and <em>Closed</em> tabs. Each row shows the ticket, the requester, the priority, the SLA left and the status. You can repeat any ticket from Closed.</p>
+<h3>Ticket page</h3>
+<p>At the top, the user's text. Alongside, the <strong>requester</strong> (user, location, device) and the affected <strong>asset</strong>, whose details change when you fix it. The <strong>actions</strong> are shortcuts for the case's most common commands.</p>
+<h3>Console</h3>
+<p>PowerShell or cmd depending on the ticket. <code>help</code> shows the basics, <code>hint</code> gives the next hint, <code>ticket</code> shows the ticket again and <code>cls</code> clears the screen. The up and down arrows repeat commands. It is not case-sensitive.</p>
+<h3>Go to the desk</h3>
+<p>On some tickets, the <em>Go to the desk</em> tab opens a simulated desktop of the user's machine, with apps such as Network settings, Storage, Services, BitLocker or Company Portal, and the Event Viewer, where the clue that isn't in the ticket usually sits. Each button does the same as the equivalent console command.</p>
+<h3>Directory</h3>
+<p>The simulated Active Directory for contoso.local: organisational units, users, groups and computers, the same ones as in the tickets. You can unlock, reset passwords, enable or disable accounts and change groups with buttons or with PowerShell (<code>Get-ADUser</code>, <code>Search-ADAccount</code>, <code>Add-ADGroupMember</code>…). It has its own <strong>practice requests</strong> and a button to put it back as it was at the start of the shift.</p>
+<h3>Inventory</h3>
+<p>Head office servers and printers, with a status that follows the open tickets: a printer with a stuck queue shows an incident until you fix it.</p>
+<h3>Progress and My account</h3>
+<p><em>Progress</em> shows your best result on each ticket. In <em>My account</em> you see your details, sign out or delete the account.</p>
+
+<h2 id="trouble">If something goes wrong</h2>
+<ul>
+  <li><strong>I forgot my password.</strong> If your account uses a Google email, sign in with <em>Continue with Google</em>. Otherwise <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">write to me</a> and I will help you get back in.</li>
+  <li><strong>"Too many attempts".</strong> After several failed attempts sign-in is blocked for 15 minutes to slow down attacks. Wait and try again.</li>
+  <li><strong>I can't see my progress on another device.</strong> Check you signed in with the same account (same email, or Google). Progress is saved when you close each ticket.</li>
+  <li><strong>The directory isn't how I left it.</strong> Directory changes are kept in the browser: on another device or in a private window it starts fresh.</li>
+  <li><strong>A command that should work doesn't.</strong> It may not be simulated yet. <a href="https://inigogonzalezgarcia.github.io/about.html?tema=sysadmindesks#contacto" target="_blank" rel="noopener noreferrer">Tell me</a> with the ticket and the exact command.</li>
+</ul>
+<p>More questions? See the <a href="faq.html">FAQ</a>.</p>
+</article>
+</main>
+<footer class="foot">
+  <p><a href="about.html"><span class="es">Qué es</span><span class="en">About</span></a> · <a href="help.html"><span class="es">Ayuda</span><span class="en">Help</span></a> · <a href="faq.html"><span class="es">Preguntas frecuentes</span><span class="en">FAQ</span></a> · <a href="terms.html"><span class="es">Términos de uso</span><span class="en">Terms of use</span></a> · <a href="privacy.html"><span class="es">Privacidad</span><span class="en">Privacy</span></a></p>
+  <p><a href="https://inigogonzalezgarcia.github.io/about.html?tema=sysadmindesks#contacto" target="_blank" rel="noopener noreferrer"><span class="es">Informar de un error</span><span class="en">Report a problem</span></a> · <a href="./"><span class="es">Volver al simulador</span><span class="en">Back to the simulator</span></a> · <a href="https://inigogonzalezgarcia.github.io/" target="_blank" rel="noopener noreferrer">inigogonzalezgarcia.github.io</a></p>
+</footer>
+</body>
+</html>
