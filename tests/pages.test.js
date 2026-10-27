@@ -8,7 +8,7 @@ const path = require("node:path");
 const PUB = path.join(__dirname, "..", "public");
 const PAGES = ["about.html", "help.html", "faq.html", "terms.html", "privacy.html"];
 const read = (f) => fs.readFileSync(path.join(PUB, f), "utf8");
-const CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'";
+const CSP = "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; base-uri 'none'; form-action 'none'";
 
 test("every static page has both languages, the strict CSP and no inline code", () => {
   for (const f of PAGES) {
@@ -44,4 +44,13 @@ test("the terms and the privacy policy agree on the minimum age and link to each
   assert.ok(read("terms.html").includes("14 años") && read("terms.html").includes("14 years old"));
   assert.ok(read("privacy.html").includes("14 años") && read("privacy.html").includes("at least 14"));
   assert.ok(read("terms.html").includes('href="privacy.html"') && read("privacy.html").includes('href="terms.html"'));
+});
+
+test("cookies: analytics only through consent.js, with a valid or empty ID, on every page", () => {
+  const c = fs.readFileSync(path.join(PUB, "assets", "consent.js"), "utf8");
+  const id = c.match(/var GA_ID = "([^"]*)";/);
+  assert.ok(id && (id[1] === "" || /^G-[A-Z0-9]{6,12}$/.test(id[1])), "GA_ID empty or G-XXXXXXXX");
+  assert.ok(c.includes('analytics_storage: "denied"') && c.includes("allow_google_signals: false"), "consent mode denied by default, no signals");
+  for (const f of PAGES.concat(["index.html"])) assert.ok(read(f).includes('src="assets/consent.js"'), f + " loads consent.js");
+  assert.ok(read("privacy.html").includes('id="cookies"') && read("privacy.html").includes("_ga"), "privacy explains the cookies");
 });
