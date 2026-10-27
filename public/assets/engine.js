@@ -252,6 +252,64 @@
       codeOk: codeOk, slaOk: slaOk, pending: [], reasons: reasons };
   }
 
+  /* ---------- the shared world and the desktop (v0.3) */
+
+  // the rule a command would match right now, without running it (the directory uses it to hand a command to an open ticket)
+  function matches(sess, input) {
+    const cmd = norm(input);
+    if (!cmd) return null;
+    return (sess.sc.commands || []).find((r) => new RegExp(r.match, "i").test(cmd) && when(r.when, sess.state, false) &&
+      !(r.unless && when(r.unless, sess.state, false))) || null;
+  }
+
+  // what a ticket says about the directory and the inventory: [{kind, id, set, note}] for the session's current state
+  function bound(sess) {
+    return (sess.sc.bind || []).map((b) => {
+      const st = b.states.find((x) => when(x.when, sess.state, false)) || b.states[b.states.length - 1];
+      return { kind: b.kind, id: b.id, set: Object.assign({}, st.set || {}), note: t(st.note, sess.lang) };
+    });
+  }
+
+  // the desktop of the user's machine ("Go to the desk"): apps with fields, actions and a page, and the event log
+  function desktop(sess) {
+    const d = sess.sc.desktop;
+    if (!d) return null;
+    const lang = sess.lang;
+    const pick = (states) => states.find((x) => when(x.when, sess.state, false)) || states[states.length - 1];
+    return {
+      host: sess.sc.machine.host,
+      apps: d.apps.map((a) => {
+        const page = a.page ? pick(a.page.states) : null;
+        return {
+          id: a.id, icon: a.icon || "▣", title: t(a.title, lang), look: a.look || null,
+          fields: (a.fields || []).map((f) => field(f, sess.state, lang)),
+          actions: (a.actions || []).map((x) => ({ id: x.id, label: t(x.label, lang), enabled: when(x.when, sess.state, false), cmd: x.cmd })),
+          page: page ? { url: a.page.url, title: t(page.title, lang), text: t(page.text, lang), tone: page.tone || "" } : null,
+        };
+      }),
+      log: (d.log || []).filter((e) => when(e.when, sess.state, false)).map((e) => ({ level: e.level, time: e.time, source: e.source, id: e.id, text: t(e.text, lang) })),
+      logNote: t(d.logNote, lang),
+    };
+  }
+  // opening an app runs what you would type to see the same thing (ipconfig /all for the network settings...)
+  function deskOpen(sess, appId) {
+    const a = ((sess.sc.desktop || {}).apps || []).find((x) => x.id === appId);
+    if (!a || !a.look) return null;
+    const res = run(sess, a.look);
+    res.command = a.look;
+    return res;
+  }
+  function deskAct(sess, appId, actionId) {
+    const a = ((sess.sc.desktop || {}).apps || []).find((x) => x.id === appId);
+    const x = a && (a.actions || []).find((y) => y.id === actionId);
+    if (!x || !when(x.when, sess.state, false)) return null;
+    sess.gui += 1;
+    const res = run(sess, x.cmd);
+    res.command = x.cmd;
+    return res;
+  }
+
   return { norm: norm, fold: fold, t: t, createSession: createSession, prompt: prompt, run: run, goalMet: goalMet, stages: stages,
-           checkNote: checkNote, score: score, SLA: SLA, sla: sla, CODES: CODES, codeLabel: codeLabel, cards: cards, act: act, verdict: verdict };
+           checkNote: checkNote, score: score, SLA: SLA, sla: sla, CODES: CODES, codeLabel: codeLabel, cards: cards, act: act, verdict: verdict,
+           matches: matches, bound: bound, desktop: desktop, deskOpen: deskOpen, deskAct: deskAct };
 });
