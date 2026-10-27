@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>SysAdmin Desks by IGG · IT support practice</title>
 <meta name="description" content="Practise real IT support tickets in a simulated console: Active Directory, DNS, Windows, printers, Exchange Online and Intune. Free with an account, in English and Spanish.">
@@ -24,12 +24,13 @@
 <footer class="foot">
   <p id="foot-text">Fictional company and people.</p>
   <p class="foot-links"><a id="foot-about" href="about.html">About</a> · <a id="foot-help" href="help.html">Help</a> · <a id="foot-faq" href="faq.html">FAQ</a> · <a id="foot-terms" href="terms.html">Terms</a> · <a id="foot-privacy" href="privacy.html">Privacy</a></p>
-  <p><a id="foot-report" href="https://inigogonzalezgarcia.github.io/about.html?tema=sysadmindesks#contacto" target="_blank" rel="noopener noreferrer">Report a problem</a> · <a id="foot-site" href="https://inigogonzalezgarcia.github.io/" target="_blank" rel="noopener noreferrer">inigogonzalezgarcia.github.io</a></p>
+  <p><a id="foot-report" href="https://inigogonzalezgarcia.github.io/about.html?tema=sysadmindesks#contacto" target="_blank" rel="noopener noreferrer">Report a problem</a> · <button type="button" class="linkbtn" id="foot-cookies" data-cookie-settings>Cookie settings</button> · <a id="foot-site" href="https://inigogonzalezgarcia.github.io/" target="_blank" rel="noopener noreferrer">inigogonzalezgarcia.github.io</a></p>
 </footer>
 <noscript><p class="noscript">This simulator needs JavaScript. / Este simulador necesita JavaScript.</p></noscript>
 <script src="assets/engine.js"></script>
 <script src="assets/scenarios.js"></script>
 <script src="assets/world.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/consent.js"></script>
 </body>
 </html>
