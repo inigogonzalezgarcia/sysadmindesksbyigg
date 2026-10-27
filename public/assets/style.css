@@ -272,7 +272,7 @@ body.landing-on main { max-width: none; padding: 0; }
 .end-screen p { margin: 0 0 10px; color: #b9cac2; max-width: 420px; font-size: 15px; }
 .end-screen .land-kicker { justify-content: center; margin: 0; }
 .land-foot { border-top: 1px solid rgba(215, 228, 221, .1); padding-top: 48px; padding-bottom: 30px; color: #9fb4aa; font-size: 14.5px; }
-.lf-cols { display: grid; grid-template-columns: 1.4fr 1.2fr 1fr 1fr; gap: 32px; }
+.lf-cols { display: grid; grid-template-columns: 1.4fr 1.2fr 1fr 1fr 1fr; gap: 28px; }
 .lf-brand .brand { display: flex; gap: 8px; align-items: center; color: #fff; font-weight: 800; font-size: 18px; margin: 0 0 10px; }
 .lf-brand .mark { font-family: var(--mono); background: var(--term-bg); color: var(--term-ok); padding: 1px 7px; border-radius: 6px; font-size: 14px; border: 1px solid rgba(94, 224, 160, .3); }
 .lf-h { color: #fff; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 12px; }
@@ -293,7 +293,7 @@ body.landing-on main { max-width: none; padding: 0; }
 }
 @media (max-width: 520px) {
   .lf-cols { grid-template-columns: 1fr; }
-  #nav-guides { display: none; }
+  #nav-guides, #nav-help { display: none; }
   .who { white-space: nowrap; }
   .end-screen h2 { font-size: 20px; } .end-screen p { display: none; }
   .mini-term { font-size: 10px; padding: 10px; }
@@ -546,3 +546,22 @@ body.shell-on main { max-width: 1360px; padding-top: 18px; }
 }
 .link-row { white-space: nowrap; }
 .qtable .tkt { white-space: nowrap; }
+
+/* static pages: about, help, FAQ, terms, privacy (assets/doc.js picks the language) */
+body.doc-es .en, body.doc-en .es { display: none !important; }
+body.doc-es .legal article + article, body.doc-en .legal article + article { margin-top: 0; padding-top: 0; border-top: 0; }
+.doc-nav { flex-wrap: wrap; justify-content: flex-end; }
+.doc-nav a[aria-current="page"] { font-weight: 700; color: var(--ink); }
+.legal .lead-p { font-size: 18px; color: var(--ink); }
+.legal h3 { font-size: 16px; margin: 20px 0 4px; }
+.legal code { font-family: var(--mono); font-size: .92em; background: var(--soft); padding: 1px 5px; border-radius: 5px; }
+.doc-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.doc-toc a { border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; text-decoration: none; font-size: 14px; background: var(--card); }
+.doc-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 15px; background: var(--card); border-radius: var(--radius); overflow: hidden; }
+.doc-table th, .doc-table td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.doc-table td:last-child, .doc-table th:last-child { text-align: right; white-space: nowrap; }
+.faq { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; margin: 10px 0; }
+.faq summary { font-weight: 600; cursor: pointer; }
+.faq p { margin: 10px 0 2px; }
+.legal h2[id], .legal h3[id] { scroll-margin-top: 16px; }
+@media (max-width: 640px) { .doc-nav { gap: 10px; } .doc-nav a { font-size: 14px; } }

@@ -24,14 +24,14 @@
       tabLogin: "Sign in", tabRegister: "Create account", fName: "Technician name", fAvatar: "Avatar", fEmail: "Email", fPassword: "Password",
       phName: "Alex Moreno", phEmail: "you@example.com", show: "Show password", hide: "Hide password",
       rules: { length: "8 characters or more", capital: "One capital letter", number: "One number" },
-      consentA: "I have read the ", consentLink: "privacy policy", consentB: ".",
+      consentA: "I have read the ", consentLink: "privacy policy", consentB: " and accept the ", consentTerms: "terms of use", consentC: ".",
       btnLogin: "Clock in", btnRegister: "Create my account", or: "or", google: "Continue with Google",
-      googleNote: "If you continue with Google you accept the privacy policy.",
+      googleNote: "If you continue with Google you accept the terms of use and the privacy policy.",
       forgot: "Forgot your password?", forgotText: "Use Continue with Google if your account uses that email, or write to me from the contact form on my website and I will help you get back in.",
       contact: "Contact form",
       errors: { credentials: "Wrong email or password.", exists: "There is already an account with that email: sign in instead.",
         name: "Write a name of 2 to 40 characters.", email: "Check the email address.", password: "The password needs 8 characters or more, a capital letter and a number.",
-        consent: "Accept the privacy policy to create the account.", locked: "Too many attempts. Wait 15 minutes and try again.",
+        consent: "Accept the privacy policy and the terms of use to create the account.", locked: "Too many attempts. Wait 15 minutes and try again.",
         google_only: "This account signs in with Google: use Continue with Google.", unavailable: "Accounts are not available right now. Try again in a few minutes.",
         server: "Something went wrong. Try again in a minute.", google_off: "Sign-in with Google is not ready yet. Use your email and password.",
         google_error: "Sign-in with Google did not finish. Try again.", network: "No connection to the server.", origin: "Reload the page and try again.", bad_request: "Reload the page and try again.", need_login: "Sign in or create a free account to open this desk." },
@@ -41,6 +41,7 @@
       accConfirm: "Yes, delete everything", accCancel: "Cancel", accDeleted: "Your account has been deleted.",
       footUser: "Fictional company and people. Your progress is saved in your account.", privacy: "Privacy",
       footAnon: "Fictional company and people.", backHome: "← Back to the home page",
+      about: "About", help: "Help", faq: "FAQ", terms: "Terms", report: "Report a problem", navHelp: "Help", accHelp: "Something not working, or an idea for a ticket?",
       navLabel: "Help desk", deskName: "Contoso help desk", navTickets: "Tickets", navProgress: "Progress", navGuides: "Guides", navAccount: "My account", navTour: "Take the tour",
       qTitle: "Ticket queue", shift: "Morning shift · on duty", tabOpen: "Open", tabClosed: "Closed",
       colTicket: "Ticket", colSubject: "Subject", colRequester: "Requester", colPriority: "Priority", colStatus: "Status", colAssignee: "Assigned to",
@@ -112,8 +113,8 @@
         ],
         endK: "05 · Start your shift", endH: "Ready for your first shift?", endP: "Create a free account and take your first ticket. Sign in with email or with Google.",
         footBlurb: "Hands-on IT support practice with realistic tickets, a simulated console and scored work notes.",
-        colDesks: "Desks", colGuides: "Guides", colProject: "Project",
-        guideLinks: [["All guides", "guias.html"], ["Level 1: first steps", "guias/nivel-1.html"], ["Level 2: solid foundations", "guias/nivel-2.html"], ["Level 3: advanced", "guias/nivel-3.html"]],
+        colDesks: "Desks", colGuides: "Guides", colProject: "Project", colHelp: "Help",
+        guideLinks: [["All guides", "guias.html"], ["Level 1: first steps", "guias/nivel-1.html"], ["Level 2: solid foundations", "guias/nivel-2.html"], ["Level 3: advanced", "guias/nivel-3.html"], ["Level 4: expert", "guias/nivel-4.html"]],
         projectLinks: [["About me", "about.html"], ["Blog", "blog/"], ["Contact", "about.html#contacto"]],
         legal: "Educational simulation with a fictional company and people. Not real IT access.",
         t1: ["The account that locks every morning", "P2"], t2: ["The reception printer queue will not empty", "P2"], t3: ["Customer emails bounce", "P1"],
@@ -138,14 +139,14 @@
       tabLogin: "Entrar", tabRegister: "Crear cuenta", fName: "Nombre de técnico", fAvatar: "Avatar", fEmail: "Email", fPassword: "Contraseña",
       phName: "Alex Moreno", phEmail: "tu@ejemplo.com", show: "Mostrar contraseña", hide: "Ocultar contraseña",
       rules: { length: "8 caracteres o más", capital: "Una mayúscula", number: "Un número" },
-      consentA: "He leído la ", consentLink: "política de privacidad", consentB: ".",
+      consentA: "He leído la ", consentLink: "política de privacidad", consentB: " y acepto los ", consentTerms: "términos de uso", consentC: ".",
       btnLogin: "Fichar entrada", btnRegister: "Crear mi cuenta", or: "o", google: "Continuar con Google",
-      googleNote: "Si continúas con Google aceptas la política de privacidad.",
+      googleNote: "Si continúas con Google aceptas los términos de uso y la política de privacidad.",
       forgot: "¿Has olvidado la contraseña?", forgotText: "Usa Continuar con Google si tu cuenta usa ese email, o escríbeme desde el formulario de contacto de mi web y te ayudo a recuperar el acceso.",
       contact: "Formulario de contacto",
       errors: { credentials: "Email o contraseña incorrectos.", exists: "Ya hay una cuenta con ese email: entra con ella.",
         name: "Escribe un nombre de 2 a 40 caracteres.", email: "Revisa el email.", password: "La contraseña necesita 8 caracteres o más, una mayúscula y un número.",
-        consent: "Acepta la política de privacidad para crear la cuenta.", locked: "Demasiados intentos. Espera 15 minutos y vuelve a probar.",
+        consent: "Acepta la política de privacidad y los términos de uso para crear la cuenta.", locked: "Demasiados intentos. Espera 15 minutos y vuelve a probar.",
         google_only: "Esta cuenta entra con Google: usa Continuar con Google.", unavailable: "Las cuentas no están disponibles ahora mismo. Prueba de nuevo en unos minutos.",
         server: "Algo ha fallado. Prueba de nuevo en un minuto.", google_off: "El acceso con Google aún no está listo. Usa tu email y contraseña.",
         google_error: "El acceso con Google no terminó. Prueba otra vez.", network: "Sin conexión con el servidor.", origin: "Recarga la página y prueba otra vez.", bad_request: "Recarga la página y prueba otra vez.", need_login: "Entra o crea una cuenta gratis para abrir este puesto." },
@@ -155,6 +156,7 @@
       accConfirm: "Sí, borrar todo", accCancel: "Cancelar", accDeleted: "Tu cuenta se ha borrado.",
       footUser: "Empresa y personas ficticias. Tu progreso se guarda en tu cuenta.", privacy: "Privacidad",
       footAnon: "Empresa y personas ficticias.", backHome: "← Volver a la portada",
+      about: "Qué es", help: "Ayuda", faq: "Preguntas frecuentes", terms: "Términos", report: "Informar de un error", navHelp: "Ayuda", accHelp: "¿Algo no funciona o tienes una idea para un ticket?",
       navLabel: "Mesa de soporte", deskName: "Mesa de soporte de Contoso", navTickets: "Tickets", navProgress: "Progreso", navGuides: "Guías", navAccount: "Mi cuenta", navTour: "Ver el tour",
       qTitle: "Cola de tickets", shift: "Turno de mañana · de guardia", tabOpen: "Abiertos", tabClosed: "Cerrados",
       colTicket: "Ticket", colSubject: "Asunto", colRequester: "Solicitante", colPriority: "Prioridad", colStatus: "Estado", colAssignee: "Asignado a",
@@ -226,8 +228,8 @@
         ],
         endK: "05 · Empieza tu turno", endH: "¿Listo para tu primer turno?", endP: "Crea una cuenta gratis y coge tu primer ticket. Entra con email o con Google.",
         footBlurb: "Práctica real de soporte IT con tickets realistas, una consola simulada y notas de trabajo puntuadas.",
-        colDesks: "Puestos", colGuides: "Guías", colProject: "Proyecto",
-        guideLinks: [["Todas las guías", "guias.html"], ["Nivel 1: primeros pasos", "guias/nivel-1.html"], ["Nivel 2: base sólida", "guias/nivel-2.html"], ["Nivel 3: avanzado", "guias/nivel-3.html"]],
+        colDesks: "Puestos", colGuides: "Guías", colProject: "Proyecto", colHelp: "Ayuda",
+        guideLinks: [["Todas las guías", "guias.html"], ["Nivel 1: primeros pasos", "guias/nivel-1.html"], ["Nivel 2: base sólida", "guias/nivel-2.html"], ["Nivel 3: avanzado", "guias/nivel-3.html"], ["Nivel 4: experto", "guias/nivel-4.html"]],
         projectLinks: [["Sobre mí", "about.html"], ["Blog", "blog/"], ["Contacto", "about.html#contacto"]],
         legal: "Simulación educativa con empresa y personas ficticias. No es acceso real a sistemas.",
         t1: ["La cuenta que se bloquea cada mañana", "P2"], t2: ["La cola de la impresora no se vacía", "P2"], t3: ["Rebotan los correos de clientes", "P1"],
@@ -253,6 +255,9 @@
   let afterLogin = null;  // the page someone asked for before signing in (a desk linked from a guide)
   const AVATARS = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"];
   const SITE = "https://inigogonzalezgarcia.github.io/";
+  // the static pages next to the app, and the contact form with the subject filled in
+  const DOCS = [["about", "about.html"], ["help", "help.html"], ["faq", "faq.html"], ["terms", "terms.html"], ["privacy", "privacy.html"]];
+  const REPORT = SITE + "about.html?tema=sysadmindesks#contacto";
 
   /* ---------- accounts (Pages Functions under /api; the page still works if they are not there) */
   async function api(path, method, body) {
@@ -312,7 +317,8 @@
     b.setAttribute("aria-label", L().langLabel);
     document.getElementById("nav-guides").textContent = L().guides;
     document.getElementById("foot-text").textContent = user ? L().footUser : L().footAnon;
-    document.getElementById("foot-privacy").textContent = L().privacy;
+    ["about", "help", "faq", "terms", "privacy", "report"].forEach((k) => { const a = document.getElementById("foot-" + k); if (a) a.textContent = L()[k]; });
+    const nh = document.getElementById("nav-help"); if (nh) nh.textContent = L().navHelp;
     const who = document.getElementById("who");
     who.replaceChildren(user
       ? el("a", { class: "who", href: "#/account", title: L().account }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
@@ -386,6 +392,8 @@
       item("#/progress", "★", L().navProgress, "progress"),
       el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer" },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { text: L().navGuides })),
+      el("a", { class: "side-item", href: "help.html", id: "nav-side-help" },
+        el("span", { class: "side-ico", "aria-hidden": "true", text: "i" }), el("span", { text: L().navHelp })),
       item("#/account", "●", L().navAccount, "account"),
       el("button", { type: "button", class: "side-item side-tour", id: "nav-tour", onclick: () => { if (location.hash !== "#/" && location.hash !== "") { location.hash = "#/"; setTimeout(() => tour(0), 50); } else tour(0); } },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "?" }), el("span", { text: L().navTour })));
@@ -1097,7 +1105,9 @@
           el("div", {}, el("p", { class: "lf-h", text: T.colDesks }), el("ul", {}, SCENARIOS.map((sc) => el("li", {}, el("a", { href: "#/desk/" + sc.id, text: t(sc.title, lang) }))))),
           el("div", {}, el("p", { class: "lf-h", text: T.colGuides }), el("ul", {}, T.guideLinks.map(([x, h]) => el("li", {}, ext(site(h), x))))),
           el("div", {}, el("p", { class: "lf-h", text: T.colProject }), el("ul", {}, T.projectLinks.map(([x, h]) => el("li", {}, ext(site(h), x))),
-            el("li", {}, ext("https://www.linkedin.com/in/igonzalez93", "LinkedIn")), el("li", {}, el("a", { href: "privacy.html", text: L().privacy }))))),
+            el("li", {}, ext("https://www.linkedin.com/in/igonzalez93", "LinkedIn")))),
+          el("div", {}, el("p", { class: "lf-h", text: T.colHelp }), el("ul", {}, DOCS.map(([k, h]) => el("li", {}, el("a", { href: h, text: L()[k] }))),
+            el("li", {}, ext(REPORT, L().report))))),
         el("div", { class: "lf-bottom" }, el("span", { text: "© 2026 Iñigo González · SysAdmin Desks by IGG" }), el("span", { text: T.legal })))));
   }
 
@@ -1190,7 +1200,8 @@
           field(L().fName, name), el("div", { class: "field" }, el("span", { class: "field-label", text: L().fAvatar }), pics),
           field(L().fEmail, email), pw.node,
           el("label", { class: "check" }, consent, el("span", {}, L().consentA,
-            el("a", { href: "privacy.html", target: "_blank", rel: "noopener noreferrer", text: L().consentLink }), L().consentB)),
+            el("a", { href: "privacy.html", target: "_blank", rel: "noopener noreferrer", text: L().consentLink }), L().consentB,
+            el("a", { href: "terms.html", target: "_blank", rel: "noopener noreferrer", text: L().consentTerms }), L().consentC)),
           submit);
       }
       body.replaceChildren(tabs, msg, form,
@@ -1251,6 +1262,9 @@
           Object.keys(live).forEach((k) => delete live[k]);
           location.hash = "#/start"; route();
         } })),
+      el("p", { class: "fine acc-help" }, L().accHelp + " ",
+        el("a", { href: REPORT, target: "_blank", rel: "noopener noreferrer", text: L().report }), " · ",
+        el("a", { href: "help.html", text: L().help }), " · ", el("a", { href: "terms.html", text: L().terms }), " · ", el("a", { href: "privacy.html", text: L().privacy })),
       msg, zone));
   }
 
