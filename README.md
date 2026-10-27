@@ -46,9 +46,15 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
   - state-changing requests must come from the site's own origin;
   - failed sign-ins are limited per email and per IP (8 in 15 minutes);
   - Google sign-in uses a `state` cookie and only accepts verified emails;
-  - the same strict CSP as before, with no third-party scripts.
+  - a strict CSP with no inline code; the only third-party script allowed is Google Analytics, and only after consent (see *Cookies*).
 - **Progress:** when you sign in, anything better in the browser is added to the account.
 - **Privacy and terms:** [public/privacy.html](public/privacy.html) explains what is stored, why, for how long (including the minimum age of 14 and international transfers), and [public/terms.html](public/terms.html) sets the terms of use; the sign-up form links to both, and the account page deletes everything.
+
+## Cookies
+
+- **Necessary:** the session cookie `sd_session` (and a temporary one during Google sign-in). No permission needed.
+- **Analytics, opt-in:** [assets/consent.js](public/assets/consent.js) shows a notice (Reject / Settings / Accept analytics) and loads Google Analytics 4 only after the visitor accepts, with consent mode denied by default, Google signals and ad personalisation off, and one page view per route (`#/...`). Rejecting loads nothing from Google and removes any `_ga` cookie. The choice is kept in `localStorage` (`sd.consent`) for 6 months, and *Cookie settings* in every footer and in *My account* reopens it.
+- `GA_ID` at the top of `consent.js` holds the measurement ID; while it is empty there is no notice and no analytics.
 
 ## Help pages
 
