@@ -41,7 +41,7 @@
       accConfirm: "Yes, delete everything", accCancel: "Cancel", accDeleted: "Your account has been deleted.",
       footUser: "Fictional company and people. Your progress is saved in your account.", privacy: "Privacy",
       footAnon: "Fictional company and people.", backHome: "← Back to the home page",
-      about: "About", help: "Help", faq: "FAQ", terms: "Terms", report: "Report a problem", navHelp: "Help", accHelp: "Something not working, or an idea for a ticket?",
+      about: "About", help: "Help", faq: "FAQ", terms: "Terms", report: "Report a problem", cookies: "Cookie settings", navHelp: "Help", accHelp: "Something not working, or an idea for a ticket?",
       navLabel: "Help desk", deskName: "Contoso help desk", navTickets: "Tickets", navProgress: "Progress", navGuides: "Guides", navAccount: "My account", navTour: "Take the tour",
       qTitle: "Ticket queue", shift: "Morning shift · on duty", tabOpen: "Open", tabClosed: "Closed",
       colTicket: "Ticket", colSubject: "Subject", colRequester: "Requester", colPriority: "Priority", colStatus: "Status", colAssignee: "Assigned to",
@@ -156,7 +156,7 @@
       accConfirm: "Sí, borrar todo", accCancel: "Cancelar", accDeleted: "Tu cuenta se ha borrado.",
       footUser: "Empresa y personas ficticias. Tu progreso se guarda en tu cuenta.", privacy: "Privacidad",
       footAnon: "Empresa y personas ficticias.", backHome: "← Volver a la portada",
-      about: "Qué es", help: "Ayuda", faq: "Preguntas frecuentes", terms: "Términos", report: "Informar de un error", navHelp: "Ayuda", accHelp: "¿Algo no funciona o tienes una idea para un ticket?",
+      about: "Qué es", help: "Ayuda", faq: "Preguntas frecuentes", terms: "Términos", report: "Informar de un error", cookies: "Preferencias de cookies", navHelp: "Ayuda", accHelp: "¿Algo no funciona o tienes una idea para un ticket?",
       navLabel: "Mesa de soporte", deskName: "Mesa de soporte de Contoso", navTickets: "Tickets", navProgress: "Progreso", navGuides: "Guías", navAccount: "Mi cuenta", navTour: "Ver el tour",
       qTitle: "Cola de tickets", shift: "Turno de mañana · de guardia", tabOpen: "Abiertos", tabClosed: "Cerrados",
       colTicket: "Ticket", colSubject: "Asunto", colRequester: "Solicitante", colPriority: "Prioridad", colStatus: "Estado", colAssignee: "Asignado a",
@@ -317,7 +317,7 @@
     b.setAttribute("aria-label", L().langLabel);
     document.getElementById("nav-guides").textContent = L().guides;
     document.getElementById("foot-text").textContent = user ? L().footUser : L().footAnon;
-    ["about", "help", "faq", "terms", "privacy", "report"].forEach((k) => { const a = document.getElementById("foot-" + k); if (a) a.textContent = L()[k]; });
+    ["about", "help", "faq", "terms", "privacy", "report", "cookies"].forEach((k) => { const a = document.getElementById("foot-" + k); if (a) a.textContent = L()[k]; });
     const nh = document.getElementById("nav-help"); if (nh) nh.textContent = L().navHelp;
     const who = document.getElementById("who");
     who.replaceChildren(user
@@ -1107,7 +1107,8 @@
           el("div", {}, el("p", { class: "lf-h", text: T.colProject }), el("ul", {}, T.projectLinks.map(([x, h]) => el("li", {}, ext(site(h), x))),
             el("li", {}, ext("https://www.linkedin.com/in/igonzalez93", "LinkedIn")))),
           el("div", {}, el("p", { class: "lf-h", text: T.colHelp }), el("ul", {}, DOCS.map(([k, h]) => el("li", {}, el("a", { href: h, text: L()[k] }))),
-            el("li", {}, ext(REPORT, L().report))))),
+            el("li", {}, ext(REPORT, L().report)),
+            el("li", {}, el("button", { type: "button", class: "linkbtn", "data-cookie-settings": "", text: L().cookies }))))),
         el("div", { class: "lf-bottom" }, el("span", { text: "© 2026 Iñigo González · SysAdmin Desks by IGG" }), el("span", { text: T.legal })))));
   }
 
@@ -1264,7 +1265,8 @@
         } })),
       el("p", { class: "fine acc-help" }, L().accHelp + " ",
         el("a", { href: REPORT, target: "_blank", rel: "noopener noreferrer", text: L().report }), " · ",
-        el("a", { href: "help.html", text: L().help }), " · ", el("a", { href: "terms.html", text: L().terms }), " · ", el("a", { href: "privacy.html", text: L().privacy })),
+        el("a", { href: "help.html", text: L().help }), " · ", el("a", { href: "terms.html", text: L().terms }), " · ", el("a", { href: "privacy.html", text: L().privacy }),
+        el("span", { class: "cc-link" }, " · ", el("button", { type: "button", class: "linkbtn", "data-cookie-settings": "", text: L().cookies }))),
       msg, zone));
   }
 

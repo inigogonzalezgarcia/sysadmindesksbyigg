@@ -565,3 +565,31 @@ body.doc-es .legal article + article, body.doc-en .legal article + article { mar
 .faq p { margin: 10px 0 2px; }
 .legal h2[id], .legal h3[id] { scroll-margin-top: 16px; }
 @media (max-width: 640px) { .doc-nav { gap: 10px; } .doc-nav a { font-size: 14px; } }
+
+/* cookie notice (assets/consent.js); the "Cookie settings" links only show once analytics exists (html.cc-on-site) */
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; font: inherit; cursor: pointer; }
+[data-cookie-settings], .cc-link { display: none; }
+.cc-on-site [data-cookie-settings], .cc-on-site .cc-link { display: inline; }
+.foot .linkbtn, .land-foot .linkbtn { color: inherit; }
+.land-foot .linkbtn { text-decoration: none; color: #9fb4aa; }
+.land-foot .linkbtn:hover { color: var(--term-ok); }
+.cc { position: fixed; z-index: 60; left: 16px; bottom: 16px; width: min(460px, calc(100% - 32px)); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 18px 50px rgba(0, 0, 0, .28); padding: 18px 20px; }
+.cc[hidden] { display: none; }
+.cc-k { margin: 0 0 6px; font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.cc-t { margin: 0 0 6px; font-size: 19px; }
+.cc-x { margin: 0 0 8px; font-size: 14.5px; color: var(--muted); }
+.cc-p { font-size: 14px; }
+.cc-b { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.cc-b .btn { flex: 1 1 auto; }
+.cc-s { margin-top: 10px; border-top: 1px solid var(--line); }
+.cc-row { display: flex; justify-content: space-between; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.cc-row p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.cc-on { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.cc-sw { position: relative; width: 44px; height: 24px; flex: none; }
+.cc-sw input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.cc-sw span { position: absolute; inset: 0; background: var(--line); border-radius: 12px; pointer-events: none; transition: background .2s; }
+.cc-sw span::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.cc-sw input:checked + span { background: var(--accent); }
+.cc-sw input:checked + span::after { transform: translateX(20px); }
+.cc-sw input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .cc-sw span, .cc-sw span::after { transition: none; } }
