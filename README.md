@@ -16,6 +16,18 @@ Free, in English and Spanish. The home page explains how it works; you clock in 
 | 4 | The reception printer queue that will not empty | Printers: corrupt job, spooler, spool folder | 1 |
 | 5 | Customer emails bounce: the sales director's mailbox | Exchange Online: quota, archive, Managed Folder Assistant | 2 |
 | 6 | "Your device does not meet requirements" | Intune / BitLocker: compliance, recovery key in Entra ID, MDM sync | 2 |
+| 7 | Working from home: the VPN will not connect | Cisco Secure Client (AnyConnect): system clock and certificate validation | 1 |
+| 8 | New starter without Outlook or Teams | Microsoft 365: group-based licensing, no seats left, a leaver's direct licence | 1 |
+| 9 | The invoices mailbox does not appear in Outlook | Exchange Online: FullAccess vs SendAs, automapping | 1 |
+| 10 | Created in AD this morning, missing in Microsoft 365 | Azure AD Connect: OU filtering, delta sync | 2 |
+| 11 | Three nights without a backup of the file server | Veeam: repository full of a deleted job's backups | 2 |
+| 12 | Installed, but Software Center says 'Failed' | MECM: detection method of an outdated product code | 2 |
+| 13 | 502 Bad Gateway: the timesheets app is down | Red Hat: /var full, logrotate, deleted files still held open | 2 |
+| 14 | The CRM in Citrix stays on 'Starting...' | Citrix: unregistered VDA and a stuck disconnected session | 2 |
+| 15 | Abroad and locked out of Microsoft 365 | Entra ID Conditional Access: blocked country, time-bound exception with PIM | 2 |
+| 16 | Nobody can sign in to Expenses with SSO | Entra ID SAML: expired signing certificate, the new one never activated | 2 |
+| 17 | The payroll SFTP server rejects AD accounts | Linux joined to AD (SSSD): clock skew and Kerberos | 2 |
+| 18 | The ERP cannot save: transaction log full | SQL Server: error 9002, failing log backup job | 2 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 
@@ -105,7 +117,7 @@ Ideas for later: password reset by email, and more desks per guide topic.
 
 ## Status
 
-Version 0.4.0: landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), a personal knowledge base, streak, weekly goal, badges and mail exercises, and the about, help, FAQ, terms and privacy pages. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
+Version 0.5.0: 18 desks (first and second line), landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), a personal knowledge base, streak, weekly goal, badges and mail exercises, and the about, help, FAQ, terms and privacy pages. Each desk links to its guide, and the guides on the website link back with a "Practise it" button. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 
