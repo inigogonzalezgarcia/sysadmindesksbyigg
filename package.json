@@ -1,6 +1,6 @@
 {
   "name": "sysadmindesksbyigg",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "SysAdmin Desks by IGG: practise IT support tickets in a simulated console, with accounts, a ticket queue and SLA.",
   "scripts": {
