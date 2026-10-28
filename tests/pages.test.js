@@ -36,6 +36,8 @@ test("local links on the static pages and in the app point at files that exist",
       assert.ok(h.includes(`id="${m[1]}"`), `${f} -> #${m[1]}`);
     }
   }
+  const order = ["engine", "scenarios", "world", "growth", "app"].map((n) => read("index.html").indexOf(`<script src="assets/${n}.js"></script>`));
+  assert.ok(order.every((x, i) => x > 0 && (!i || x > order[i - 1])), "index.html loads growth.js before app.js");
   const app = fs.readFileSync(path.join(PUB, "assets", "app.js"), "utf8");
   for (const f of PAGES) assert.ok(app.includes(`"${f}"`), "app links " + f);
 });

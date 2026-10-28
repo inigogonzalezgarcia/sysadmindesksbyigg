@@ -60,13 +60,14 @@
       unresolvedTitle: "The ticket is not fixed yet", unresolvedText: "The user would call back within the hour. The ticket stays open and the SLA keeps running; closing it unfixed costs 10 points.",
       whyT: "What is missing", obsT: "Observations", keepWorking: "Back to the ticket", queueBtn: "Ticket queue",
       timeUsed: (m, l) => `Time: ${m} of ${l} min`, codeUsed: (c) => `Code: ${c}`,
-      pTitle: "Your progress", pSub: "Your best result on each ticket, saved in your account.", tClosed: "Tickets closed", tStars: "Stars", tPoints: "Points", tAvg: "Average score", notYet: "Not yet",
+      pTitle: "Your progress", pSub: "Your best result on each ticket is saved in your account. Your streak, goal, badges, articles and mail answers stay in this browser.", tClosed: "Tickets closed", tStars: "Stars", tPoints: "Points", tAvg: "Average score", notYet: "Not yet",
       tour: [
         ["Welcome to the Contoso help desk", "You are the technician on the morning shift. In two minutes: where the tickets are, how the SLA works and how a ticket is closed."],
         ["Your ticket queue", "Every row is a ticket from a user of the fictional company, with its priority and status. Open shows what is waiting; Closed, what you have solved and how."],
         ["The SLA", "The clock starts when you assign a ticket to yourself: 20 minutes for a P1, 30 for a P2, 45 for a P3. Closing in time counts."],
         ["Open a ticket", "On the ticket page, press Assign to me and the console comes alive. Investigate, fix the cause, prove it works, then choose the resolution code and write the note."],
-        ["Your progress", "Points and stars for your best result on each ticket, saved in your account and on any device."],
+        ["Your progress", "Points and stars for your best result on each ticket, saved in your account, plus your day streak, your weekly goal and your badges."],
+        ["Mail and knowledge base", "Mail has messages to triage: requests, notices and the odd phishing email. Every ticket you close with a complete note becomes an article in your knowledge base."],
         ["Take the tour again", "This button shows the tour whenever you want. Each ticket also links to its step-by-step guide. Good shift!"],
       ],
       tourNext: "Next", tourBack: "Back", tourSkip: "Skip the tour", tourDone: "Start the shift", tourStep: (i, n) => `${i} of ${n}`,
@@ -91,6 +92,27 @@
       iTitle: "Inventory", iSub: "Servers and printers at head office. The status follows the open tickets.", iAll: "All", iServers: "Servers", iPrinters: "Printers", iProblems: "With an incident",
       colName: "Name", colType: "Type", colRole: "Role / model", colLocation: "Location", colTickets: "Tickets", iServer: "Server", iPrinter: "Printer",
       st: { ok: "OK", warn: "Warning", bad: "Error" }, iNoProblem: "Nothing to report.", iPick: "Pick a row to see the details.", iNoIssue: "Nothing to report.",
+      navMail: "Mail", navKb: "Knowledge base", unreadN: (n) => `${n} unread`,
+      kbTitle: "Knowledge base", kbSub: "Your own articles, written from the work notes of the tickets you closed well. Kept in this browser.",
+      kbEmptyT: "No articles yet", kbEmpty: "An article is saved when you close a ticket as fixed and your work note covers everything it asks for (cause, change, check and follow-up). Close the same ticket again with a newer note and the article gets a new version: v1.0, v1.1…",
+      kbEmptyBtn: "Go to the ticket queue", kbSearch: "Search the articles", kbAll: "All", kbNone: "No article matches.", kbCount: (n) => n === 1 ? "1 article" : `${n} articles`,
+      colVersion: "Version", kbDownload: "Download Markdown", kbPrint: "Print or save as PDF", kbBack: "← Knowledge base", kbReplay: "Replay the ticket",
+      kbNoArticle: "This ticket has no article yet.", kbSaved: (v) => `Saved in your knowledge base as v${v}.`, kbSame: "This note is already in your knowledge base.",
+      kbOpenArticle: "Open the article", kbNotSaved: "To save it in your knowledge base, the note needs every element: see what was missing above.", kbDownloaded: (f) => `Downloaded ${f}.`,
+      newBadge: (n) => `New badge: ${n}`,
+      pTickets: "Tickets", gStreak: "Day streak", gBest: (n) => `Best: ${n} ${n === 1 ? "day" : "days"}`, gToday: "Practise today to keep it going.", gTodayDone: "Done for today.",
+      gWeek: "This week", gGoalLabel: "Weekly goal", gGoalHelp: "Tickets closed and mail exercises answered, Monday to Sunday.", gGoalMet: "Goal met. Good week!",
+      gMail: "Mail exercises correct", gKb: "Knowledge base articles", gOpen: "Open",
+      bTitle: "Badges", bEarned: (d) => `Earned on ${d}`, bLocked: "Not yet earned", bCount: (n, m) => `${n} of ${m}`,
+      mScoreTitle: "Mail exercises", colMessage: "Message", mNotAnswered: "Not answered",
+      res: { correct: "Correct", partial: "Partly correct", wrong: "Wrong" },
+      mTitle: "Mail", mSub: "The service desk inbox. Requests, notices and some messages that are not what they seem: decide what to do with each one.",
+      mInbox: "Inbox", mPick: "Pick a message to read it.", mFrom: "From", mTo: "To", mCc: "Cc", mDate: "Date",
+      mHeadersShow: "Show headers", mHeadersHide: "Hide headers", mLinks: "Links", mDirectory: "Directory",
+      mDirNone: "No account in contoso.local uses this address.", mDirClaims: (n, a) => `No account uses this address. In the directory, ${n} is ${a}.`,
+      mLinkTip: "Point at or focus a link to see where it really goes.", mLinkTo: (u) => `Opens: ${u}`, mLinkBlocked: (u) => `Blocked in the simulation. This link opens: ${u}`,
+      mWhat: "What do you do?", mCreate: "Create ticket from this message", mHandled: (id) => `Ticket ${id} created from this message.`, mOpenTicket: (id) => `Open ${id}`,
+      mClues: "The clues", mProcedure: "The right procedure", mRetry: "Try again", mBack: "← Inbox", mNext: "Next message",
       iOs: "Operating system", iOwner: "Owner", iPatched: "Last patched", iQueue: "Print server", iJobs: "Jobs in the queue", iNone: "No tickets.", iInDir: "Show in the directory",
       land: {
         tag: "IT support simulator · free", title: "SysAdmin Desks",
@@ -175,13 +197,14 @@
       unresolvedTitle: "El ticket aún no está arreglado", unresolvedText: "El usuario volvería a llamar antes de una hora. El ticket sigue abierto y el SLA sigue corriendo; cerrarlo sin arreglar resta 10 puntos.",
       whyT: "Qué falta", obsT: "Observaciones", keepWorking: "Volver al ticket", queueBtn: "Cola de tickets",
       timeUsed: (m, l) => `Tiempo: ${m} de ${l} min`, codeUsed: (c) => `Código: ${c}`,
-      pTitle: "Tu progreso", pSub: "Tu mejor resultado en cada ticket, guardado en tu cuenta.", tClosed: "Tickets cerrados", tStars: "Estrellas", tPoints: "Puntos", tAvg: "Puntuación media", notYet: "Aún no",
+      pTitle: "Tu progreso", pSub: "Tu mejor resultado en cada ticket se guarda en tu cuenta. Tu racha, objetivo, insignias, artículos y respuestas de correo se quedan en este navegador.", tClosed: "Tickets cerrados", tStars: "Estrellas", tPoints: "Puntos", tAvg: "Puntuación media", notYet: "Aún no",
       tour: [
         ["Bienvenido a la mesa de soporte de Contoso", "Eres el técnico del turno de mañana. En dos minutos: dónde están los tickets, cómo funciona el SLA y cómo se cierra un ticket."],
         ["Tu cola de tickets", "Cada fila es un ticket de un usuario de la empresa ficticia, con su prioridad y su estado. En Abiertos ves lo que espera; en Cerrados, lo que has resuelto y cómo."],
         ["El SLA", "El reloj empieza cuando te asignas un ticket: 20 minutos para una P1, 30 para una P2 y 45 para una P3. Cerrar a tiempo cuenta."],
         ["Abre un ticket", "En la ficha, pulsa Asignarme y la consola se activa. Investiga, arregla la causa, demuestra que funciona y después elige el código de resolución y escribe la nota."],
-        ["Tu progreso", "Puntos y estrellas de tu mejor resultado en cada ticket, guardados en tu cuenta y en cualquier equipo."],
+        ["Tu progreso", "Puntos y estrellas de tu mejor resultado en cada ticket, guardados en tu cuenta, y además tu racha de días, tu objetivo semanal y tus insignias."],
+        ["Correo y base de conocimiento", "En Correo hay mensajes que clasificar: peticiones, avisos y algún phishing. Cada ticket que cierras con una nota completa se convierte en un artículo de tu base de conocimiento."],
         ["Repite el tour", "Este botón vuelve a mostrar el tour cuando quieras. Cada ticket enlaza también con su guía paso a paso. ¡Buen turno!"],
       ],
       tourNext: "Siguiente", tourBack: "Atrás", tourSkip: "Saltar el tour", tourDone: "Empezar el turno", tourStep: (i, n) => `${i} de ${n}`,
@@ -206,6 +229,27 @@
       iTitle: "Inventario", iSub: "Servidores e impresoras de la oficina central. El estado sigue a los tickets abiertos.", iAll: "Todo", iServers: "Servidores", iPrinters: "Impresoras", iProblems: "Con incidencia",
       colName: "Nombre", colType: "Tipo", colRole: "Función / modelo", colLocation: "Ubicación", colTickets: "Tickets", iServer: "Servidor", iPrinter: "Impresora",
       st: { ok: "Correcto", warn: "Aviso", bad: "Error" }, iNoProblem: "Nada que destacar.", iPick: "Elige una fila para ver el detalle.", iNoIssue: "Nada que destacar.",
+      navMail: "Correo", navKb: "Base de conocimiento", unreadN: (n) => `${n} sin leer`,
+      kbTitle: "Base de conocimiento", kbSub: "Tus propios artículos, redactados a partir de las notas de trabajo de los tickets que cerraste bien. Se guardan en este navegador.",
+      kbEmptyT: "Aún no hay artículos", kbEmpty: "Se guarda un artículo cuando cierras un ticket arreglado y tu nota de trabajo incluye todo lo que pide (causa, cambio, comprobación y seguimiento). Si vuelves a cerrar el mismo ticket con una nota nueva, el artículo pasa a otra versión: v1.0, v1.1…",
+      kbEmptyBtn: "Ir a la cola de tickets", kbSearch: "Buscar en los artículos", kbAll: "Todos", kbNone: "Ningún artículo coincide.", kbCount: (n) => n === 1 ? "1 artículo" : `${n} artículos`,
+      colVersion: "Versión", kbDownload: "Descargar Markdown", kbPrint: "Imprimir o guardar PDF", kbBack: "← Base de conocimiento", kbReplay: "Repetir el ticket",
+      kbNoArticle: "Este ticket aún no tiene artículo.", kbSaved: (v) => `Guardado en tu base de conocimiento como v${v}.`, kbSame: "Esta nota ya está en tu base de conocimiento.",
+      kbOpenArticle: "Abrir el artículo", kbNotSaved: "Para guardarlo en tu base de conocimiento, la nota tiene que incluir todos los elementos: mira arriba lo que faltaba.", kbDownloaded: (f) => `Descargado ${f}.`,
+      newBadge: (n) => `Insignia nueva: ${n}`,
+      pTickets: "Tickets", gStreak: "Racha de días", gBest: (n) => `Mejor: ${n} ${n === 1 ? "día" : "días"}`, gToday: "Practica hoy para mantenerla.", gTodayDone: "Hoy ya has practicado.",
+      gWeek: "Esta semana", gGoalLabel: "Objetivo semanal", gGoalHelp: "Tickets cerrados y ejercicios de correo respondidos, de lunes a domingo.", gGoalMet: "Objetivo cumplido. ¡Buena semana!",
+      gMail: "Ejercicios de correo correctos", gKb: "Artículos de la base de conocimiento", gOpen: "Abrir",
+      bTitle: "Insignias", bEarned: (d) => `Conseguida el ${d}`, bLocked: "Por conseguir", bCount: (n, m) => `${n} de ${m}`,
+      mScoreTitle: "Ejercicios de correo", colMessage: "Mensaje", mNotAnswered: "Sin responder",
+      res: { correct: "Correcto", partial: "Parcialmente correcto", wrong: "Incorrecto" },
+      mTitle: "Correo", mSub: "El buzón de la mesa de soporte. Peticiones, avisos y algún mensaje que no es lo que parece: decide qué hacer con cada uno.",
+      mInbox: "Bandeja de entrada", mPick: "Elige un mensaje para leerlo.", mFrom: "De", mTo: "Para", mCc: "CC", mDate: "Fecha",
+      mHeadersShow: "Ver cabeceras", mHeadersHide: "Ocultar cabeceras", mLinks: "Enlaces", mDirectory: "Directorio",
+      mDirNone: "Ninguna cuenta de contoso.local usa esta dirección.", mDirClaims: (n, a) => `Ninguna cuenta usa esta dirección. En el directorio, ${n} es ${a}.`,
+      mLinkTip: "Pasa el ratón o el foco por un enlace para ver adónde lleva de verdad.", mLinkTo: (u) => `Abre: ${u}`, mLinkBlocked: (u) => `Bloqueado en la simulación. Este enlace abre: ${u}`,
+      mWhat: "¿Qué haces?", mCreate: "Crear ticket desde este mensaje", mHandled: (id) => `Ticket ${id} creado desde este mensaje.`, mOpenTicket: (id) => `Abrir ${id}`,
+      mClues: "Las pistas", mProcedure: "Lo que toca hacer", mRetry: "Intentarlo de nuevo", mBack: "← Bandeja de entrada", mNext: "Siguiente mensaje",
       iOs: "Sistema operativo", iOwner: "Responsable", iPatched: "Último parcheo", iQueue: "Servidor de impresión", iJobs: "Trabajos en cola", iNone: "Sin tickets.", iInDir: "Ver en el directorio",
       land: {
         tag: "Simulador de soporte IT · gratis", title: "SysAdmin Desks",
@@ -377,18 +421,47 @@
     badge.textContent = String(n);
   }
 
+  /* ---------- v0.4: progress and knowledge, kept only in this browser (sd.activity, sd.kb, sd.mail, sd.mailRead, sd.badges, sd.goal) */
+  const G = window.SDGrowth;
+  const GROWTH_KEYS = ["activity", "kb", "mail", "mailRead", "badges", "goal"];
+  const activity = () => { const a = load("activity", []); return Array.isArray(a) ? a : []; };
+  const mailAnswers = () => load("mail", {}) || {};
+  const unread = () => { const r = load("mailRead", []); return G.MAIL.filter((m) => !(Array.isArray(r) && r.includes(m.id))).length; };
+  function markRead(id) {
+    const r = load("mailRead", []);
+    const list = Array.isArray(r) ? r : [];
+    if (!list.includes(id)) { list.push(id); save("mailRead", list); }
+  }
+  // a day with something done: a ticket closed fixed or a mail exercise answered; then any badge it unlocks (returns the new ones)
+  function logActivity(entry) {
+    const a = activity();
+    a.push(Object.assign({ day: G.dayOf() }, entry));
+    save("activity", a.slice(-1000));
+    return awardNow();
+  }
+  function awardNow() {
+    const f = G.facts({ activity: activity(), progress, desks: SCENARIOS.map((s) => s.id), kb: load("kb", {}), mail: mailAnswers(), today: G.dayOf() });
+    const r = G.award(load("badges", {}), f, G.dayOf());
+    if (r.fresh.length) save("badges", r.awards);
+    return r.fresh;
+  }
+  const badgeName = (id) => (G.badges({}, lang).find((b) => b.id === id) || {}).name || id;
+
   /* ---------- the signed-in shell: sidebar + view */
   function shell(active) {
     const app = document.getElementById("app");
     app.replaceChildren();
     const open = SCENARIOS.filter(isOpen).length;
+    const unreadN = unread();
     const item = (href, icon, text, key, extra) => el("a", { href, class: "side-item" + (active === key ? " on" : ""), id: "nav-" + key,
       "aria-current": active === key ? "page" : null }, el("span", { class: "side-ico", "aria-hidden": "true", text: icon }), el("span", { text }), extra || null);
     const nav = el("nav", { class: "side", "aria-label": L().navLabel },
       el("p", { class: "side-h", text: L().deskName }),
       item("#/", "▤", L().navTickets, "tickets", open ? el("span", { class: "badge", text: String(open) }) : null),
+      item("#/mail", "✉", L().navMail, "mail", unreadN ? el("span", { class: "badge", "aria-label": L().unreadN(unreadN), text: String(unreadN) }) : null),
       item("#/directory", "◫", L().navDirectory, "directory"),
       item("#/inventory", "▦", L().navInventory, "inventory"),
+      item("#/kb", "▧", L().navKb, "kb"),
       item("#/progress", "★", L().navProgress, "progress"),
       el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer" },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { text: L().navGuides })),
@@ -652,6 +725,14 @@
           save("progress", progress);
         }
         api("/api/progress", "PUT", { results: { [sc.id]: { points: v.points, stars: v.stars } } });
+        // v0.4: a complete note becomes (a new version of) the knowledge base article, and the close counts for the streak and the badges
+        if (G.qualifies(v.level, note)) {
+          const k = G.saveArticle(load("kb", {}), { deskId: sc.id, ticketId: sc.ticket.id, note: text, code: codeId, points: v.points, lang, day: G.dayOf() });
+          if (k.changed) save("kb", k.kb);
+          lv.result.kb = { saved: k.changed, version: k.entry.version };
+        }
+        lv.result.fresh = logActivity({ type: "ticket", id: sc.id, level: v.level, points: v.points, hints: sess.hints, slaOk: v.slaOk, codeOk: v.codeOk,
+          code: codeId, noteComplete: note.missing.length === 0 && note.words >= 15 });
         setWork(id, null);
         lv.draft = null;
         refreshBadge();
@@ -683,6 +764,10 @@
           el("span", { text: L().hintsUsed(sess.hints) })),
         list(L().obsT, v.reasons, "missing"),
         list(L().found, note.found, "found"),
+        lv.result.kb ? el("p", { class: "kb-saved" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "▧" }),
+          el("span", { text: (lv.result.kb.saved ? L().kbSaved(lv.result.kb.version) : L().kbSame) + " " }), el("a", { href: "#/kb/" + sc.id, text: L().kbOpenArticle }))
+          : el("p", { class: "kb-saved muted", text: L().kbNotSaved }),
+        (lv.result.fresh || []).map((b) => el("p", { class: "badge-new" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "★" }), el("span", { text: L().newBadge(badgeName(b)) }))),
         el("details", {}, el("summary", { text: L().sample }), el("blockquote", { text: t(sc.sampleNote, lang) })),
         el("details", {}, el("summary", { text: L().solution }), el("div", { class: "solution", text: sc.solution.join("\n") })),
         el("div", { class: "row" }, nextSc ? el("a", { class: "btn", href: "#/desk/" + nextSc.id, text: L().next }) : null,
@@ -730,9 +815,33 @@
     const done = SCENARIOS.filter((s) => progress[s.id]);
     const starsSum = done.reduce((a, s) => a + progress[s.id].stars, 0);
     const pointsSum = done.reduce((a, s) => a + progress[s.id].points, 0);
-    const tile = (n, label) => el("div", { class: "tile" }, el("p", { class: "tile-n", text: n }), el("p", { class: "tile-l", text: label }));
+    const tile = (n, label, ...extra) => el("div", { class: "tile" }, el("p", { class: "tile-n", text: n }), el("p", { class: "tile-l", text: label }), extra);
+    // v0.4: streak, weekly goal, mail score and knowledge base, from this browser
+    awardNow();
+    const today = G.dayOf();
+    const act = activity();
+    const st = G.streak(act, today);
+    const goal = G.goalValue(load("goal", G.GOAL.def));
+    const wk = G.week(act, today, goal);
+    const answers = mailAnswers();
+    const ms = G.mailScore(answers);
+    const kbN = Object.keys(load("kb", {}) || {}).length;
+    const goalSel = el("select", { class: "goal-sel", id: "goal-sel", onchange: (ev) => { save("goal", G.goalValue(ev.target.value)); progressPage(); } },
+      Array.from({ length: G.GOAL.max - G.GOAL.min + 1 }, (_, i) => G.GOAL.min + i).map((n) => el("option", { value: String(n), selected: n === goal, text: String(n) })));
+    const bar = el("progress", { class: "goal-bar", max: String(wk.target), value: String(Math.min(wk.done, wk.target)), "aria-label": `${L().gWeek}: ${wk.done} / ${wk.target}` });
+    const list = G.badges(load("badges", {}), lang);
+    const earned = list.filter((b) => b.earned).length;
+    const h2 = (text, extra) => el("div", { class: "p-h" }, el("h2", { text }), extra || null);
     view.append(
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().pTitle }), el("p", { class: "sub", text: L().pSub }))),
+      el("div", { class: "tiles growth" },
+        tile(String(st.current), L().gStreak, el("p", { class: "tile-x", text: L().gBest(st.best) + " · " + (st.today ? L().gTodayDone : L().gToday) })),
+        tile(`${wk.done}/${wk.target}`, L().gWeek, bar,
+          el("p", { class: "tile-x goal-row" }, el("label", { for: "goal-sel", text: L().gGoalLabel }), goalSel),
+          el("p", { class: "tile-x", text: wk.met ? L().gGoalMet : L().gGoalHelp })),
+        tile(`${ms.correct}/${ms.total}`, L().gMail, el("p", { class: "tile-x" }, el("a", { href: "#/mail", text: L().gOpen + " " + L().navMail.toLowerCase() }))),
+        tile(String(kbN), L().gKb, el("p", { class: "tile-x" }, el("a", { href: "#/kb", text: L().gOpen + " " + L().navKb.toLowerCase() })))),
+      h2(L().pTickets),
       el("div", { class: "tiles" }, tile(`${done.length}/${SCENARIOS.length}`, L().tClosed), tile(`${starsSum}/${SCENARIOS.length * 3}`, L().tStars),
         tile(String(pointsSum), L().tPoints), tile(done.length ? String(Math.round(pointsSum / done.length)) : "–", L().tAvg)),
       el("div", { class: "qwrap" }, el("table", { class: "qtable" },
@@ -746,7 +855,218 @@
             el("td", { "data-label": L().colBest }, p ? [stars(p.stars), " ", el("span", { text: String(p.points) })] : el("span", { class: "muted", text: L().notYet })),
             el("td", { "data-label": L().colDate, text: p ? p.date || "" : "" }),
             el("td", {}, el("a", { class: "link", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide })));
+        })))),
+      h2(L().bTitle, el("span", { class: "count-pill", text: L().bCount(earned, list.length) })),
+      el("ul", { class: "badges", id: "badges" }, list.map((b) => el("li", { class: "bdg" + (b.earned ? " on" : "") },
+        el("span", { class: "bdg-ico", "aria-hidden": "true", text: b.icon }),
+        el("span", { class: "bdg-txt" }, el("b", { text: b.name }), el("span", { class: "sub", text: b.rule }),
+          el("span", { class: "bdg-st", text: b.earned ? L().bEarned(b.day) : L().bLocked }))))),
+      h2(L().mScoreTitle, el("span", { class: "count-pill", text: `${ms.correct}/${ms.total}` })),
+      el("div", { class: "qwrap" }, el("table", { class: "qtable" },
+        el("thead", {}, el("tr", {}, [L().colMessage, L().colResult, L().mDate].map((x) => el("th", { scope: "col", text: x })))),
+        el("tbody", {}, G.MAIL.map((m) => {
+          const a = answers[m.id];
+          return el("tr", {},
+            el("td", { class: "subj", "data-label": L().colMessage }, el("a", { href: "#/mail/" + m.id, text: t(m.subject, lang) }), el("span", { class: "sub", text: t(m.from.name, lang) })),
+            el("td", { "data-label": L().colResult }, a ? pill(RES_PILL[a.result], L().res[a.result]) : el("span", { class: "muted", text: L().mNotAnswered })),
+            el("td", { "data-label": L().mDate, text: a ? a.day : "" }));
         })))));
+  }
+  const RES_PILL = { correct: "resolved", partial: "observations", wrong: "unresolved" };
+
+  /* ---------- v0.4: knowledge base (#/kb, #/kb/<deskId>) */
+  let kbQuery = "";
+  let kbTopic = "";
+  function kbArticles() {
+    const kb = load("kb", {}) || {};
+    return SCENARIOS.filter((sc) => kb[sc.id]).map((sc) => G.buildArticle(sc, kb[sc.id], lang, E.codeLabel));
+  }
+  function kbPage(id) {
+    const view = shell("kb");
+    const all = kbArticles();
+    if (id) return kbArticle(view, all.find((a) => a.deskId === id), id);
+    document.title = L().kbTitle + " · SysAdmin Desks";
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().kbTitle }), el("p", { class: "sub", text: L().kbSub }))));
+    if (!all.length) {
+      view.append(el("section", { class: "panel kb-empty" }, el("span", { class: "kb-empty-ico", "aria-hidden": "true", text: "▧" }), el("h2", { text: L().kbEmptyT }),
+        el("p", { text: L().kbEmpty }), el("a", { class: "btn", href: "#/", text: L().kbEmptyBtn })));
+      return;
+    }
+    const topics = Array.from(new Set(all.map((a) => a.topic)));
+    if (kbTopic && !topics.includes(kbTopic)) kbTopic = "";
+    const listBox = el("div");
+    const search = el("input", { type: "search", class: "dir-search kb-search", placeholder: L().kbSearch, "aria-label": L().kbSearch, value: kbQuery });
+    search.addEventListener("input", () => { kbQuery = search.value; renderList(); });
+    const chips = el("div", { class: "qtabs", role: "tablist" });
+    function renderChips() {
+      chips.replaceChildren(...[["", L().kbAll]].concat(topics.map((x) => [x, x])).map(([k, text]) => el("button", { type: "button", role: "tab", class: "qtab" + (kbTopic === k ? " on" : ""),
+        "aria-selected": kbTopic === k ? "true" : "false", onclick: () => { kbTopic = k; renderChips(); renderList(); } }, text + " ",
+        el("span", { class: "count", text: String(all.filter((a) => !k || a.topic === k).length) }))));
+    }
+    function renderList() {
+      const shown = G.searchKb(all, kbQuery, kbTopic);
+      put(listBox, el("p", { class: "sub kb-count", "aria-live": "polite", text: L().kbCount(shown.length) }),
+        shown.length ? el("div", { class: "qwrap" }, el("table", { class: "qtable" },
+          el("thead", {}, el("tr", {}, [L().colTicket, L().colSubject, L().colTopic, L().colVersion, L().colDate].map((x) => el("th", { scope: "col", text: x })))),
+          el("tbody", {}, shown.map((a) => el("tr", {},
+            el("td", { class: "mono", "data-label": L().colTicket, text: a.ticketId }),
+            el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/kb/" + a.deskId, text: a.title }), el("span", { class: "sub", text: a.symptom.subject })),
+            el("td", { "data-label": L().colTopic, text: a.topic }),
+            el("td", { class: "mono", "data-label": L().colVersion, text: "v" + a.version }),
+            el("td", { "data-label": L().colDate, text: a.day }))))))
+          : el("p", { class: "empty", text: L().kbNone }));
+    }
+    renderChips(); renderList();
+    view.append(el("div", { class: "kb-filters" }, search, chips), listBox);
+  }
+  function kbArticle(view, a, id) {
+    const sc = SCENARIOS.find((s) => s.id === id);
+    if (!a) {
+      document.title = L().kbTitle + " · SysAdmin Desks";
+      view.append(el("p", { class: "kb-back" }, el("a", { href: "#/kb", text: L().kbBack })),
+        el("section", { class: "panel kb-empty" }, el("h2", { text: L().kbNoArticle }), el("p", { text: L().kbEmpty }),
+          sc ? el("a", { class: "btn", href: "#/desk/" + sc.id, text: L().kbReplay }) : el("a", { class: "btn", href: "#/", text: L().kbEmptyBtn })));
+      return;
+    }
+    const Lb = a.labels;
+    document.title = `${a.title} · KB ${a.ticketId} v${a.version}`;
+    const msg = el("p", { class: "kb-msg", role: "status" });
+    function download() {
+      const name = G.fileName(a);
+      try {
+        const url = URL.createObjectURL(new Blob([G.toMarkdown(a)], { type: "text/markdown;charset=utf-8" }));
+        const link = el("a", { href: url, download: name, class: "kb-dl" });
+        document.body.append(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        msg.textContent = L().kbDownloaded(name);
+      } catch (e) { msg.textContent = L().errors.server; }
+    }
+    const meta = [[Lb.ticket, a.ticketId], [Lb.version, "v" + a.version], [Lb.date, a.day], [Lb.topic, a.topic], [Lb.code, a.code]];
+    view.append(
+      el("p", { class: "kb-back" }, el("a", { href: "#/kb", text: L().kbBack })),
+      el("article", { class: "panel kb-article", "aria-labelledby": "kb-h" },
+        el("p", { class: "kb-kicker", text: `${Lb.kb} · ${a.ticketId} · v${a.version}` }),
+        el("h1", { id: "kb-h", text: a.title }),
+        el("dl", { class: "fields kb-meta" }, meta.map(([k, v]) => [el("dt", { text: k }), el("dd", { text: v })])),
+        el("h2", { text: Lb.symptom }), el("p", { class: "strong", text: a.symptom.subject }), el("p", { text: a.symptom.body }),
+        el("h2", { text: Lb.environment }), el("dl", { class: "fields" }, a.environment.map((x) => [el("dt", { text: x.label }), el("dd", { text: x.value })])),
+        a.sections.map((sec) => [el("h2", { text: sec.label }), sec.text.length ? sec.text.map((x) => el("p", { class: "kb-own", text: x })) : el("p", { class: "muted", text: Lb.none })]),
+        el("h2", { text: Lb.guide }), el("p", {}, el("a", { href: a.guide, target: "_blank", rel: "noopener noreferrer", text: a.guide })),
+        a.history.length ? [el("h2", { text: Lb.history }), el("ul", {}, a.history.map((h) => el("li", { text: `v${h.version} · ${h.day}` })))] : null,
+        el("p", { class: "kb-foot", text: Lb.foot })),
+      el("div", { class: "row kb-tools" },
+        el("button", { type: "button", class: "btn", id: "kb-download", text: L().kbDownload, onclick: download }),
+        el("button", { type: "button", class: "btn ghost", id: "kb-print", text: L().kbPrint, onclick: () => window.print() }),
+        el("a", { class: "btn ghost", href: "#/desk/" + a.deskId, text: L().kbReplay, onclick: () => { delete live[a.deskId]; } })),
+      msg);
+  }
+
+  /* ---------- v0.4: internal mail (#/mail, #/mail/<id>): every message is an exercise */
+  const mailRetry = {};
+  let mailFresh = { id: null, list: [] };   // badges earned by the last answer, shown under it
+  function mailPage(id) {
+    const msg = id ? G.mail(id) : null;
+    if (msg) markRead(msg.id);
+    const view = shell("mail");
+    document.title = (msg ? t(msg.subject, lang) : L().mTitle) + " · SysAdmin Desks";
+    const answers = mailAnswers();
+    const name = (m) => t(m.from.name, lang);
+    const readList = load("mailRead", []) || [];
+    const list = el("nav", { class: "panel mail-list", "aria-label": L().mInbox }, el("h2", { text: L().mInbox }),
+      el("ul", {}, G.MAIL.map((m) => {
+        const a = answers[m.id];
+        const isNew = !readList.includes(m.id);
+        return el("li", {}, el("a", { href: "#/mail/" + m.id, class: "mail-item" + (msg && msg.id === m.id ? " on" : "") + (isNew ? " new" : ""), "aria-current": msg && msg.id === m.id ? "true" : null },
+          el("span", { class: "mail-row" }, el("b", { text: name(m) }), el("span", { class: "mono muted", text: m.time })),
+          el("span", { class: "mail-subj", text: t(m.subject, lang) }),
+          a ? pill(RES_PILL[a.result], L().res[a.result]) : isNew ? el("span", { class: "mail-dot", "aria-label": L().unreadN(1) }) : null));
+      })));
+    const pane = msg ? mailMessage(msg, answers[msg.id]) : el("section", { class: "panel mail-msg mail-none" }, el("p", { class: "empty", text: L().mPick }));
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().mTitle }), el("p", { class: "sub", text: L().mSub }))),
+      el("div", { class: "mail" + (msg ? " has-msg" : "") }, list, pane));
+  }
+  function mailMessage(m, answer) {
+    const sc = m.ticket ? SCENARIOS.find((s) => s.id === m.ticket) : null;
+    const dirUser = m.directory ? Wd.user(world, m.directory) : null;
+    const claims = m.claims ? Wd.user(world, m.claims) : null;
+    const fromAddr = m.from.address;
+    const h = m.headers;
+    const tone = (v) => (v === "pass" ? "ok" : v === "none" ? "warn" : "bad");
+    const dirText = dirUser ? `${dirUser.name} · ${Wd.t(dirUser.title, lang)} · ${dirUser.dept}`
+      : m.dirNote ? t(m.dirNote, lang) : claims ? L().mDirClaims(claims.name, claims.sam + "@contoso.com") : L().mDirNone;
+    const status = el("p", { class: "mail-status", "aria-live": "polite", text: m.links.length ? L().mLinkTip : "" });
+    const headers = el("div", { class: "mail-headers", id: "mail-h-" + m.id, hidden: true },
+      fieldsDl([
+        { label: "From", value: `${t(m.from.name, lang)} <${fromAddr}>` },
+        { label: "Reply-To", value: h.replyTo, tone: h.replyTo === fromAddr ? "" : "bad" },
+        { label: "Return-Path", value: `<${h.returnPath}>`, tone: G.domainOf(h.returnPath) === G.domainOf(fromAddr) ? "" : "bad" },
+        { label: "Received", value: h.received },
+        { label: "Received-SPF", value: h.spf, tone: tone(h.spf) },
+        { label: "DKIM", value: h.dkim, tone: tone(h.dkim) },
+        { label: "DMARC", value: h.dmarc, tone: tone(h.dmarc) },
+      ].concat(m.links.map((x) => ({ label: L().mLinks, value: `${x.text} → ${x.href}`, tone: x.text === x.href ? "" : "bad" })),
+        [{ label: L().mDirectory, value: dirText, tone: dirUser || m.dirNote ? "ok" : "bad" }])));
+    const toggle = el("button", { type: "button", class: "btn ghost sm", "aria-expanded": "false", "aria-controls": headers.id, text: L().mHeadersShow, onclick: () => {
+      headers.hidden = !headers.hidden;
+      toggle.setAttribute("aria-expanded", headers.hidden ? "false" : "true");
+      toggle.textContent = headers.hidden ? L().mHeadersShow : L().mHeadersHide;
+    } });
+    const linkEl = (i) => {
+      const x = m.links[i];
+      const show = () => { status.textContent = L().mLinkTo(x.href); };
+      return el("a", { href: "#/mail/" + m.id, class: "mail-link", title: x.href, onmouseenter: show, onfocus: show,
+        onclick: (ev) => { ev.preventDefault(); status.textContent = L().mLinkBlocked(x.href); } }, x.text);
+    };
+    const body = el("div", { class: "mail-body" }, t(m.body, lang).map((p) => el("p", {}, G.paragraph(p).map((part) => part.link != null ? linkEl(part.link) : part.text))));
+    const handled = answer && answer.answer === "ticket" && answer.result === "correct";
+    const showAnswer = answer && !mailRetry[m.id];
+    function choose(optId) {
+      const g = G.grade(m, optId);
+      if (!g) return;
+      const all = mailAnswers();
+      const prev = all[m.id];
+      all[m.id] = { answer: optId, result: g.result, day: G.dayOf(), tries: (prev ? prev.tries || 0 : 0) + 1 };
+      save("mail", all);
+      delete mailRetry[m.id];
+      mailFresh = { id: m.id, list: logActivity({ type: "mail", id: m.id, result: g.result }) };
+      mailPage(m.id);
+      const r = document.getElementById("mail-result");
+      if (r) { r.scrollIntoView({ behavior: "smooth", block: "nearest" }); r.focus({ preventScroll: true }); }
+    }
+    const opts = el("div", { class: "mail-opts", role: "group", "aria-labelledby": "mail-what" }, m.options.map((o) =>
+      el("button", { type: "button", class: "mail-opt" + (showAnswer && answer.answer === o.id ? " picked " + o.result : ""), disabled: Boolean(showAnswer),
+        "aria-pressed": showAnswer && answer.answer === o.id ? "true" : "false", onclick: () => choose(o.id) }, t(o.label, lang))));
+    let result = null;
+    if (showAnswer) {
+      const o = m.options.find((x) => x.id === answer.answer);
+      const next = G.MAIL[(G.MAIL.indexOf(m) + 1) % G.MAIL.length];
+      result = el("div", { class: "mail-result " + answer.result, id: "mail-result", tabindex: "-1" },
+        el("p", { class: "lvl" }, pill(RES_PILL[answer.result], L().res[answer.result])),
+        el("p", { text: t(o.why, lang) }),
+        (mailFresh.id === m.id ? mailFresh.list : []).map((b) => el("p", { class: "badge-new" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "★" }), el("span", { text: L().newBadge(badgeName(b)) }))),
+        el("h3", { text: L().mClues }), el("ul", { class: "mail-clues" }, t(m.clues, lang).map((c) => el("li", { text: c }))),
+        el("h3", { text: L().mProcedure }), el("p", { text: t(m.procedure, lang) }),
+        el("div", { class: "row" },
+          answer.result === "correct" && sc ? el("a", { class: "btn", href: "#/desk/" + sc.id, text: L().mOpenTicket(sc.ticket.id) }) : null,
+          answer.result === "correct" && m.link ? el("a", { class: "btn", href: m.link.href, text: t(m.link.label, lang) }) : null,
+          el("button", { type: "button", class: "btn ghost", text: L().mRetry, onclick: () => { mailRetry[m.id] = true; mailFresh = { id: null, list: [] }; mailPage(m.id); } }),
+          el("a", { class: "btn ghost", href: "#/mail/" + next.id, text: L().mNext })));
+    }
+    return el("article", { class: "panel mail-msg", "aria-labelledby": "mail-subj" },
+      el("p", { class: "mail-back" }, el("a", { href: "#/mail", text: L().mBack })),
+      el("h2", { class: "mail-title", id: "mail-subj", text: t(m.subject, lang) }),
+      el("dl", { class: "fields mail-meta" },
+        el("dt", { text: L().mFrom }), el("dd", { text: `${t(m.from.name, lang)} <${fromAddr}>` }),
+        el("dt", { text: L().mTo }), el("dd", { text: m.to }),
+        m.cc ? [el("dt", { text: L().mCc }), el("dd", { text: m.cc })] : null,
+        el("dt", { text: L().mDate }), el("dd", { text: m.day.split("-").reverse().join("/") + " " + m.time })),
+      el("div", { class: "row mail-tools" }, toggle,
+        sc && !handled ? el("button", { type: "button", class: "btn sm", id: "mail-create", text: L().mCreate, onclick: () => choose("ticket") }) : null,
+        handled && sc ? el("span", { class: "mail-handled" }, pill("resolved", L().mHandled(sc.ticket.id)), " ", el("a", { href: "#/desk/" + sc.id, text: L().mOpenTicket(sc.ticket.id) })) : null),
+      headers, body, status,
+      el("section", { class: "mail-ex" }, el("h3", { id: "mail-what", text: L().mWhat }), opts, result));
   }
 
   /* ---------- v0.3: the shared world (directory and inventory) and what the open tickets say about it */
@@ -1015,7 +1335,7 @@
   function tour(i) {
     closeTour(false);
     const steps = L().tour;
-    const targets = [null, "tour-queue", "tour-sla", "tour-row", "nav-progress", "nav-tour"];
+    const targets = [null, "tour-queue", "tour-sla", "tour-row", "nav-progress", "nav-mail", "nav-tour"];
     const step = steps[i];
     const target = targets[i] && document.getElementById(targets[i]);
     if (target) { target.classList.add("tour-focus"); target.scrollIntoView({ behavior: "smooth", block: "center" }); }
@@ -1244,6 +1564,7 @@
           const r = await api("/api/me", "DELETE");
           if (!r.ok) { msg.textContent = L().errors[r.data.error] || L().errors.server; return; }
           user = null; progress = {}; save("progress", progress); save("work", {});
+          GROWTH_KEYS.forEach((k) => { try { localStorage.removeItem("sd." + k); } catch (e) { /* ignore */ } });
           document.body.classList.remove("shell-on");
           chrome();
           app.replaceChildren(el("section", { class: "panel account" }, el("p", { text: L().accDeleted }), el("a", { class: "btn", href: "#/start", text: L().signIn })));
@@ -1278,6 +1599,8 @@
     let h = location.hash;
     if (user && (h === "#/start" || h === "#/register")) { history.replaceState(null, "", location.pathname + location.search + "#/"); h = "#/"; }
     const m = h.match(/^#\/desk\/([a-z0-9-]+)$/);
+    const km = h.match(/^#\/kb(?:\/([a-z0-9-]+))?$/);
+    const mm = h.match(/^#\/mail(?:\/([a-z0-9-]+))?$/);
     document.body.classList.toggle("landing-on", !user && (h === "" || h === "#/"));
     document.body.classList.toggle("shell-on", Boolean(user));
     if (m && user) desk(m[1]);
@@ -1288,6 +1611,8 @@
     else if (h === "#/progress" && user) progressPage();
     else if (h === "#/directory" && user) directory();
     else if (h === "#/inventory" && user) inventory();
+    else if (km && user) kbPage(km[1] || null);
+    else if (mm && user) mailPage(mm[1] || null);
     else if (user) queue();
     else landing();
     if (user) ticker = setInterval(tick, 1000);

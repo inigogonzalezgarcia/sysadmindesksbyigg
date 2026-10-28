@@ -20,7 +20,7 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 | `stages` | Investigate / fix / verify checklist: each stage is done when its `when` flags match |
 | `resolved` | Message shown when the goal is met `{en, es}` |
 | `hints` | Ordered hints `{en, es}`; each one used costs 10 points |
-| `note` | Elements a good work note must contain: `label {en, es}` and `any` (keywords in English or Spanish, accents ignored) |
+| `note` | Elements a good work note must contain: `label {en, es}`, `any` (keywords in English or Spanish, accents ignored) and `kb` (the knowledge base section it fills: `cause`, `fix`, `verify` or `followup`) |
 | `solution` | A reference path; the tests play it and expect the ticket to be resolved exactly at the last command |
 | `sampleNote` | An example work note `{en, es}`; the tests expect it to cover every note element |
 | `requester` | The person on the ticket: `name`, `team`, `location` (text or `{en, es}`), `user` and `device` |

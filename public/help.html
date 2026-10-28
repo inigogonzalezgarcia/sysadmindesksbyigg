@@ -26,7 +26,7 @@
 <article class="es" lang="es">
 <h1>Ayuda</h1>
 <nav class="doc-toc" aria-label="En esta página">
-  <a href="#empezar">Empezar</a> <a href="#ticket">Un ticket de principio a fin</a> <a href="#puntos">Cómo se puntúa</a> <a href="#herramientas">Las herramientas</a> <a href="#problemas">Si algo falla</a>
+  <a href="#empezar">Empezar</a> <a href="#ticket">Un ticket de principio a fin</a> <a href="#puntos">Cómo se puntúa</a> <a href="#herramientas">Las herramientas</a> <a href="#conocimiento">Base de conocimiento</a> <a href="#progreso">Progreso</a> <a href="#correo">Correo</a> <a href="#problemas">Si algo falla</a>
 </nav>
 
 <h2 id="empezar">Empezar</h2>
@@ -77,7 +77,23 @@
 <h3>Inventario</h3>
 <p>Servidores e impresoras de la oficina central, con su estado, que sigue a los tickets abiertos: una impresora con la cola atascada aparece con incidencia hasta que la arreglas.</p>
 <h3>Progreso y Mi cuenta</h3>
-<p><em>Progreso</em> muestra tu mejor resultado en cada ticket. En <em>Mi cuenta</em> ves tus datos, cierras la sesión o borras la cuenta.</p>
+<p><em>Progreso</em> muestra tu mejor resultado en cada ticket, tu racha, tu objetivo semanal y tus insignias (más abajo). En <em>Mi cuenta</em> ves tus datos, cierras la sesión o borras la cuenta.</p>
+
+<h2 id="conocimiento">Base de conocimiento</h2>
+<p>Cuando cierras un ticket arreglado (<strong>resuelto</strong> o <strong>resuelto con observaciones</strong>) y tu nota de trabajo incluye todos los elementos que pide, se guarda un <strong>artículo</strong> en tu base de conocimiento: el síntoma y el entorno salen del ticket, y la causa, la solución, la verificación y el seguimiento salen de tus propias frases, sin reescribirlas. Si vuelves a cerrar el ticket con una nota nueva, el artículo pasa a la siguiente versión (v1.0, v1.1…).</p>
+<p>Puedes buscar y filtrar por tema, <strong>descargar el artículo en Markdown</strong> o <strong>imprimirlo o guardarlo como PDF</strong> (al imprimir solo sale el artículo). Los artículos se guardan en tu navegador.</p>
+
+<h2 id="progreso">Progreso: racha, objetivo e insignias</h2>
+<ul>
+  <li><strong>Racha de días</strong>: días seguidos en los que has cerrado un ticket arreglado o respondido un ejercicio de correo. Si hoy aún no has practicado, la racha de ayer sigue viva hasta medianoche.</li>
+  <li><strong>Objetivo semanal</strong>: tickets distintos cerrados y ejercicios de correo respondidos de lunes a domingo. Lo eliges tú, de 1 a 7 (3 al empezar).</li>
+  <li><strong>Insignias</strong>: diez, cada una con su criterio a la vista (primer ticket, nota impecable sin pistas, cinco tickets dentro del SLA, siete días seguidos, phishing reportado…). Una vez conseguida, se queda con su fecha.</li>
+</ul>
+<p>Tu mejor resultado en cada ticket se guarda en tu cuenta; la racha, el objetivo, las insignias, los artículos y las respuestas de correo se guardan en este navegador.</p>
+
+<h2 id="correo">Correo</h2>
+<p>El buzón de la mesa de soporte tiene seis mensajes: peticiones de usuarios, un aviso de mantenimiento y algunos que no son lo que parecen. En cada uno, <em>Ver cabeceras</em> muestra From, Reply-To, Return-Path y los resultados de SPF, DKIM y DMARC, adónde llevan de verdad los enlaces y si el remitente está en el directorio. Pasa el ratón o el foco por un enlace para ver su destino real; en la simulación los enlaces no se abren.</p>
+<p>Elige qué harías: el resultado es <strong>correcto</strong>, <strong>parcialmente correcto</strong> o <strong>incorrecto</strong>, con las pistas y lo que toca hacer. Puedes repetirlo. Las peticiones que corresponden a un ticket tienen <em>Crear ticket desde este mensaje</em>, que te lleva a ese ticket. No todo es phishing: también hay mensajes urgentes que son legítimos.</p>
 
 <h2 id="problemas">Si algo falla</h2>
 <ul>
@@ -93,7 +109,7 @@
 <article class="en" lang="en" id="en">
 <h1>Help</h1>
 <nav class="doc-toc" aria-label="On this page">
-  <a href="#start">Getting started</a> <a href="#ticket-en">A ticket from start to finish</a> <a href="#scoring">How scoring works</a> <a href="#tools">The tools</a> <a href="#trouble">If something goes wrong</a>
+  <a href="#start">Getting started</a> <a href="#ticket-en">A ticket from start to finish</a> <a href="#scoring">How scoring works</a> <a href="#tools">The tools</a> <a href="#kb">Knowledge base</a> <a href="#progress">Progress</a> <a href="#mail">Mail</a> <a href="#trouble">If something goes wrong</a>
 </nav>
 
 <h2 id="start">Getting started</h2>
@@ -144,7 +160,23 @@
 <h3>Inventory</h3>
 <p>Head office servers and printers, with a status that follows the open tickets: a printer with a stuck queue shows an incident until you fix it.</p>
 <h3>Progress and My account</h3>
-<p><em>Progress</em> shows your best result on each ticket. In <em>My account</em> you see your details, sign out or delete the account.</p>
+<p><em>Progress</em> shows your best result on each ticket, your streak, your weekly goal and your badges (see below). In <em>My account</em> you see your details, sign out or delete the account.</p>
+
+<h2 id="kb">Knowledge base</h2>
+<p>When you close a ticket fixed (<strong>resolved</strong> or <strong>resolved with observations</strong>) and your work note covers every element it asks for, an <strong>article</strong> is saved in your knowledge base: the symptom and the environment come from the ticket, and the cause, fix, verification and follow-up are your own sentences, not reworded. Close the ticket again with a new note and the article moves to the next version (v1.0, v1.1…).</p>
+<p>You can search and filter by topic, <strong>download the article as Markdown</strong> or <strong>print it or save it as a PDF</strong> (only the article is printed). Articles are kept in your browser.</p>
+
+<h2 id="progress">Progress: streak, goal and badges</h2>
+<ul>
+  <li><strong>Day streak</strong>: days in a row on which you closed a ticket fixed or answered a mail exercise. If you have not practised yet today, yesterday's streak stays alive until midnight.</li>
+  <li><strong>Weekly goal</strong>: different tickets closed and mail exercises answered from Monday to Sunday. You choose it, from 1 to 7 (3 to start with).</li>
+  <li><strong>Badges</strong>: ten, each with its rule on show (first ticket, spotless note with no hints, five tickets within the SLA, seven days in a row, phishing reported…). Once earned, a badge keeps its date.</li>
+</ul>
+<p>Your best result on each ticket is saved in your account; the streak, goal, badges, articles and mail answers are kept in this browser.</p>
+
+<h2 id="mail">Mail</h2>
+<p>The service desk inbox has six messages: user requests, a maintenance notice and a few that are not what they seem. On each one, <em>Show headers</em> shows From, Reply-To, Return-Path and the SPF, DKIM and DMARC results, where the links really go and whether the sender is in the directory. Point at or focus a link to see its real target; links never open in the simulation.</p>
+<p>Choose what you would do: the result is <strong>correct</strong>, <strong>partly correct</strong> or <strong>wrong</strong>, with the clues and the right procedure. You can try again. Requests that match a ticket have <em>Create ticket from this message</em>, which takes you to that ticket. Not everything is phishing: some urgent messages are genuine.</p>
 
 <h2 id="trouble">If something goes wrong</h2>
 <ul>
