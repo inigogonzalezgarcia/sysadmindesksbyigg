@@ -1,10 +1,10 @@
 {
   "name": "sysadmindesksbyigg",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "description": "SysAdmin Desks by IGG: practise IT support tickets in a simulated console, with accounts, a ticket queue and SLA.",
   "scripts": {
-    "test": "node --test --no-warnings tests/scenarios.test.js tests/ticket.test.js tests/world.test.js tests/pages.test.js tests/auth.test.mjs",
+    "test": "node --test --no-warnings tests/scenarios.test.js tests/ticket.test.js tests/world.test.js tests/growth.test.js tests/pages.test.js tests/auth.test.mjs",
     "dev": "node --no-warnings scripts/dev-server.mjs",
     "serve": "python3 -m http.server 8080 -d public"
   },

@@ -24,7 +24,7 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 - **Ticket queue:** the desks are tickets in a table with ID, requester, priority, SLA, status and assignee; Open and Closed tabs.
 - **Ticket page:** press *Assign to me* and the SLA starts (20 min for P1, 30 for P2, 45 for P3) and the console unlocks. Cards for the requester and for the account, device, queue or mailbox update as you work ("Locked" turns into "Unlocked", the free space grows), and a few actions can be run from the card with the same effect as the command.
 - **Closing:** choose a resolution code and write the work note. The result has three levels: *Resolved*, *Resolved with observations* (note, code, SLA or an earlier early close) or *Not resolved* (what is still to do; the ticket stays open).
-- **Progress page** with your best result per ticket, and a 6-step **welcome tour** you can skip or take again from the sidebar.
+- **Progress page** with your best result per ticket, and a 7-step **welcome tour** you can skip or take again from the sidebar.
 
 ## The tools
 
@@ -56,20 +56,29 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 - **Analytics, opt-in:** [assets/consent.js](public/assets/consent.js) shows a notice (Reject / Settings / Accept analytics) and loads Google Analytics 4 only after the visitor accepts, with consent mode denied by default, Google signals and ad personalisation off, and one page view per route (`#/...`). Rejecting loads nothing from Google and removes any `_ga` cookie. The choice is kept in `localStorage` (`sd.consent`) for 6 months, and *Cookie settings* in every footer and in *My account* reopens it.
 - `GA_ID` at the top of `consent.js` holds the measurement ID; while it is empty there is no notice and no analytics.
 
+## Progress and knowledge (v0.4)
+
+Everything here is kept only in the browser (`localStorage`, keys `sd.kb`, `sd.activity`, `sd.mail`, `sd.mailRead`, `sd.badges`, `sd.goal`); the account backend is unchanged.
+
+- **Knowledge base** (`#/kb`, `#/kb/<desk>`): closing a ticket fixed with a note that covers every element saves an article for that desk: title, symptom and environment from the ticket, and the cause, fix, verification and follow-up taken from your own sentences (sorted by the note elements, never reworded), with the resolution code, date, ticket, version and the related guide. A newer approved note is a new version (v1.0, v1.1…). Search and filter by topic, **Download Markdown** (`kb-<ticket>-v<version>.md`) and **Print or save as PDF** (a print stylesheet that shows only the article).
+- **Progress page:** a day streak (current and best, local days), a weekly goal (different tickets and mail exercises in the ISO week, target 1-7, default 3) and ten **badges** with their rule and the day they were earned, plus the mail score.
+- **Mail** (`#/mail`, `#/mail/<id>`, unread count in the sidebar): six messages with *Show headers* (From, Reply-To, Return-Path, Received, SPF/DKIM/DMARC, real link targets, directory check). Two user requests become tickets (*Create ticket from this message*), one executive phishing from a look-alike domain, one service desk impersonation asking for an MFA and password reset by email, one maintenance notice and one urgent internal request that passes every check. Each answer is graded correct, partly correct or wrong, with the clues and the right procedure, and can be retried.
+- The logic and the mail data are in [assets/growth.js](public/assets/growth.js) (no DOM), tested in `tests/growth.test.js`; [docs/growth-format.md](docs/growth-format.md) describes the data.
+
 ## Help pages
 
 Static pages next to the app, in both languages (`assets/doc.js` shows the one picked in the simulator and adds the switch), with the same strict CSP:
 
 - [about.html](public/about.html): what SysAdmin Desks is, who it is for, how a ticket is checked, and what it is not (not work experience, not a real system, not affiliated with any vendor or certification body);
 - [help.html](public/help.html): getting started, a ticket from start to finish, how scoring works, each tool, and what to do if something goes wrong;
-- [faq.html](public/faq.html): twelve short questions and answers;
+- [faq.html](public/faq.html): fifteen short questions and answers;
 - [terms.html](public/terms.html) and [privacy.html](public/privacy.html).
 
 Every page, the app footer, the sidebar and *My account* link to them and to **Report a problem**, which opens the contact form on my website with the subject filled in. `tests/pages.test.js` checks both languages, the CSP, that there is no inline code or email address, and that every local link exists.
 
 ## How it is built
 
-- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/scenarios.js` (the desks as data), `assets/world.js` (the directory, its PowerShell and the inventory, no DOM) and `assets/style.css`.
+- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/scenarios.js` (the desks as data), `assets/world.js` (the directory, its PowerShell and the inventory, no DOM), `assets/growth.js` (knowledge base, streak, goal, badges and mail, no DOM) and `assets/style.css`.
 - No framework, no build step, no external requests. A strict Content Security Policy (no inline scripts or styles) in the page and in `public/_headers`, and no HTML strings: every text is set with `textContent`.
 - The engine and the scenarios are shared with the Node tests: `npm test` checks that every desk is complete in both languages, that the reference solution resolves it exactly at its last step, that the example note scores 100, and that the wrong paths do not resolve it.
 - [docs/scenario-format.md](docs/scenario-format.md) explains how to write a new desk.
@@ -77,7 +86,7 @@ Every page, the app footer, the sidebar and *My account* link to them and to **R
 ## Run it locally
 
 ```bash
-npm test                 # 28 tests: the desks, the ticket page, the directory and desktops, and the accounts against an in-memory database (Node 22+)
+npm test                 # 45 tests: the desks, the ticket page, the directory and desktops, progress and knowledge, the pages, and the accounts against an in-memory database (Node 22+)
 npm run dev              # http://localhost:8788 with accounts, in-memory database
 npm run serve            # http://localhost:8080, static only (no accounts)
 ```
@@ -92,11 +101,11 @@ The live site is deployed by Cloudflare Pages on every push to `main`. To deploy
 4. Accounts: create a D1 database (Workers & Pages → D1) and bind it to the Pages project as `DB` (Settings → Bindings → D1 database), then redeploy.
 5. Google (optional): create an OAuth client of type "Web application" in Google Cloud with the redirect URI `https://<your-site>/api/auth/google/callback`. In the Pages project, add `GOOGLE_CLIENT_ID` as a variable and `GOOGLE_CLIENT_SECRET` as a secret (Settings → Variables and Secrets). Without them, the Google button says it is not ready.
 
-Ideas for later: password reset by email, a personal knowledge base from your work notes, and more desks per guide topic.
+Ideas for later: password reset by email, and more desks per guide topic.
 
 ## Status
 
-Version 0.3.1: landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), and the about, help, FAQ, terms and privacy pages. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
+Version 0.4.0: landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), a personal knowledge base, streak, weekly goal, badges and mail exercises, and the about, help, FAQ, terms and privacy pages. More desks are coming. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 
