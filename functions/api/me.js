@@ -24,6 +24,7 @@ export async function onRequestDelete({ request, env }) {
   await DB.batch([
     DB.prepare("DELETE FROM progress WHERE user_id = ?").bind(user.id),
     DB.prepare("DELETE FROM sessions WHERE user_id = ?").bind(user.id),
+    DB.prepare("DELETE FROM resets WHERE user_id = ?").bind(user.id),
     DB.prepare("DELETE FROM users WHERE id = ?").bind(user.id),
   ]);
   return json({ ok: true }, 200, { "set-cookie": cookie(SESSION_COOKIE, "", { maxAge: 0 }) });

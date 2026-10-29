@@ -2,6 +2,7 @@
 (function () {
   "use strict";
   const E = window.SDEngine;
+  const W = window.SDWorkflow;
   const SCENARIOS = window.SDScenarios;
   const t = E.t;
 
@@ -27,14 +28,22 @@
       consentA: "I have read the ", consentLink: "privacy policy", consentB: " and accept the ", consentTerms: "terms of use", consentC: ".",
       btnLogin: "Clock in", btnRegister: "Create my account", or: "or", google: "Continue with Google",
       googleNote: "If you continue with Google you accept the terms of use and the privacy policy.",
-      forgot: "Forgot your password?", forgotText: "Use Continue with Google if your account uses that email, or write to me from the contact form on my website and I will help you get back in.",
+      forgot: "Forgot your password?", forgotTitle: "Reset your password", forgotText: "Write the email of your account and we will send you a link to choose a new password.",
+      forgotSend: "Send me the link", forgotBack: "← Back to sign in",
+      forgotSent: "If there is an account with that email, we have sent you a link to choose a new password. It expires in 30 minutes. Check the spam folder too.",
+      forgotOff: "Password reset by email is not available yet. Use Continue with Google if your account uses that email, or write to me from the contact form and I will help you get back in.",
       contact: "Contact form",
+      resetTitle: "Choose a new password", resetText: "Your new password signs you out on every device. Then sign in with it.",
+      fNewPassword: "New password", fConfirm: "Repeat the new password", resetBtn: "Save the new password", resetMismatch: "The two passwords do not match.",
+      resetDone: "Your password has been changed and every session has been closed. Sign in with the new password.", resetNoToken: "Open the link from the email again, or ask for a new one.",
+      resetAgain: "Ask for a new link",
       errors: { credentials: "Wrong email or password.", exists: "There is already an account with that email: sign in instead.",
         name: "Write a name of 2 to 40 characters.", email: "Check the email address.", password: "The password needs 8 characters or more, a capital letter and a number.",
         consent: "Accept the privacy policy and the terms of use to create the account.", locked: "Too many attempts. Wait 15 minutes and try again.",
         google_only: "This account signs in with Google: use Continue with Google.", unavailable: "Accounts are not available right now. Try again in a few minutes.",
         server: "Something went wrong. Try again in a minute.", google_off: "Sign-in with Google is not ready yet. Use your email and password.",
-        google_error: "Sign-in with Google did not finish. Try again.", network: "No connection to the server.", origin: "Reload the page and try again.", bad_request: "Reload the page and try again.", need_login: "Sign in or create a free account to open this desk." },
+        google_error: "Sign-in with Google did not finish. Try again.", network: "No connection to the server.", origin: "Reload the page and try again.", bad_request: "Reload the page and try again.", need_login: "Sign in or create a free account to open this desk.",
+        reset_invalid: "This link is not valid or has expired. Ask for a new one.", reset_unavailable: "Password reset by email is not available yet." },
       signIn: "Sign in", account: "My account", signOut: "Sign out", hello: (n) => `Hi, ${n}. Pick a ticket to start your shift.`,
       accTitle: "My account", accSynced: "Your progress is saved in your account.", accGoogle: "Signs in with Google", accPassword: "Signs in with email and password",
       accDelete: "Delete my account", accDeleteText: "This deletes your account, your sessions and your saved progress. It cannot be undone.",
@@ -46,9 +55,19 @@
       qTitle: "Ticket queue", shift: "Morning shift · on duty", tabOpen: "Open", tabClosed: "Closed",
       colTicket: "Ticket", colSubject: "Subject", colRequester: "Requester", colPriority: "Priority", colStatus: "Status", colAssignee: "Assigned to",
       colResult: "Result", colPoints: "Score", colDate: "Closed on", colTopic: "Topic", colBest: "Best result",
-      status: { new: "New", progress: "In progress", closed: "Closed" }, unassigned: "Unassigned", replay: "Replay",
+      status: { new: "New", progress: "In progress", "pending-user": "Pending user", "pending-vendor": "Pending vendor", closed: "Closed" }, unassigned: "Unassigned", replay: "Replay",
       lvl: { resolved: "Resolved", observations: "Resolved with observations", unresolved: "Not resolved" },
       slaTarget: (m) => `${m} min`, slaLeft: (m) => `${m} left`, slaOver: (m) => `${m} min over`,
+      slaPausedShort: "Paused", slaPaused: (l, p) => `Paused · ${l} · on hold ${p}`,
+      pendBtn: "Set pending", unassignBtn: "Unassign", resumeBtn: "Resume",
+      pendTitle: "Put the ticket on hold", pendText: "Use it when you are waiting for the user or a vendor. The SLA is paused until you resume, and the reason goes into the activity.",
+      pendState: "State", pendReason: "Reason", pendPh: "Waiting for the user to restart the laptop after the update",
+      pendCount: (n, m) => n >= m ? `${n} characters` : `${n} of ${m} characters minimum`, pendOk: "Set pending", pendNeedReason: (m) => `Write a reason of at least ${m} characters.`,
+      pausedTitle: (st) => `${st}: the SLA is paused`, pausedText: "The console and the actions are read-only while the ticket waits. Resume it to keep working.",
+      unassignedTitle: "Ticket unassigned", unassignedText: (l) => `The SLA keeps running (${l}). Assign it to yourself again to carry on where you left off.`,
+      resolvePending: "A ticket on hold cannot be resolved. Resume it first.",
+      tlTitle: "Activity", tlEmpty: "No changes yet: assign the ticket to start.", pausedUsed: (m) => `SLA paused: ${m} (not counted)`,
+      dPendingTicket: (n, id) => `${n}'s account is part of ticket ${id}, which is on hold. Resume the ticket to work on it.`,
       emptyOpen: "No open tickets. Good shift! You can replay any of them from Closed.", emptyClosed: "You have not closed any ticket yet.",
       console: "Console", assign: "Assign to me", assignedTo: "Assigned to",
       lockedTitle: "Assign the ticket to yourself to start", lockedText: (m, p) => `The SLA starts when you take it: ${m} minutes for a ${p}.`,
@@ -64,7 +83,7 @@
       tour: [
         ["Welcome to the Contoso help desk", "You are the technician on the morning shift. In two minutes: where the tickets are, how the SLA works and how a ticket is closed."],
         ["Your ticket queue", "Every row is a ticket from a user of the fictional company, with its priority and status. Open shows what is waiting; Closed, what you have solved and how."],
-        ["The SLA", "The clock starts when you assign a ticket to yourself: 20 minutes for a P1, 30 for a P2, 45 for a P3. Closing in time counts."],
+        ["The SLA", "The clock starts when you assign a ticket to yourself: 20 minutes for a P1, 30 for a P2, 45 for a P3. Closing in time counts. Waiting for the user or a vendor? Set the ticket to Pending with a reason and the SLA pauses until you resume it."],
         ["Open a ticket", "On the ticket page, press Assign to me and the console comes alive. Investigate, fix the cause, prove it works, then choose the resolution code and write the note."],
         ["Your progress", "Points and stars for your best result on each ticket, saved in your account, plus your day streak, your weekly goal and your badges."],
         ["Mail and knowledge base", "Mail has messages to triage: requests, notices and the odd phishing email. Every ticket you close with a complete note becomes an article in your knowledge base."],
@@ -164,14 +183,22 @@
       consentA: "He leído la ", consentLink: "política de privacidad", consentB: " y acepto los ", consentTerms: "términos de uso", consentC: ".",
       btnLogin: "Fichar entrada", btnRegister: "Crear mi cuenta", or: "o", google: "Continuar con Google",
       googleNote: "Si continúas con Google aceptas los términos de uso y la política de privacidad.",
-      forgot: "¿Has olvidado la contraseña?", forgotText: "Usa Continuar con Google si tu cuenta usa ese email, o escríbeme desde el formulario de contacto de mi web y te ayudo a recuperar el acceso.",
+      forgot: "¿Has olvidado la contraseña?", forgotTitle: "Restablecer la contraseña", forgotText: "Escribe el email de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.",
+      forgotSend: "Enviarme el enlace", forgotBack: "← Volver a entrar",
+      forgotSent: "Si existe una cuenta con ese email, te hemos enviado un enlace para elegir una contraseña nueva. Caduca en 30 minutos. Mira también en la carpeta de spam.",
+      forgotOff: "El restablecimiento por email todavía no está disponible. Usa Continuar con Google si tu cuenta usa ese email, o escríbeme desde el formulario de contacto y te ayudo a recuperar el acceso.",
       contact: "Formulario de contacto",
+      resetTitle: "Elige una contraseña nueva", resetText: "Al guardarla se cierra tu sesión en todos los equipos. Después entra con ella.",
+      fNewPassword: "Contraseña nueva", fConfirm: "Repite la contraseña nueva", resetBtn: "Guardar la contraseña nueva", resetMismatch: "Las dos contraseñas no coinciden.",
+      resetDone: "Tu contraseña se ha cambiado y se han cerrado todas las sesiones. Entra con la contraseña nueva.", resetNoToken: "Vuelve a abrir el enlace del email o pide uno nuevo.",
+      resetAgain: "Pedir un enlace nuevo",
       errors: { credentials: "Email o contraseña incorrectos.", exists: "Ya hay una cuenta con ese email: entra con ella.",
         name: "Escribe un nombre de 2 a 40 caracteres.", email: "Revisa el email.", password: "La contraseña necesita 8 caracteres o más, una mayúscula y un número.",
         consent: "Acepta la política de privacidad y los términos de uso para crear la cuenta.", locked: "Demasiados intentos. Espera 15 minutos y vuelve a probar.",
         google_only: "Esta cuenta entra con Google: usa Continuar con Google.", unavailable: "Las cuentas no están disponibles ahora mismo. Prueba de nuevo en unos minutos.",
         server: "Algo ha fallado. Prueba de nuevo en un minuto.", google_off: "El acceso con Google aún no está listo. Usa tu email y contraseña.",
-        google_error: "El acceso con Google no terminó. Prueba otra vez.", network: "Sin conexión con el servidor.", origin: "Recarga la página y prueba otra vez.", bad_request: "Recarga la página y prueba otra vez.", need_login: "Entra o crea una cuenta gratis para abrir este puesto." },
+        google_error: "El acceso con Google no terminó. Prueba otra vez.", network: "Sin conexión con el servidor.", origin: "Recarga la página y prueba otra vez.", bad_request: "Recarga la página y prueba otra vez.", need_login: "Entra o crea una cuenta gratis para abrir este puesto.",
+        reset_invalid: "El enlace no es válido o ha caducado. Pide uno nuevo.", reset_unavailable: "El restablecimiento por email todavía no está disponible." },
       signIn: "Entrar", account: "Mi cuenta", signOut: "Salir", hello: (n) => `Hola, ${n}. Elige un ticket para empezar el turno.`,
       accTitle: "Mi cuenta", accSynced: "Tu progreso se guarda en tu cuenta.", accGoogle: "Entra con Google", accPassword: "Entra con email y contraseña",
       accDelete: "Borrar mi cuenta", accDeleteText: "Se borran tu cuenta, tus sesiones y tu progreso guardado. No se puede deshacer.",
@@ -183,9 +210,19 @@
       qTitle: "Cola de tickets", shift: "Turno de mañana · de guardia", tabOpen: "Abiertos", tabClosed: "Cerrados",
       colTicket: "Ticket", colSubject: "Asunto", colRequester: "Solicitante", colPriority: "Prioridad", colStatus: "Estado", colAssignee: "Asignado a",
       colResult: "Resultado", colPoints: "Puntuación", colDate: "Cerrado el", colTopic: "Tema", colBest: "Mejor resultado",
-      status: { new: "Nuevo", progress: "En curso", closed: "Cerrado" }, unassigned: "Sin asignar", replay: "Repetir",
+      status: { new: "Nuevo", progress: "En curso", "pending-user": "Pendiente del usuario", "pending-vendor": "Pendiente del proveedor", closed: "Cerrado" }, unassigned: "Sin asignar", replay: "Repetir",
       lvl: { resolved: "Resuelto", observations: "Resuelto con observaciones", unresolved: "No resuelto" },
       slaTarget: (m) => `${m} min`, slaLeft: (m) => `quedan ${m}`, slaOver: (m) => `vencido hace ${m} min`,
+      slaPausedShort: "En pausa", slaPaused: (l, p) => `En pausa · ${l} · en espera ${p}`,
+      pendBtn: "Poner en espera", unassignBtn: "Desasignarme", resumeBtn: "Reanudar",
+      pendTitle: "Poner el ticket en espera", pendText: "Úsalo cuando esperas al usuario o a un proveedor. El SLA se pausa hasta que lo reanudes, y el motivo queda en la actividad.",
+      pendState: "Estado", pendReason: "Motivo", pendPh: "Esperando a que el usuario reinicie el portátil tras la actualización",
+      pendCount: (n, m) => n >= m ? `${n} caracteres` : `${n} de ${m} caracteres como mínimo`, pendOk: "Poner en espera", pendNeedReason: (m) => `Escribe un motivo de al menos ${m} caracteres.`,
+      pausedTitle: (st) => `${st}: el SLA está en pausa`, pausedText: "La consola y las acciones son de solo lectura mientras el ticket espera. Reanúdalo para seguir trabajando.",
+      unassignedTitle: "Ticket sin asignar", unassignedText: (l) => `El SLA sigue corriendo (${l}). Vuelve a asignártelo para seguir donde lo dejaste.`,
+      resolvePending: "Un ticket en espera no se puede resolver. Reanúdalo primero.",
+      tlTitle: "Actividad", tlEmpty: "Aún no hay cambios: asígnate el ticket para empezar.", pausedUsed: (m) => `SLA en pausa: ${m} (no cuenta)`,
+      dPendingTicket: (n, id) => `La cuenta de ${n} forma parte del ticket ${id}, que está en espera. Reanuda el ticket para trabajar en ella.`,
       emptyOpen: "No quedan tickets abiertos. ¡Buen turno! Puedes repetir cualquiera desde Cerrados.", emptyClosed: "Aún no has cerrado ningún ticket.",
       console: "Consola", assign: "Asignarme", assignedTo: "Asignado a",
       lockedTitle: "Asígnate el ticket para empezar", lockedText: (m, p) => `El SLA empieza a contar cuando lo coges: ${m} minutos para una ${p}.`,
@@ -201,7 +238,7 @@
       tour: [
         ["Bienvenido a la mesa de soporte de Contoso", "Eres el técnico del turno de mañana. En dos minutos: dónde están los tickets, cómo funciona el SLA y cómo se cierra un ticket."],
         ["Tu cola de tickets", "Cada fila es un ticket de un usuario de la empresa ficticia, con su prioridad y su estado. En Abiertos ves lo que espera; en Cerrados, lo que has resuelto y cómo."],
-        ["El SLA", "El reloj empieza cuando te asignas un ticket: 20 minutos para una P1, 30 para una P2 y 45 para una P3. Cerrar a tiempo cuenta."],
+        ["El SLA", "El reloj empieza cuando te asignas un ticket: 20 minutos para una P1, 30 para una P2 y 45 para una P3. Cerrar a tiempo cuenta. ¿Esperas al usuario o a un proveedor? Pon el ticket en Pendiente con un motivo y el SLA se pausa hasta que lo reanudes."],
         ["Abre un ticket", "En la ficha, pulsa Asignarme y la consola se activa. Investiga, arregla la causa, demuestra que funciona y después elige el código de resolución y escribe la nota."],
         ["Tu progreso", "Puntos y estrellas de tu mejor resultado en cada ticket, guardados en tu cuenta, y además tu racha de días, tu objetivo semanal y tus insignias."],
         ["Correo y base de conocimiento", "En Correo hay mensajes que clasificar: peticiones, avisos y algún phishing. Cada ticket que cierras con una nota completa se convierte en un artículo de tu base de conocimiento."],
@@ -383,19 +420,28 @@
     if (!live[id]) live[id] = { sess: E.createSession(sc, lang), log: [], hist: [], pos: 0, closed: false, result: null };
     return live[id];
   }
+  // v0.6: the workflow record of a ticket (state, SLA start, pauses and activity), or null when nobody has assigned it yet
+  function rec(id) { return W.normalise(work()[id]); }
+  // SLA minutes used: since the first assignment, without the time spent pending
   function minutesOn(id) {
-    const w = work()[id];
-    return w ? Math.max(0, (Date.now() - w.startedAt) / 60000) : 0;
+    const r = rec(id);
+    return r ? W.slaMinutesUsed(r, Date.now()) : 0;
+  }
+  function mmss(min) {
+    const s = Math.max(0, Math.floor(min * 60));
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
   }
   // {text, tone} for the SLA of a ticket; long: mm:ss for the ticket page
   function slaInfo(sc, long) {
     const limit = E.sla(sc);
-    const w = work()[sc.id];
-    if (!w) return { text: L().slaTarget(limit), tone: "" };
-    const left = limit - minutesOn(sc.id);
-    if (left < 0) return { text: L().slaOver(Math.ceil(-left)), tone: "bad" };
-    const mmss = Math.floor(left) + ":" + String(Math.floor((left % 1) * 60)).padStart(2, "0");
-    return { text: L().slaLeft(long ? mmss : Math.ceil(left) + " min"), tone: left < limit / 4 ? "warn" : "ok" };
+    const r = rec(sc.id);
+    if (!r) return { text: L().slaTarget(limit), tone: "" };
+    const now = Date.now();
+    const left = W.slaRemaining(r, limit, now);
+    const leftText = left < 0 ? L().slaOver(Math.ceil(-left)) : L().slaLeft(long ? mmss(left) : Math.ceil(left) + " min");
+    if (W.isPaused(r)) return { text: long ? L().slaPaused(leftText, mmss(W.pausedMs(r, now) / 60000)) : L().slaPausedShort, tone: "paused" };
+    if (left < 0) return { text: leftText, tone: "bad" };
+    return { text: leftText, tone: left < limit / 4 ? "warn" : "ok" };
   }
   function tick() {
     document.querySelectorAll("[data-sla]").forEach((n) => {
@@ -407,7 +453,9 @@
     });
   }
   function isOpen(sc) { return !progress[sc.id] || Boolean(work()[sc.id]); }
-  function statusOf(sc) { return work()[sc.id] ? "progress" : progress[sc.id] ? "closed" : "new"; }
+  function statusOf(sc) { const r = rec(sc.id); return r ? r.status : progress[sc.id] ? "closed" : "new"; }
+  // assigned to me: in progress or pending (not "new" after Unassign)
+  function mine(id) { const r = rec(id); return Boolean(r && r.status !== "new" && r.status !== "closed"); }
   function pill(cls, text) { return el("span", { class: "pill " + cls, text }); }
   function prioPill(p) { return el("span", { class: "prio " + p, text: p }); }
 
@@ -493,7 +541,7 @@
         el("tbody", {}, open.map((sc, i) => {
           const st = statusOf(sc);
           const sla = slaInfo(sc, false);
-          return el("tr", { id: i === 0 ? "tour-row" : null, class: st === "progress" ? "active" : "" },
+          return el("tr", { id: i === 0 ? "tour-row" : null, class: (st === "progress" ? "active" : W.isPending(st) ? "active paused" : "") || null },
             el("td", { class: "mono", "data-label": L().colTicket, text: sc.ticket.id }),
             el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/desk/" + sc.id, text: t(sc.title, lang) }),
               el("span", { class: "sub" }, `${t(sc.topic, lang)} · ${L().level} ${sc.level}`)),
@@ -501,7 +549,7 @@
             el("td", { "data-label": L().colPriority }, prioPill(sc.ticket.priority)),
             el("td", { "data-label": "SLA" }, el("span", { class: "sla " + sla.tone, "data-sla": sc.id, text: sla.text })),
             el("td", { "data-label": L().colStatus }, pill(st, L().status[st])),
-            el("td", { "data-label": L().colAssignee }, w[sc.id] && user ? el("span", { class: "assignee" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
+            el("td", { "data-label": L().colAssignee }, mine(sc.id) && user ? el("span", { class: "assignee" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
               : el("span", { class: "muted", text: L().unassigned })));
         }))) : el("p", { class: "empty", text: L().emptyOpen });
     } else {
@@ -535,7 +583,8 @@
     const sess = lv.sess;
     sess.lang = lang;   // the narration and the cards follow the language switch
     document.title = sc.ticket.id + " · " + t(sc.title, lang) + " · SysAdmin Desks";
-    const assigned = () => Boolean(work()[id]);
+    const assigned = () => mine(id);                // in progress or pending, assigned to me
+    const working = () => W.canWork(rec(id));       // in progress: the console and the actions work
 
     const out = el("div", { class: "out", "aria-live": "polite" });
     const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": L().console });
@@ -550,7 +599,7 @@
       term.hidden = v !== "console";
       pc.hidden = v !== "desk";
       renderTabs();
-      if (v === "desk") renderDesk(); else if (assigned() && !lv.closed) input.focus();
+      if (v === "desk") renderDesk(); else if (working() && !lv.closed) input.focus();
     }
     function renderTabs() {
       if (!hasDesk) return;
@@ -562,7 +611,7 @@
       lv.deskMsg = { app: appId, lines: r.lines.filter((l) => ["say", "err", "ok", "event"].includes(l.kind)) };
     }
     function openApp(id) {
-      if (!assigned() || lv.closed) return;
+      if (!working() || lv.closed) return;
       lv.app = id;
       lv.deskMsg = null;
       const r = id === "log" ? null : E.deskOpen(sess, id);
@@ -573,6 +622,7 @@
       } else renderDesk();
     }
     function deskAction(appId, x) {
+      if (!working() || lv.closed) return;
       const r = E.deskAct(sess, appId, x.id);
       if (!r) return;
       print(`${L().deskRan} ${x.label} → ${r.command}`, "dim");
@@ -604,7 +654,7 @@
             app.page ? el("div", { class: "pc-page" }, el("div", { class: "pc-url", text: app.page.url }),
               el("div", { class: "pc-site " + app.page.tone }, el("h3", { text: app.page.title }), el("p", { text: app.page.text }))) : null,
             app.fields.length ? fieldsDl(app.fields) : null,
-            acts.length && !lv.closed ? el("div", { class: "acts" }, acts.map((x) => el("button", { type: "button", class: "btn ghost sm", text: x.label, onclick: () => deskAction(app.id, x) }))) : null,
+            acts.length && !lv.closed && working() ? el("div", { class: "acts" }, acts.map((x) => el("button", { type: "button", class: "btn ghost sm", text: x.label, onclick: () => deskAction(app.id, x) }))) : null,
             msg,
             app.look ? el("p", { class: "pc-eq" }, el("span", { text: L().equivalent + " " }), el("code", { text: app.look })) : null);
         }
@@ -621,6 +671,8 @@
     const headBox = el("div", { class: "tbar" });
     const resolveBox = el("div");
     const resultBox = el("div");
+    const pendBox = el("div");
+    const timelineBox = el("div");
 
     function print(text, kind, keep) {
       out.append(el("div", { class: "line " + (kind || "out"), text }));
@@ -636,32 +688,93 @@
       assetBox.replaceChildren(el("section", { class: "panel asset" }, el("h2", { text: c.asset.title }),
         el("dl", { class: "fields" }, c.asset.fields.map((f) => [el("dt", { text: f.label }),
           el("dd", { class: f.tone ? "tone " + f.tone : "" }, f.tone ? el("span", { class: "tdot", "aria-hidden": "true" }) : null, el("span", { text: f.value }))])),
-        actions.length && assigned() && !lv.closed ? el("div", { class: "acts" }, el("p", { class: "acts-h", text: L().actionsT }),
+        actions.length && working() && !lv.closed ? el("div", { class: "acts" }, el("p", { class: "acts-h", text: L().actionsT }),
           actions.map((a) => el("button", { type: "button", class: "btn ghost sm", text: a.label, onclick: () => gui(a.id, a.label) }))) : null));
     }
     function renderHead() {
-      const st = lv.closed ? "closed" : statusOf(sc) === "progress" ? "progress" : "new";
+      const st = lv.closed ? "closed" : statusOf(sc);
       const sla = slaInfo(sc, true);
+      const r = rec(id);
+      const who = el("span", { class: "assignee" }, el("span", { class: "muted", text: L().assignedTo + " " }), avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }));
+      let buttons;
+      if (lv.closed) buttons = [who];
+      else if (r && r.status === "progress") buttons = [who,
+        el("button", { type: "button", class: "btn ghost sm", id: "wf-pend", "aria-expanded": lv.pendOpen ? "true" : "false", "aria-controls": "wf-pend-box", text: L().pendBtn,
+          onclick: () => { lv.pendOpen = !lv.pendOpen; renderHead(); renderPend(); if (lv.pendOpen) { const ta = pendBox.querySelector("textarea"); if (ta) ta.focus(); } } }),
+        el("button", { type: "button", class: "btn ghost sm", id: "wf-unassign", text: L().unassignBtn, onclick: () => move("new") })];
+      else if (r && W.isPending(r.status)) buttons = [who, el("button", { type: "button", class: "btn sm", id: "wf-resume", text: L().resumeBtn, onclick: () => move("progress") })];
+      else buttons = [el("button", { type: "button", class: "btn", id: "assign", text: L().assign, onclick: assign })];
       headBox.replaceChildren(...[
         el("span", { class: "mono strong", text: sc.ticket.id }), prioPill(sc.ticket.priority), pill(st, L().status[st]),
         lv.closed ? null : el("span", { class: "sla-wrap" }, el("span", { class: "muted", text: "SLA " }),
           el("span", { class: "sla " + sla.tone, "data-sla": sc.id, "data-long": "", text: sla.text })),
-        el("span", { class: "grow" }),
-        assigned() || lv.closed ? el("span", { class: "assignee" }, el("span", { class: "muted", text: L().assignedTo + " " }), avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
-          : el("button", { type: "button", class: "btn", id: "assign", text: L().assign, onclick: assign })].filter(Boolean));
+        el("span", { class: "grow" }), el("span", { class: "wf-btns" }, buttons)].filter(Boolean));
     }
     function lockConsole() {
       termBox.querySelectorAll(".term-lock").forEach((n) => n.remove());
-      input.disabled = !assigned() || lv.closed;
-      if (!assigned() && !lv.closed) {
+      input.disabled = !working() || lv.closed;
+      if (lv.closed) return;
+      const r = rec(id);
+      if (!r) {
         termBox.append(el("div", { class: "term-lock" }, el("p", { class: "strong", text: L().lockedTitle }),
           el("p", { text: L().lockedText(E.sla(sc), sc.ticket.priority) }), el("button", { type: "button", class: "btn", text: L().assign, onclick: assign })));
+      } else if (r.status === "new") {
+        termBox.append(el("div", { class: "term-lock" }, el("p", { class: "strong", text: L().unassignedTitle }),
+          el("p", { text: L().unassignedText(slaInfo(sc, true).text) }), el("button", { type: "button", class: "btn", text: L().assign, onclick: assign })));
+      } else if (W.isPending(r.status)) {
+        termBox.append(el("div", { class: "term-lock paused", role: "status" }, el("p", { class: "strong", text: L().pausedTitle(L().status[r.status]) }),
+          el("p", { text: L().pausedText }), el("button", { type: "button", class: "btn", text: L().resumeBtn, onclick: () => move("progress") })));
       }
     }
+    function refreshWork() {
+      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderDesk(); tick();
+    }
     function assign() {
-      if (!assigned()) setWork(id, { startedAt: Date.now() });
-      renderHead(); renderAsset(); lockConsole(); renderResolve(); tick();
+      setWork(id, W.assign(work()[id], Date.now()));
+      lv.pendOpen = false;
+      refreshWork();
       input.focus();
+    }
+    // a workflow change (pending, resume, unassign): recorded in the activity with its reason
+    function move(to, reason) {
+      const res = W.transition(work()[id], to, { now: Date.now(), reason });
+      if (!res.ok) return res;
+      setWork(id, res.rec);
+      lv.pendOpen = false;
+      refreshWork();
+      if (to === "progress") input.focus();
+      return res;
+    }
+    function renderPend() {
+      const r = rec(id);
+      if (!lv.pendOpen || lv.closed || !r || r.status !== "progress") { pendBox.replaceChildren(); return; }
+      const state = el("select", { id: "wf-state", "aria-label": L().pendState },
+        W.PENDING.map((k) => el("option", { value: k, text: L().status[k] })));
+      const ta = el("textarea", { id: "wf-reason", maxlength: String(W.REASON_MAX), placeholder: L().pendPh, "aria-describedby": "wf-count" });
+      const count = el("p", { class: "fine wf-count", id: "wf-count", "aria-live": "polite" });
+      const msg = el("p", { class: "form-msg", role: "alert" });
+      const upd = () => { const n = W.cleanReason(ta.value).length; count.textContent = L().pendCount(n, W.REASON_MIN); count.classList.toggle("ok", n >= W.REASON_MIN); };
+      ta.addEventListener("input", upd); upd();
+      pendBox.replaceChildren(el("section", { class: "panel note wf-pend", id: "wf-pend-box" }, el("h2", { text: L().pendTitle }), el("p", { text: L().pendText }),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().pendState }), state),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().pendReason }), ta), count, msg,
+        el("div", { class: "row" },
+          el("button", { type: "button", class: "btn", id: "wf-pend-ok", text: L().pendOk, onclick: () => {
+            const res = move(state.value, ta.value);
+            if (!res.ok) { msg.textContent = res.error === "reason" ? L().pendNeedReason(W.REASON_MIN) : L().errors.bad_request; ta.focus(); }
+          } }),
+          el("button", { type: "button", class: "btn ghost", text: L().accCancel, onclick: () => { lv.pendOpen = false; renderHead(); renderPend(); } }))));
+    }
+    function renderTimeline() {
+      const r = rec(id);
+      const items = lv.closed && lv.timeline ? lv.timeline : r ? r.timeline : [];
+      const time = (ts) => { const d = new Date(ts); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+      timelineBox.replaceChildren(el("section", { class: "panel timeline", id: "wf-timeline" }, el("h2", { text: L().tlTitle }),
+        items.length ? el("ol", { class: "tl" }, items.slice().reverse().map((x) => el("li", { class: "tl-" + x.to },
+          el("p", { class: "tl-head" }, el("time", { datetime: new Date(x.at).toISOString(), text: time(x.at) }),
+            el("span", { text: `${L().status[x.from] || x.from} → ${L().status[x.to] || x.to}` })),
+          x.reason ? el("p", { class: "tl-reason", text: x.reason }) : null)))
+          : el("p", { class: "sub", text: L().tlEmpty })));
     }
     function after(r) {
       if (r.clear) { out.replaceChildren(); lv.log = []; }
@@ -677,12 +790,13 @@
       print(t(sc.ticket.body, lang), "dim");
     }
     function exec(cmd) {
-      if (!cmd.trim() || !assigned() || lv.closed) return;
+      if (!cmd.trim() || !working() || lv.closed) return;
       lv.hist.push(cmd); lv.pos = lv.hist.length;
       print(E.prompt(sess) + cmd, "cmd");
       after(E.run(sess, cmd));
     }
     function gui(actionId, label) {
+      if (!working() || lv.closed) return;
       const r = E.act(sess, actionId);
       if (!r) return;
       print(`${L().guiRan} ${label} → ${r.command}`, "dim");
@@ -695,6 +809,11 @@
 
     function renderResolve() {
       if (!assigned() || lv.closed) { resolveBox.replaceChildren(); return; }
+      if (!working()) {
+        resolveBox.replaceChildren(el("section", { class: "panel note" }, el("h2", { text: L().resTitle }), el("p", { class: "wf-hold", text: L().resolvePending }),
+          el("div", { class: "row" }, el("button", { type: "button", class: "btn", text: L().resumeBtn, onclick: () => move("progress") }))));
+        return;
+      }
       const code = el("select", { "aria-label": L().resCode },
         el("option", { value: "", text: L().resPick }), E.CODES.map((c) => el("option", { value: c.id, text: t(c.label, lang) })));
       const ta = el("textarea", { "aria-label": L().resNote, maxlength: "2000", placeholder: L().resPlaceholder });
@@ -713,12 +832,17 @@
     }
 
     function close(codeId, text) {
+      if (!W.canResolve(rec(id))) { renderResolve(); return; }   // pending: resume first
       const note = E.checkNote(sc, text, lang);
-      const minutes = minutesOn(id);
+      const now = Date.now();
+      const minutes = minutesOn(id);                   // without the pauses: a legitimate wait is never penalised
+      const paused = W.pausedMs(rec(id), now) / 60000;
       const v = E.verdict(sess, note, { code: codeId, minutes });
-      lv.result = { v, note, minutes, code: codeId };
+      lv.result = { v, note, minutes, code: codeId, paused };
       if (v.level !== "unresolved") {
         lv.closed = true;
+        const fin = W.transition(work()[id], "closed", { now });
+        lv.timeline = fin.ok ? fin.rec.timeline : rec(id).timeline;
         const prev = progress[sc.id];
         if (!prev || v.points >= prev.points) {
           progress[sc.id] = { points: v.points, stars: v.stars, date: new Date().toISOString().slice(0, 10), level: v.level };
@@ -737,13 +861,13 @@
         lv.draft = null;
         refreshBadge();
       }
-      renderHead(); renderAsset(); lockConsole(); renderResolve(); showResult();
+      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); showResult();
       resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function showResult() {
       if (!lv.result) { resultBox.replaceChildren(); return; }
-      const { v, note, minutes, code } = lv.result;
+      const { v, note, minutes, code, paused } = lv.result;
       const nextSc = SCENARIOS.find((s) => s.id !== sc.id && isOpen(s));
       const list = (title, items, cls) => items.length ? el("div", {}, el("b", { text: title }), el("ul", { class: cls }, items.map((x) => el("li", { text: x })))) : null;
       if (v.level === "unresolved") {
@@ -761,7 +885,7 @@
         el("div", { class: "big-stars" }, "★".repeat(v.stars), el("span", { class: "off", text: "★".repeat(3 - v.stars) })),
         el("h3", { text: `${v.points} ${L().points}` }),
         el("p", { class: "facts" }, el("span", { text: L().timeUsed(Math.ceil(minutes), E.sla(sc)) }), el("span", { text: L().codeUsed(E.codeLabel(code, lang)) }),
-          el("span", { text: L().hintsUsed(sess.hints) })),
+          el("span", { text: L().hintsUsed(sess.hints) }), paused >= 1 / 60 ? el("span", { class: "wf-paused", text: L().pausedUsed(mmss(paused)) }) : null),
         list(L().obsT, v.reasons, "missing"),
         list(L().found, note.found, "found"),
         lv.result.kb ? el("p", { class: "kb-saved" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "▧" }),
@@ -792,20 +916,21 @@
           assetBox,
           el("section", { class: "panel" }, el("h2", { text: L().context }), el("p", { class: "intro", text: t(sc.intro, lang) })),
           el("section", { class: "panel" }, el("h2", { text: L().stages }), stagesList),
+          timelineBox,
           el("section", { class: "panel tools" },
-            el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { if (assigned() && !lv.closed) { exec("hint"); input.focus(); } } }),
+            el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { if (working() && !lv.closed) { exec("hint"); input.focus(); } } }),
             el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => { delete live[id]; desk(id); } }),
             el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))),
-        el("div", {}, tabsBox, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
+        el("div", {}, pendBox, tabsBox, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
 
     if (!lv.log.length) {
       print(L().welcome.replace("{host}", sc.machine.host).replace("{user}", sc.machine.domain + "\\" + sc.machine.user), "dim");
       print("", "out");
     } else lv.log.forEach((l) => print(l.text, l.kind, false));
-    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); showResult();
+    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); showResult();
     if (hasDesk) setView(lv.view || "console");
     term.scrollTop = term.scrollHeight;
-    if (assigned() && !lv.closed) input.focus();
+    if (working() && !lv.closed) input.focus();
   }
 
   /* ---------- progress */
@@ -1086,11 +1211,12 @@
     const out = [];
     SCENARIOS.forEach((sc) => {
       if (!sc.bind || !isOpen(sc)) return;
-      const working = Boolean(work()[sc.id]);
-      const lv = working ? liveOf(sc.id, sc) : null;
+      const has = Boolean(work()[sc.id]);
+      const lv = has ? liveOf(sc.id, sc) : null;
       const sess = lv ? lv.sess : E.createSession(sc, lang);
       sess.lang = lang;
-      E.bound(sess).forEach((b) => out.push(Object.assign(b, { sc, sess, live: working && !lv.closed })));
+      const r = rec(sc.id);
+      E.bound(sess).forEach((b) => out.push(Object.assign(b, { sc, sess, live: W.canWork(r) && !lv.closed, paused: W.isPaused(r) })));
     });
     return out;
   }
@@ -1123,7 +1249,7 @@
       r.lines.push({ text: L().dRouted(b.sc.ticket.id), kind: "dim" });
       return { lines: r.lines, changed: false };
     }
-    if (MUTATING.test(p.verb)) return { lines: [{ text: L().dAssignFirst(Wd.user(world, sam).name, b.sc.ticket.id), kind: "say" }], changed: false };
+    if (MUTATING.test(p.verb)) return { lines: [{ text: (b.paused ? L().dPendingTicket : L().dAssignFirst)(Wd.user(world, sam).name, b.sc.ticket.id), kind: "say" }], changed: false };
     return null;
   }
 
@@ -1433,6 +1559,7 @@
   }
 
   /* ---------- start page: sign in or create an account */
+  let resetToken = null;   // from #/reset?token=..., kept in memory only (the address bar drops it at once)
   function start(mode, notice) {
     const app = document.getElementById("app");
     app.replaceChildren();
@@ -1447,8 +1574,8 @@
     function field(label, input, extra) {
       return el("label", { class: "field" }, el("span", { class: "field-label", text: label }), input, extra || null);
     }
-    function passwordField(withRules) {
-      const input = el("input", { type: "password", name: "password", required: true, maxlength: "128",
+    function passwordField(withRules, label, name) {
+      const input = el("input", { type: "password", name: name || "password", required: true, maxlength: "128",
         autocomplete: withRules ? "new-password" : "current-password" });
       const eye = el("button", { type: "button", class: "eye", "aria-label": L().show, text: "👁" });
       eye.addEventListener("click", () => {
@@ -1457,7 +1584,7 @@
         eye.setAttribute("aria-label", hidden ? L().hide : L().show);
       });
       const wrap = el("span", { class: "pw" }, input, eye);
-      if (!withRules) return { input, node: field(L().fPassword, wrap) };
+      if (!withRules) return { input, node: field(label || L().fPassword, wrap) };
       const items = Object.keys(L().rules).map((k) => el("li", { "data-rule": k, text: L().rules[k] }));
       const list = el("ul", { class: "rules" }, items);
       input.addEventListener("input", () => {
@@ -1465,7 +1592,7 @@
         const ok = { length: v.length >= 8, capital: /[A-ZÁÉÍÓÚÑ]/.test(v), number: /[0-9]/.test(v) };
         items.forEach((li) => li.classList.toggle("ok", ok[li.getAttribute("data-rule")]));
       });
-      return { input, node: field(L().fPassword, wrap, list) };
+      return { input, node: field(label || L().fPassword, wrap, list) };
     }
     function busy(btn, on) { btn.disabled = on; btn.classList.toggle("busy", on); }
     async function done(r) {
@@ -1477,7 +1604,62 @@
       if (location.hash === next) route(); else location.hash = next;
     }
 
+    function info(text) { msg.textContent = text; msg.classList.add("info"); }
+    function problem(text) { msg.textContent = text; msg.classList.remove("info"); }
+    // "Forgot your password?": the same answer whether or not the account exists
+    function forgotForm() {
+      const email = el("input", { type: "email", name: "email", required: true, maxlength: "254", autocomplete: "email", placeholder: L().phEmail, id: "forgot-email" });
+      const submit = el("button", { type: "submit", class: "btn wide", id: "forgot-send", text: L().forgotSend });
+      return el("form", { class: "signin-form", novalidate: true, onsubmit: async (ev) => {
+        ev.preventDefault();
+        busy(submit, true);
+        const r = await api("/api/auth/forgot", "POST", { email: email.value, lang });
+        busy(submit, false);
+        if (r.ok) info(L().forgotSent);
+        else if (r.data.error === "reset_unavailable") info(L().forgotOff);
+        else problem(L().errors[r.data.error] || L().errors.server);
+      } },
+        el("h2", { class: "signin-h", text: L().forgotTitle }), el("p", { class: "forgot-text", text: L().forgotText }),
+        field(L().fEmail, email), submit,
+        el("button", { type: "button", class: "link-btn", text: L().forgotBack, onclick: () => { tab = "login"; problem(""); render(); } }));
+    }
+    // the link from the email: a new password with the same rules as sign-up
+    function resetForm() {
+      if (!resetToken) {
+        return el("div", { class: "signin-form" }, el("h2", { class: "signin-h", text: L().resetTitle }), el("p", { class: "forgot-text", text: L().resetNoToken }),
+          el("button", { type: "button", class: "btn wide", text: L().resetAgain, onclick: () => { tab = "forgot"; problem(""); render(); } }));
+      }
+      const pw = passwordField(true, L().fNewPassword);
+      const pw2 = passwordField(false, L().fConfirm, "confirm");
+      pw2.input.setAttribute("autocomplete", "new-password");
+      const submit = el("button", { type: "submit", class: "btn wide", id: "reset-save", text: L().resetBtn });
+      return el("form", { class: "signin-form", novalidate: true, onsubmit: async (ev) => {
+        ev.preventDefault();
+        const v = pw.input.value;
+        if (!(v.length >= 8 && /[A-ZÁÉÍÓÚÑ]/.test(v) && /[0-9]/.test(v))) { problem(L().errors.password); pw.input.focus(); return; }
+        if (v !== pw2.input.value) { problem(L().resetMismatch); pw2.input.focus(); return; }
+        busy(submit, true);
+        const r = await api("/api/auth/reset", "POST", { token: resetToken, password: v });
+        busy(submit, false);
+        if (!r.ok) {
+          problem(L().errors[r.data.error] || L().errors.server);
+          if (r.data.error === "reset_invalid") { resetToken = null; render(); problem(L().errors.reset_invalid); }
+          return;
+        }
+        resetToken = null;
+        user = null; save("work", {});
+        Object.keys(live).forEach((k) => delete live[k]);
+        chrome();
+        tab = "login"; render(); info(L().resetDone);
+      } },
+        el("h2", { class: "signin-h", text: L().resetTitle }), el("p", { class: "forgot-text", text: L().resetText }), pw.node, pw2.node, submit);
+    }
+
     function render() {
+      if (tab === "forgot" || tab === "reset") {
+        body.replaceChildren(msg, tab === "forgot" ? forgotForm() : resetForm());
+        return;
+      }
       const tabs = el("div", { class: "tabs", role: "tablist" },
         ["login", "register"].map((k) => el("button", { type: "button", role: "tab", class: "tab" + (tab === k ? " on" : ""),
           "aria-selected": tab === k ? "true" : "false", text: k === "login" ? L().tabLogin : L().tabRegister,
@@ -1486,8 +1668,6 @@
       let form;
       if (tab === "login") {
         const pw = passwordField(false);
-        const forgotText = el("p", { class: "forgot-text", hidden: true }, L().forgotText + " ",
-          el("a", { href: SITE + "about.html#contacto", target: "_blank", rel: "noopener noreferrer", text: L().contact }));
         const submit = el("button", { type: "submit", class: "btn wide", text: L().btnLogin });
         form = el("form", { class: "signin-form", novalidate: true, onsubmit: async (ev) => {
           ev.preventDefault();
@@ -1497,7 +1677,7 @@
           await done(r);
         } },
           field(L().fEmail, email), pw.node,
-          el("button", { type: "button", class: "link-btn", text: L().forgot, onclick: () => { forgotText.hidden = !forgotText.hidden; } }), forgotText,
+          el("button", { type: "button", class: "link-btn", id: "forgot", text: L().forgot, onclick: () => { tab = "forgot"; problem(""); render(); } }),
           submit);
       } else {
         const name = el("input", { type: "text", name: "name", required: true, minlength: "2", maxlength: "40", autocomplete: "nickname", placeholder: L().phName });
@@ -1601,9 +1781,12 @@
     const m = h.match(/^#\/desk\/([a-z0-9-]+)$/);
     const km = h.match(/^#\/kb(?:\/([a-z0-9-]+))?$/);
     const mm = h.match(/^#\/mail(?:\/([a-z0-9-]+))?$/);
+    const rm = h.match(/^#\/reset(?:\?token=([A-Za-z0-9_-]{20,128}))?$/);
+    if (rm && rm[1]) { resetToken = rm[1]; history.replaceState(null, "", location.pathname + location.search + "#/reset"); }
     document.body.classList.toggle("landing-on", !user && (h === "" || h === "#/"));
-    document.body.classList.toggle("shell-on", Boolean(user));
-    if (m && user) desk(m[1]);
+    document.body.classList.toggle("shell-on", Boolean(user) && !rm);
+    if (rm) start("reset");
+    else if (m && user) desk(m[1]);
     else if (m) { afterLogin = h; start("login", notice || "need_login"); }
     else if (h === "#/start") start("login", notice);
     else if (h === "#/register") start("register", notice);

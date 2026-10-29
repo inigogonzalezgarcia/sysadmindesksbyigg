@@ -35,6 +35,11 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 
 - **Ticket queue:** the desks are tickets in a table with ID, requester, priority, SLA, status and assignee; Open and Closed tabs.
 - **Ticket page:** press *Assign to me* and the SLA starts (20 min for P1, 30 for P2, 45 for P3) and the console unlocks. Cards for the requester and for the account, device, queue or mailbox update as you work ("Locked" turns into "Unlocked", the free space grows), and a few actions can be run from the card with the same effect as the command.
+- **Workflow states (v0.6):** *New*, *In progress*, *Pending user*, *Pending vendor* and *Closed*, each with its own badge in the queue and on the ticket page.
+  - *Set pending* asks for the state and a short reason (15+ characters). While pending, the SLA is paused (the counter freezes and shows "Paused" with the time on hold), the console and the actions are read-only, and the ticket cannot be resolved; *Resume* carries on from where the SLA stopped.
+  - *Unassign* sends the ticket back to New; the SLA keeps running, as on a real desk, and the console stays as it was.
+  - Every change goes into the ticket's **Activity** timeline (time, from → to, reason). It lives in the browser with the ticket (`localStorage`, `sd.work[<desk>]`) and starts again when the ticket is replayed.
+  - Scoring: the SLA minutes exclude the paused time, so a pause is never penalised; the result shows the total time on hold. The state machine and the SLA arithmetic are in [assets/workflow.js](public/assets/workflow.js) (no DOM), tested in `tests/workflow.test.js`.
 - **Closing:** choose a resolution code and write the work note. The result has three levels: *Resolved*, *Resolved with observations* (note, code, SLA or an earlier early close) or *Not resolved* (what is still to do; the ticket stays open).
 - **Progress page** with your best result per ticket, and a 7-step **welcome tour** you can skip or take again from the sidebar.
 
@@ -49,6 +54,7 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
 - **Home page:** a landing page for signed-out visitors (what a desk looks like, the four steps of a ticket, and a call to start), then the sign-in page: create an account with a technician name, one of eight avatars, email and password (8+ characters, a capital letter and a number, checked as you type), or continue with Google. A desk linked from a guide opens right after signing in.
 - **Backend:** Cloudflare Pages Functions in `functions/api` with a D1 database bound as `DB`. The tables are created on first use.
   - `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`;
+  - `POST /api/auth/forgot` (`{email, lang}`: emails a reset link; always the same answer) and `POST /api/auth/reset` (`{token, password}`), see *Password reset* below;
   - `GET /api/me` (who is signed in, and their progress), `DELETE /api/me` (delete the account and everything in it);
   - `PUT /api/progress` (keeps the best result per desk);
   - `GET /api/auth/google` and its callback.
@@ -58,9 +64,31 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
   - state-changing requests must come from the site's own origin;
   - failed sign-ins are limited per email and per IP (8 in 15 minutes);
   - Google sign-in uses a `state` cookie and only accepts verified emails;
+  - password reset links are single-use, expire after 30 minutes and are stored only as a SHA-256 hash; resetting closes every session of the account;
   - a strict CSP with no inline code; the only third-party script allowed is Google Analytics, and only after consent (see *Cookies*).
 - **Progress:** when you sign in, anything better in the browser is added to the account.
 - **Privacy and terms:** [public/privacy.html](public/privacy.html) explains what is stored, why, for how long (including the minimum age of 14 and international transfers), and [public/terms.html](public/terms.html) sets the terms of use; the sign-up form links to both, and the account page deletes everything.
+
+## Password reset (v0.6)
+
+*Forgot your password?* on the sign-in tab asks for the email and calls `POST /api/auth/forgot`.
+
+- The answer is always the same generic 200 ("if there is an account with that email, we have sent a link"), for unknown emails too, so it does not tell who has an account. The origin check applies.
+- If the account exists and has a password, a token of 32 random bytes (base64url) is created and only its SHA-256 is stored, with the user, an expiry of 30 minutes and a used flag; earlier unused links of that user stop working. Accounts that only sign in with Google have no password: nothing is sent.
+- Limits: 3 requests per email per hour and 10 per IP per hour (`CF-Connecting-IP`); over the limit the answer is still the generic 200.
+- The email goes through Brevo's transactional API (`POST https://api.brevo.com/v3/smtp/email`, header `api-key`), in the language picked in the app, with the link `https://<site>/?lang=es#/reset?token=…` (the token is in the fragment, so it never reaches server logs; the app drops it from the address bar at once).
+- `POST /api/auth/reset` checks the token (hash, expiry, single use), stores the new password like sign-up (PBKDF2), marks the link used, deletes **all** the user's sessions and clears the account's failed sign-ins. Any problem with the link is a generic 400 `reset_invalid`.
+- D1 tables, created on first use like the others: `resets (token_hash, user_id, expires_at, used, created_at)` and `reset_requests (k, ts)`. Both are cleaned up opportunistically after 24 hours (on every reset request).
+
+**Configuration** (Cloudflare → Workers & Pages → the project → Settings → Variables and secrets, for Production and, if you use it, Preview; then redeploy):
+
+| Name | Type | What |
+|---|---|---|
+| `BREVO_API_KEY` | Secret | A Brevo API key (Brevo → SMTP & API → API keys) |
+| `MAIL_FROM` | Variable | The sender address, a sender or domain verified in Brevo |
+| `MAIL_FROM_NAME` | Variable, optional | The sender name; default `SysAdmin Desks` |
+
+Until `BREVO_API_KEY` and `MAIL_FROM` exist, `/api/auth/forgot` answers 503 `{error: "reset_unavailable"}` and the app says reset by email is not available yet. Keys and tokens are never written to the logs.
 
 ## Cookies
 
@@ -83,14 +111,14 @@ Static pages next to the app, in both languages (`assets/doc.js` shows the one p
 
 - [about.html](public/about.html): what SysAdmin Desks is, who it is for, how a ticket is checked, and what it is not (not work experience, not a real system, not affiliated with any vendor or certification body);
 - [help.html](public/help.html): getting started, a ticket from start to finish, how scoring works, each tool, and what to do if something goes wrong;
-- [faq.html](public/faq.html): fifteen short questions and answers;
+- [faq.html](public/faq.html): seventeen short questions and answers;
 - [terms.html](public/terms.html) and [privacy.html](public/privacy.html).
 
 Every page, the app footer, the sidebar and *My account* link to them and to **Report a problem**, which opens the contact form on my website with the subject filled in. `tests/pages.test.js` checks both languages, the CSP, that there is no inline code or email address, and that every local link exists.
 
 ## How it is built
 
-- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/scenarios.js` (the desks as data), `assets/world.js` (the directory, its PowerShell and the inventory, no DOM), `assets/growth.js` (knowledge base, streak, goal, badges and mail, no DOM) and `assets/style.css`.
+- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/workflow.js` (ticket states and SLA with pauses, no DOM), `assets/scenarios.js` (the desks as data), `assets/world.js` (the directory, its PowerShell and the inventory, no DOM), `assets/growth.js` (knowledge base, streak, goal, badges and mail, no DOM) and `assets/style.css`.
 - No framework, no build step, no external requests. A strict Content Security Policy (no inline scripts or styles) in the page and in `public/_headers`, and no HTML strings: every text is set with `textContent`.
 - The engine and the scenarios are shared with the Node tests: `npm test` checks that every desk is complete in both languages, that the reference solution resolves it exactly at its last step, that the example note scores 100, and that the wrong paths do not resolve it.
 - [docs/scenario-format.md](docs/scenario-format.md) explains how to write a new desk.
@@ -98,8 +126,9 @@ Every page, the app footer, the sidebar and *My account* link to them and to **R
 ## Run it locally
 
 ```bash
-npm test                 # 45 tests: the desks, the ticket page, the directory and desktops, progress and knowledge, the pages, and the accounts against an in-memory database (Node 22+)
-npm run dev              # http://localhost:8788 with accounts, in-memory database
+npm test                 # 72 tests: the desks, the ticket page and its workflow, the directory and desktops, progress and knowledge, the pages, and the accounts and password reset against an in-memory database (Node 22+)
+npm run dev              # http://localhost:8788 with accounts, in-memory database; reset answers 503 unless BREVO_API_KEY and MAIL_FROM are set
+npm run dev:reset        # the same, but reset emails are not sent: the link is printed in this console (DEV_RESET_LOG=1, only in scripts/dev-server.mjs)
 npm run serve            # http://localhost:8080, static only (no accounts)
 ```
 
@@ -111,13 +140,14 @@ The live site is deployed by Cloudflare Pages on every push to `main`. To deploy
 2. Build settings: framework preset **None**, build command empty, build output directory **`public`**.
 3. Deploy. `public/_headers` adds the security headers (CSP, frame-ancestors, nosniff, referrer and permissions policies). `functions/` is deployed with the site.
 4. Accounts: create a D1 database (Workers & Pages → D1) and bind it to the Pages project as `DB` (Settings → Bindings → D1 database), then redeploy.
-5. Google (optional): create an OAuth client of type "Web application" in Google Cloud with the redirect URI `https://<your-site>/api/auth/google/callback`. In the Pages project, add `GOOGLE_CLIENT_ID` as a variable and `GOOGLE_CLIENT_SECRET` as a secret (Settings → Variables and Secrets). Without them, the Google button says it is not ready.
+5. Password reset by email (optional): add `BREVO_API_KEY` (secret), `MAIL_FROM` and optionally `MAIL_FROM_NAME`, see *Password reset*.
+6. Google (optional): create an OAuth client of type "Web application" in Google Cloud with the redirect URI `https://<your-site>/api/auth/google/callback`. In the Pages project, add `GOOGLE_CLIENT_ID` as a variable and `GOOGLE_CLIENT_SECRET` as a secret (Settings → Variables and Secrets). Without them, the Google button says it is not ready.
 
-Ideas for later: password reset by email, and more desks per guide topic.
+Ideas for later: more desks per guide topic.
 
 ## Status
 
-Version 0.5.0: 18 desks (first and second line), landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), a personal knowledge base, streak, weekly goal, badges and mail exercises, and the about, help, FAQ, terms and privacy pages. Each desk links to its guide, and the guides on the website link back with a "Practise it" button. Fictional company (Contoso) and people; no real systems or data.
+Version 0.6.0: workflow states with the SLA paused while pending and an activity timeline per ticket, and password reset by email (Brevo), on top of 18 desks (first and second line), landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), a personal knowledge base, streak, weekly goal, badges and mail exercises, and the about, help, FAQ, terms and privacy pages. Each desk links to its guide, and the guides on the website link back with a "Practise it" button. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 
