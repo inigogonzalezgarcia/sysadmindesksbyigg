@@ -19,12 +19,31 @@ function fakeD1() {
   });
   return { prepare: (q) => stmt(q), batch: async (list) => { for (const s of list) await s.run(); return []; } };
 }
-const env = { DB: fakeD1(), GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET };
+const env = { DB: fakeD1(), GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  BREVO_API_KEY: process.env.BREVO_API_KEY, MAIL_FROM: process.env.MAIL_FROM, MAIL_FROM_NAME: process.env.MAIL_FROM_NAME };
+
+// Password reset in development. Without BREVO_API_KEY and MAIL_FROM, /api/auth/forgot answers 503 (as in production before the
+// key is added). With DEV_RESET_LOG=1 (npm run dev:reset) and no real key, nothing is sent: the call to Brevo is caught here and the
+// reset link is printed in this console. This exists only in this local script, never in the functions deployed to Cloudflare.
+const BREVO = "https://api.brevo.com/v3/smtp/email";
+if (process.env.DEV_RESET_LOG === "1" && !process.env.BREVO_API_KEY) {
+  Object.assign(env, { BREVO_API_KEY: "dev-log-only", MAIL_FROM: env.MAIL_FROM || "no-reply@localhost" });
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    if (String(url) !== BREVO) return realFetch(url, init);
+    const msg = JSON.parse(init.body);
+    const link = (msg.textContent.match(/https?:\/\/\S+#\/reset\?token=\S+/) || ["(no link)"])[0];
+    console.log(`[dev] password reset email for ${msg.to[0].email} (not sent): ${link}`);
+    return new Response(JSON.stringify({ messageId: "dev" }), { status: 201, headers: { "content-type": "application/json" } });
+  };
+}
 
 const ROUTES = {
   "/api/auth/register": "functions/api/auth/register.js",
   "/api/auth/login": "functions/api/auth/login.js",
   "/api/auth/logout": "functions/api/auth/logout.js",
+  "/api/auth/forgot": "functions/api/auth/forgot.js",
+  "/api/auth/reset": "functions/api/auth/reset.js",
   "/api/auth/google": "functions/api/auth/google.js",
   "/api/auth/google/callback": "functions/api/auth/google/callback.js",
   "/api/me": "functions/api/me.js",
@@ -63,4 +82,5 @@ createServer(async (req, res) => {
     res.writeHead(e.code === "ENOENT" ? 404 : 500, { "content-type": "text/plain" });
     res.end(e.code === "ENOENT" ? "Not found" : String(e));
   }
-}).listen(PORT, () => console.log(`SysAdmin Desks with accounts on http://localhost:${PORT} (in-memory database)`));
+}).listen(PORT, () => console.log(`SysAdmin Desks with accounts on http://localhost:${PORT} (in-memory database)` +
+  (env.BREVO_API_KEY === "dev-log-only" ? "; password reset links are printed here" : env.BREVO_API_KEY ? "; password reset emails go through Brevo" : "; password reset is off (no BREVO_API_KEY)")));

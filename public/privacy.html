@@ -25,7 +25,7 @@
 <main class="legal">
 <article class="es" lang="es">
 <h1>Política de privacidad</h1>
-<p class="fine">Última actualización: 27 de octubre de 2026</p>
+<p class="fine">Última actualización: 29 de octubre de 2026</p>
 
 <h2>Quién es el responsable</h2>
 <p>SysAdmin Desks by IGG es un proyecto personal de Iñigo González. Para cualquier pregunta sobre tus datos, usa el <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">formulario de contacto de mi web</a>.</p>
@@ -37,16 +37,17 @@
   <li>la contraseña, nunca en claro: solo un resumen cifrado (PBKDF2 con sal) que no permite recuperarla;</li>
   <li>si entras con Google, el identificador de tu cuenta de Google, tu nombre y tu email (no se pide acceso a nada más);</li>
   <li>tu progreso: los puestos resueltos, los puntos y las estrellas;</li>
-  <li>las sesiones abiertas (solo un resumen del identificador de sesión) y, durante 24 horas, los intentos fallidos de inicio de sesión con el email y la dirección IP, para frenar ataques.</li>
+  <li>las sesiones abiertas (solo un resumen del identificador de sesión) y, durante 24 horas, los intentos fallidos de inicio de sesión con el email y la dirección IP, para frenar ataques;</li>
+  <li id="restablecer">si pides restablecer la contraseña: un resumen (SHA-256) del enlace que te enviamos, que caduca a los 30 minutos y solo sirve una vez, y un registro de la petición con el email y la dirección IP para limitar los envíos (3 por email y hora). Ambos se borran a las 24 horas.</li>
 </ul>
 <p>Las notas de trabajo que escribes y los comandos de la consola no se envían al servidor: se puntúan en tu navegador.</p>
 <p id="navegador">Los artículos de tu base de conocimiento (que incluyen el texto de tus notas de trabajo), tus respuestas a los ejercicios de correo, tu racha, tu objetivo semanal y tus insignias se guardan <strong>solo en este navegador</strong> (en su almacenamiento local, <code>localStorage</code>). No se envían al servidor, no pasan a otros equipos y se pierden si borras los datos de este sitio en el navegador. Cuando borras tu cuenta desde Mi cuenta, también se borran de este navegador. Los artículos que descargas en Markdown o guardas como PDF se quedan en tu dispositivo.</p>
 
 <h2>Para qué y con qué base</h2>
-<p>Solo para darte el servicio que pides: tener una cuenta y guardar tu progreso. La base es tu consentimiento al crear la cuenta y la ejecución de ese servicio según los <a href="terms.html">términos de uso</a>. Los intentos fallidos se guardan por interés legítimo en proteger las cuentas. La analítica de visitas solo se activa si la aceptas en el aviso de cookies, y la base es ese consentimiento, que puedes retirar cuando quieras. No hay publicidad ni se ceden datos a terceros con fines comerciales.</p>
+<p>Solo para darte el servicio que pides: tener una cuenta y guardar tu progreso. Tu email se usa también para enviarte el enlace de restablecer la contraseña cuando lo pides tú, y para nada más. La base es tu consentimiento al crear la cuenta y la ejecución de ese servicio según los <a href="terms.html">términos de uso</a>. Los intentos fallidos se guardan por interés legítimo en proteger las cuentas. La analítica de visitas solo se activa si la aceptas en el aviso de cookies, y la base es ese consentimiento, que puedes retirar cuando quieras. No hay publicidad ni se ceden datos a terceros con fines comerciales.</p>
 
 <h2>Quién más los trata</h2>
-<p>La web y la base de datos están alojadas en Cloudflare, que actúa como encargado del tratamiento. Si eliges entrar con Google, Google gestiona ese inicio de sesión según su propia política. Si aceptas la analítica, Google Analytics (Google Ireland Limited) trata los datos de uso como encargado del tratamiento.</p>
+<p>La web y la base de datos están alojadas en Cloudflare, que actúa como encargado del tratamiento. Los emails para restablecer la contraseña los envía Brevo (Sendinblue SAS, Francia, en la Unión Europea) como encargado del tratamiento: recibe tu email, tu nombre de técnico y el enlace, solo para entregar ese mensaje. Si eliges entrar con Google, Google gestiona ese inicio de sesión según su propia política. Si aceptas la analítica, Google Analytics (Google Ireland Limited) trata los datos de uso como encargado del tratamiento.</p>
 
 <h2>Transferencias internacionales</h2>
 <p>Cloudflare y Google pueden tratar datos fuera del Espacio Económico Europeo, sobre todo en Estados Unidos. Lo hacen con las garantías del Marco de Privacidad de Datos UE-EE. UU., al que están adheridos, y con cláusulas contractuales tipo de la Comisión Europea.</p>
@@ -54,16 +55,16 @@
 <h2 id="cookies">Cookies</h2>
 <p><strong>Necesarias</strong> (no piden permiso): <code>sd_session</code>, para mantener la sesión iniciada durante 30 días, y otra temporal durante el inicio con Google.</p>
 <p><strong>Analítica, solo si la aceptas</strong>: Google Analytics 4 pone las cookies <code>_ga</code> y <code>_ga_*</code> (hasta 2 años) para contar visitas, páginas y tickets abiertos, el país y de dónde llegas, de forma agregada. No se le envían tu email, tus notas ni tus comandos, no se usan las señales de Google ni la publicidad personalizada, y Google Analytics no guarda tu dirección IP. Si rechazas, no se carga nada de Google Analytics. Puedes cambiar tu elección cuando quieras en <em>Preferencias de cookies</em>, en el pie de cada página; tu elección se guarda en el navegador y se vuelve a preguntar a los 6 meses.</p>
-<p>No hay cookies de publicidad. El navegador guarda además en su almacenamiento local tu idioma, una copia de tu progreso, la hora a la que te asignaste cada ticket en curso (para calcular el SLA) los cambios que hagas en el directorio simulado y lo que se explica arriba (base de conocimiento, correo, racha, objetivo e insignias).</p>
+<p>No hay cookies de publicidad. El navegador guarda además en su almacenamiento local tu idioma, una copia de tu progreso, la hora a la que te asignaste cada ticket en curso, su estado, sus pausas y su actividad (para calcular el SLA), los cambios que hagas en el directorio simulado y lo que se explica arriba (base de conocimiento, correo, racha, objetivo e insignias).</p>
 
 <h2>Cuánto tiempo</h2>
-<p>Mientras tengas la cuenta. Las sesiones caducan a los 30 días y los intentos fallidos se borran a las 24 horas. Cuando borras tu cuenta, tu cuenta, tus sesiones y tu progreso se eliminan de la base de datos en ese momento; pueden seguir en las copias de recuperación automáticas de la base de datos un máximo de 30 días, y después desaparecen. Lo que guarda tu navegador se borra al borrar los datos de este sitio en él.</p>
+<p>Mientras tengas la cuenta. Las sesiones caducan a los 30 días y los intentos fallidos se borran a las 24 horas. Los enlaces para restablecer la contraseña caducan a los 30 minutos, y tanto ellos como los registros de peticiones se borran a las 24 horas. Cuando borras tu cuenta, tu cuenta, tus sesiones y tu progreso se eliminan de la base de datos en ese momento; pueden seguir en las copias de recuperación automáticas de la base de datos un máximo de 30 días, y después desaparecen. Lo que guarda tu navegador se borra al borrar los datos de este sitio en él.</p>
 
 <h2>Edad mínima</h2>
 <p>Necesitas tener al menos 14 años para crear una cuenta. Si sé que una cuenta es de alguien más joven, la borro.</p>
 
 <h2>Seguridad</h2>
-<p>La conexión va siempre cifrada (HTTPS). Las contraseñas se guardan con PBKDF2 y sal, la cookie de sesión es HttpOnly, Secure y SameSite, y los inicios de sesión fallidos se limitan para frenar ataques.</p>
+<p>La conexión va siempre cifrada (HTTPS). Las contraseñas se guardan con PBKDF2 y sal, la cookie de sesión es HttpOnly, Secure y SameSite, y los inicios de sesión fallidos se limitan para frenar ataques. Al restablecer la contraseña se cierran todas tus sesiones.</p>
 
 <h2>Tus derechos</h2>
 <p>Puedes borrar tu cuenta y todo tu progreso en cualquier momento desde <a href="./#/account">Mi cuenta</a>. Para acceder a tus datos, corregirlos, llevártelos u oponerte a su tratamiento, escríbeme desde el formulario de contacto. Si crees que no se han respetado tus derechos, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
@@ -71,7 +72,7 @@
 
 <article class="en" lang="en" id="en">
 <h1>Privacy policy</h1>
-<p class="fine">Last updated: 27 October 2026</p>
+<p class="fine">Last updated: 29 October 2026</p>
 
 <h2>Who is responsible</h2>
 <p>SysAdmin Desks by IGG is a personal project by Iñigo González. For any question about your data, use the <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">contact form on my website</a>.</p>
@@ -83,16 +84,17 @@
   <li>your password, never in clear text: only a salted hash (PBKDF2) that cannot be turned back into the password;</li>
   <li>if you sign in with Google, your Google account identifier, name and email (no access to anything else is requested);</li>
   <li>your progress: the desks solved, points and stars;</li>
-  <li>open sessions (only a hash of the session identifier) and, for 24 hours, failed sign-in attempts with the email and IP address, to slow down attacks.</li>
+  <li>open sessions (only a hash of the session identifier) and, for 24 hours, failed sign-in attempts with the email and IP address, to slow down attacks;</li>
+  <li id="reset">if you ask to reset your password: a hash (SHA-256) of the link we email you, which expires after 30 minutes and works only once, and a record of the request with the email and IP address to limit how many are sent (3 per email per hour). Both are deleted after 24 hours.</li>
 </ul>
 <p>The work notes you write and the console commands are not sent to the server: they are scored in your browser.</p>
 <p id="navegador-en">Your knowledge base articles (which include the text of your work notes), your mail exercise answers, your streak, your weekly goal and your badges are kept <strong>only in this browser</strong> (in its local storage, <code>localStorage</code>). They are not sent to the server, do not move to other devices and are lost if you clear this site's data in the browser. When you delete your account from My account, they are also removed from this browser. Articles you download as Markdown or save as a PDF stay on your device.</p>
 
 <h2>Why, and on what basis</h2>
-<p>Only to provide the service you ask for: an account that keeps your progress. The basis is your consent when you create the account and the performance of that service under the <a href="terms.html">terms of use</a>. Failed attempts are kept on the basis of a legitimate interest in protecting accounts. Visit analytics only runs if you accept it in the cookie notice, and the basis is that consent, which you can withdraw at any time. There is no advertising and no data is passed to third parties for commercial purposes.</p>
+<p>Only to provide the service you ask for: an account that keeps your progress. Your email is also used to send you a password reset link when you ask for one, and for nothing else. The basis is your consent when you create the account and the performance of that service under the <a href="terms.html">terms of use</a>. Failed attempts are kept on the basis of a legitimate interest in protecting accounts. Visit analytics only runs if you accept it in the cookie notice, and the basis is that consent, which you can withdraw at any time. There is no advertising and no data is passed to third parties for commercial purposes.</p>
 
 <h2>Who else processes it</h2>
-<p>The site and the database are hosted on Cloudflare, acting as processor. If you choose to sign in with Google, Google handles that sign-in under its own policy. If you accept analytics, Google Analytics (Google Ireland Limited) processes the usage data as processor.</p>
+<p>The site and the database are hosted on Cloudflare, acting as processor. Password reset emails are sent by Brevo (Sendinblue SAS, France, in the European Union) as processor: it receives your email, your technician name and the link, only to deliver that message. If you choose to sign in with Google, Google handles that sign-in under its own policy. If you accept analytics, Google Analytics (Google Ireland Limited) processes the usage data as processor.</p>
 
 <h2>International transfers</h2>
 <p>Cloudflare and Google may process data outside the European Economic Area, mainly in the United States. They do so with the safeguards of the EU-US Data Privacy Framework, which they have joined, and the European Commission's standard contractual clauses.</p>
@@ -100,16 +102,16 @@
 <h2 id="cookies-en">Cookies</h2>
 <p><strong>Necessary</strong> (no permission needed): <code>sd_session</code>, to keep you signed in for 30 days, and a temporary one during the Google sign-in.</p>
 <p><strong>Analytics, only if you accept</strong>: Google Analytics 4 sets the <code>_ga</code> and <code>_ga_*</code> cookies (up to 2 years) to count visits, pages and tickets opened, country and where you came from, in aggregate. Your email, notes and commands are never sent to it, Google signals and ad personalisation are off, and Google Analytics does not store your IP address. If you reject, nothing from Google Analytics is loaded. You can change your choice at any time from <em>Cookie settings</em> in the footer of every page; your choice is kept in the browser and asked again after 6 months.</p>
-<p>No advertising cookies. The browser also keeps in its local storage your language, a copy of your progress, the time you assigned each open ticket to yourself (to work out the SLA) the changes you make in the simulated directory and what is described above (knowledge base, mail, streak, goal and badges).</p>
+<p>No advertising cookies. The browser also keeps in its local storage your language, a copy of your progress, the time you assigned each open ticket to yourself, its state, its pauses and its activity (to work out the SLA), the changes you make in the simulated directory and what is described above (knowledge base, mail, streak, goal and badges).</p>
 
 <h2>How long</h2>
-<p>For as long as you keep the account. Sessions expire after 30 days and failed attempts are deleted after 24 hours. When you delete your account, your account, sessions and progress are removed from the database at that moment; they may remain in the database's automatic recovery copies for up to 30 days, and then they are gone. What your browser keeps is removed when you clear this site's data in it.</p>
+<p>For as long as you keep the account. Sessions expire after 30 days and failed attempts are deleted after 24 hours. Password reset links expire after 30 minutes, and both they and the request records are deleted after 24 hours. When you delete your account, your account, sessions and progress are removed from the database at that moment; they may remain in the database's automatic recovery copies for up to 30 days, and then they are gone. What your browser keeps is removed when you clear this site's data in it.</p>
 
 <h2>Minimum age</h2>
 <p>You must be at least 14 to create an account. If I learn that an account belongs to someone younger, I delete it.</p>
 
 <h2>Security</h2>
-<p>The connection is always encrypted (HTTPS). Passwords are stored with salted PBKDF2, the session cookie is HttpOnly, Secure and SameSite, and failed sign-ins are rate-limited to slow down attacks.</p>
+<p>The connection is always encrypted (HTTPS). Passwords are stored with salted PBKDF2, the session cookie is HttpOnly, Secure and SameSite, and failed sign-ins are rate-limited to slow down attacks. Resetting your password closes all your sessions.</p>
 
 <h2>Your rights</h2>
 <p>You can delete your account and all your progress at any time from <a href="./#/account">My account</a>. To access, correct, take away or object to the processing of your data, write to me through the contact form. If you think your rights have not been respected, you can complain to the Spanish Data Protection Agency (aepd.es) or the authority where you live.</p>

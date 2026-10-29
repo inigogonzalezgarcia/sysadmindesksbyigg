@@ -10,6 +10,10 @@ export const AVATARS = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"];
 export const DESK_ID = /^[a-z0-9-]{2,40}$/;
 const LOCK_MINUTES = 15;
 const LOCK_FAILS = 8;
+export const RESET_MINUTES = 30;          // a reset link works for 30 minutes, once
+export const RESET_PER_EMAIL = 3;         // reset requests per email address per hour
+export const RESET_PER_IP = 10;           // reset requests per IP address per hour
+export const RESET_KEEP_MS = 86400000;    // reset links and request records are deleted after 24 hours
 
 const enc = new TextEncoder();
 
@@ -128,6 +132,12 @@ const SCHEMA = [
      updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, desk_id))`,
   `CREATE TABLE IF NOT EXISTS attempts (k TEXT NOT NULL, ts INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS attempts_k ON attempts (k, ts)`,
+  // v0.6: password reset links (only the SHA-256 of the token) and the reset emails sent, for the rate limit
+  `CREATE TABLE IF NOT EXISTS resets (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL, expires_at INTEGER NOT NULL, used INTEGER NOT NULL DEFAULT 0,
+     created_at INTEGER NOT NULL)`,
+  `CREATE INDEX IF NOT EXISTS resets_user ON resets (user_id)`,
+  `CREATE TABLE IF NOT EXISTS reset_requests (k TEXT NOT NULL, ts INTEGER NOT NULL)`,
+  `CREATE INDEX IF NOT EXISTS reset_requests_k ON reset_requests (k, ts)`,
 ];
 const ready = new WeakSet();     // databases already migrated in this isolate
 export async function db(env) {
@@ -183,4 +193,49 @@ export async function recordFail(DB, keys) {
 }
 export function newId() {
   return crypto.randomUUID();
+}
+
+// failed sign-ins of one email are forgotten once its password is reset
+export async function clearFails(DB, email) {
+  await DB.prepare("DELETE FROM attempts WHERE k = ?").bind("e:" + email).run();
+}
+
+// ---------------------------------------------------------------- password reset (v0.6)
+
+export const TOKEN = /^[A-Za-z0-9_-]{20,128}$/;
+
+// reset requests in the last hour per email and per IP; true when any of them is over its limit
+export async function resetLimited(DB, email, ip) {
+  const since = Date.now() - 3600000;
+  for (const [k, max] of [["e:" + email, RESET_PER_EMAIL], ["i:" + ip, RESET_PER_IP]]) {
+    const r = await DB.prepare("SELECT COUNT(*) AS n FROM reset_requests WHERE k = ? AND ts > ?").bind(k, since).first();
+    if (r && r.n >= max) return true;
+  }
+  return false;
+}
+export async function recordResetRequest(DB, email, ip) {
+  const now = Date.now();
+  await DB.batch([
+    DB.prepare("INSERT INTO reset_requests (k, ts) VALUES (?, ?)").bind("e:" + email, now),
+    DB.prepare("INSERT INTO reset_requests (k, ts) VALUES (?, ?)").bind("i:" + ip, now),
+  ]);
+}
+// short-term records only: old request records and old (used or expired) reset links go after 24 hours
+export async function cleanResets(DB) {
+  const old = Date.now() - RESET_KEEP_MS;
+  await DB.batch([
+    DB.prepare("DELETE FROM reset_requests WHERE ts < ?").bind(old),
+    DB.prepare("DELETE FROM resets WHERE created_at < ?").bind(old),
+  ]);
+}
+// a new link for this user: the earlier unused ones stop working; returns the token (only its hash is stored)
+export async function createResetToken(DB, userId) {
+  const token = randomToken(32);
+  const now = Date.now();
+  await DB.batch([
+    DB.prepare("UPDATE resets SET used = 1 WHERE user_id = ? AND used = 0").bind(userId),
+    DB.prepare("INSERT INTO resets (token_hash, user_id, expires_at, used, created_at) VALUES (?, ?, ?, 0, ?)")
+      .bind(await sha256hex(token), userId, now + RESET_MINUTES * 60000, now),
+  ]);
+  return token;
 }

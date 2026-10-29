@@ -91,7 +91,7 @@ desktop: {
 
 ## Closing a ticket
 
-- **SLA:** it starts when the user assigns the ticket: 20 minutes for P1, 30 for P2 and 45 for P3.
+- **SLA:** it starts when the user assigns the ticket: 20 minutes for P1, 30 for P2 and 45 for P3. Since v0.6 the ticket page has workflow states (New, In progress, Pending user, Pending vendor, Closed), kept per ticket in the browser (`sd.work[<id>]`) and handled by the pure module `public/assets/workflow.js`: while a ticket is pending the SLA is paused, *Unassign* sends it back to New with the SLA still running, and the minutes passed to `verdict` are the SLA minutes without the pauses. Scenarios need nothing new for this.
 - **Resolution codes:** root cause removed, configuration corrected, space or quota freed, device brought into compliance, workaround, user guidance, no fault found.
 - **Result** (`verdict` in the engine), in three levels:
   - *Not resolved* when the goal is not met: it lists the stages not done, the ticket stays open and each early close costs 10 points later.

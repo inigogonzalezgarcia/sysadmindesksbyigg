@@ -47,6 +47,14 @@
 </ol>
 <p>Si cierras un ticket que aún no está arreglado, sigue abierto, el SLA sigue corriendo y te resta puntos: como un usuario que vuelve a llamar.</p>
 
+<h3 id="estados">Estados del ticket y SLA en pausa</h3>
+<ul>
+  <li><strong>Nuevo</strong>: nadie lo ha cogido. <strong>En curso</strong>: asignado a ti, con la consola activa.</li>
+  <li><strong>Pendiente del usuario</strong> y <strong>Pendiente del proveedor</strong>: con <em>Poner en espera</em> eliges el estado y escribes un motivo corto (15 caracteres o más). Mientras espera, el SLA está en pausa (el contador se congela y marca «En pausa») y la consola y las acciones son de solo lectura. Un ticket en espera no se puede resolver: pulsa <em>Reanudar</em> y el SLA sigue desde donde se paró.</li>
+  <li><strong>Desasignarme</strong> devuelve el ticket a Nuevo. Como en una mesa real, el SLA sigue corriendo; la consola se queda como estaba para cuando vuelvas a asignártelo.</li>
+  <li>Cada cambio de estado queda en la <strong>Actividad</strong> de la ficha, con la hora y el motivo. El tiempo en pausa no cuenta para el SLA ni resta puntos, y el resultado te dice cuánto fue.</li>
+</ul>
+
 <h2 id="puntos">Cómo se puntúa</h2>
 <p>Cada ticket empieza con 100 puntos y resta por lo que haría peor el trabajo en un turno real:</p>
 <table class="doc-table">
@@ -97,7 +105,7 @@
 
 <h2 id="problemas">Si algo falla</h2>
 <ul>
-  <li><strong>He olvidado la contraseña.</strong> Si tu cuenta usa un email de Google, entra con <em>Continuar con Google</em>. Si no, <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">escríbeme</a> y te ayudo a recuperar el acceso.</li>
+  <li id="contrasena"><strong>He olvidado la contraseña.</strong> En <em>Entrar</em>, pulsa <em>¿Has olvidado la contraseña?</em> y escribe tu email: si hay una cuenta con ese email, te llega un enlace que caduca en 30 minutos y sirve una sola vez. Al elegir la contraseña nueva se cierran tus sesiones en todos los equipos. Si no te llega, mira en spam. Si tu cuenta entra con Google, no tiene contraseña: usa <em>Continuar con Google</em>. Si el restablecimiento por email aún no está disponible, <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">escríbeme</a> y te ayudo a recuperar el acceso.</li>
   <li><strong>«Demasiados intentos».</strong> Tras varios intentos fallidos el acceso se bloquea 15 minutos para frenar ataques. Espera y vuelve a probar.</li>
   <li><strong>No veo mi progreso en otro equipo.</strong> Comprueba que has entrado con la misma cuenta (el mismo email, o Google). El progreso se guarda al cerrar cada ticket.</li>
   <li><strong>El directorio no está como lo dejé.</strong> Los cambios del directorio se guardan en el navegador: en otro equipo o en una ventana privada empieza de cero.</li>
@@ -129,6 +137,14 @@
   <li><strong>Review the result</strong>: what was missing, an example note and one way to solve it, with the link to the guide.</li>
 </ol>
 <p>If you close a ticket that isn't fixed yet, it stays open, the SLA keeps running and it costs you points: like a user calling back.</p>
+
+<h3 id="states">Ticket states and the paused SLA</h3>
+<ul>
+  <li><strong>New</strong>: nobody has taken it. <strong>In progress</strong>: assigned to you, with the console live.</li>
+  <li><strong>Pending user</strong> and <strong>Pending vendor</strong>: with <em>Set pending</em> you pick the state and write a short reason (15 characters or more). While it waits, the SLA is paused (the counter freezes and says "Paused") and the console and the actions are read-only. A pending ticket cannot be resolved: press <em>Resume</em> and the SLA carries on from where it stopped.</li>
+  <li><strong>Unassign</strong> sends the ticket back to New. As on a real desk, the SLA keeps running; the console stays as it was for when you assign it to yourself again.</li>
+  <li>Every state change goes into the ticket's <strong>Activity</strong>, with the time and the reason. Paused time does not count against the SLA or cost points, and the result tells you how long it was.</li>
+</ul>
 
 <h2 id="scoring">How scoring works</h2>
 <p>Each ticket starts at 100 points and loses points for what would make the work worse on a real shift:</p>
@@ -180,7 +196,7 @@
 
 <h2 id="trouble">If something goes wrong</h2>
 <ul>
-  <li><strong>I forgot my password.</strong> If your account uses a Google email, sign in with <em>Continue with Google</em>. Otherwise <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">write to me</a> and I will help you get back in.</li>
+  <li id="password"><strong>I forgot my password.</strong> On <em>Sign in</em>, press <em>Forgot your password?</em> and type your email: if there is an account with that email, you get a link that expires in 30 minutes and works once. Choosing the new password signs you out on every device. If it doesn't arrive, check spam. If your account signs in with Google, it has no password: use <em>Continue with Google</em>. If reset by email is not available yet, <a href="https://inigogonzalezgarcia.github.io/about.html#contacto" target="_blank" rel="noopener noreferrer">write to me</a> and I will help you get back in.</li>
   <li><strong>"Too many attempts".</strong> After several failed attempts sign-in is blocked for 15 minutes to slow down attacks. Wait and try again.</li>
   <li><strong>I can't see my progress on another device.</strong> Check you signed in with the same account (same email, or Google). Progress is saved when you close each ticket.</li>
   <li><strong>The directory isn't how I left it.</strong> Directory changes are kept in the browser: on another device or in a private window it starts fresh.</li>
