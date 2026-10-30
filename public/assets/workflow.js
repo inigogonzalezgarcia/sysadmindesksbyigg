@@ -1,11 +1,13 @@
 /* SysAdmin Desks by IGG - ticket workflow (v0.6): states, allowed transitions, reasons, the activity timeline and the SLA with pauses.
    Pure logic, no DOM: the app keeps one record per ticket in the browser (sd.work[deskId]) and the Node tests use the same code.
 
-   A record: { status, startedAt, pausedMs, pausedAt, timeline: [{ at, from, to, reason }] }
+   A record: { status, startedAt, pausedMs, pausedAt, timeline: [{ at, from, to, reason }], extraMs?, contact? }
    - status: "new" (unassigned, after "Unassign"; the SLA keeps running), "progress" (assigned to me),
      "pending-user" or "pending-vendor" (the SLA is paused), and "closed" (resolved).
    - startedAt: when the ticket was first assigned (the SLA starts then and never restarts while the record lives).
-   - pausedMs: time already spent in a pending state; pausedAt: when the current pause started (null if not paused). */
+   - pausedMs: time already spent in a pending state; pausedAt: when the current pause started (null if not paused).
+   - extraMs and contact (v0.6a, written by comms.js): simulated SLA time spent asking the requester, and the questions asked;
+     a timeline entry with `contact: <question id>` is one of those questions. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
   else root.SDWorkflow = factory();
@@ -36,13 +38,17 @@
   // a record saved by v0.5 was only {startedAt}: it was in progress and never paused
   function normalise(rec) {
     if (!rec || typeof rec !== "object" || !Number.isFinite(Number(rec.startedAt))) return null;
-    return {
+    const out = {
       status: STATES.indexOf(rec.status) !== -1 ? rec.status : "progress",
       startedAt: Number(rec.startedAt),
       pausedMs: Math.max(0, Number(rec.pausedMs) || 0),
       pausedAt: Number.isFinite(Number(rec.pausedAt)) && rec.pausedAt !== null ? Number(rec.pausedAt) : null,
       timeline: Array.isArray(rec.timeline) ? rec.timeline.slice(-100) : [],
     };
+    // v0.6a: SLA time added by contacting the requester (1 minute per question), and the conversation itself (comms.js)
+    if (Number(rec.extraMs) > 0) out.extraMs = Number(rec.extraMs);
+    if (rec.contact && typeof rec.contact === "object" && Array.isArray(rec.contact.asked)) out.contact = { asked: rec.contact.asked.slice(-50) };
+    return out;
   }
 
   // "Assign to me": a brand new record, or the same one again after "Unassign" (the SLA kept running)
@@ -82,11 +88,12 @@
     if (!r) return 0;
     return r.pausedMs + (r.pausedAt !== null ? Math.max(0, now - r.pausedAt) : 0);
   }
-  // SLA time used: from the first assignment to now, minus the pauses (unassigned time counts, as on a real desk)
+  // SLA time used: from the first assignment to now, minus the pauses (unassigned time counts, as on a real desk),
+  // plus the simulated time spent talking to the requester (extraMs, v0.6a)
   function elapsedMs(rec, now) {
     const r = normalise(rec);
     if (!r) return 0;
-    return Math.max(0, now - r.startedAt - pausedMs(r, now));
+    return Math.max(0, now - r.startedAt - pausedMs(r, now) + (r.extraMs || 0));
   }
   function slaMinutesUsed(rec, now) { return elapsedMs(rec, now) / 60000; }
   // minutes left of an SLA of limitMin minutes (negative once it is over)

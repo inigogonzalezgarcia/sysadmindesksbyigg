@@ -26,7 +26,7 @@
 <article class="es" lang="es">
 <h1>Ayuda</h1>
 <nav class="doc-toc" aria-label="En esta página">
-  <a href="#empezar">Empezar</a> <a href="#ticket">Un ticket de principio a fin</a> <a href="#puntos">Cómo se puntúa</a> <a href="#herramientas">Las herramientas</a> <a href="#conocimiento">Base de conocimiento</a> <a href="#progreso">Progreso</a> <a href="#correo">Correo</a> <a href="#problemas">Si algo falla</a>
+  <a href="#empezar">Empezar</a> <a href="#ticket">Un ticket de principio a fin</a> <a href="#contactar">Contactar al solicitante</a> <a href="#puntos">Cómo se puntúa</a> <a href="#herramientas">Las herramientas</a> <a href="#conocimiento">Base de conocimiento</a> <a href="#progreso">Progreso</a> <a href="#correo">Correo</a> <a href="#problemas">Si algo falla</a>
 </nav>
 
 <h2 id="empezar">Empezar</h2>
@@ -55,6 +55,23 @@
   <li>Cada cambio de estado queda en la <strong>Actividad</strong> de la ficha, con la hora y el motivo. El tiempo en pausa no cuenta para el SLA ni resta puntos, y el resultado te dice cuánto fue.</li>
 </ul>
 
+<h2 id="contactar">Contactar al solicitante y nota para el usuario</h2>
+<p>Con el ticket <strong>en curso</strong>, el botón <em>Contactar al solicitante</em> (en su ficha) abre una conversación con él. No se escribe texto libre: eliges entre 5 y 7 preguntas preparadas para cada ticket.</p>
+<ul>
+  <li><strong>Útiles</strong>: la respuesta da una pista que la consola no da, y se anota en <strong>Lo que sabes</strong>. <strong>Neutras</strong>: ciertas, pero no ayudan. <strong>Malas</strong>: dirigidas, culpabilizadoras, con jerga o pidiendo la contraseña. El usuario responde como lo haría de verdad y la pregunta queda marcada como mala práctica, con el motivo. Pedir una contraseña nunca está bien, tampoco desde IT.</li>
+  <li><strong>Cada pregunta cuesta 1 minuto de SLA</strong>: el contador salta un minuto y la pregunta queda en la <strong>Actividad</strong> como «Contacto: …». Un ticket nuevo o en espera no puede contactar: asígnatelo o reanúdalo antes.</li>
+  <li><strong>Pedir confirmación</strong> solo aparece cuando has aplicado un arreglo: el usuario confirma que funciona, o te dice que sigue fallando si aplicaste el arreglo tentador.</li>
+  <li>Contactar es una ventaja, no una obligación: todos los tickets se pueden resolver solo con la consola, y preguntar no cambia nada en ella. La conversación se guarda en tu navegador con el ticket y empieza de cero si lo repites.</li>
+</ul>
+<p>Al cerrar, además de la nota de trabajo (interna), escribe la <strong>nota para el usuario</strong>: lo que leerá el solicitante. Puedes partir de cuatro plantillas (resuelto con explicación, resuelto con un paso para el usuario, solución temporal y seguimiento, no se ha podido reproducir) y sustituir cada <code>[hueco]</code>. Se puntúa sobre 5, una regla cada punto, y mientras escribes ves cuáles cumples:</p>
+<ol>
+  <li>te diriges al usuario por su nombre;</li>
+  <li>explicas qué pasaba con palabras sencillas («el problema era…», «porque…»), sin jerga (spooler, GPO, SPN, Kerberos, DNS, registro, PowerShell…) salvo que la expliques justo después, entre paréntesis o con «es decir»;</li>
+  <li>dices qué tiene que hacer, o que no tiene que hacer nada;</li>
+  <li>no incluyes datos internos: nombres de servidores, cuentas de administración o de servicio, contraseñas o claves, IP internas, identificadores o rutas de red;</li>
+  <li>está lista para enviar: ningún <code>[hueco]</code> sin rellenar y entre 120 y 900 caracteres.</li>
+</ol>
+
 <h2 id="puntos">Cómo se puntúa</h2>
 <p>Cada ticket empieza con 100 puntos y resta por lo que haría peor el trabajo en un turno real:</p>
 <table class="doc-table">
@@ -70,6 +87,7 @@
   </tbody>
 </table>
 <p>Estrellas: tres desde 90 puntos, dos desde 70 y una desde 40. El resultado es <strong>resuelto</strong> si no hay nada que comentar, <strong>resuelto con observaciones</strong> si está arreglado pero algo de lo anterior se puede mejorar, y <strong>no resuelto</strong> si la causa sigue ahí.</p>
+<p><strong>Comunicación</strong> (aparte): ni la nota para el usuario ni las preguntas cambian el resultado ni los puntos del ticket, así que un cierre que antes era correcto lo sigue siendo. El resultado muestra <em>Nota de trabajo</em> y <em>Nota al usuario x/5</em> una junto a otra, y un <strong>bonus de comunicación</strong> de 0 a 10 que no se suma a la puntuación: nota al usuario 5/5 +5, 4/5 +3, 3/5 +1; al menos una pregunta útil y ninguna mala +3; el usuario confirmó que funciona +2. Y observaciones si no escribiste nota para el usuario, si pediste una contraseña o si hiciste otras preguntas inadecuadas.</p>
 
 <h2 id="herramientas">Las herramientas</h2>
 <h3>Cola de tickets</h3>
@@ -95,7 +113,8 @@
 <ul>
   <li><strong>Racha de días</strong>: días seguidos en los que has cerrado un ticket arreglado o respondido un ejercicio de correo. Si hoy aún no has practicado, la racha de ayer sigue viva hasta medianoche.</li>
   <li><strong>Objetivo semanal</strong>: tickets distintos cerrados y ejercicios de correo respondidos de lunes a domingo. Lo eliges tú, de 1 a 7 (3 al empezar).</li>
-  <li><strong>Insignias</strong>: diez, cada una con su criterio a la vista (primer ticket, nota impecable sin pistas, cinco tickets dentro del SLA, siete días seguidos, phishing reportado…). Una vez conseguida, se queda con su fecha.</li>
+  <li><strong>Comunicación</strong>: preguntas útiles hechas y la media de tus notas al usuario.</li>
+  <li><strong>Insignias</strong>: once, cada una con su criterio a la vista (primer ticket, nota impecable sin pistas, cinco tickets dentro del SLA, siete días seguidos, phishing reportado, tres notas al usuario de 5/5…). Una vez conseguida, se queda con su fecha.</li>
 </ul>
 <p>Tu mejor resultado en cada ticket se guarda en tu cuenta; la racha, el objetivo, las insignias, los artículos y las respuestas de correo se guardan en este navegador.</p>
 
@@ -117,7 +136,7 @@
 <article class="en" lang="en" id="en">
 <h1>Help</h1>
 <nav class="doc-toc" aria-label="On this page">
-  <a href="#start">Getting started</a> <a href="#ticket-en">A ticket from start to finish</a> <a href="#scoring">How scoring works</a> <a href="#tools">The tools</a> <a href="#kb">Knowledge base</a> <a href="#progress">Progress</a> <a href="#mail">Mail</a> <a href="#trouble">If something goes wrong</a>
+  <a href="#start">Getting started</a> <a href="#ticket-en">A ticket from start to finish</a> <a href="#contact">Contact the requester</a> <a href="#scoring">How scoring works</a> <a href="#tools">The tools</a> <a href="#kb">Knowledge base</a> <a href="#progress">Progress</a> <a href="#mail">Mail</a> <a href="#trouble">If something goes wrong</a>
 </nav>
 
 <h2 id="start">Getting started</h2>
@@ -146,6 +165,23 @@
   <li>Every state change goes into the ticket's <strong>Activity</strong>, with the time and the reason. Paused time does not count against the SLA or cost points, and the result tells you how long it was.</li>
 </ul>
 
+<h2 id="contact">Contact the requester and the note to the user</h2>
+<p>With the ticket <strong>in progress</strong>, the <em>Contact the requester</em> button (on their card) opens a conversation with them. There is no free text: you choose from 5 to 7 questions prepared for each ticket.</p>
+<ul>
+  <li><strong>Useful</strong>: the answer gives a clue the console does not, and it goes into <strong>What you know</strong>. <strong>Neutral</strong>: true, but no help. <strong>Bad</strong>: leading, blaming, full of jargon or asking for the password. The user answers as they really would, and the question is flagged as bad practice, with the reason. Asking for a password is never right, not even from IT.</li>
+  <li><strong>Each question costs 1 minute of SLA</strong>: the counter jumps a minute and the question goes into the <strong>Activity</strong> as "Contact: …". A new or pending ticket cannot contact: assign it or resume it first.</li>
+  <li><strong>Ask to confirm</strong> only appears once you have applied a fix: the user confirms it works, or tells you it still fails if you applied the tempting fix.</li>
+  <li>Contacting is an advantage, not a requirement: every ticket can be solved with the console alone, and asking changes nothing in it. The conversation is kept in your browser with the ticket and starts again if you replay it.</li>
+</ul>
+<p>When you close, besides the (internal) work note, write the <strong>note to the user</strong>: what the requester will read. You can start from four templates (resolved with an explanation, resolved with one step for the user, workaround and follow-up, could not reproduce) and replace every <code>[gap]</code>. It is marked out of 5, one point per rule, and you see which ones you meet as you type:</p>
+<ol>
+  <li>you address the user by name;</li>
+  <li>you say what was wrong in plain words ("the problem was…", "because…"), with no jargon (spooler, GPO, SPN, Kerberos, DNS, registry, PowerShell…) unless you explain it right after, in brackets or with "that is";</li>
+  <li>you say what they need to do, or that nothing is needed;</li>
+  <li>no internal details: server names, admin or service accounts, passwords or keys, internal IPs, ids or network paths;</li>
+  <li>it is ready to send: no <code>[gap]</code> left and between 120 and 900 characters.</li>
+</ol>
+
 <h2 id="scoring">How scoring works</h2>
 <p>Each ticket starts at 100 points and loses points for what would make the work worse on a real shift:</p>
 <table class="doc-table">
@@ -161,6 +197,7 @@
   </tbody>
 </table>
 <p>Stars: three from 90 points, two from 70 and one from 40. The result is <strong>resolved</strong> when there is nothing to comment on, <strong>resolved with observations</strong> when it is fixed but something above can improve, and <strong>unresolved</strong> when the cause is still there.</p>
+<p><strong>Communication</strong> (apart): neither the note to the user nor the questions change the ticket's result or points, so a closure that was right before still is. The result shows <em>Work note</em> and <em>Note to the user x/5</em> side by side, and a <strong>communication bonus</strong> from 0 to 10 that is not added to the score: note to the user 5/5 +5, 4/5 +3, 3/5 +1; at least one useful question and no bad one +3; the user confirmed it works +2. And remarks if you wrote no note to the user, asked for a password or asked other poor questions.</p>
 
 <h2 id="tools">The tools</h2>
 <h3>Ticket queue</h3>
@@ -186,7 +223,8 @@
 <ul>
   <li><strong>Day streak</strong>: days in a row on which you closed a ticket fixed or answered a mail exercise. If you have not practised yet today, yesterday's streak stays alive until midnight.</li>
   <li><strong>Weekly goal</strong>: different tickets closed and mail exercises answered from Monday to Sunday. You choose it, from 1 to 7 (3 to start with).</li>
-  <li><strong>Badges</strong>: ten, each with its rule on show (first ticket, spotless note with no hints, five tickets within the SLA, seven days in a row, phishing reported…). Once earned, a badge keeps its date.</li>
+  <li><strong>Communication</strong>: useful questions asked and the average of your notes to the user.</li>
+  <li><strong>Badges</strong>: eleven, each with its rule on show (first ticket, spotless note with no hints, five tickets within the SLA, seven days in a row, phishing reported, three 5/5 notes to the user…). Once earned, a badge keeps its date.</li>
 </ul>
 <p>Your best result on each ticket is saved in your account; the streak, goal, badges, articles and mail answers are kept in this browser.</p>
 
