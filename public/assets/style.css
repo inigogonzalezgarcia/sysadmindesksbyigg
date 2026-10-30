@@ -833,3 +833,30 @@ body.doc-es .legal article + article, body.doc-en .legal article + article { mar
   .kb-article a { color: var(--ink); text-decoration: none; }
   .mail-result, .kb-saved, .badge-new { animation: none; }
 }
+
+/* v0.6.2 SEO: the static intro in index.html (shown to search engines, without JS and until the app renders; app.js picks
+   the language) and the public ticket pages in tickets/ */
+.intro-es .seo-intro .en, .intro-en .seo-intro .es { display: none; }
+.intro-es .seo-intro article + article, .intro-en .seo-intro article + article { margin-top: 0; padding-top: 0; border-top: 0; }
+.seo-intro { margin: 0 auto; padding-top: 12px; }
+.seo-intro .land-tag { color: var(--accent); font-size: 12px; }
+.seo-intro .land-tag .dot { background: var(--accent); box-shadow: none; animation: none; }
+.seo-intro h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.12; }
+.seo-intro ol li { margin: 6px 0; }
+.tk-list { padding-left: 20px; }
+.tk-list li { margin: 6px 0; }
+.tk-tag { color: var(--muted); font-size: 14px; }
+.tk-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin: 18px 0; }
+.btn.tk-btn { padding: 10px 20px; font-size: 16px; }
+.tk-crumbs { font-size: 14px; color: var(--muted); margin: 0; }
+.tk-meta { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.tk-meta li { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 14px; margin: 0; }
+.tk-ticket { margin: 10px 0; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 14px 18px; }
+.tk-subject { font-weight: 600; margin: 0 0 8px; }
+.tk-id { font-family: var(--mono); font-size: 13px; background: var(--term-bg); color: var(--term-ok); padding: 1px 7px; border-radius: 6px; margin-right: 6px; font-weight: 500; }
+.tk-ticket blockquote { margin: 0; }
+.tk-ticket blockquote p { margin: 0; }
+.tk-ticket figcaption { margin-top: 8px; color: var(--muted); font-size: 14px; }
+.legal .fine { color: var(--muted); font-size: 14px; }
+/* the laptop base is wider than its lid on purpose: keep it from adding a horizontal scroll on a 390px phone */
+.landing { overflow-x: clip; }

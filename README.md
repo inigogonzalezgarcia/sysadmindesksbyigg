@@ -117,12 +117,20 @@ Everything here is kept only in the browser (`localStorage`, keys `sd.kb`, `sd.a
 
 Static pages next to the app, in both languages (`assets/doc.js` shows the one picked in the simulator and adds the switch), with the same strict CSP:
 
-- [about.html](public/about.html): what SysAdmin Desks is, who it is for, how a ticket is checked, and what it is not (not work experience, not a real system, not affiliated with any vendor or certification body);
+- [about.html](public/about.html) (`/about`): what SysAdmin Desks is, who it is for, how a ticket is checked, and what it is not (not work experience, not a real system, not affiliated with any vendor or certification body);
 - [help.html](public/help.html): getting started, a ticket from start to finish, contacting the requester and the note to the user, how scoring works, each tool, and what to do if something goes wrong;
 - [faq.html](public/faq.html): nineteen short questions and answers;
 - [terms.html](public/terms.html) and [privacy.html](public/privacy.html).
 
 Every page, the app footer, the sidebar and *My account* link to them and to **Report a problem**, which opens the contact form on my website with the subject filled in. `tests/pages.test.js` checks both languages, the CSP, that there is no inline code or email address, and that every local link exists.
+
+## SEO (v0.6.2)
+
+- **Static intro on the home page:** `index.html` ships real text inside `<main id="app">` (H1, how it works, the 18 tickets, links to the help pages and the guides), in Spanish and English. Search engines and visitors without JavaScript read it; `app.js` shows only the visitor's language and replaces it with the landing or the app on its first render.
+- **A public page per ticket:** `public/tickets/<desk id>.html` (served as `/tickets/<desk id>`) with the problem, the ticket as the requester tells it, level, topic and SLA, what you practise (never the cause or the fix), the related guide and a *Practise it free* button to `/?lang=xx#/desk/<id>`; `/tickets/` lists them all. The about page and the home intro link to them.
+- **Clean URLs:** `/about`, `/help`, `/faq`, `/terms`, `/privacy` and `/tickets/...` everywhere (Cloudflare Pages serves `about.html` for `/about`; `npm run dev` does the same). `sitemap.xml` lists them.
+- **Head:** every public page has its Spanish title and description (the default visible language; `doc.js` and `app.js` switch the title for English), a canonical URL, Open Graph (`assets/og.png`, 1200×630, drawn by `scripts/make-og.py`) and a Twitter card. JSON-LD: `WebApplication` on the home page and `FAQPage` on `/faq`, built from the visible Spanish questions. JSON-LD is the only inline `<script>` allowed: it is data and never runs, so the CSP does not block it.
+- **`npm run pages`** (`scripts/build-ticket-pages.mjs`) builds the ticket pages, the `<!-- seo -->` head blocks and the ticket lists from `assets/scenarios.js` and `scripts/ticket-pages-data.mjs` (the description and skills of each desk). Run it after changing a desk or the FAQ; `tests/seo.test.mjs` fails if a generated file is out of date, if a page lacks its tags or if a ticket page shows a solution command, a hint or the example note.
 
 ## How it is built
 
@@ -134,10 +142,11 @@ Every page, the app footer, the sidebar and *My account* link to them and to **R
 ## Run it locally
 
 ```bash
-npm test                 # 85 tests: the desks, the ticket page and its workflow, contacting the requester and the note for the user, the directory and desktops, progress and knowledge, the pages, and the accounts and password reset against an in-memory database (Node 22+)
+npm test                 # 91 tests: the desks, the ticket page and its workflow, contacting the requester and the note for the user, the directory and desktops, progress and knowledge, the pages and their SEO, and the accounts and password reset against an in-memory database (Node 22+)
 npm run dev              # http://localhost:8788 with accounts, in-memory database; reset answers 503 unless BREVO_API_KEY and MAIL_FROM are set
 npm run dev:reset        # the same, but reset emails are not sent: the link is printed in this console (DEV_RESET_LOG=1, only in scripts/dev-server.mjs)
-npm run serve            # http://localhost:8080, static only (no accounts)
+npm run pages            # rebuild the ticket pages, the SEO head blocks and the ticket lists (after changing a desk or the FAQ)
+npm run serve            # http://localhost:8080, static only (no accounts, and no clean URLs: open /about.html)
 ```
 
 ## Deploy (Cloudflare Pages)

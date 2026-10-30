@@ -7,7 +7,8 @@ import { DatabaseSync } from "node:sqlite";
 
 const ROOT = new URL("../", import.meta.url).pathname;
 const PORT = Number(process.env.PORT || 8788);
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".json": "application/json" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".json": "application/json",
+  ".png": "image/png", ".xml": "application/xml", ".txt": "text/plain; charset=utf-8" };
 
 function fakeD1() {
   const sql = new DatabaseSync(":memory:");
@@ -75,7 +76,14 @@ createServer(async (req, res) => {
     }
     let path = normalize(decodeURIComponent(url.pathname)).replace(/^(\.\.[/\\])+/, "");
     if (path.endsWith("/")) path += "index.html";
-    const body = await readFile(join(ROOT, "public", path));
+    // clean URLs like Cloudflare Pages: /about serves about.html, /tickets serves tickets/index.html
+    let body;
+    try { body = await readFile(join(ROOT, "public", path)); }
+    catch (e) {
+      if (e.code !== "ENOENT" && e.code !== "EISDIR" || extname(path)) throw e;
+      try { body = await readFile(join(ROOT, "public", path + ".html")); path += ".html"; }
+      catch (e2) { if (e2.code !== "ENOENT") throw e2; body = await readFile(join(ROOT, "public", path, "index.html")); path += "/index.html"; }
+    }
     res.writeHead(200, { "content-type": TYPES[extname(path)] || "application/octet-stream" });
     res.end(body);
   } catch (e) {
