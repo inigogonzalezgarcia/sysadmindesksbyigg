@@ -147,7 +147,8 @@
     "acceso condicional", "pim", "countviolation", "sku", "fullaccess", "full access", "sendas", "send as", "automapping", "mecm", "sccm",
     "detection method", "metodo de deteccion", "product code", "codigo de producto", "msi", "logrotate", "nginx", "gunicorn", "systemd", "journalctl",
     "upstream", "vda", "delivery controller", "broker", "transaction log", "log_backup", "recovery model", "synthetic full", "repository", "repositorio",
-    "managed folder assistant", "retention policy", "wuauserv", "softwaredistribution", "delta sync", "keytab", "realm", "gfs", "flushdns", "ipconfig"];
+    "managed folder assistant", "retention policy", "wuauserv", "softwaredistribution", "delta sync", "keytab", "realm", "gfs", "flushdns", "ipconfig",
+    "vlan", "bpdu", "bpduguard", "bpdu guard", "err-disabled", "spanning tree", "any-any"];
   const EXPLAINED = /^\s*(\(|,?\s*(es decir|o sea|that is|i\.e\.|which is|meaning|que es|el servicio|the service|la pieza|the part)\b|:\s|\s[-–—]\s)/;
   function jargonIn(text) {
     const f = fold(text);
