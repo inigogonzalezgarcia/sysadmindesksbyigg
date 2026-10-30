@@ -45,8 +45,10 @@
   }
 
   /* ---------- activity: [{type: "ticket" | "mail", id, day, ...}] recorded when a ticket is closed fixed or a mail exercise is answered */
+  // v0.9b: only closes and mail answers make a day (lab tasks and failed closes are in the activity too, for the weekly goals and the counters)
+  const COUNTS = (a) => a && (a.type === "ticket" || a.type === "mail");
   function activeDays(activity) {
-    return Array.from(new Set((activity || []).map((a) => a.day).filter((d) => parts(d)))).sort();
+    return Array.from(new Set((activity || []).filter(COUNTS).map((a) => a.day).filter((d) => parts(d)))).sort();
   }
   // current streak (ending today, or yesterday if there is nothing yet today) and the best run ever
   function streak(activity, today) {
@@ -69,7 +71,7 @@
   }
   function week(activity, today, goal) {
     const key = isoWeek(today);
-    const done = new Set((activity || []).filter((a) => isoWeek(a.day) === key).map((a) => a.type + ":" + a.id)).size;
+    const done = new Set((activity || []).filter((a) => COUNTS(a) && isoWeek(a.day) === key).map((a) => a.type + ":" + a.id)).size;
     const target = goalValue(goal);
     return { week: key, done, target, met: done >= target };
   }
@@ -189,7 +191,7 @@
       q.every((w) => fold([a.title, a.ticketId, a.topic, a.symptom.subject].concat(a.sections.flatMap((s) => s.text)).join(" ")).indexOf(w) !== -1));
   }
 
-  /* ---------- internal mail: six messages, each one an exercise (see docs/growth-format.md) */
+  /* ---------- internal mail: eleven messages (six since v0.4, five more in v0.9), each one an exercise (see docs/growth-format.md) */
   const ME = "soporte@contoso.com";
   const PASS = { spf: "pass", dkim: "pass", dmarc: "pass" };
   const MAIL = [
@@ -405,6 +407,181 @@
       procedure: { en: "A genuine notice needs no action. Note the window: if S: drive tickets arrive on Monday, you know where to start.",
         es: "Un aviso legítimo no necesita acción. Apunta la ventana: si el lunes llegan tickets de la unidad S:, ya sabes por dónde empezar." },
     },
+    /* v0.9: five more, tied to the network, shipment and RMA desks */
+    {
+      id: "net-change", kind: "notice", day: "2026-10-25", time: "23:41", directory: null, link: { href: "#/network", label: { en: "Open the network room", es: "Abrir la sala de red" } },
+      dirNote: { en: "Shared mailbox of the Network and Communications team (contoso.com).", es: "Buzón compartido del equipo de Redes y Comunicaciones (contoso.com)." },
+      from: { name: { en: "Network and Communications", es: "Redes y Comunicaciones" }, address: "redes@contoso.com" }, to: "it-team@contoso.com",
+      subject: { en: "Change CHG-4471 completed: ERP web front moved to ERPWEB02", es: "Cambio CHG-4471 completado: frontal web del ERP movido a ERPWEB02" },
+      body: {
+        en: ["Hello,", "Tonight's change CHG-4471 is complete (22:00 to 23:30): the ERP web front now runs on ERPWEB02 instead of ERPWEB01. The FortiGate address objects for the ERP have been updated and the old server stays on for a week as a fallback.",
+          "No action is needed from users. If anyone cannot reach the ERP tomorrow, log a ticket and link it to CHG-4471 so we can check it against the change.", "Network and Communications"],
+        es: ["Hola:", "El cambio de esta noche, CHG-4471, está completado (de 22:00 a 23:30): el frontal web del ERP funciona ahora en ERPWEB02 en lugar de ERPWEB01. Se han actualizado los objetos de dirección del ERP en el FortiGate y el servidor antiguo sigue encendido una semana como plan de vuelta atrás.",
+          "Los usuarios no tienen que hacer nada. Si mañana alguien no llega al ERP, registrad un ticket y vinculadlo a CHG-4471 para revisarlo contra el cambio.", "Redes y Comunicaciones"],
+      },
+      links: [],
+      headers: Object.assign({ replyTo: "redes@contoso.com", returnPath: "redes@contoso.com",
+        received: "from ADM-WS01.contoso.local (10.20.14.61) by mail.contoso.com; Sun, 25 Oct 2026 23:41:18 +0100" }, PASS),
+      options: [
+        { id: "none", result: "correct", label: { en: "Nothing now: note the change and link any ERP ticket to CHG-4471", es: "Nada por ahora: apuntar el cambio y vincular a CHG-4471 cualquier ticket del ERP" },
+          why: { en: "Right: an internal, authenticated change notice. Knowing what changed last night is the quickest start if ERP tickets come in.",
+            es: "Correcto: un aviso de cambio interno y autenticado. Saber qué cambió anoche es el mejor punto de partida si llegan tickets del ERP." } },
+        { id: "report", result: "partial", label: { en: "Report it as phishing", es: "Reportarlo como phishing" },
+          why: { en: "Reporting when in doubt is fine, but this one adds up: the network team's mailbox, every check passes, no links and nothing asked of you.",
+            es: "Reportar ante la duda está bien, pero aquí todo cuadra: el buzón del equipo de redes, todas las comprobaciones pasan, sin enlaces y no te pide nada." } },
+        { id: "revert", result: "wrong", label: { en: "Undo the change yourself on the FortiGate, just in case", es: "Deshacer tú el cambio en el FortiGate, por si acaso" },
+          why: { en: "Nothing has failed yet, and an unplanned change to a firewall is how outages start. Rollbacks are decided by the change owner.",
+            es: "Todavía no ha fallado nada, y un cambio sin planificar en un cortafuegos es como empiezan las caídas. La vuelta atrás la decide quien es responsable del cambio." } },
+      ],
+      clues: {
+        en: ["Internal shared mailbox (redes@contoso.com); SPF, DKIM and DMARC pass.", "It has a change reference (CHG-4471), a window and a fallback plan, and asks users for nothing.", "ERPWEB02 and the FortiGate are in the inventory and the network room."],
+        es: ["Buzón compartido interno (redes@contoso.com); SPF, DKIM y DMARC pasan.", "Trae referencia de cambio (CHG-4471), ventana y plan de vuelta atrás, y no pide nada a los usuarios.", "ERPWEB02 y el FortiGate están en el inventario y en la sala de red."],
+      },
+      procedure: { en: "A change notice needs no action. Keep the reference: a ticket that starts after a change is linked to it and checked against what changed.",
+        es: "Un aviso de cambio no necesita acción. Guarda la referencia: un ticket que empieza después de un cambio se vincula a él y se revisa contra lo que cambió." },
+    },
+    {
+      id: "vendor-rma", kind: "external", day: "2026-10-27", time: "10:14", directory: null,
+      dirNote: { en: "External sender: the laptop vendor's support domain, registered in the support contract (trusted senders list).", es: "Remitente externo: el dominio de soporte del fabricante de portátiles, registrado en el contrato de soporte (lista de remitentes de confianza)." },
+      from: { name: { en: "Laptop vendor support", es: "Soporte del fabricante de portátiles" }, address: "rma@laptop-vendor.example" }, to: ME,
+      subject: { en: "Service request SR 812604417 approved: collection for 2BW4MN3", es: "Solicitud de servicio SR 812604417 aprobada: recogida de 2BW4MN3" },
+      body: {
+        en: ["Dear customer,", "Your service request SR 812604417 for the system with service tag 2BW4MN3 (swollen battery) has been approved under your Collect & Return warranty.",
+          "Our courier will collect the system tomorrow between 09:00 and 13:00 at the address on file. Please send the laptop without the charger or accessories. Our technicians do not need any password: the repair does not start Windows.",
+          "You can follow the request on your support account: [[0]]", "Kind regards,\nLaptop vendor support"],
+        es: ["Estimado cliente:", "Su solicitud de servicio SR 812604417 para el equipo con etiqueta de servicio 2BW4MN3 (batería hinchada) ha sido aprobada con su garantía Collect & Return.",
+          "Nuestro mensajero recogerá el equipo mañana entre las 09:00 y las 13:00 en la dirección registrada. Envíe el portátil sin cargador ni accesorios. Nuestros técnicos no necesitan ninguna contraseña: la reparación no arranca Windows.",
+          "Puede seguir la solicitud en su cuenta de soporte: [[0]]", "Atentamente,\nSoporte del fabricante de portátiles"],
+      },
+      links: [{ text: "https://support.laptop-vendor.example/requests/SR812604417", href: "https://support.laptop-vendor.example/requests/SR812604417" }],
+      headers: Object.assign({ replyTo: "rma@laptop-vendor.example", returnPath: "bounces@laptop-vendor.example",
+        received: "from mta2.laptop-vendor.example (198.51.100.40) by mail.contoso.com; Tue, 27 Oct 2026 10:14:52 +0100" }, PASS),
+      options: [
+        { id: "check", result: "correct", label: { en: "Check the SR number and the service tag against the register and the ticket, note it there and prepare the laptop without the charger",
+          es: "Comprobar el número de SR y la etiqueta de servicio con el registro y el ticket, anotarlo allí y preparar el portátil sin cargador" },
+          why: { en: "Right: the vendor's own domain, every check passes, the tag matches LAPTOP-0251 in the register and it asks for no credentials. Record the SR so the next step is traceable.",
+            es: "Correcto: el dominio propio del fabricante, todas las comprobaciones pasan, la etiqueta coincide con LAPTOP-0251 del registro y no pide credenciales. Anota la SR para que el siguiente paso quede trazado." } },
+        { id: "report", result: "partial", label: { en: "Report it as phishing: it comes from outside", es: "Reportarlo como phishing: viene de fuera" },
+          why: { en: "External is not the same as malicious: this is the vendor's domain from the contract, it passes SPF, DKIM and DMARC and its link goes where it says.",
+            es: "Externo no es lo mismo que malicioso: es el dominio del fabricante que figura en el contrato, pasa SPF, DKIM y DMARC y su enlace va a donde dice." } },
+        { id: "password", result: "wrong", label: { en: "Reply with the user's Windows password so the technician can test it", es: "Contestar con la contraseña de Windows del usuario para que el técnico lo pruebe" },
+          why: { en: "A password is never sent to anyone, and the vendor itself says it does not need one. If a test needs Windows, a local test account is created for it.",
+            es: "Una contraseña no se envía nunca a nadie, y el propio fabricante dice que no la necesita. Si una prueba necesita Windows, se crea una cuenta local de prueba." } },
+      ],
+      clues: {
+        en: ["The sender's domain is the vendor's, the one in the support contract; SPF, DKIM and DMARC pass.", "Service tag 2BW4MN3 is LAPTOP-0251 in the asset register (Inventory → Endpoints), with Collect & Return warranty.",
+          "The link text and its real target are the same, and it says outright that no password is needed."],
+        es: ["El dominio del remitente es el del fabricante, el del contrato de soporte; SPF, DKIM y DMARC pasan.", "La etiqueta 2BW4MN3 es LAPTOP-0251 en el registro de activos (Inventario → Endpoints), con garantía Collect & Return.",
+          "El texto del enlace y su destino real coinciden, y dice claramente que no hace falta ninguna contraseña."],
+      },
+      procedure: { en: "Match the vendor's numbers with your own records (serial, register, ticket), write the SR in the ticket or the shipment, prepare the device as asked, and never send credentials.",
+        es: "Cruza los números del fabricante con tus registros (número de serie, registro, ticket), anota la SR en el ticket o en el envío, prepara el equipo como piden y no envíes nunca credenciales." },
+    },
+    {
+      id: "courier-pickup", kind: "external", day: "2026-10-27", time: "08:55", directory: null, link: { href: "#/shipping", label: { en: "Open Shipments", es: "Abrir Envíos" } },
+      dirNote: { en: "External sender: TransIbérica Express, the carrier Contoso has an account with (trusted senders list).", es: "Remitente externo: TransIbérica Express, el transportista con el que Contoso tiene cuenta (lista de remitentes de confianza)." },
+      from: { name: "TransIbérica Express", address: "avisos@transiberica.example" }, to: ME,
+      subject: { en: "Pickup confirmed: shipment TIX412905337, today 14:00-18:00", es: "Recogida confirmada: envío TIX412905337, hoy de 14:00 a 18:00" },
+      body: {
+        en: ["Hello,", "We confirm the pickup you booked for shipment TIX412905337: today between 14:00 and 18:00 at Contoso · IT store room, Calle del Ejemplo 21, 1st floor, 28000 Madrid.",
+          "Please have the parcel closed and labelled. To change the time slot, sign in to your customer area: [[0]]", "TransIbérica Express · Customer service"],
+        es: ["Hola:", "Confirmamos la recogida que ha reservado para el envío TIX412905337: hoy entre las 14:00 y las 18:00 en Contoso · Almacén de IT, Calle del Ejemplo 21, 1ª planta, 28000 Madrid.",
+          "Tenga el paquete cerrado y etiquetado. Para cambiar la franja, entre en su área de cliente: [[0]]", "TransIbérica Express · Atención al cliente"],
+      },
+      links: [{ text: "https://www.transiberica.example/customers", href: "https://www.transiberica.example/customers" }],
+      headers: Object.assign({ replyTo: "avisos@transiberica.example", returnPath: "avisos@transiberica.example",
+        received: "from out1.transiberica.example (203.0.113.70) by mail.contoso.com; Tue, 27 Oct 2026 08:55:03 +0100" }, PASS),
+      options: [
+        { id: "check", result: "correct", label: { en: "Check that the tracking number matches a shipment in Shipments and have the parcel ready", es: "Comprobar que el número de seguimiento coincide con un envío en Envíos y tener el paquete listo" },
+          why: { en: "Right: the carrier's real domain, every check passes, the tracking number has the carrier's format and the address is the IT store room. Nothing else to do.",
+            es: "Correcto: el dominio real del transportista, todas las comprobaciones pasan, el número de seguimiento tiene el formato del transportista y la dirección es el almacén de IT. No hay que hacer nada más." } },
+        { id: "report", result: "partial", label: { en: "Report it as phishing: couriers are a classic lure", es: "Reportarlo como phishing: los transportistas son un cebo clásico" },
+          why: { en: "They are, but this one checks out: the carrier's own domain, SPF, DKIM and DMARC pass, it asks for no payment or data, and the link goes where it says.",
+            es: "Lo son, pero este cuadra: el dominio propio del transportista, SPF, DKIM y DMARC pasan, no pide pagos ni datos y el enlace va a donde dice." } },
+        { id: "forward", result: "wrong", label: { en: "Forward it to the whole office so someone is there at 14:00", es: "Reenviarlo a toda la oficina para que alguien esté a las 14:00" },
+          why: { en: "The pickup is at the IT store room: it is IT's job. Sending it to everyone adds noise and teaches people to trust any courier email.",
+            es: "La recogida es en el almacén de IT: es cosa de IT. Mandarlo a todos añade ruido y acostumbra a la gente a fiarse de cualquier correo de mensajería." } },
+      ],
+      clues: {
+        en: ["transiberica.example is the carrier Contoso has an account with; SPF, DKIM and DMARC pass.", "TIX followed by nine digits is the carrier's tracking format, the one the Shipments page shows.",
+          "No payment, no attachment and no personal data asked for; the link goes to the carrier's own site."],
+        es: ["transiberica.example es el transportista con el que Contoso tiene cuenta; SPF, DKIM y DMARC pasan.", "TIX seguido de nueve cifras es el formato de seguimiento del transportista, el mismo que muestra la página Envíos.",
+          "No pide pagos, ni datos personales, ni trae adjuntos; el enlace va a la web del propio transportista."],
+      },
+      procedure: { en: "Match the tracking number with your shipment, keep the parcel ready, and if a carrier message ever asks for money or data, check the shipment on the carrier's site typed by hand, never from the email.",
+        es: "Cruza el número de seguimiento con tu envío, ten el paquete listo y, si un mensaje de un transportista pide dinero o datos, consulta el envío en su web escribiendo tú la dirección, nunca desde el correo." },
+    },
+    {
+      id: "cab-reminder", kind: "notice", day: "2026-10-27", time: "08:30", directory: null,
+      dirNote: { en: "Shared mailbox of Change Management (contoso.com).", es: "Buzón compartido de Gestión del Cambio (contoso.com)." },
+      from: { name: { en: "Change Management", es: "Gestión del Cambio" }, address: "cambios@contoso.com" }, to: "it-team@contoso.com",
+      subject: { en: "Reminder: CAB on Thursday 29 October at 10:00", es: "Recordatorio: CAB el jueves 29 de octubre a las 10:00" },
+      body: {
+        en: ["Hello,", "The Change Advisory Board meets on Thursday 29 October at 10:00 (room Ebro, or Teams). Normal changes for next week must be logged with their risk, test and rollback plan by Wednesday 28 at 17:00.",
+          "Emergency changes made since the last CAB will be reviewed at the start: bring the reference of the incident that caused them.", "Change Management"],
+        es: ["Hola:", "El Comité Asesor de Cambios (CAB) se reúne el jueves 29 de octubre a las 10:00 (sala Ebro o Teams). Los cambios normales de la semana que viene deben estar registrados con su riesgo, prueba y plan de vuelta atrás antes del miércoles 28 a las 17:00.",
+          "Al principio se revisarán los cambios de emergencia hechos desde el último CAB: traed la referencia de la incidencia que los motivó.", "Gestión del Cambio"],
+      },
+      links: [],
+      headers: Object.assign({ replyTo: "cambios@contoso.com", returnPath: "cambios@contoso.com",
+        received: "from ADM-WS01.contoso.local (10.20.14.50) by mail.contoso.com; Tue, 27 Oct 2026 08:30:40 +0100" }, PASS),
+      options: [
+        { id: "plan", result: "correct", label: { en: "Log any change you are planning before Wednesday 17:00, with its rollback plan, and have your emergency changes' references ready",
+          es: "Registrar antes del miércoles a las 17:00 los cambios que tengas previstos, con su vuelta atrás, y tener a mano las referencias de tus cambios de emergencia" },
+          why: { en: "Right: a genuine reminder with a deadline. Changes go through the CAB with a rollback plan, and emergency ones are reviewed afterwards with their incident.",
+            es: "Correcto: un recordatorio legítimo con plazo. Los cambios pasan por el CAB con su vuelta atrás, y los de emergencia se revisan después con su incidencia." } },
+        { id: "skip", result: "wrong", label: { en: "Make your small change on Friday without logging it: it is only a switch port", es: "Hacer tu cambio pequeño el viernes sin registrarlo: es solo un puerto de un switch" },
+          why: { en: "Small changes cause outages too, and an unlogged one leaves no trace for whoever investigates the next incident.",
+            es: "Los cambios pequeños también provocan caídas, y uno sin registrar no deja rastro para quien investigue la siguiente incidencia." } },
+        { id: "report", result: "partial", label: { en: "Report it as phishing", es: "Reportarlo como phishing" },
+          why: { en: "There is nothing suspicious: internal mailbox, all checks pass, no links and no requests beyond the usual process.",
+            es: "No hay nada sospechoso: buzón interno, todas las comprobaciones pasan, sin enlaces y sin pedir nada fuera del proceso habitual." } },
+        { id: "replyall", result: "partial", label: { en: "Reply to all with \"OK, thanks\"", es: "Responder a todos con «OK, gracias»" },
+          why: { en: "Harmless, but it fills the whole IT team's inbox. A reminder needs no reply.", es: "No hace daño, pero llena el buzón de todo el equipo de IT. Un recordatorio no necesita respuesta." } },
+      ],
+      clues: {
+        en: ["Internal shared mailbox (cambios@contoso.com); SPF, DKIM and DMARC pass.", "It reminds of the usual process (deadline, risk, test and rollback plan) and asks for nothing unusual.", "No links or attachments."],
+        es: ["Buzón compartido interno (cambios@contoso.com); SPF, DKIM y DMARC pasan.", "Recuerda el proceso habitual (plazo, riesgo, prueba y vuelta atrás) y no pide nada fuera de lo normal.", "Sin enlaces ni adjuntos."],
+      },
+      procedure: { en: "Put the deadline in your calendar, log planned changes with their risk, test and rollback plan, and keep the incident reference of any emergency change for the review.",
+        es: "Apunta el plazo, registra los cambios previstos con su riesgo, prueba y vuelta atrás, y guarda la referencia de la incidencia de cualquier cambio de emergencia para la revisión." },
+    },
+    {
+      id: "courier-phish", kind: "phishing", day: "2026-10-27", time: "07:12", directory: null,
+      from: { name: "TransIbérica Express", address: "notificaciones@transiberica-aduanas.example" }, to: ME,
+      subject: { en: "Your parcel is held at customs: pay €1.99 within 24 h", es: "Su paquete está retenido en aduanas: pague 1,99 € en 24 h" },
+      body: {
+        en: ["Dear customer,", "Your parcel ES-TIX-0042117 is held at customs because of unpaid import fees of €1.99. If the fee is not paid within 24 hours, the parcel will be returned to the sender.",
+          "Pay securely with your card here: [[0]]", "TransIbérica Express"],
+        es: ["Estimado cliente:", "Su paquete ES-TIX-0042117 está retenido en aduanas por unas tasas de importación pendientes de 1,99 €. Si no se abonan en 24 horas, el paquete se devolverá al remitente.",
+          "Pague de forma segura con su tarjeta aquí: [[0]]", "TransIbérica Express"],
+      },
+      links: [{ text: "https://www.transiberica.example/tracking", href: "https://transiberica-aduanas.example/pay/fee.php?ref=ES-TIX-0042117" }],
+      headers: { replyTo: "pagos@transiberica-aduanas.example", returnPath: "bounce@mailer.transiberica-aduanas.example",
+        received: "from mailer.transiberica-aduanas.example (203.0.113.88) by mail.contoso.com; Tue, 27 Oct 2026 07:12:36 +0100", spf: "softfail", dkim: "none", dmarc: "fail" },
+      options: [
+        { id: "pay", result: "wrong", label: { en: "Pay the €1.99: it is very little and the parcel may be important", es: "Pagar el 1,99 €: es muy poco y el paquete puede ser importante" },
+          why: { en: "The small amount is the bait: what they want is the card number and its security code, and often a later \"bank verification\".",
+            es: "La cantidad pequeña es el cebo: lo que buscan es el número de la tarjeta y su código de seguridad, y muchas veces una «verificación del banco» después." } },
+        { id: "track", result: "partial", label: { en: "Type the carrier's real address yourself and look up the tracking number", es: "Escribir tú la dirección real del transportista y buscar el número de seguimiento" },
+          why: { en: "A good habit, and you would find nothing: that is not a real tracking number. But the message must also be reported so it is blocked for everyone.",
+            es: "Buen hábito, y no encontrarías nada: ese no es un número de seguimiento real. Pero además hay que reportar el mensaje para que se bloquee para todos." } },
+        { id: "report", result: "correct", label: { en: "Report it as phishing without opening the link", es: "Reportarlo como phishing sin abrir el enlace" },
+          why: { en: "Right: a look-alike domain, SPF softfail and DMARC fail, a link that does not go where it says, urgency and a card payment for a shipment inside Spain.",
+            es: "Correcto: dominio parecido, SPF softfail y DMARC fail, un enlace que no va a donde dice, urgencia y un pago con tarjeta por un envío dentro de España." } },
+        { id: "forward", result: "wrong", label: { en: "Forward it to the user who is waiting for a parcel so they can pay", es: "Reenviárselo al usuario que espera un paquete para que pague" },
+          why: { en: "That passes the scam on to a colleague with IT's endorsement. Reported phishing is never forwarded to users.",
+            es: "Así le pasas la estafa a un compañero con el aval de IT. El phishing reportado no se reenvía nunca a los usuarios." } },
+      ],
+      clues: {
+        en: ["transiberica-aduanas.example is not the carrier's domain (transiberica.example).", "SPF softfail, no DKIM signature and DMARC fail; the Reply-To is a payments address on the same look-alike domain.",
+          "The link says www.transiberica.example but opens transiberica-aduanas.example.", "ES-TIX-0042117 is not the carrier's format (TIX and nine digits), and a shipment inside Spain pays no customs.", "Urgency (24 hours) and a card payment."],
+        es: ["transiberica-aduanas.example no es el dominio del transportista (transiberica.example).", "SPF softfail, sin firma DKIM y DMARC fail; el Reply-To es una dirección de pagos del mismo dominio falso.",
+          "El enlace dice www.transiberica.example pero abre transiberica-aduanas.example.", "ES-TIX-0042117 no tiene el formato del transportista (TIX y nueve cifras), y un envío dentro de España no paga aduanas.", "Prisa (24 horas) y pago con tarjeta."],
+      },
+      procedure: { en: "Do not open the link or pay. Report it to security (the phishing button) and, if a real shipment is expected, look it up on the carrier's site typed by hand or in Shipments.",
+        es: "No abras el enlace ni pagues. Repórtalo a seguridad (el botón de phishing) y, si esperas un envío real, consúltalo en la web del transportista escribiendo tú la dirección o en Envíos." },
+    },
   ];
   function mail(id) { return MAIL.find((m) => m.id === id) || null; }
   // a paragraph with links: "Text [[0]]" -> [{text}, {link: 0}]
@@ -439,13 +616,13 @@
       test: (f) => new Set(f.closes.filter((c) => c.hints === 0).map((c) => c.id)).size >= 3 },
     { id: "on-time", icon: "◷", name: { en: "Beat the clock", es: "Dentro del SLA" }, rule: { en: "Close five different tickets within the SLA.", es: "Cierra cinco tickets distintos dentro del SLA." },
       test: (f) => new Set(f.closes.filter((c) => c.slaOk).map((c) => c.id)).size >= 5 },
-    { id: "full-shift", icon: "★", name: { en: "Full shift", es: "Turno completo" }, rule: { en: "Close every ticket in the queue at least once.", es: "Cierra todos los tickets de la cola al menos una vez." },
+    { id: "full-shift", icon: "★", name: { en: "Queue cleared", es: "Cola despejada" }, rule: { en: "Close every ticket in the queue at least once.", es: "Cierra todos los tickets de la cola al menos una vez." },
       test: (f) => f.desks.length > 0 && f.desks.every((id) => f.solved.includes(id)) },
     { id: "streak-3", icon: "3", name: { en: "Three in a row", es: "Tres días seguidos" }, rule: { en: "Practise three days in a row.", es: "Practica tres días seguidos." },
       test: (f) => f.best >= 3 },
     { id: "streak-7", icon: "7", name: { en: "Seven-day streak", es: "Semana seguida" }, rule: { en: "Practise seven days in a row.", es: "Practica siete días seguidos." },
       test: (f) => f.best >= 7 },
-    { id: "sharp-eye", icon: "⚑", name: { en: "Sharp eye", es: "Ojo de halcón" }, rule: { en: "Report the phishing email to security.", es: "Reporta a seguridad el correo de phishing." },
+    { id: "sharp-eye", icon: "⚑", name: { en: "Sharp eye", es: "Ojo de halcón" }, rule: { en: "Report every phishing email to security.", es: "Reporta a seguridad todos los correos de phishing." },
       test: (f) => MAIL.filter((m) => m.kind === "phishing").every((m) => f.mail[m.id] && f.mail[m.id].result === "correct") },
     { id: "first-article", icon: "▧", name: { en: "First article", es: "Primer artículo" }, rule: { en: "Save your first knowledge base article.", es: "Guarda tu primer artículo en la base de conocimiento." },
       test: (f) => f.kb >= 1 },

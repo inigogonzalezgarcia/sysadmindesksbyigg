@@ -4,7 +4,7 @@
 
 ## Where shipments live
 
-- **A ticket's shipments** live in its session (`sess.ships`, a store with the prefix `SHP-<ticket number>`, e.g. `SHP-20612-1`), like its console: they start again when the ticket is replayed or the page reloads. Each step goes into the ticket's Activity (`sd.work[<desk>].timeline`, entries `{at, ship, state, ms, charged, paused}`).
+- **A ticket's shipments** live in its session (`sess.ships`, a store with the prefix `SHP-<ticket number>`, e.g. `SHP-20612-1`), like its console: since v0.9 they are kept with the ticket's saved session across a reload (`sd.live`, see workspace.md) and start again when the ticket is closed and replayed. Each step goes into the ticket's Activity (`sd.work[<desk>].timeline`, entries `{at, ship, state, ms, charged, paused}`).
 - **Practice shipments** (no ticket, prefix `SHP-P`) are kept in this browser in `localStorage` (`sd.ships`), and removed with the account like the other growth data. Nothing is sent to the server.
 
 ## The state machine

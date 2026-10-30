@@ -26,10 +26,24 @@ Functions: `create(id, lang)`, `prompt(lab)`, `run(lab, line, lang)` → `{lines
 - `record(store, labId, doneIds, day)` → `{store, fresh, completedNow}`: tasks are only added, never taken away (a reset sandbox keeps the ticks until *Reset the lab*);
 - `reset(store, labId)`, `normalise(store)` (drops unknown labs and tasks), `progressOf(store, labId)` → `{done, total, complete, completed}`, `summary(store)`.
 
+### The sandbox across a reload (v0.9)
+
+The lab's sandbox (its world, network and open SSH sessions, or rule session, the tags in `seen`, the console lines and the command history) is kept in `sd.labbox` (`{labId: envelope}`) by persist.js: `labToJSON(lv)` and `labFromJSON(id, snap, lang)`, which refuses a sandbox for another lab or kind and rebuilds the world on top of this version's users. *Reset the lab* removes it with the ticks.
+
+### The full shift (v0.9b, [levels.js](../public/assets/levels.js), `sd.shifts`)
+
+At the end of each lab, once its tasks are all done (`canStart`), the *Full shift / Turno completo* asks for four real tickets in a row against a shift timer.
+
+- `pickShift(labId, {desks, levels, unavailable})`: the lab's areas in `NEAR` order (`ad`: AD, M365, Intune, Windows; `network`: network, hardware, Windows; `windows`: Windows, Intune, Citrix, AD; `m365`: M365, AD, Intune; `linux`: Linux, backup/SQL, network), inside each area level 1 first and then the queue's order, skipping the desks not in this version or in progress in the queue; up to `SHIFT.size` (4). The same input always gives the same shift.
+- Store `{v: 1, active: {lab, desks, started (ms), results: [{id, level, points, hints, at}]} | null, done: {labId: {day, ms, results}}, log: [last 20 finished]}`, kept by the app in a persist.js envelope with the owner, so it survives a reload and another account starts clean; `normaliseShifts(store, knownDesks)` drops another format, unknown labs and desks.
+- `start(store, labId, desks, now, labs)` (errors `locked`, `busy`, `running`, `desks`), `current(store)` (the next desk), `record(store, close, day)`: a close counts only if it is fixed, is the shift's next desk and happened after the start; the fourth one finishes the shift (`log`), and the first finished shift of a lab goes to `done` (75 points and the badge `shift-<lab>`, once). `abandon`, `elapsed(active, now)`, `summary(entry)` → `{tickets, minutes, avg, clean, remarks, hints}`.
+- In the app: a *Full shift* panel under the lab's console (locked, preview and start, running with the timer and the four desks, or the last summary), a strip on the shift's desks with the timer, and a line in the ticket result (*Counted for the full shift (k of 4)* with a link to the next one).
+
 ## Profile and career
 
 [public/assets/profile.js](../public/assets/profile.js) (`window.SDProfile`) computes everything from `{ desks, levels, progress, activity, labs }`; it stores nothing.
 
+- Since v0.9b the profile also shows the level panel and the close counters from levels.js.
 - `DESK_AREA`: the area of every desk. `aggregate(input)` → per area `{desks, solved, avgPoints (best results), comms (average userNote of the area's closes), labDone, labTotal, skill}` and totals. `skill` (0-100) = 75 % share of the area's tickets solved + 25 % share of its lab's tasks; areas without a lab count only tickets; `itsm` is the average user-note mark × 20.
 - `CAREER`: `l1` Service Desk L1, `l2` Service Desk L2 / Desktop, `sys` Sysadmin / Infrastructure, `netcloud` Network / Cloud, each with its areas, desks and labs (every desk and lab in exactly one step; every level-1 desk in `l1`). `career(input)` → the steps with `done/total/pct/status` (`done`, `current` = the first not finished, `later`) and `next`: in the current step, a lab first while none of its tickets is solved, then its unsolved tickets (level 1 first), then its unfinished labs; `null` when everything is done.
 - `radar(values, size)`: axes from the top clockwise, the rings and the polygon, as SVG coordinates (the app draws it with `createElementNS`, no library and no inline style).
