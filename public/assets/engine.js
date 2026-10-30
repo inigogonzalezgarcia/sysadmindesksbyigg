@@ -22,14 +22,15 @@
     return value[lang] || value.en || "";
   }
 
-  function fill(text, sc) {
+  // {user}, {host} and {domain} come from the machine; {$1}…{$9} (v0.8) are the groups the rule's `match` captured
+  function fill(text, sc, groups) {
     const m = sc.machine || {};
-    return text.replace(/\{(user|host|domain)\}/g, (_, k) => m[k] || "");
+    return text.replace(/\{(user|host|domain)\}/g, (_, k) => m[k] || "").replace(/\{\$([1-9])\}/g, (_, n) => (groups && groups[n]) || "");
   }
 
-  function lines(value, lang, sc) {
+  function lines(value, lang, sc, groups) {
     const text = Array.isArray(value) ? value.join("\n") : t(value, lang);
-    return text === "" ? [] : fill(text, sc).split("\n");
+    return text === "" ? [] : fill(text, sc, groups).split("\n");
   }
 
   function when(cond, state, negate) {
@@ -37,8 +38,29 @@
     return Object.keys(cond).every((k) => (state[k] === cond[k]) !== Boolean(negate));
   }
 
+  // v0.7a: the network desks (sc.net) run their console through the device CLI simulator (netcli.js)
+  function NET() {
+    if (typeof module === "object" && module.exports) return require("./netcli.js");
+    return (typeof self !== "undefined" ? self : this).SDNet;
+  }
+  // the flags a network desk reads from the devices (sc.net.flags: {flag: check}), recomputed after every command
+  function deriveNet(sess) {
+    const f = (sess.sc.net || {}).flags || {};
+    Object.keys(f).forEach((k) => { sess.state[k] = NET().check(sess.net, f[k]); });
+  }
+
+  // v0.7b: the desks closed with a shipment (sc.ship) use the shipments tool (shipping.js): `ship ...` lines, and flags read from the shipments
+  function SHIP() {
+    if (typeof module === "object" && module.exports) return require("./shipping.js");
+    return (typeof self !== "undefined" ? self : this).SDShip;
+  }
+  function deriveShip(sess) {
+    const f = (sess.sc.ship || {}).flags || {};
+    Object.keys(f).forEach((k) => { sess.state[k] = SHIP().check(sess.ships, f[k]); });
+  }
+
   function createSession(sc, lang) {
-    return {
+    const sess = {
       sc: sc,
       lang: lang || "en",
       state: Object.assign({}, sc.state || {}),
@@ -51,9 +73,22 @@
       gui: 0,            // actions run from the ticket page instead of the console
       failedCloses: 0,   // times the ticket was closed before it was fixed
     };
+    if (sc.net) {
+      const N = NET();
+      sess.net = N.createNet(sc.net.setup);
+      if (sc.net.flow) sess.net.flow = Object.assign({}, sc.net.flow);
+      sess.term = N.terminal(sess.net);
+      deriveNet(sess);
+    }
+    if (sc.ship) {
+      sess.ships = SHIP().createStore({ ticket: sc.ticket.id });
+      deriveShip(sess);
+    }
+    return sess;
   }
 
   function prompt(sess) {
+    if (sess.net) return NET().prompt(sess.term);
     const m = sess.sc.machine || {};
     return fill(m.prompt || "PS C:\\> ", sess.sc);
   }
@@ -88,7 +123,7 @@
 
   /* Runs one command. Returns {lines:[{text, kind}], clear, ticket, resolvedNow}.
      kind: "out" (console output), "say" (narration in the user's language), "err", "event", "ok". */
-  function run(sess, input) {
+  function run(sess, input, opts) {
     const sc = sess.sc;
     const lang = sess.lang;
     const cmd = norm(input);
@@ -98,7 +133,7 @@
     const low = cmd.toLowerCase();
 
     if (low === "clear" || low === "cls") { res.clear = true; return res; }
-    if (low === "help" || low === "?") { BUILTIN.help[lang === "es" ? "es" : "en"].forEach((x) => res.lines.push({ text: x, kind: "say" })); return res; }
+    if (low === "help" || (low === "?" && !(sess.net && NET().depth(sess.term)))) { BUILTIN.help[lang === "es" ? "es" : "en"].forEach((x) => res.lines.push({ text: x, kind: "say" })); return res; }
     if (low === "ticket") { res.ticket = true; return res; }
     if (low === "hint") {
       const hs = sc.hints || [];
@@ -119,7 +154,12 @@
       }
     });
 
-    const rule = (sc.commands || []).find((r) => new RegExp(r.match, "i").test(cmd) && when(r.when, sess.state, false) &&
+    // v0.7b: `ship ...` goes to the shipments tool (on the workstation, never inside a device CLI); ticket-page buttons always reach it
+    const o = opts || {};
+    if (sc.ship && /^ship(\s|$)/i.test(cmd) && (!sess.net || o.local || (!o.term && NET().depth(sess.term) === 0))) return runShip(sess, cmd, res);
+    if (sc.net) return runNet(sess, cmd, res, o);
+
+    const rule = (sc.commands || []).find((r) => r.match && new RegExp(r.match, "i").test(cmd) && when(r.when, sess.state, false) &&
       !(r.unless && when(r.unless, sess.state, false)));
     if (!rule) {
       sess.unknown += 1;
@@ -127,15 +167,92 @@
       return res;
     }
     if (rule.id) sess.used.add(rule.id);
-    lines(rule.out, lang, sc).forEach((x) => res.lines.push({ text: x, kind: rule.error ? "err" : "out" }));
+    const groups = new RegExp(rule.match, "i").exec(cmd);
+    lines(rule.out, lang, sc, groups).forEach((x) => res.lines.push({ text: x, kind: rule.error ? "err" : "out" }));
     Object.assign(sess.state, rule.set || {});
-    lines(rule.say, lang, sc).forEach((x) => res.lines.push({ text: x, kind: "say" }));
+    lines(rule.say, lang, sc, groups).forEach((x) => res.lines.push({ text: x, kind: "say" }));
+    if (sc.ship) deriveShip(sess);
 
     if (!sess.resolved && goalMet(sc, sess.state)) {
       sess.resolved = true;
       sess.resolvedAt = sess.history.length;
       res.resolvedNow = true;
       lines(sc.resolved, lang, sc).forEach((x) => res.lines.push({ text: x, kind: "ok" }));
+    }
+    return res;
+  }
+
+  /* A network desk: scenario rules with a `match` run on your workstation (or anywhere with `anywhere: true`, like the on-site
+     requests); everything else goes to the device CLI you are connected to. Then the rules with `on` react to what the device did
+     (its tags: "show logging", "no shutdown Gi1/0/14", "debug flow allowed 12"...), and the flags are read again from the devices.
+     opts.term runs the line on another terminal over the same net (the network room's CLI); opts.local runs a ticket-page action. */
+  function applyRule(sess, rule, res) {
+    const sc = sess.sc;
+    if (rule.id) sess.used.add(rule.id);
+    lines(rule.out, sess.lang, sc).forEach((x) => res.lines.push({ text: x, kind: rule.error ? "err" : "out" }));
+    (rule.net || []).forEach((op) => NET().apply(sess.net, Object.assign({ live: true }, op)));
+    Object.assign(sess.state, rule.set || {});
+    lines(rule.say, sess.lang, sc).forEach((x) => res.lines.push({ text: x, kind: "say" }));
+  }
+  function runNet(sess, cmd, res, opts) {
+    const sc = sess.sc;
+    const N = NET();
+    const term = opts.term || sess.term;
+    const ok = (r) => when(r.when, sess.state, false) && !(r.unless && when(r.unless, sess.state, false));
+    const atDesk = !opts.term && (opts.local || N.depth(term) === 0);
+    const rule = (sc.commands || []).find((r) => r.match && (r.anywhere ? !opts.term : atDesk) && new RegExp(r.match, "i").test(cmd) && ok(r));
+    let tags = [];
+    if (rule) {
+      applyRule(sess, rule, res);
+      deriveNet(sess);
+      if (sc.ship) deriveShip(sess);
+    } else {
+      const r = N.exec(term, cmd, { lang: sess.lang });
+      if (r.unknown) sess.unknown += 1;
+      r.lines.forEach((l) => res.lines.push(l));
+      tags = r.tags;
+      deriveNet(sess);
+      // what the device did: the first matching `on` rule for each tag
+      tags.forEach((tg) => {
+        const hit = (sc.commands || []).find((x) => x.on && (!x.dev || x.dev === tg.dev) && new RegExp(x.on, "i").test(tg.tag) && ok(x));
+        if (hit) { applyRule(sess, hit, res); deriveNet(sess); }
+      });
+    }
+    res.prompt = N.prompt(term);
+    res.tags = tags;
+    if (!sess.resolved && goalMet(sc, sess.state)) {
+      sess.resolved = true;
+      sess.resolvedAt = sess.history.length;
+      res.resolvedNow = true;
+      lines(sc.resolved, sess.lang, sc).forEach((x) => res.lines.push({ text: x, kind: "ok" }));
+    }
+    return res;
+  }
+
+  /* A shipments line: the tool answers, then the desk's rules with `on` react to its tags ("ship submit rma escrow",
+     "ship state rma transit", "ship mark 3FJ7WR3 stock"...), like the network desks react to a device. res.shipMs is the simulated time
+     the step took (the app charges it to the SLA unless the ticket is pending) and res.ship the shipment it touched. */
+  function runShip(sess, cmd, res) {
+    const sc = sess.sc;
+    const r = SHIP().exec(sess.ships, cmd, { lang: sess.lang });
+    if (r.unknown) sess.unknown += 1;
+    r.lines.forEach((l) => res.lines.push(l));
+    res.shipMs = r.ms;
+    res.ship = r.ship;
+    res.tags = r.tags;
+    deriveShip(sess);
+    if (sess.net) deriveNet(sess);
+    const ok = (x) => when(x.when, sess.state, false) && !(x.unless && when(x.unless, sess.state, false));
+    r.tags.forEach((tg) => {
+      const hit = (sc.commands || []).find((x) => x.on && !x.dev && new RegExp(x.on, "i").test(tg) && ok(x));
+      if (hit) { applyRule(sess, hit, res); deriveShip(sess); if (sess.net) deriveNet(sess); }
+    });
+    if (sess.net) res.prompt = NET().prompt(sess.term);
+    if (!sess.resolved && goalMet(sc, sess.state)) {
+      sess.resolved = true;
+      sess.resolvedAt = sess.history.length;
+      res.resolvedNow = true;
+      lines(sc.resolved, sess.lang, sc).forEach((x) => res.lines.push({ text: x, kind: "ok" }));
     }
     return res;
   }
@@ -183,6 +300,7 @@
     { id: "capacity", label: { en: "Space or quota freed", es: "Espacio o cuota liberados" } },
     { id: "compliance", label: { en: "Device brought into compliance", es: "Dispositivo puesto en cumplimiento" } },
     { id: "workaround", label: { en: "Workaround applied", es: "Solución temporal aplicada" } },
+    { id: "hardware", label: { en: "Hardware repaired, replaced or returned", es: "Hardware reparado, sustituido o devuelto" } },
     { id: "user-guidance", label: { en: "User guidance", es: "Orientación al usuario" } },
     { id: "no-fault", label: { en: "No fault found", es: "Sin incidencia" } },
   ];
@@ -214,7 +332,7 @@
     const x = (sess.sc.actions || []).find((a) => a.id === id);
     if (!x || !when(x.when, sess.state, false)) return null;
     sess.gui += 1;
-    const res = run(sess, x.cmd);
+    const res = run(sess, x.cmd, { local: true });
     res.command = x.cmd;
     return res;
   }
@@ -243,10 +361,13 @@
     }
     if (!codeOk) reasons.push((es ? "Código de resolución: mejor «" : "Resolution code: better “") + codeLabel((sc.codes || [])[0], lang) + (es ? "»" : "”"));
     if (!slaOk) reasons.push(es ? `Cerrado fuera del SLA (${Math.ceil(minutes)} de ${limit} min)` : `Closed outside the SLA (${Math.ceil(minutes)} of ${limit} min)`);
+    // v0.7b: a desk can name things that were done badly on the way, even if the ticket is now fixed (sc.remarks: [{when, text}])
+    const marks = (sc.remarks || []).filter((rm) => when(rm.when, sess.state, false));
+    marks.forEach((rm) => reasons.push(t(rm.text, lang)));
     const n = sess.failedCloses;
     if (n) reasons.push(es ? (n === 1 ? "Se cerró una vez sin estar arreglado" : `Se cerró ${n} veces sin estar arreglado`)
       : (n === 1 ? "Closed once before it was fixed" : `Closed ${n} times before it was fixed`));
-    let points = score(sess, note).points - (codeOk ? 0 : 10) - (slaOk ? 0 : 10) - 10 * sess.failedCloses;
+    let points = score(sess, note).points - (codeOk ? 0 : 10) - (slaOk ? 0 : 10) - 10 * sess.failedCloses - 10 * marks.length;
     points = Math.max(0, Math.min(100, points));
     return { level: reasons.length ? "observations" : "resolved", points: points, stars: points >= 90 ? 3 : points >= 70 ? 2 : points >= 40 ? 1 : 0,
       codeOk: codeOk, slaOk: slaOk, pending: [], reasons: reasons };
@@ -257,8 +378,8 @@
   // the rule a command would match right now, without running it (the directory uses it to hand a command to an open ticket)
   function matches(sess, input) {
     const cmd = norm(input);
-    if (!cmd) return null;
-    return (sess.sc.commands || []).find((r) => new RegExp(r.match, "i").test(cmd) && when(r.when, sess.state, false) &&
+    if (!cmd || sess.sc.net) return null;
+    return (sess.sc.commands || []).find((r) => r.match && new RegExp(r.match, "i").test(cmd) && when(r.when, sess.state, false) &&
       !(r.unless && when(r.unless, sess.state, false))) || null;
   }
 
@@ -311,5 +432,5 @@
 
   return { norm: norm, fold: fold, t: t, createSession: createSession, prompt: prompt, run: run, goalMet: goalMet, stages: stages,
            checkNote: checkNote, score: score, SLA: SLA, sla: sla, CODES: CODES, codeLabel: codeLabel, cards: cards, act: act, verdict: verdict,
-           matches: matches, bound: bound, desktop: desktop, deskOpen: deskOpen, deskAct: deskAct };
+           matches: matches, bound: bound, desktop: desktop, deskOpen: deskOpen, deskAct: deskAct, NET: NET, SHIP: SHIP, deriveShip: deriveShip };
 });

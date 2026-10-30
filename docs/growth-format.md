@@ -12,6 +12,9 @@
 | `sd.mailRead` | ids of the messages opened (for the unread count) |
 | `sd.badges` | `{badgeId: day}`: badges stay earned once awarded |
 | `sd.goal` | the weekly goal, 1 to 7 (default 3) |
+| `sd.ships` | practice shipments (v0.7b, see shipping.md) |
+| `sd.labs` | the lab tasks done (v0.8, see labs.md) |
+| `sd.tourDone`, `sd.whatsNew` | the guided tour was taken or skipped; the version whose "what's new" card was seen (v0.8) |
 
 ## Knowledge base
 

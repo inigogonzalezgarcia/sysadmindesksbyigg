@@ -92,7 +92,8 @@ test("a public page per desk: title, description, CTA, guide, and nothing that g
     assert.ok(index.includes(`href="/tickets/${sc.id}"`), "index links " + sc.id);
     // no spoilers: the reference solution, the hints, the note elements and the sample note never appear
     const low = plain.toLowerCase();
-    for (const cmd of sc.solution) assert.ok(!low.includes(cmd.toLowerCase()), `${sc.id} shows the command ${cmd}`);
+    // (single words such as end, exit or enable are CLI mode changes and plain English: they give nothing away)
+    for (const cmd of sc.solution) if (!/^[a-z]+$/i.test(cmd)) assert.ok(!low.includes(cmd.toLowerCase()), `${sc.id} shows the command ${cmd}`);
     for (const x of sc.hints) for (const l of ["es", "en"]) assert.ok(!plain.includes(x[l]), `${sc.id} shows a hint`);
     for (const n of sc.note) for (const l of ["es", "en"]) assert.ok(!plain.includes(n.label[l]), `${sc.id} shows a note element`);
     for (const l of ["es", "en"]) assert.ok(!plain.includes(sc.sampleNote[l].slice(0, 60)), `${sc.id} shows the sample note`);

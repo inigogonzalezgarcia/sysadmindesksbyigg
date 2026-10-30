@@ -28,12 +28,13 @@ test("every scenario is complete in English and Spanish", () => {
     for (const k of Object.keys(sc.goal)) assert.ok(keys.has(k), `${sc.id}: goal key ${k} not in state`);
     for (const st of sc.stages) for (const k of Object.keys(st.when)) assert.ok(keys.has(k), `${sc.id}: stage key ${k} not in state`);
     for (const r of sc.commands) {
-      assert.ok(r.match instanceof RegExp || typeof r.match === "string", `${sc.id}/${r.id} match`);
+      // v0.7a: network desks also have rules that react to what a device did (`on`, a pattern for the device's tags)
+      assert.ok(r.match instanceof RegExp || typeof r.match === "string" || ((sc.net || sc.ship) && r.on instanceof RegExp), `${sc.id}/${r.id} match`);
       for (const k of Object.keys(Object.assign({}, r.when, r.unless, r.set))) assert.ok(keys.has(k), `${sc.id}/${r.id}: key ${k} not in state`);
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 18);
+  assert.equal(SCENARIOS.length, 24);
 });
 
 test("the reference solution resolves every scenario, in both languages, and the sample note scores 100", () => {

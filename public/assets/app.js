@@ -4,7 +4,11 @@
   const E = window.SDEngine;
   const W = window.SDWorkflow;
   const C = window.SDComms;
+  const SH = window.SDShip;      // v0.7b: shipments and RMA
   const SCENARIOS = window.SDScenarios;
+  const Lib = window.SDLibrary;  // v0.8: the documentation library
+  const Lb = window.SDLabs;      // v0.8: labs by area
+  const PF = window.SDProfile;   // v0.8: profile and career path
   const t = E.t;
 
   const UI = {
@@ -21,7 +25,7 @@
       langBtn: "ES", langLabel: "Español", notFound: "That desk does not exist.",
       startTag: "Help desk · morning shift", startTitle: "Clock in and start your support shift",
       startText: "SysAdmin Desks puts you at the help desk of a fictional company. Real tickets, a console that answers like a real machine, and a work note that is scored when you close the ticket.",
-      startPoints: ["18 tickets: from Active Directory, Windows and Microsoft 365 to VPN, backups, Citrix, Linux and SQL Server", "Hints when you are stuck, and the tempting fix that does not solve it", "Each desk links to its step-by-step guide", "Your progress is saved in your account and follows you to any device"],
+      startPoints: ["21 tickets: from Active Directory, Windows and Microsoft 365 to VPN, backups, Citrix, Linux, SQL Server and Cisco, HP and FortiGate network devices", "Hints when you are stuck, and the tempting fix that does not solve it", "Each desk links to its step-by-step guide", "Your progress is saved in your account and follows you to any device"],
       deskHost: "CONTOSO-HD-07", deskDomain: "contoso.local", cardTitle: "Contoso help desk · technician sign-in",
       tabLogin: "Sign in", tabRegister: "Create account", fName: "Technician name", fAvatar: "Avatar", fEmail: "Email", fPassword: "Password",
       phName: "Alex Moreno", phEmail: "you@example.com", show: "Show password", hide: "Hide password",
@@ -81,17 +85,8 @@
       whyT: "What is missing", obsT: "Observations", keepWorking: "Back to the ticket", queueBtn: "Ticket queue",
       timeUsed: (m, l) => `Time: ${m} of ${l} min`, codeUsed: (c) => `Code: ${c}`,
       pTitle: "Your progress", pSub: "Your best result on each ticket is saved in your account. Your streak, goal, badges, articles and mail answers stay in this browser.", tClosed: "Tickets closed", tStars: "Stars", tPoints: "Points", tAvg: "Average score", notYet: "Not yet",
-      tour: [
-        ["Welcome to the Contoso help desk", "You are the technician on the morning shift. In two minutes: where the tickets are, how the SLA works and how a ticket is closed."],
-        ["Your ticket queue", "Every row is a ticket from a user of the fictional company, with its priority and status. Open shows what is waiting; Closed, what you have solved and how."],
-        ["The SLA", "The clock starts when you assign a ticket to yourself: 20 minutes for a P1, 30 for a P2, 45 for a P3. Closing in time counts. Waiting for the user or a vendor? Set the ticket to Pending with a reason and the SLA pauses until you resume it."],
-        ["Open a ticket", "On the ticket page, press Assign to me and the console comes alive. Need details? Contact the requester (each question takes a minute). Investigate, fix the cause, prove it works, then choose the resolution code and write the work note and the note to the user."],
-        ["Your progress", "Points and stars for your best result on each ticket, saved in your account, plus your day streak, your weekly goal and your badges."],
-        ["Mail and knowledge base", "Mail has messages to triage: requests, notices and the odd phishing email. Every ticket you close with a complete note becomes an article in your knowledge base."],
-        ["Take the tour again", "This button shows the tour whenever you want. Each ticket also links to its step-by-step guide. Good shift!"],
-      ],
       tourNext: "Next", tourBack: "Back", tourSkip: "Skip the tour", tourDone: "Start the shift", tourStep: (i, n) => `${i} of ${n}`,
-      navDirectory: "Directory", navInventory: "Inventory",
+      navDirectory: "Directory", navInventory: "Inventory", navNetwork: "Network room",
       tabConsole: "Console", tabDesk: (h) => `Go to the desk · ${h}`, evTitle: "Event Viewer", terminal: "Terminal", deskRan: "[desk]", equivalent: "Same as typing:",
       lvlNames: { error: "Error", warning: "Warning", information: "Information" }, evSource: "Source", evId: "Event ID",
       dTitle: "Directory", dSub: "contoso.local · Active Directory (simulated). The same users and computers as the tickets.", dTree: "Organisational units",
@@ -109,7 +104,7 @@
       dWelcome: "Connected to ADM-WS01 as CONTOSO\\it.admin with the ActiveDirectory module. Type help if you need it.",
       dRouted: (id) => `(Sent to ticket ${id}: the account belongs to an open ticket.)`,
       dAssignFirst: (n, id) => `${n}'s account is part of ticket ${id}, still unassigned. Assign the ticket to yourself to work on it.`,
-      iTitle: "Inventory", iSub: "Servers and printers at head office. The status follows the open tickets.", iAll: "All", iServers: "Servers", iPrinters: "Printers", iProblems: "With an incident",
+      iTitle: "Inventory", iSub: "Servers, printers and network devices. The status follows the open tickets.", iAll: "All", iServers: "Servers", iPrinters: "Printers", iProblems: "With an incident",
       colName: "Name", colType: "Type", colRole: "Role / model", colLocation: "Location", colTickets: "Tickets", iServer: "Server", iPrinter: "Printer",
       st: { ok: "OK", warn: "Warning", bad: "Error" }, iNoProblem: "Nothing to report.", iPick: "Pick a row to see the details.", iNoIssue: "Nothing to report.",
       navMail: "Mail", navKb: "Knowledge base", unreadN: (n) => `${n} unread`,
@@ -134,6 +129,41 @@
       mWhat: "What do you do?", mCreate: "Create ticket from this message", mHandled: (id) => `Ticket ${id} created from this message.`, mOpenTicket: (id) => `Open ${id}`,
       mClues: "The clues", mProcedure: "The right procedure", mRetry: "Try again", mBack: "← Inbox", mNext: "Next message",
       iOs: "Operating system", iOwner: "Owner", iPatched: "Last patched", iQueue: "Print server", iJobs: "Jobs in the queue", iNone: "No tickets.", iInDir: "Show in the directory",
+      // v0.7a: the network room
+      nTitle: "Network room", nSub: "Contoso's switches, the Valencia branch router and the firewall. A device that belongs to an open ticket shows that ticket's state, and its CLI works on the ticket; outside tickets, what you change here lasts while the page is open.",
+      nReset: "Reset the network room", nResetDone: "Network room reset: every device outside a ticket is back as it was at the start of the shift.",
+      colDevice: "Device", colModel: "Model", colMgmt: "Management IP", nType: { switch: "Switch", router: "Router", firewall: "Firewall" },
+      nTabs: { general: "General", health: "Health", diag: "Diagnostics" }, nPick: "Pick a device to see its details.",
+      nModel: "Model", nSerial: "Serial number", nOs: "OS / firmware", nLocation: "Location and rack", nMgmt: "Management IP", nOwner: "Owner", nRole: "Role", nSite: "Site",
+      nSites: { HQ: "Head office", VLC: "Valencia branch" },
+      nCpu: "CPU (5 min)", nMem: "Memory", nUptime: "Uptime", nTemp: "Temperature", nPsu: "Power supplies", nFans: "Fans", nPorts: "Ports up", nPortsVal: (u, n) => `${u} of ${n}`,
+      nErrDis: "Err-disabled ports", nNone: "None", nErrors: "Interface errors", nErrorsVal: (p, c) => `${p}: ${c} CRC/FCS`, nConfig: "Configuration",
+      nSaved: "Saved (running = startup)", nUnsaved: "Unsaved changes (running ≠ startup)", nUnsavedShort: "Unsaved", nSessions: "Sessions", nPolicies: "Firewall policies",
+      nAutoSave: "Saved automatically (FortiOS)", nHealthNote: "Read from the device: it changes with what you do in the CLI or in a ticket.",
+      nDiagWhat: "Test", nPing: "Ping", nTrace: "Traceroute", nTarget: "Destination", nTargetPh: "10.20.1.10 or erp.contoso.local", nRun: "Run", nLog: "Show the end of the log", nDiagNote: "Run from the device itself. Nothing changes.",
+      nOpenCli: "Open CLI", nCloseCli: "Close the CLI", nCliTitle: (d) => `CLI · ${d}`, nCliHelp: "Type ? for the commands of each mode. exit closes the session and leaves you on your workstation, where ssh <device> opens another. ↑/↓ repeat commands.",
+      nRouted: (id) => `(Run on ticket ${id}: this device belongs to an open ticket.)`, nAssignFirst: (id) => `This device belongs to ticket ${id}, still unassigned. Assign the ticket to yourself to work on it.`,
+      nPausedTicket: (id) => `This device belongs to ticket ${id}, which is on hold. Resume the ticket to work on it.`, nReadyRoom: (id) => `Ticket ${id} is ready to close.`, nOpenTicket: "Open the ticket",
+      iNetwork: "Network", iInRoom: "Open in the network room",
+      // v0.7b: shipments and RMA
+      navShipping: "Shipments", shTitle: "Shipments and RMA", shSub: "Vendor RMAs, shipments to users, device returns and loans, with a simulated clock and tracking. Each button runs a ship command.",
+      shNew: "New shipment", shList: "Shipments", shNone: "No shipments yet. Create one with the form, or from a ticket that needs one.",
+      shColId: "Shipment", shColTicket: "Ticket", shColType: "Type", shColAsset: "Asset", shColState: "State", shColTracking: "Tracking", shPractice: "Practice (no ticket)",
+      shPick: "Pick a shipment to see its tracking.", shTicketLabel: "Ticket", shTicketNone: "Practice, not linked to a ticket", shType: "Type", shAsset: "Asset (serial from the inventory)",
+      shVendor: "Vendor", shVendorNone: "None", shFault: "Fault description", shFaultPh: "What fails, since when, what you tested", shEvidence: "Evidence attached",
+      shEvidencePh: "Diagnostic code, log line, photo… comma separated", shContract: "Support contract or warranty", shCarrier: "Carrier", shFrom: "Pickup at", shTo: "Deliver to",
+      shData: "Data handling (laptops)", shDataPick: "Choose…", shEscrow: "BitLocker recovery key checked in Entra ID before it leaves", shItems: "Checklist (returns)",
+      shCreate: "Create draft", shCreated: (id) => `${id} created as a draft. Check it and press Request.`, shCmd: "Command:",
+      shSubmit: "Request", shAdvance: (st) => `Next step: ${st}`, shLost: "Report lost", shDamaged: "Report damaged", shClose: "Close shipment",
+      shRma: "RMA number", shTracking: "Tracking", shEvents: "Tracking events", shNoTicket: "Practice shipment: no ticket, no SLA.",
+      shNeedAssign: (id) => `Ticket ${id} is not assigned to you: assign it to work on its shipments.`, shPaused: "The ticket is pending: the shipping time does not count against the SLA.",
+      shRunning: "The ticket is in progress: each step's shipping time counts against the SLA. Set it to Pending vendor while you wait.",
+      shCost: (h) => `+${h} of SLA`, shFree: "SLA paused", shTicketShips: "Shipments of this ticket", shOpenAll: "Open in Shipments", shNewForTicket: "New shipment for this ticket",
+      shTl: (id, st) => `Shipment ${id}: ${st}`, shWarn: "Warnings", shMissing: "Missing before it can be requested:", shDeviceNote: "Device state in the inventory:",
+      shPracticeReset: "Clear practice shipments", shRan: "Shipments:", shNoTicketShips: "No shipments yet for this ticket.",
+      iEndpoints: "Endpoints", iEndpoint: { laptop: "Laptop", phone: "Mobile phone", part: "Spare part" }, iSerial: "Serial number", iUser: "Assigned to", iWarranty: "Warranty / contract",
+      iDevState: "State", iShipments: "Shipments", iToShipping: "Open in Shipments",
+      netWelcome: "Network devices: ssh SW-CORE-01, SW-ACC-2F, SW-ACC-1F, RTR-VLC-01 or FGT-HQ-01. exit closes the session. onsite: what can be done on site.",
       // v0.6a: contacting the requester and the note for the user
       cContact: "Contact the requester", cOff: { unassigned: "Assign the ticket to yourself to contact the requester.", pending: "The ticket is on hold: resume it to contact the requester.", closed: "" },
       cTitle: (n) => `Conversation with ${n}`, cIntro: "Pick a question. Each one takes 1 minute of the SLA. Some help, some do not, and some are bad practice.",
@@ -157,11 +187,11 @@
         newTicket: "New ticket", heroTicket: "Internet works, the intranet does not",
         sections: [
           { k: "01 · Read the ticket", h: "Real tickets,\none support desk.",
-            p: "Eighteen tickets from first and second line: a user locked out every morning, a new starter with no Outlook, a VPN that will not connect from home, a backup that fails every night, an ERP that cannot save. Each one comes with the user, the priority and what you have to work with.",
-            chips: ["Active Directory", "Microsoft 365", "Windows", "VPN", "Veeam", "Citrix", "Linux", "SQL Server"] },
+            p: "Twenty-one tickets from first and second line: a user locked out every morning, a new starter with no Outlook, a VPN that will not connect from home, a desk port the switch shut down, a backup that fails every night, an ERP that cannot save. Each one comes with the user, the priority and what you have to work with.",
+            chips: ["Active Directory", "Microsoft 365", "Windows", "VPN", "Veeam", "Citrix", "Linux", "SQL Server", "Cisco", "FortiGate"] },
           { k: "02 · Investigate", h: "A console that answers\nlike a real machine.",
             p: "Type the commands you would use at work, in PowerShell or cmd: Get-ADUser, Get-WinEvent, ipconfig, nslookup, Get-Printer, Get-Mailbox and more. The output changes with what you do. Hints when you are stuck, and one tempting fix that looks right but does not solve the ticket.",
-            chips: ["PowerShell and cmd", "Simulated directory and desktop", "Hints", "The tempting fix"] },
+            chips: ["PowerShell and cmd", "Cisco IOS, HP and FortiOS CLI", "Simulated directory, desktop and network room", "Hints", "The tempting fix"] },
           { k: "03 · Fix and prove it", h: "Fix the cause,\nnot only the symptom.",
             p: "Each desk has a checklist: find the cause, fix it and check it stays fixed. The ticket only closes when you have proved it, like on a real shift, where unlocking an account again does not help if the old password is still saved somewhere.",
             chips: ["Investigate", "Fix", "Verify"] },
@@ -192,7 +222,7 @@
       langBtn: "EN", langLabel: "English", notFound: "Ese puesto no existe.",
       startTag: "Mesa de soporte · turno de mañana", startTitle: "Ficha y empieza tu turno de soporte",
       startText: "SysAdmin Desks te sienta en la mesa de soporte de una empresa ficticia. Tickets reales, una consola que responde como un equipo de verdad y una nota de trabajo que se puntúa al cerrar el ticket.",
-      startPoints: ["18 tickets: de Active Directory, Windows y Microsoft 365 a VPN, copias, Citrix, Linux y SQL Server", "Pistas cuando te atascas, y el arreglo tentador que no lo resuelve", "Cada puesto enlaza con su guía paso a paso", "Tu progreso se guarda en tu cuenta y te sigue a cualquier equipo"],
+      startPoints: ["21 tickets: de Active Directory, Windows y Microsoft 365 a VPN, copias, Citrix, Linux, SQL Server y equipos de red Cisco, HP y FortiGate", "Pistas cuando te atascas, y el arreglo tentador que no lo resuelve", "Cada puesto enlaza con su guía paso a paso", "Tu progreso se guarda en tu cuenta y te sigue a cualquier equipo"],
       deskHost: "CONTOSO-HD-07", deskDomain: "contoso.local", cardTitle: "Mesa de soporte de Contoso · acceso de técnicos",
       tabLogin: "Entrar", tabRegister: "Crear cuenta", fName: "Nombre de técnico", fAvatar: "Avatar", fEmail: "Email", fPassword: "Contraseña",
       phName: "Alex Moreno", phEmail: "tu@ejemplo.com", show: "Mostrar contraseña", hide: "Ocultar contraseña",
@@ -252,17 +282,8 @@
       whyT: "Qué falta", obsT: "Observaciones", keepWorking: "Volver al ticket", queueBtn: "Cola de tickets",
       timeUsed: (m, l) => `Tiempo: ${m} de ${l} min`, codeUsed: (c) => `Código: ${c}`,
       pTitle: "Tu progreso", pSub: "Tu mejor resultado en cada ticket se guarda en tu cuenta. Tu racha, objetivo, insignias, artículos y respuestas de correo se quedan en este navegador.", tClosed: "Tickets cerrados", tStars: "Estrellas", tPoints: "Puntos", tAvg: "Puntuación media", notYet: "Aún no",
-      tour: [
-        ["Bienvenido a la mesa de soporte de Contoso", "Eres el técnico del turno de mañana. En dos minutos: dónde están los tickets, cómo funciona el SLA y cómo se cierra un ticket."],
-        ["Tu cola de tickets", "Cada fila es un ticket de un usuario de la empresa ficticia, con su prioridad y su estado. En Abiertos ves lo que espera; en Cerrados, lo que has resuelto y cómo."],
-        ["El SLA", "El reloj empieza cuando te asignas un ticket: 20 minutos para una P1, 30 para una P2 y 45 para una P3. Cerrar a tiempo cuenta. ¿Esperas al usuario o a un proveedor? Pon el ticket en Pendiente con un motivo y el SLA se pausa hasta que lo reanudes."],
-        ["Abre un ticket", "En la ficha, pulsa Asignarme y la consola se activa. ¿Te faltan datos? Contacta al solicitante (cada pregunta cuesta un minuto). Investiga, arregla la causa, demuestra que funciona y después elige el código de resolución y escribe la nota de trabajo y la nota para el usuario."],
-        ["Tu progreso", "Puntos y estrellas de tu mejor resultado en cada ticket, guardados en tu cuenta, y además tu racha de días, tu objetivo semanal y tus insignias."],
-        ["Correo y base de conocimiento", "En Correo hay mensajes que clasificar: peticiones, avisos y algún phishing. Cada ticket que cierras con una nota completa se convierte en un artículo de tu base de conocimiento."],
-        ["Repite el tour", "Este botón vuelve a mostrar el tour cuando quieras. Cada ticket enlaza también con su guía paso a paso. ¡Buen turno!"],
-      ],
       tourNext: "Siguiente", tourBack: "Atrás", tourSkip: "Saltar el tour", tourDone: "Empezar el turno", tourStep: (i, n) => `${i} de ${n}`,
-      navDirectory: "Directorio", navInventory: "Inventario",
+      navDirectory: "Directorio", navInventory: "Inventario", navNetwork: "Sala de red",
       tabConsole: "Consola", tabDesk: (h) => `Ir al puesto · ${h}`, evTitle: "Visor de eventos", terminal: "Terminal", deskRan: "[puesto]", equivalent: "Igual que escribir:",
       lvlNames: { error: "Error", warning: "Advertencia", information: "Información" }, evSource: "Origen", evId: "Id. del evento",
       dTitle: "Directorio", dSub: "contoso.local · Active Directory (simulado). Los mismos usuarios y equipos que los tickets.", dTree: "Unidades organizativas",
@@ -280,7 +301,7 @@
       dWelcome: "Conectado a ADM-WS01 como CONTOSO\\it.admin con el módulo ActiveDirectory. Escribe help si lo necesitas.",
       dRouted: (id) => `(Enviado al ticket ${id}: la cuenta forma parte de un ticket abierto.)`,
       dAssignFirst: (n, id) => `La cuenta de ${n} forma parte del ticket ${id}, aún sin asignar. Asígnate el ticket para trabajar en ella.`,
-      iTitle: "Inventario", iSub: "Servidores e impresoras de la oficina central. El estado sigue a los tickets abiertos.", iAll: "Todo", iServers: "Servidores", iPrinters: "Impresoras", iProblems: "Con incidencia",
+      iTitle: "Inventario", iSub: "Servidores, impresoras y equipos de red. El estado sigue a los tickets abiertos.", iAll: "Todo", iServers: "Servidores", iPrinters: "Impresoras", iProblems: "Con incidencia",
       colName: "Nombre", colType: "Tipo", colRole: "Función / modelo", colLocation: "Ubicación", colTickets: "Tickets", iServer: "Servidor", iPrinter: "Impresora",
       st: { ok: "Correcto", warn: "Aviso", bad: "Error" }, iNoProblem: "Nada que destacar.", iPick: "Elige una fila para ver el detalle.", iNoIssue: "Nada que destacar.",
       navMail: "Correo", navKb: "Base de conocimiento", unreadN: (n) => `${n} sin leer`,
@@ -306,6 +327,41 @@
       mClues: "Las pistas", mProcedure: "Lo que toca hacer", mRetry: "Intentarlo de nuevo", mBack: "← Bandeja de entrada", mNext: "Siguiente mensaje",
       iOs: "Sistema operativo", iOwner: "Responsable", iPatched: "Último parcheo", iQueue: "Servidor de impresión", iJobs: "Trabajos en cola", iNone: "Sin tickets.", iInDir: "Ver en el directorio",
       // v0.6a: contactar al solicitante y la nota para el usuario
+      // v0.7a: la sala de red
+      nTitle: "Sala de red", nSub: "Los switches de Contoso, el router de la sucursal de Valencia y el cortafuegos. Un equipo que forma parte de un ticket abierto muestra el estado de ese ticket, y su CLI trabaja sobre el ticket; fuera de los tickets, lo que cambies aquí dura mientras la página esté abierta.",
+      nReset: "Restablecer la sala de red", nResetDone: "Sala de red restablecida: los equipos que no están en un ticket vuelven a estar como al empezar el turno.",
+      colDevice: "Equipo", colModel: "Modelo", colMgmt: "IP de gestión", nType: { switch: "Switch", router: "Router", firewall: "Cortafuegos" },
+      nTabs: { general: "General", health: "Salud", diag: "Diagnóstico" }, nPick: "Elige un equipo para ver sus detalles.",
+      nModel: "Modelo", nSerial: "Número de serie", nOs: "Sistema / firmware", nLocation: "Ubicación y rack", nMgmt: "IP de gestión", nOwner: "Responsable", nRole: "Función", nSite: "Sede",
+      nSites: { HQ: "Oficina central", VLC: "Sucursal de Valencia" },
+      nCpu: "CPU (5 min)", nMem: "Memoria", nUptime: "Tiempo encendido", nTemp: "Temperatura", nPsu: "Fuentes de alimentación", nFans: "Ventiladores", nPorts: "Puertos activos", nPortsVal: (u, n) => `${u} de ${n}`,
+      nErrDis: "Puertos en err-disabled", nNone: "Ninguno", nErrors: "Errores de interfaz", nErrorsVal: (p, c) => `${p}: ${c} CRC/FCS`, nConfig: "Configuración",
+      nSaved: "Guardada (running = startup)", nUnsaved: "Cambios sin guardar (running ≠ startup)", nUnsavedShort: "Sin guardar", nSessions: "Sesiones", nPolicies: "Políticas del cortafuegos",
+      nAutoSave: "Se guarda sola (FortiOS)", nHealthNote: "Leído del propio equipo: cambia con lo que hagas en la CLI o en un ticket.",
+      nDiagWhat: "Prueba", nPing: "Ping", nTrace: "Traceroute", nTarget: "Destino", nTargetPh: "10.20.1.10 o erp.contoso.local", nRun: "Ejecutar", nLog: "Ver el final del registro", nDiagNote: "Se lanza desde el propio equipo. No cambia nada.",
+      nOpenCli: "Abrir CLI", nCloseCli: "Cerrar la CLI", nCliTitle: (d) => `CLI · ${d}`, nCliHelp: "Escribe ? para ver los comandos de cada modo. exit cierra la sesión y te deja en tu equipo, donde ssh <equipo> abre otra. ↑/↓ repiten comandos.",
+      nRouted: (id) => `(Ejecutado en el ticket ${id}: este equipo forma parte de un ticket abierto.)`, nAssignFirst: (id) => `Este equipo forma parte del ticket ${id}, aún sin asignar. Asígnate el ticket para trabajar en él.`,
+      nPausedTicket: (id) => `Este equipo forma parte del ticket ${id}, que está en espera. Reanuda el ticket para trabajar en él.`, nReadyRoom: (id) => `El ticket ${id} está listo para cerrar.`, nOpenTicket: "Abrir el ticket",
+      iNetwork: "Red", iInRoom: "Abrir en la sala de red",
+      // v0.7b: envíos y RMA
+      navShipping: "Envíos", shTitle: "Envíos y RMA", shSub: "RMA a fabricante, envíos a usuarios, devoluciones de equipos y préstamos, con un reloj simulado y seguimiento. Cada botón ejecuta un comando ship.",
+      shNew: "Nuevo envío", shList: "Envíos", shNone: "Todavía no hay envíos. Crea uno con el formulario o desde un ticket que lo necesite.",
+      shColId: "Envío", shColTicket: "Ticket", shColType: "Tipo", shColAsset: "Equipo", shColState: "Estado", shColTracking: "Seguimiento", shPractice: "Práctica (sin ticket)",
+      shPick: "Elige un envío para ver su seguimiento.", shTicketLabel: "Ticket", shTicketNone: "Práctica, sin ticket", shType: "Tipo", shAsset: "Equipo (número de serie del inventario)",
+      shVendor: "Fabricante", shVendorNone: "Ninguno", shFault: "Descripción de la avería", shFaultPh: "Qué falla, desde cuándo, qué has probado", shEvidence: "Evidencias adjuntas",
+      shEvidencePh: "Código de diagnóstico, línea de log, foto… separadas por comas", shContract: "Contrato de soporte o garantía", shCarrier: "Transportista", shFrom: "Recogida en", shTo: "Entrega en",
+      shData: "Tratamiento de datos (portátiles)", shDataPick: "Elige…", shEscrow: "Clave de recuperación de BitLocker comprobada en Entra ID antes de que salga", shItems: "Lista (devoluciones)",
+      shCreate: "Crear borrador", shCreated: (id) => `${id} creado como borrador. Revísalo y pulsa Solicitar.`, shCmd: "Comando:",
+      shSubmit: "Solicitar", shAdvance: (st) => `Siguiente paso: ${st}`, shLost: "Avisar de pérdida", shDamaged: "Avisar de daños", shClose: "Cerrar el envío",
+      shRma: "Número de RMA", shTracking: "Seguimiento", shEvents: "Eventos de seguimiento", shNoTicket: "Envío de práctica: sin ticket y sin SLA.",
+      shNeedAssign: (id) => `El ticket ${id} no está asignado a ti: asígnatelo para trabajar en sus envíos.`, shPaused: "El ticket está pendiente: el tiempo del envío no cuenta para el SLA.",
+      shRunning: "El ticket está en curso: el tiempo de cada paso del envío cuenta para el SLA. Ponlo en Pendiente del proveedor mientras esperas.",
+      shCost: (h) => `+${h} de SLA`, shFree: "SLA en pausa", shTicketShips: "Envíos de este ticket", shOpenAll: "Abrir en Envíos", shNewForTicket: "Nuevo envío para este ticket",
+      shTl: (id, st) => `Envío ${id}: ${st}`, shWarn: "Avisos", shMissing: "Falta antes de poder solicitarlo:", shDeviceNote: "Estado del equipo en el inventario:",
+      shPracticeReset: "Borrar los envíos de práctica", shRan: "Envíos:", shNoTicketShips: "Este ticket todavía no tiene envíos.",
+      iEndpoints: "Equipos", iEndpoint: { laptop: "Portátil", phone: "Móvil", part: "Pieza" }, iSerial: "Número de serie", iUser: "Asignado a", iWarranty: "Garantía / contrato",
+      iDevState: "Estado", iShipments: "Envíos", iToShipping: "Abrir en Envíos",
+      netWelcome: "Equipos de red: ssh SW-CORE-01, SW-ACC-2F, SW-ACC-1F, RTR-VLC-01 o FGT-HQ-01. exit cierra la sesión. onsite: lo que se puede hacer en el sitio.",
       cContact: "Contactar al solicitante", cOff: { unassigned: "Asígnate el ticket para contactar al solicitante.", pending: "El ticket está en espera: reanúdalo para contactar al solicitante.", closed: "" },
       cTitle: (n) => `Conversación con ${n}`, cIntro: "Elige una pregunta. Cada una consume 1 minuto del SLA. Unas ayudan, otras no, y algunas son mala práctica.",
       cQuestions: "¿Qué preguntas?", cCost: "+1 min", cNoMore: "No quedan preguntas por ahora.", cConfirmLater: "Cuando hayas aplicado un arreglo, podrás pedirle que confirme que funciona.",
@@ -328,11 +384,11 @@
         newTicket: "Nuevo ticket", heroTicket: "Internet funciona, la intranet no",
         sections: [
           { k: "01 · Lee el ticket", h: "Tickets reales,\nuna mesa de soporte.",
-            p: "Dieciocho tickets de primera y segunda línea: un usuario que se bloquea cada mañana, una incorporación sin Outlook, una VPN que no conecta desde casa, una copia que falla cada noche, un ERP que no puede guardar. Cada uno llega con el usuario, la prioridad y lo que tienes para trabajar.",
-            chips: ["Active Directory", "Microsoft 365", "Windows", "VPN", "Veeam", "Citrix", "Linux", "SQL Server"] },
+            p: "Veintiún tickets de primera y segunda línea: un usuario que se bloquea cada mañana, una incorporación sin Outlook, una VPN que no conecta desde casa, un puesto cuyo puerto ha apagado el switch, una copia que falla cada noche, un ERP que no puede guardar. Cada uno llega con el usuario, la prioridad y lo que tienes para trabajar.",
+            chips: ["Active Directory", "Microsoft 365", "Windows", "VPN", "Veeam", "Citrix", "Linux", "SQL Server", "Cisco", "FortiGate"] },
           { k: "02 · Investiga", h: "Una consola que responde\ncomo un equipo de verdad.",
             p: "Escribe los comandos que usarías en el trabajo, en PowerShell o cmd: Get-ADUser, Get-WinEvent, ipconfig, nslookup, Get-Printer, Get-Mailbox y más. La salida cambia según lo que haces. Pistas cuando te atascas, y un arreglo tentador que parece bueno pero no resuelve el ticket.",
-            chips: ["PowerShell y cmd", "Directorio y escritorio simulados", "Pistas", "El arreglo tentador"] },
+            chips: ["PowerShell y cmd", "CLI de Cisco IOS, HP y FortiOS", "Directorio, escritorio y sala de red simulados", "Pistas", "El arreglo tentador"] },
           { k: "03 · Arregla y compruébalo", h: "Arregla la causa,\nno solo el síntoma.",
             p: "Cada puesto tiene su checklist: encontrar la causa, arreglarla y comprobar que sigue arreglado. El ticket solo se cierra cuando lo has demostrado, como en un turno real, donde desbloquear otra vez la cuenta no sirve si la contraseña antigua sigue guardada en algún sitio.",
             chips: ["Investigar", "Arreglar", "Verificar"] },
@@ -351,6 +407,88 @@
       },
     },
   };
+
+  /* ---------- v0.8: learning (library, labs, profile and career) and the guided first ticket */
+  Object.assign(UI.en, {
+    navLibrary: "Library", navLabs: "Labs", navProfile: "Profile and career",
+    libTitle: "Library", libSub: "One short reference per area: what it is, the commands you use in this simulator, common causes and where to practise it. No ticket is given away.",
+    libSearch: "Search the library (a command, a word…)", libCount: (n) => `${n} article${n === 1 ? "" : "s"}`, libNone: "No article matches. Try a command (journalctl) or a word (licence).",
+    libTickets: "Public list of every ticket", libBack: "← Library", libKicker: "Library", libWhat: "What it is", libTools: "Commands and tools in the simulator",
+    libCmd: "Command or tool", libGives: "What it tells you", libWhere: "Where", libCauses: "Common causes", libTips: "Good practice", libDesks: "Practise it in these tickets",
+    libLabs: "Practise it in a lab", libGuides: "Step-by-step guides (on my website)", libNoLab: "No lab for this area yet: the tickets are the practice.",
+    libPlace: { ad: "Directory · AD lab", lab: (x) => x, desk: (x) => x, device: (x) => `${x} (network room · network lab)`, page: (x) => x },
+    libDownload: "Download Markdown", libNotSpoiler: "This page teaches the area; it does not say what is wrong in any ticket.",
+    libSolved: "Solved", libOpen: "Open", libOneArticle: "Library article", labTasks: (d, n) => `${d}/${n} tasks`,
+    labsTitle: "Labs", labsSub: "Free practice by area: a console and a few guided tasks that tick themselves. No SLA, no score, and nothing here changes the tickets.",
+    labOpen: "Open the lab", labContinue: "Continue", labDone: "Completed", labBack: "← Labs", labNoPressure: "No SLA and no score: try, get it wrong, try again.",
+    labTasksT: "Tasks", labHow: "Show how", labReset: "Reset the lab", labResetDone: "Lab reset: a fresh copy and no tasks done.", labConsole: (x) => `Lab console · ${x}`,
+    labWelcome: "A copy for practice: nothing here reaches the tickets, the Directory or the network room. Type help to start.",
+    labTaskDone: (x) => `✓ Task done: ${x}`, labComplete: "Lab completed. Well done!", labRead: "Read about it in the library",
+    labHelp: "Type the commands you would use at work. ↑/↓ repeat commands.", labStored: "Your progress in the labs is kept in this browser.",
+    pfTitle: "Profile and career", pfSub: "Your practice by area and the path from first-line support to infrastructure, from your results in this browser and your account.",
+    pfSolved: "Tickets solved", pfAvg: "Average score", pfComms: "Note to the user (average)", pfLabs: "Labs completed",
+    pfSkills: "Practice by area", pfSkillsNote: "Practice level: three quarters the area's tickets solved and one quarter its lab's tasks; areas without a lab count only tickets; the service desk process is the average mark of your notes to the user.",
+    pfRadar: "Practice level by area, from 0 to 100", pfAreas: "By area", colArea: "Area", colTickets: "Tickets", colAvg: "Average", colComms: "Note to the user", colLabTasks: "Lab tasks", colLevel: "Level",
+    pfCareer: "Career path", pfCareerSub: "A simple path, not a job description: each step lists the tickets and labs that practise it.",
+    pfStepDone: "Done", pfStepNow: "You are here", pfStepLater: "Next", pfNext: "Recommended next step", pfNextDesk: (x) => `Solve the ticket «${x}»`, pfNextLab: (x) => `Complete the ${x}`,
+    pfNextGo: "Go", pfAllDone: "Every step is done: replay the tickets to improve your scores, or try them in the other language.",
+    pfExport: "Summary of your practice", pfExportText: "A Markdown file with your results by area, the tickets you solved, the labs and the career path. It says clearly that it is practice in a simulator, not work experience.",
+    pfExportBtn: "Download summary (Markdown)", pfDownloaded: (f) => `Downloaded ${f}.`, pfLabel: "Practice in a simulator, not work experience.",
+    tourGuided: [
+      ["Your first shift", "Let's work one ticket together, from the queue to the note. It takes three minutes; skip it whenever you want and take it again from the sidebar."],
+      ["The sidebar", "Everything you need: the ticket queue, mail, the Directory, the inventory and the network room, shipments, your knowledge base, the library, the labs, your progress and your profile."],
+      ["The queue", "Every row is a ticket from a user of the fictional company Contoso, with its priority, its SLA and its state."],
+      ["Open a ticket", "Start with this one. Next opens it for you."],
+      ["Assign it to yourself", "Press Assign to me: the SLA starts (20 min for a P1, 30 for a P2, 45 for a P3) and the console unlocks. Go ahead, the tour waits."],
+      ["The console", "Investigate with the commands you would use at work. help lists the basics and hint gives a hint (it costs 10 points). The checklist on the left ticks itself as you go."],
+      ["Resolve", "When the cause is gone and you have proved it, pick the resolution code and write the work note: cause, what you changed, how you checked it and what is left."],
+      ["The note to the user", "What the requester reads: plain words, what was wrong and what they need to do. The templates help; it is marked apart from the score."],
+      ["Learn and practise", "Stuck? The library explains each area, the labs let you practise without an SLA, and your profile shows your progress by area and the next step. Good shift!"],
+    ],
+    tourWait: "Assign the ticket to see this part, or press Next.",
+    newTitle: "New in 0.8: learning", newText: "A library with one reference per area, labs to practise without an SLA (Active Directory, network, Windows, Microsoft 365 and Linux), and a profile with your progress by area, a career path and a summary you can download.",
+    newGot: "Got it",
+  });
+  Object.assign(UI.es, {
+    navLibrary: "Biblioteca", navLabs: "Laboratorios", navProfile: "Perfil y carrera",
+    libTitle: "Biblioteca", libSub: "Una referencia corta por área: qué es, los comandos que usas en este simulador, causas habituales y dónde practicarlo. No destripa ningún ticket.",
+    libSearch: "Busca en la biblioteca (un comando, una palabra…)", libCount: (n) => `${n} artículo${n === 1 ? "" : "s"}`, libNone: "Ningún artículo coincide. Prueba con un comando (journalctl) o una palabra (licencia).",
+    libTickets: "Lista pública de todos los tickets", libBack: "← Biblioteca", libKicker: "Biblioteca", libWhat: "Qué es", libTools: "Comandos y herramientas en el simulador",
+    libCmd: "Comando o herramienta", libGives: "Qué te dice", libWhere: "Dónde", libCauses: "Causas habituales", libTips: "Buenas prácticas", libDesks: "Practícalo en estos tickets",
+    libLabs: "Practícalo en un laboratorio", libGuides: "Guías paso a paso (en mi web)", libNoLab: "Esta área aún no tiene laboratorio: la práctica son los tickets.",
+    libPlace: { ad: "Directorio · laboratorio de AD", lab: (x) => x, desk: (x) => x, device: (x) => `${x} (sala de red · laboratorio de red)`, page: (x) => x },
+    libDownload: "Descargar Markdown", libNotSpoiler: "Esta página enseña el área; no dice qué falla en ningún ticket.",
+    libSolved: "Resuelto", libOpen: "Abierto", libOneArticle: "Artículo de la biblioteca", labTasks: (d, n) => `${d}/${n} tareas`,
+    labsTitle: "Laboratorios", labsSub: "Práctica libre por área: una consola y unas pocas tareas guiadas que se marcan solas. Sin SLA, sin puntuación, y nada de aquí cambia los tickets.",
+    labOpen: "Abrir el laboratorio", labContinue: "Continuar", labDone: "Completado", labBack: "← Laboratorios", labNoPressure: "Sin SLA ni puntuación: prueba, equivócate y vuelve a probar.",
+    labTasksT: "Tareas", labHow: "Ver cómo", labReset: "Reiniciar el laboratorio", labResetDone: "Laboratorio reiniciado: una copia nueva y ninguna tarea hecha.", labConsole: (x) => `Consola del laboratorio · ${x}`,
+    labWelcome: "Una copia para practicar: nada de aquí llega a los tickets, al Directorio ni a la sala de red. Escribe help para empezar.",
+    labTaskDone: (x) => `✓ Tarea hecha: ${x}`, labComplete: "Laboratorio completado. ¡Bien hecho!", labRead: "Léelo en la biblioteca",
+    labHelp: "Escribe los comandos que usarías en el trabajo. ↑/↓ repite comandos.", labStored: "Tu progreso en los laboratorios se guarda en este navegador.",
+    pfTitle: "Perfil y carrera", pfSub: "Tu práctica por área y el camino del soporte de primera línea a la infraestructura, con tus resultados de este navegador y de tu cuenta.",
+    pfSolved: "Tickets resueltos", pfAvg: "Puntuación media", pfComms: "Nota al usuario (media)", pfLabs: "Laboratorios completados",
+    pfSkills: "Práctica por área", pfSkillsNote: "Nivel de práctica: tres cuartas partes los tickets resueltos del área y una cuarta parte las tareas de su laboratorio; las áreas sin laboratorio cuentan solo los tickets; el proceso de service desk es la nota media de tus notas para el usuario.",
+    pfRadar: "Nivel de práctica por área, de 0 a 100", pfAreas: "Por área", colArea: "Área", colTickets: "Tickets", colAvg: "Media", colComms: "Nota al usuario", colLabTasks: "Tareas de laboratorio", colLevel: "Nivel",
+    pfCareer: "Itinerario profesional", pfCareerSub: "Un camino sencillo, no una descripción de puesto: cada paso indica los tickets y laboratorios que lo practican.",
+    pfStepDone: "Hecho", pfStepNow: "Estás aquí", pfStepLater: "Después", pfNext: "Siguiente paso recomendado", pfNextDesk: (x) => `Resuelve el ticket «${x}»`, pfNextLab: (x) => `Completa el ${x.charAt(0).toLowerCase() + x.slice(1)}`,
+    pfNextGo: "Ir", pfAllDone: "Todos los pasos están hechos: repite los tickets para mejorar tus puntuaciones o pruébalos en el otro idioma.",
+    pfExport: "Resumen de tu práctica", pfExportText: "Un archivo Markdown con tus resultados por área, los tickets resueltos, los laboratorios y el itinerario. Dice claramente que es práctica en un simulador, no experiencia laboral.",
+    pfExportBtn: "Descargar resumen (Markdown)", pfDownloaded: (f) => `Descargado ${f}.`, pfLabel: "Práctica en un simulador, no experiencia laboral.",
+    tourGuided: [
+      ["Tu primer turno", "Vamos a trabajar un ticket juntos, de la cola a la nota. Son tres minutos; sáltalo cuando quieras y repítelo desde la barra lateral."],
+      ["La barra lateral", "Todo lo que necesitas: la cola de tickets, el correo, el Directorio, el inventario y la sala de red, los envíos, tu base de conocimiento, la biblioteca, los laboratorios, tu progreso y tu perfil."],
+      ["La cola", "Cada fila es un ticket de un usuario de la empresa ficticia Contoso, con su prioridad, su SLA y su estado."],
+      ["Abre un ticket", "Empieza por este. Siguiente lo abre por ti."],
+      ["Asígnatelo", "Pulsa Asignarme: empieza el SLA (20 min para una P1, 30 para una P2, 45 para una P3) y se activa la consola. Adelante, el tour te espera."],
+      ["La consola", "Investiga con los comandos que usarías en el trabajo. help muestra lo básico y hint da una pista (cuesta 10 puntos). La lista de la izquierda se marca sola según avanzas."],
+      ["Resolver", "Cuando la causa ya no esté y lo hayas comprobado, elige el código de resolución y escribe la nota de trabajo: causa, qué cambiaste, cómo lo comprobaste y qué queda."],
+      ["La nota para el usuario", "Lo que lee el solicitante: palabras sencillas, qué pasaba y qué tiene que hacer. Las plantillas ayudan; se evalúa aparte de la puntuación."],
+      ["Aprende y practica", "¿Atascado? La biblioteca explica cada área, los laboratorios te dejan practicar sin SLA y tu perfil muestra tu progreso por área y el siguiente paso. ¡Buen turno!"],
+    ],
+    tourWait: "Asígnate el ticket para ver esta parte, o pulsa Siguiente.",
+    newTitle: "Novedades de la 0.8: aprendizaje", newText: "Una biblioteca con una referencia por área, laboratorios para practicar sin SLA (Active Directory, red, Windows, Microsoft 365 y Linux) y un perfil con tu progreso por área, un itinerario profesional y un resumen que puedes descargar.",
+    newGot: "Entendido",
+  });
 
   /* ---------- storage (per-viewer convenience only; the page works without it) */
   function load(key, fallback) {
@@ -465,6 +603,11 @@
     const r = rec(id);
     return r ? W.slaMinutesUsed(r, Date.now()) : 0;
   }
+  // v0.7b: simulated shipping time, as "2 h 30 min"
+  function hours(ms) {
+    const m = Math.round(ms / 60000);
+    return m < 60 ? m + " min" : Math.floor(m / 60) + " h" + (m % 60 ? " " + (m % 60) + " min" : "");
+  }
   function mmss(min) {
     const s = Math.max(0, Math.floor(min * 60));
     return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
@@ -509,7 +652,7 @@
 
   /* ---------- v0.4: progress and knowledge, kept only in this browser (sd.activity, sd.kb, sd.mail, sd.mailRead, sd.badges, sd.goal) */
   const G = window.SDGrowth;
-  const GROWTH_KEYS = ["activity", "kb", "mail", "mailRead", "badges", "goal"];
+  const GROWTH_KEYS = ["activity", "kb", "mail", "mailRead", "badges", "goal", "ships", "labs"];
   const activity = () => { const a = load("activity", []); return Array.isArray(a) ? a : []; };
   const mailAnswers = () => load("mail", {}) || {};
   const unread = () => { const r = load("mailRead", []); return G.MAIL.filter((m) => !(Array.isArray(r) && r.includes(m.id))).length; };
@@ -541,20 +684,25 @@
     const unreadN = unread();
     const item = (href, icon, text, key, extra) => el("a", { href, class: "side-item" + (active === key ? " on" : ""), id: "nav-" + key,
       "aria-current": active === key ? "page" : null }, el("span", { class: "side-ico", "aria-hidden": "true", text: icon }), el("span", { text }), extra || null);
-    const nav = el("nav", { class: "side", "aria-label": L().navLabel },
+    const nav = el("nav", { class: "side", id: "side-nav", "aria-label": L().navLabel },
       el("p", { class: "side-h", text: L().deskName }),
       item("#/", "▤", L().navTickets, "tickets", open ? el("span", { class: "badge", text: String(open) }) : null),
       item("#/mail", "✉", L().navMail, "mail", unreadN ? el("span", { class: "badge", "aria-label": L().unreadN(unreadN), text: String(unreadN) }) : null),
       item("#/directory", "◫", L().navDirectory, "directory"),
       item("#/inventory", "▦", L().navInventory, "inventory"),
+      item("#/network", "⌗", L().navNetwork, "network"),
+      item("#/shipping", "⇪", L().navShipping, "shipping"),
       item("#/kb", "▧", L().navKb, "kb"),
+      item("#/library", "❏", L().navLibrary, "library"),
+      item("#/labs", "⚗", L().navLabs, "labs"),
       item("#/progress", "★", L().navProgress, "progress"),
+      item("#/profile", "◎", L().navProfile, "profile"),
       el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer" },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { text: L().navGuides })),
       el("a", { class: "side-item", href: "/help", id: "nav-side-help" },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "i" }), el("span", { text: L().navHelp })),
       item("#/account", "●", L().navAccount, "account"),
-      el("button", { type: "button", class: "side-item side-tour", id: "nav-tour", onclick: () => { if (location.hash !== "#/" && location.hash !== "") { location.hash = "#/"; setTimeout(() => tour(0), 50); } else tour(0); } },
+      el("button", { type: "button", class: "side-item side-tour", id: "nav-tour", onclick: () => tour(0) },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "?" }), el("span", { text: L().navTour })));
     const view = el("section", { class: "view" });
     app.append(el("div", { class: "shell" }, nav, view));
@@ -579,7 +727,7 @@
         el("tbody", {}, open.map((sc, i) => {
           const st = statusOf(sc);
           const sla = slaInfo(sc, false);
-          return el("tr", { id: i === 0 ? "tour-row" : null, class: (st === "progress" ? "active" : W.isPending(st) ? "active paused" : "") || null },
+          return el("tr", { id: sc.id === tourDesk() ? "tour-row" : null, class: (st === "progress" ? "active" : W.isPending(st) ? "active paused" : "") || null },
             el("td", { class: "mono", "data-label": L().colTicket, text: sc.ticket.id }),
             el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/desk/" + sc.id, text: t(sc.title, lang) }),
               el("span", { class: "sub" }, `${t(sc.topic, lang)} · ${L().level} ${sc.level}`)),
@@ -609,7 +757,11 @@
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().qTitle }), el("p", { class: "sub", text: user ? L().hello(user.name) : "" })),
         el("p", { class: "shift" }, el("span", { class: "dot", "aria-hidden": "true" }), L().shift)),
       tabs, el("div", { class: "qwrap" }, table));
-    if (!load("tourDone", false) && queueTab === "open") setTimeout(() => { if (document.getElementById("tour-queue") && !document.querySelector(".tour")) tour(0); }, 400);
+    // v0.8: the guided first ticket for a new technician; "what's new" once for one who already took the tour
+    if (queueTab === "open" && tourAt == null) setTimeout(() => {
+      if (!document.getElementById("tour-queue") || document.querySelector(".tour")) return;
+      if (!load("tourDone", false)) tour(0); else if (load("whatsNew", "") !== WHATS_NEW) whatsNew();
+    }, 400);
   }
 
   /* ---------- ticket page */
@@ -626,10 +778,11 @@
 
     const out = el("div", { class: "out", "aria-live": "polite" });
     const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": L().console });
-    const form = el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, el("span", { class: "ps", text: E.prompt(sess) }), input);
+    const psSpan = el("span", { class: "ps", text: E.prompt(sess) });   // v0.7a: the prompt follows the device and its mode
+    const form = el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, psSpan, input);
     const term = el("div", { class: "term", onclick: () => { if (!window.getSelection().toString()) input.focus(); } }, out, form);
     const pc = el("div", { class: "pc", hidden: true });
-    const termBox = el("div", { class: "term-box" }, term, pc);
+    const termBox = el("div", { class: "term-box", id: "tour-term" }, term, pc);
     const hasDesk = Boolean(sc.desktop);
     const tabsBox = el("div", { class: "desk-tabs", role: "tablist" });
     function setView(v) {
@@ -714,6 +867,7 @@
     const chatBox = el("div");        // v0.6a: the conversation with the requester
     const knowBox = el("div");        // v0.6a: "What you know", the clues from the conversation
     const contactBox = el("div", { class: "contact-cta" });
+    const shipBox = el("div");        // v0.7b: the shipments of this ticket
     const person = C.who(sc, lang);
 
     function print(text, kind, keep) {
@@ -769,7 +923,35 @@
       }
     }
     function refreshWork() {
-      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderDesk(); renderContact(); tick();
+      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderDesk(); renderContact(); renderShips(); tick();
+    }
+
+    /* ---------- v0.7b: the shipments of this ticket. Their buttons work while the ticket is pending (the vendor and the courier
+       go on); each step's simulated time counts against the SLA only while the ticket is in progress */
+    function renderShips() {
+      if (!sc.ship) return;
+      const can = assigned() && !lv.closed;
+      const r = rec(id);
+      const note = !can ? (lv.closed ? null : L().shNeedAssign(sc.ticket.id)) : W.isPending(r.status) ? L().shPaused : L().shRunning;
+      put(shipBox, el("section", { class: "panel ship-card", id: "ship-card" }, el("h2", { text: L().shTicketShips }),
+        sess.ships.list.length ? el("ul", { class: "ship-mini" }, sess.ships.list.map((x) => {
+          const last = x.events[x.events.length - 1];
+          return el("li", {}, el("p", { class: "ship-mini-h" }, el("a", { class: "mono", href: "#/shipping/" + x.id, text: x.id }), " ", shipPill(x),
+            el("span", { class: "sub", text: " " + SH.t(SH.TYPES[x.type], lang) + " · " + x.serial })),
+            last ? el("p", { class: "fine", text: `${SH.stamp(last.at)} · ${SH.eventText(x, last, lang)}` }) : null,
+            can ? el("div", { class: "acts ship-acts" }, shipButtons(x, (cmd) => shipBtn(cmd))) : null);
+        })) : el("p", { class: "sub", text: L().shNoTicketShips }),
+        note ? el("p", { class: "fine", id: "ship-sla-note", text: note }) : null,
+        el("p", { class: "ship-links" }, can ? el("a", { class: "btn ghost sm", href: "#/shipping/new/" + sc.id, id: "ship-new-ticket", text: L().shNewForTicket }) : null,
+          " ", el("a", { href: "#/shipping", text: L().shOpenAll }))));
+    }
+    function shipBtn(cmd) {
+      if (!assigned() || lv.closed) return;
+      print(`${L().shRan} → ${cmd}`, "dim");
+      const r = E.run(sess, cmd, { local: true });
+      chargeShip(id, r);
+      after(r);
+      renderTimeline(); tick();
     }
 
     /* ---------- v0.6a: contacting the requester. Scripted questions (comms.js), 1 minute of SLA each, kept in the ticket record */
@@ -865,7 +1047,12 @@
       const items = lv.closed && lv.timeline ? lv.timeline : r ? r.timeline : [];
       const time = (ts) => { const d = new Date(ts); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
       timelineBox.replaceChildren(el("section", { class: "panel timeline", id: "wf-timeline" }, el("h2", { text: L().tlTitle }),
-        items.length ? el("ol", { class: "tl" }, items.slice().reverse().map((x) => x.contact
+        items.length ? el("ol", { class: "tl" }, items.slice().reverse().map((x) => x.ship
+          // v0.7b: a step of one of the ticket's shipments, with what it cost the SLA
+          ? el("li", { class: "tl-ship" }, el("p", { class: "tl-head" }, el("time", { datetime: new Date(x.at).toISOString(), text: time(x.at) }),
+              el("span", { text: L().shTl(x.ship, SH.t(SH.STATE[x.state] || { en: x.state }, lang)) }),
+              x.ms > 0 ? el("span", { class: "tl-cost" + (x.charged ? "" : " free"), text: x.charged ? L().shCost(hours(x.ms)) : L().shFree }) : null))
+          : x.contact
           // v0.6a: a question to the requester
           ? el("li", { class: "tl-contact" }, el("p", { class: "tl-head" }, el("time", { datetime: new Date(x.at).toISOString(), text: time(x.at) }),
               el("span", { text: L().tlContact }), el("span", { class: "tl-cost", text: L().cCost })),
@@ -880,7 +1067,8 @@
       if (r.clear) { out.replaceChildren(); lv.log = []; }
       if (r.ticket) ticketLines();
       r.lines.forEach((l) => print(l.text, l.kind));
-      renderStages(); renderAsset(); renderDesk();
+      psSpan.textContent = E.prompt(sess);
+      renderStages(); renderAsset(); renderDesk(); renderShips();
       if (lv.chatOpen) renderChat();   // the confirmation question appears once a fix is in
       if (r.resolvedNow) { print(L().readyMsg, "ok"); const ta = resolveBox.querySelector("textarea"); if (ta) ta.scrollIntoView({ behavior: "smooth", block: "center" }); }
       term.scrollTop = term.scrollHeight;
@@ -894,7 +1082,10 @@
       if (!cmd.trim() || !working() || lv.closed) return;
       lv.hist.push(cmd); lv.pos = lv.hist.length;
       print(E.prompt(sess) + cmd, "cmd");
-      after(E.run(sess, cmd));
+      const r = E.run(sess, cmd);
+      chargeShip(id, r);     // v0.7b: a `ship` step typed in the console costs its simulated time (in progress: always)
+      after(r);
+      if (r.ship) { renderTimeline(); tick(); }
     }
     function gui(actionId, label) {
       if (!working() || lv.closed) return;
@@ -942,7 +1133,7 @@
       };
       updLive();
       const msg = el("p", { class: "form-msg", role: "alert" });
-      resolveBox.replaceChildren(el("section", { class: "panel note" }, el("h2", { text: L().resTitle }), el("p", { text: L().resText }),
+      resolveBox.replaceChildren(el("section", { class: "panel note", id: "resolve-panel" }, el("h2", { text: L().resTitle }), el("p", { text: L().resText }),
         el("label", { class: "field" }, el("span", { class: "field-label", text: L().resCode }), code),
         el("label", { class: "field" }, el("span", { class: "field-label", text: L().resNote }), ta),
         el("div", { class: "field unote" }, el("label", { class: "field-label", for: "user-note", text: L().uNote }),
@@ -1069,20 +1260,24 @@
             contactBox),
           knowBox,
           assetBox,
+          shipBox,
           el("section", { class: "panel" }, el("h2", { text: L().context }), el("p", { class: "intro", text: t(sc.intro, lang) })),
           el("section", { class: "panel" }, el("h2", { text: L().stages }), stagesList),
           timelineBox,
           el("section", { class: "panel tools" },
             el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { if (working() && !lv.closed) { exec("hint"); input.focus(); } } }),
             el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => { delete live[id]; desk(id); } }),
-            el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))),
+            el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }),
+            // v0.8: the library article of the ticket's area (it teaches the area, never the ticket)
+            Lib.forDesk(sc.id).slice(0, 1).map((a) => el("a", { class: "btn ghost", href: "#/library/" + a.id, id: "desk-library", text: L().libOneArticle })))),
         el("div", {}, pendBox, chatBox, tabsBox, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
 
     if (!lv.log.length) {
       print(L().welcome.replace("{host}", sc.machine.host).replace("{user}", sc.machine.domain + "\\" + sc.machine.user), "dim");
+      if (sc.net) print(L().netWelcome, "dim");
       print("", "out");
     } else lv.log.forEach((l) => print(l.text, l.kind, false));
-    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderContact(); showResult();
+    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderContact(); renderShips(); showResult();
     if (hasDesk) setView(lv.view || "console");
     term.scrollTop = term.scrollHeight;
     if (working() && !lv.closed) input.focus();
@@ -1573,9 +1768,20 @@
       const b = binds.filter((y) => y.kind === x.kind && y.id === x.id);
       const status = b.map((y) => y.set.status).find((s) => s && s !== "ok") || "ok";
       return Object.assign(x, { status, notes: b.map((y) => y.note).filter(Boolean), jobs: (b.find((y) => "jobs" in y.set) || { set: { jobs: 0 } }).set.jobs, tickets: linked(x.id) });
-    });
+    }).concat(NN.list(roomNet).map((d) => {
+      // v0.7a: the switches, the router and the firewall, with the status of the network room (health and open tickets)
+      const ns = netStatus(d.id);
+      return { kind: "network", id: d.id, d: Object.assign({}, d, { ip: d.mgmt }), status: ns.tone, notes: ns.notes.concat(ns.health.unsaved && !ns.notes.length ? [L().nUnsaved] : []), jobs: 0, tickets: netTickets(d.id), health: ns.health };
+    })).concat(SH.ASSETS.map((a) => {
+      // v0.7b: laptops, phones and spare parts from the asset register, in the state their shipments give them (in RMA, on loan, replaced...)
+      const ds = SH.deviceState(allStores(), a.serial);
+      const tone = ["rma", "returning", "received", "loan"].includes(ds) ? "warn" : "ok";
+      const label = SH.t(SH.DEVICE[ds], lang);
+      const tk = SCENARIOS.filter((sc) => sc.ship && (sc.requester.device === a.id || JSON.stringify(sc.ship.flags).includes('"' + a.serial + '"')));
+      return { kind: "endpoint", id: a.id, d: Object.assign({}, a, { ip: "–", role: `${a.model} · ${label}` }), status: tone, notes: tone === "ok" ? [] : [L().shDeviceNote + " " + label], jobs: 0, tickets: tk, devState: ds };
+    }));
     const shown = items.filter((x) => invFilter === "all" || (invFilter === "problems" ? x.status !== "ok" : x.kind === invFilter));
-    const chips = el("div", { class: "qtabs", role: "tablist" }, [["all", L().iAll], ["server", L().iServers], ["printer", L().iPrinters], ["problems", L().iProblems]].map(([k, text]) =>
+    const chips = el("div", { class: "qtabs inv-chips", role: "tablist" }, [["all", L().iAll], ["server", L().iServers], ["printer", L().iPrinters], ["network", L().iNetwork], ["endpoint", L().iEndpoints], ["problems", L().iProblems]].map(([k, text]) =>
       el("button", { type: "button", role: "tab", class: "qtab" + (invFilter === k ? " on" : ""), "aria-selected": invFilter === k ? "true" : "false", onclick: () => { invFilter = k; inventory(); } },
         text + " ", el("span", { class: "count", text: String(items.filter((x) => k === "all" || (k === "problems" ? x.status !== "ok" : x.kind === k)).length) }))));
     const stPill = (s) => el("span", { class: "inv-st " + s }, el("span", { class: "tdot", "aria-hidden": "true" }), el("span", { text: L().st[s] }));
@@ -1584,8 +1790,8 @@
       el("tbody", {}, shown.map((x) => el("tr", { class: invSel === x.id ? "active" : "" },
         el("td", { "data-label": L().colStatus }, stPill(x.status)),
         el("td", { class: "subj", "data-label": L().colName }, el("button", { type: "button", class: "link-row", text: x.id, onclick: () => { invSel = x.id; inventory(); } })),
-        el("td", { "data-label": L().colType, text: x.kind === "server" ? L().iServer : L().iPrinter }),
-        el("td", { "data-label": L().colRole, text: Wd.t(x.kind === "server" ? x.d.role : x.d.model, lang) }),
+        el("td", { "data-label": L().colType, text: x.kind === "server" ? L().iServer : x.kind === "network" ? L().nType[x.d.kind] : x.kind === "endpoint" ? L().iEndpoint[x.d.kind] : L().iPrinter }),
+        el("td", { "data-label": L().colRole, text: Wd.t(x.kind === "printer" ? x.d.model : x.d.role, lang) }),
         el("td", { class: "mono", "data-label": "IP", text: x.d.ip }),
         el("td", { "data-label": L().colTickets }, x.tickets.length ? x.tickets.map((sc) => el("a", { class: "tkt mono", href: "#/desk/" + sc.id, text: sc.ticket.id }))
           : el("span", { class: "muted", text: "–" })))))) : el("p", { class: "empty", text: L().iNoProblem });
@@ -1596,45 +1802,727 @@
       detail = el("section", { class: "panel inv-detail" },
         el("div", { class: "row" }, el("h2", { class: "dtitle", text: sel.id }), stPill(sel.status)),
         sel.notes.length ? el("ul", { class: "inv-notes" }, sel.notes.map((n) => el("li", { text: n }))) : el("p", { class: "sub", text: L().iNoIssue }),
-        fieldsDl(sel.kind === "server" ? [{ label: L().colRole, value: Wd.t(d.role, lang) }, { label: L().iOs, value: d.os }, { label: "IP", value: d.ip },
+        fieldsDl(sel.kind === "endpoint" ? [{ label: L().colRole, value: d.model }, { label: L().iSerial, value: d.serial }, { label: L().iUser, value: d.user || "–" },
+          { label: L().iDevState, value: SH.t(SH.DEVICE[sel.devState], lang), tone: sel.status === "ok" ? "ok" : "warn" }, { label: L().iWarranty, value: SH.t(d.warranty, lang) }]
+          : sel.kind === "network" ? [{ label: L().colRole, value: Wd.t(d.role, lang) }, { label: L().nModel, value: d.model }, { label: L().nOs, value: d.version },
+          { label: L().nMgmt, value: d.mgmt }, { label: L().colLocation, value: Wd.t(d.location, lang) }, { label: L().iOwner, value: Wd.t(d.owner, lang) },
+          { label: L().nConfig, value: sel.health.unsaved ? L().nUnsaved : d.os === "fortios" ? L().nAutoSave : L().nSaved, tone: sel.health.unsaved ? "warn" : "ok" }]
+          : sel.kind === "server" ? [{ label: L().colRole, value: Wd.t(d.role, lang) }, { label: L().iOs, value: d.os }, { label: "IP", value: d.ip },
           { label: L().colLocation, value: Wd.t(d.location, lang) }, { label: L().iOwner, value: Wd.t(d.owner, lang) }, { label: L().iPatched, value: d.patched }]
           : [{ label: L().colRole, value: Wd.t(d.model, lang) }, { label: "IP", value: d.ip }, { label: L().iQueue, value: d.queue },
             { label: L().iJobs, value: String(sel.jobs), tone: sel.jobs ? "bad" : "" }, { label: L().colLocation, value: Wd.t(d.location, lang) }]),
         el("h3", { text: L().colTickets }),
         sel.tickets.length ? el("ul", { class: "inv-tickets" }, sel.tickets.map((sc) => el("li", {}, ticketPill(sc), el("span", { text: " " + t(sc.title, lang) })))) : el("p", { class: "sub", text: L().iNone }),
-        sel.kind === "server" ? el("p", {}, el("a", { href: "#/directory", onclick: () => { dirOu = "servers"; dirSel = { type: "computer", id: sel.id }; }, text: L().iInDir })) : null);
+        sel.kind === "server" ? el("p", {}, el("a", { href: "#/directory", onclick: () => { dirOu = "servers"; dirSel = { type: "computer", id: sel.id }; }, text: L().iInDir })) : null,
+        sel.kind === "network" ? el("p", {}, el("a", { href: "#/network/" + sel.id, id: "inv-to-room", text: L().iInRoom })) : null,
+        sel.kind === "endpoint" ? el("div", {}, el("h3", { text: L().iShipments }),
+          (() => { const list = allShips().filter((y) => y.ship.serial === sel.d.serial); return list.length ? el("ul", { class: "inv-tickets" }, list.map((y) => el("li", {},
+            el("a", { class: "mono", href: "#/shipping/" + y.ship.id, text: y.ship.id }), " ", shipPill(y.ship)))) : el("p", { class: "sub", text: L().iNone }); })(),
+          el("p", {}, el("a", { href: "#/shipping", id: "inv-to-shipping", text: L().iToShipping }))) : null);
     }
     view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().iTitle }), el("p", { class: "sub", text: L().iSub }))),
       chips, el("div", { class: "inv-grid" }, el("div", { class: "qwrap" }, table), detail));
   }
 
-  /* ---------- welcome tour: a card at the bottom and the element it talks about highlighted; skip it or take it again from the sidebar */
+  /* ---------- v0.7a: the network room. Devices of an open network ticket show that ticket's net (and their CLI works on the
+     ticket, like the directory hands a command to its ticket); the rest use the room's own net, kept while the page is open. */
+  const NN = window.SDNet;
+  let roomNet = NN.createNet([]);
+  const netPreview = {};     // deskId -> a fresh session, to show an unassigned ticket's fault
+  let netSel = null;
+  let netTab = "general";
+  let netDiag = { what: "ping", target: "", out: [] };
+  let netCli = null;         // {dev, term, src, log: [{text, kind}], hist: [], pos}
+  function netSources() {
+    return SCENARIOS.filter((sc) => sc.net && isOpen(sc)).map((sc) => {
+      const has = Boolean(work()[sc.id]);
+      const lv = has ? liveOf(sc.id, sc) : null;
+      const sess = lv ? lv.sess : (netPreview[sc.id] || (netPreview[sc.id] = E.createSession(sc, lang)));
+      sess.lang = lang;
+      const r = rec(sc.id);
+      return { sc, sess, lv, live: Boolean(lv) && W.canWork(r) && !lv.closed, paused: W.isPaused(r) };
+    }).filter((x) => !(x.lv && x.lv.closed));
+  }
+  // the net a device lives in right now: {net, src} (src: the open ticket it belongs to, or null)
+  function netFor(id) {
+    // v0.7b: two open tickets can share a device (SW-ACC-2F): the one assigned to you wins, then the first one
+    const all = netSources().filter((x) => x.sc.net.devices.includes(id));
+    const src = all.find((x) => x.live) || all.find((x) => x.lv) || all[0] || null;
+    return { net: src ? src.sess.net : roomNet, src };
+  }
+  // status for the room and the inventory: the worst of the device's health and what its tickets say
+  function netStatus(id) {
+    const { net, src } = netFor(id);
+    const h = NN.health(net, id);
+    const marks = src ? E.bound(src.sess).filter((b) => b.kind === "network" && b.id === id) : [];
+    const order = ["ok", "warn", "bad"];
+    const tone = [h.tone].concat(marks.map((b) => b.set.status || "ok")).sort((a, b) => order.indexOf(b) - order.indexOf(a))[0];
+    return { tone, health: h, notes: marks.map((b) => b.note).filter(Boolean), src, net };
+  }
+  const netTickets = (id) => SCENARIOS.filter((sc) => sc.net && sc.net.devices.includes(id));
+  const stPillN = (s) => el("span", { class: "inv-st " + s }, el("span", { class: "tdot", "aria-hidden": "true" }), el("span", { text: L().st[s] }));
+
+  function networkRoom(selId) {
+    const view = shell("network");
+    document.title = L().nTitle + " · SysAdmin Desks";
+    if (selId && roomNet.devices[selId]) netSel = selId;
+    const devs = NN.list(roomNet);
+    const rows = devs.map((d) => Object.assign({ d }, netStatus(d.id)));
+    const table = el("table", { class: "qtable inv net-table" },
+      el("thead", {}, el("tr", {}, [L().colStatus, L().colDevice, L().colMgmt, L().colTickets].map((x) => el("th", { scope: "col", text: x })))),
+      el("tbody", {}, rows.map((x) => el("tr", { class: netSel === x.d.id ? "active" : "" },
+        el("td", { "data-label": L().colStatus }, stPillN(x.tone), x.health.unsaved ? el("span", { class: "pill observations net-unsaved", text: L().nUnsavedShort }) : null),
+        el("td", { class: "subj", "data-label": L().colDevice }, el("a", { class: "link-row", href: "#/network/" + x.d.id, text: x.d.id }), el("span", { class: "sub", text: `${L().nType[x.d.kind]} · ${x.d.model}` })),
+        el("td", { class: "mono", "data-label": L().colMgmt, text: x.d.mgmt }),
+        el("td", { "data-label": L().colTickets }, netTickets(x.d.id).length ? netTickets(x.d.id).map((sc) => el("a", { class: "tkt mono", href: "#/desk/" + sc.id, text: sc.ticket.id })) : el("span", { class: "muted", text: "–" }))))));
+    const detail = el("section", { class: "panel inv-detail net-detail", id: "net-detail" });
+    const cliBox = el("div", { id: "net-cli-box" });
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().nTitle }), el("p", { class: "sub", text: L().nSub })),
+      el("button", { type: "button", class: "link-btn", id: "net-reset", text: L().nReset, onclick: () => {
+        roomNet = NN.createNet([]); netCli = null; netDiag = { what: "ping", target: "", out: [L().nResetDone] }; networkRoom(netSel); } })),
+      el("div", { class: "inv-grid net-grid" }, el("div", { class: "qwrap" }, table), detail), cliBox);
+    renderNetDetail(detail, cliBox);
+    renderNetCli(cliBox);
+  }
+
+  function renderNetDetail(box, cliBox) {
+    const d = netSel && roomNet.devices[netSel];
+    if (!d) { box.replaceChildren(el("p", { class: "empty", text: L().nPick })); return; }
+    const st = netStatus(d.id);
+    const dev = st.net.devices[d.id];
+    const h = st.health;
+    const tabs = el("div", { class: "qtabs net-tabs", role: "tablist" }, ["general", "health", "diag"].map((k) => el("button", { type: "button", role: "tab", id: "net-tab-" + k,
+      class: "qtab" + (netTab === k ? " on" : ""), "aria-selected": netTab === k ? "true" : "false", onclick: () => { netTab = k; renderNetDetail(box, cliBox); } }, L().nTabs[k])));
+    let body;
+    if (netTab === "general") {
+      body = fieldsDl([{ label: L().nRole, value: t(dev.role, lang) }, { label: L().nModel, value: dev.model }, { label: L().nSerial, value: dev.serial },
+        { label: L().nOs, value: dev.os === "ios" ? "Cisco IOS XE " + dev.version : dev.os === "aruba" ? "ArubaOS-Switch " + dev.version : "FortiOS " + dev.version },
+        { label: L().nLocation, value: t(dev.location, lang) }, { label: L().nSite, value: L().nSites[dev.site] }, { label: L().nMgmt, value: dev.mgmt }, { label: L().nOwner, value: t(dev.owner, lang) }]);
+    } else if (netTab === "health") {
+      const pct = (n) => el("span", { class: "net-meter" }, el("meter", { min: "0", max: "100", low: "60", high: "85", optimum: "10", value: String(n) }), el("span", { text: n + " %" }));
+      const fields = [{ label: L().nCpu, value: pct(h.cpu) }, { label: L().nMem, value: pct(h.mem) }, { label: L().nUptime, value: h.uptimeText },
+        { label: L().nTemp, value: h.temp + " °C", tone: h.temp >= 60 ? "warn" : "ok" }, { label: L().nPsu, value: h.psu.map((x) => x.join(" ")).join(" · "), tone: (h.psuFailed || []).length ? "warn" : "ok" },
+        { label: L().nFans, value: h.fans, tone: (h.psuFailed || []).length ? "warn" : "ok" }];
+      if (dev.os === "fortios") fields.push({ label: L().nSessions, value: String(h.sessions) }, { label: L().nPolicies, value: String(h.policies) }, { label: L().nConfig, value: L().nAutoSave, tone: "ok" });
+      else fields.push({ label: L().nPorts, value: L().nPortsVal(h.up, h.ports) },
+        { label: L().nErrDis, value: h.errDisabled.length ? h.errDisabled.map((x) => `${x.port} (${x.reason})`).join(", ") : L().nNone, tone: h.errDisabled.length ? "bad" : "ok" },
+        { label: L().nErrors, value: h.errors.length ? h.errors.map((x) => L().nErrorsVal(x.port, x.crc + x.inErr)).join(", ") : L().nNone, tone: h.errors.some((x) => x.crc >= 100) ? "warn" : "" },
+        { label: L().nConfig, value: h.unsaved ? L().nUnsaved : L().nSaved, tone: h.unsaved ? "warn" : "ok" });
+      body = el("div", {}, netFields(fields), el("p", { class: "fine", text: L().nHealthNote }));
+    } else {
+      const what = el("select", { id: "net-diag-what", "aria-label": L().nDiagWhat }, [["ping", L().nPing], ["trace", L().nTrace]].map(([v, x]) => el("option", { value: v, selected: netDiag.what === v, text: x })));
+      const target = el("input", { type: "text", id: "net-diag-target", class: "net-target", autocomplete: "off", spellcheck: "false", placeholder: L().nTargetPh, "aria-label": L().nTarget, value: netDiag.target });
+      const go = () => { netDiag = { what: what.value, target: target.value.trim(), out: NN.diag(st.net, dev.id, what.value, target.value), cmd: `${NN.LOOK[dev.os][what.value]} ${target.value.trim()}` }; renderNetDetail(box, cliBox); };
+      target.addEventListener("keydown", (ev) => { if (ev.key === "Enter") { ev.preventDefault(); go(); } });
+      body = el("div", { class: "net-diag" },
+        el("div", { class: "net-diag-row" }, el("label", { class: "field" }, el("span", { class: "field-label", text: L().nDiagWhat }), what),
+          el("label", { class: "field grow" }, el("span", { class: "field-label", text: L().nTarget }), target),
+          el("button", { type: "button", class: "btn sm", id: "net-diag-run", text: L().nRun, onclick: go })),
+        el("button", { type: "button", class: "btn ghost sm", id: "net-diag-log", text: L().nLog, onclick: () => { netDiag = { what: netDiag.what, target: netDiag.target, out: NN.diag(st.net, dev.id, "log"), cmd: NN.LOOK[dev.os].log }; renderNetDetail(box, cliBox); } }),
+        netDiag.out.length ? el("pre", { class: "net-out", id: "net-diag-out", text: netDiag.out.join("\n") }) : null,
+        netDiag.cmd ? el("p", { class: "pc-eq" }, el("span", { text: L().equivalent + " " }), el("code", { text: netDiag.cmd })) : null,
+        el("p", { class: "fine", text: L().nDiagNote }));
+    }
+    const src = st.src;
+    const blocked = src && !src.live;
+    put(box,
+      el("div", { class: "row" }, el("h2", { class: "dtitle", text: dev.id }), stPillN(st.tone)),
+      el("p", { class: "sub", text: `${L().nType[dev.kind]} · ${dev.model}` }),
+      st.notes.length ? el("ul", { class: "inv-notes" }, st.notes.map((n) => el("li", { text: n }))) : null,
+      src ? el("p", { class: "dir-ticket" }, el("span", { text: L().dTicket + " " }), ticketPill(src.sc)) : null,
+      tabs, el("div", { class: "net-tab-body", role: "tabpanel" }, body),
+      el("div", { class: "acts" },
+        el("button", { type: "button", class: "btn sm", id: "net-open-cli", disabled: blocked ? true : null, "aria-describedby": blocked ? "net-cli-why" : null,
+          onclick: () => { openNetCli(dev.id); renderNetCli(cliBox); const i = cliBox.querySelector("input"); if (i) { i.focus(); cliBox.scrollIntoView({ behavior: "smooth", block: "nearest" }); } } },
+          el("span", { "aria-hidden": "true", text: ">_ " }), L().nOpenCli)),
+      blocked ? el("p", { class: "fine", id: "net-cli-why" }, (src.paused ? L().nPausedTicket : L().nAssignFirst)(src.sc.ticket.id) + " ", el("a", { href: "#/desk/" + src.sc.id, text: L().nOpenTicket })) : null);
+  }
+  // like fieldsDl, but a value can be an element (the meters)
+  function netFields(fields) {
+    return el("dl", { class: "fields" }, fields.map((f) => [el("dt", { text: f.label }),
+      el("dd", { class: f.tone ? "tone " + f.tone : "" }, f.tone ? el("span", { class: "tdot", "aria-hidden": "true" }) : null, typeof f.value === "string" ? el("span", { text: f.value }) : f.value)]));
+  }
+  function openNetCli(id) {
+    const { net, src } = netFor(id);
+    if (src && !src.live) return;
+    const term = NN.terminal(net);
+    const log = [{ text: NN.connect(term, id).join("\n"), kind: "out" }];
+    if (src) log.push({ text: L().nRouted(src.sc.ticket.id), kind: "dim" });
+    netCli = { dev: id, term, src, log, hist: [], pos: 0 };
+  }
+  function renderNetCli(box) {
+    if (!netCli) { box.replaceChildren(); return; }
+    const c = netCli;
+    const out = el("div", { class: "out", "aria-live": "polite" });
+    const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": L().nCliTitle(c.dev) });
+    const ps = el("span", { class: "ps", text: NN.prompt(c.term) });
+    const print = (text, kind) => { c.log.push({ text, kind }); if (c.log.length > 600) c.log = c.log.slice(-400); out.append(el("div", { class: "line " + (kind || "out"), text })); };
+    c.log.forEach((l) => out.append(el("div", { class: "line " + (l.kind || "out"), text: l.text })));
+    function exec(cmd) {
+      cmd = String(cmd || "").trim();
+      if (!cmd) return;
+      c.hist.push(cmd); c.pos = c.hist.length;
+      const before = NN.prompt(c.term);
+      print(before + cmd, "cmd");
+      const src = c.src && netSources().find((x) => x.sc.id === c.src.sc.id);
+      let r;
+      if (src && src.live) {
+        // the same rules as the ticket console: a ticket's device answers through the ticket (traps, flags and the result included)
+        r = E.run(src.sess, cmd, { term: c.term });
+        const lv = live[src.sc.id];
+        lv.log.push({ text: before + cmd, kind: "cmd" });
+        r.lines.forEach((l) => lv.log.push({ text: l.text, kind: l.kind }));
+        if (r.resolvedNow) lv.log.push({ text: L().readyMsg, kind: "ok" });
+      } else if (c.src) {
+        r = { lines: [{ text: (c.src.paused ? L().nPausedTicket : L().nAssignFirst)(c.src.sc.ticket.id), kind: "say" }] };
+      } else r = NN.exec(c.term, cmd, { lang });
+      if (r.clear) { out.replaceChildren(); c.log = []; }
+      r.lines.forEach((l) => print(l.text, l.kind));
+      if (r.resolvedNow) print(L().nReadyRoom(c.src.sc.ticket.id), "ok");
+      ps.textContent = NN.prompt(c.term);
+      term.scrollTop = term.scrollHeight;
+      const det = document.getElementById("net-detail");
+      if (det) renderNetDetail(det, box);
+      refreshNetTable();
+    }
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "ArrowUp" && c.pos > 0) { c.pos -= 1; input.value = c.hist[c.pos]; ev.preventDefault(); }
+      else if (ev.key === "ArrowDown") { c.pos = Math.min(c.hist.length, c.pos + 1); input.value = c.hist[c.pos] || ""; ev.preventDefault(); }
+    });
+    const term = el("div", { class: "term net-term", onclick: () => { if (!window.getSelection().toString()) input.focus(); } }, out,
+      el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, ps, input));
+    box.replaceChildren(el("section", { class: "panel net-cli", id: "net-cli", "aria-label": L().nCliTitle(c.dev) },
+      el("div", { class: "row" }, el("h2", { text: L().nCliTitle(c.dev) }), el("span", { class: "grow" }),
+        el("button", { type: "button", class: "pc-x", "aria-label": L().nCloseCli, title: L().nCloseCli, text: "×", onclick: () => { netCli = null; renderNetCli(box); } })),
+      term, el("p", { class: "term-help", text: L().nCliHelp })));
+    term.scrollTop = term.scrollHeight;
+  }
+  // the status column follows the CLI without rebuilding the page (the CLI keeps its focus)
+  function refreshNetTable() {
+    document.querySelectorAll(".net-table tbody tr").forEach((tr) => {
+      const id = tr.querySelector(".link-row") && tr.querySelector(".link-row").textContent;
+      if (!id) return;
+      const x = netStatus(id);
+      const td = tr.querySelector("td");
+      put(td, stPillN(x.tone), x.health.unsaved ? el("span", { class: "pill observations net-unsaved", text: L().nUnsavedShort }) : null);
+    });
+  }
+
+
+  /* ---------- v0.7b: shipments and RMA. A ticket's shipments live in its session (like its console); practice shipments, not linked
+     to any ticket, are kept in this browser (sd.ships). Every button builds a `ship` line and runs it, so the console and the page agree. */
+  let practice = null;
+  let shipOut = null;        // {id, cmd, lines}: what the last button on the Shipments page did
+  let shipSel = null;
+  function practiceStore() { if (!practice) practice = SH.normalise(load("ships", null), {}); return practice; }
+  function savePractice() { save("ships", practiceStore()); }
+  // the shipping desks with a session in this page: [{sc, lv, sess}]
+  function shipSources() {
+    return SCENARIOS.filter((sc) => sc.ship && (work()[sc.id] || live[sc.id])).map((sc) => {
+      const lv = liveOf(sc.id, sc);
+      lv.sess.lang = lang;
+      return { sc, lv, sess: lv.sess };
+    });
+  }
+  function allStores() { return [practiceStore()].concat(shipSources().map((x) => x.sess.ships)); }
+  function allShips() {
+    const out = practiceStore().list.map((ship) => ({ ship, src: null }));
+    shipSources().forEach((src) => src.sess.ships.list.forEach((ship) => out.push({ ship, src })));
+    return out;
+  }
+  // a ticket's shipments can be worked on while it is assigned to me (in progress or pending)
+  function canShip(src) {
+    if (!src) return true;
+    const r = rec(src.sc.id);
+    return Boolean(r && r.status !== "new" && r.status !== "closed" && !src.lv.closed);
+  }
+  // a step that changed a ticket's shipment goes into its Activity, and its simulated time into the SLA unless the ticket is pending
+  function chargeShip(id, r) {
+    if (!r || !r.ship || !(r.tags || []).some((tg) => /^ship state /.test(tg)) || !work()[id]) return;
+    setWork(id, SH.charge(work()[id], { id: r.ship.id, state: r.ship.state, ms: r.shipMs || 0 }, Date.now()));
+  }
+  function shipRun(src, cmd) {
+    if (!src) {
+      const r = SH.exec(practiceStore(), cmd, { lang, stores: allStores() });
+      savePractice();
+      return r;
+    }
+    const r = E.run(src.sess, cmd, { local: true });
+    const lv = src.lv;
+    lv.log.push({ text: L().shRan + " → " + cmd, kind: "dim" });
+    r.lines.forEach((l) => lv.log.push({ text: l.text, kind: l.kind }));
+    if (r.resolvedNow) lv.log.push({ text: L().readyMsg, kind: "ok" });
+    chargeShip(src.sc.id, r);
+    return r;
+  }
+  const SHIP_TONE = { draft: "new", requested: "progress", pickup: "progress", transit: "pending-vendor", delivered: "resolved", closed: "closed", incident: "unresolved" };
+  function shipPill(x) { return el("span", { class: "pill " + SHIP_TONE[x.state] + " ship-st", text: SH.stateLabel(x, lang) }); }
+  // the buttons for the steps a shipment can take now; run(cmd) does it
+  function shipButtons(x, run) {
+    const nxt = SH.next(x);
+    const after = { requested: "pickup", pickup: "transit", transit: "delivered", incident: "transit" }[x.state];
+    const b = (cls, label, cmd, idx) => el("button", { type: "button", class: "btn sm " + cls, "data-ship": x.id, "data-step": idx, text: label, onclick: () => run(cmd) });
+    const out = [];
+    if (nxt.includes("submit")) out.push(b("", L().shSubmit, SH.command("submit", x.id), "submit"));
+    if (nxt.includes("advance")) out.push(b("", L().shAdvance(SH.stateLabel(x, lang, after)), SH.command("advance", x.id), "advance"));
+    if (nxt.includes("incident")) out.push(b("ghost", L().shLost, SH.command("incident", x.id, "lost"), "lost"), b("ghost", L().shDamaged, SH.command("incident", x.id, "damaged"), "damaged"));
+    if (nxt.includes("close")) out.push(b("", L().shClose, SH.command("close", x.id), "close"));
+    return out;
+  }
+  const FIELD_LABEL = () => ({ serial: L().shAsset, carrier: L().shCarrier, from: L().shFrom, to: L().shTo, vendor: L().shVendor, fault: L().shFault,
+    evidence: L().shEvidence, data: L().shData, items: L().shItems });
+
+  function shippingPage(seg, deskId) {
+    const view = shell("shipping");
+    document.title = L().shTitle + " · SysAdmin Desks";
+    const ships = allShips();
+    if (seg && seg !== "new") shipSel = seg;
+    const sel = ships.find((x) => x.ship.id === shipSel) || null;
+    const table = ships.length ? el("table", { class: "qtable inv ship-table" },
+      el("thead", {}, el("tr", {}, [L().shColState, L().shColId, L().shColType, L().shColAsset, L().shColTicket, L().shColTracking].map((x) => el("th", { scope: "col", text: x })))),
+      el("tbody", {}, ships.map(({ ship: x, src }) => el("tr", { class: sel && sel.ship.id === x.id ? "active" : "" },
+        el("td", { "data-label": L().shColState }, shipPill(x)),
+        el("td", { class: "subj", "data-label": L().shColId }, el("a", { class: "link-row mono", href: "#/shipping/" + x.id, text: x.id })),
+        el("td", { "data-label": L().shColType, text: SH.t(SH.TYPES[x.type], lang) }),
+        el("td", { class: "mono", "data-label": L().shColAsset, text: x.serial || "–" }),
+        el("td", { "data-label": L().shColTicket }, src ? el("a", { class: "tkt mono", href: "#/desk/" + src.sc.id, text: src.sc.ticket.id }) : el("span", { class: "muted", text: L().shPractice })),
+        el("td", { class: "mono", "data-label": L().shColTracking, text: x.tracking || "–" }))))) : el("p", { class: "empty", text: L().shNone });
+    const detail = el("section", { class: "panel inv-detail ship-detail", id: "ship-detail" });
+    renderShipDetail(detail, sel);
+    const form = el("div", { id: "ship-form-box" });
+    renderShipForm(form, deskId || (seg === "new" ? null : null), seg === "new");
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().shTitle }), el("p", { class: "sub", text: L().shSub })),
+      practiceStore().list.length ? el("button", { type: "button", class: "link-btn", id: "ship-reset", text: L().shPracticeReset,
+        onclick: () => { practice = SH.createStore({}); savePractice(); shipOut = null; shippingPage(); } }) : null),
+      el("div", { class: "inv-grid ship-grid" }, el("div", { class: "qwrap" }, table), detail), form);
+    if (seg === "new") setTimeout(() => { const f = document.getElementById("ship-form"); if (f) f.scrollIntoView({ block: "start" }); }, 0);
+  }
+
+  function renderShipDetail(box, sel) {
+    if (!sel) { box.replaceChildren(el("p", { class: "empty", text: L().shPick })); return; }
+    const { ship: x, src } = sel;
+    const a = SH.asset(x.serial);
+    const can = canShip(src);
+    const r = src ? rec(src.sc.id) : null;
+    const name = (k) => (SH.ADDRESSES[k] ? `${SH.t(SH.ADDRESSES[k].name, lang)} · ${SH.ADDRESSES[k].line}` : "–");
+    const v = SH.validate(x);
+    const fields = [{ label: L().shType, value: SH.t(SH.TYPES[x.type], lang) },
+      { label: L().shAsset, value: a ? `${a.id} · ${a.model} · ${a.serial}` : x.serial || "–" },
+      { label: L().shDeviceNote, value: a ? SH.t(SH.DEVICE[SH.deviceState(allStores(), a.serial)], lang) : "–" }];
+    if (x.type === "rma") fields.push({ label: L().shVendor, value: x.vendor ? SH.t((SH.VENDORS[x.vendor] || {}).name, lang) || x.vendor : "–" },
+      { label: L().shRma, value: x.rma || "–" }, { label: L().shFault, value: x.fault || "–" }, { label: L().shEvidence, value: x.evidence.join("; ") || "–" },
+      { label: L().shContract, value: x.contract || "–" });
+    if (a && a.kind === "laptop" && x.type !== "loan" && x.type !== "to-user") fields.push({ label: L().shData, value: x.data ? SH.t(SH.DATA[x.data], lang) || x.data : "–" },
+      { label: "BitLocker", value: x.escrow ? "✓ " + L().shEscrow : "✗ " + L().shEscrow, tone: x.escrow ? "ok" : x.type === "rma" ? "warn" : "" });
+    if (x.type === "return") fields.push({ label: L().shItems, value: x.items.map((i) => SH.t(SH.ITEMS[i] || { en: i }, lang)).join(", ") || "–" });
+    fields.push({ label: L().shCarrier, value: SH.CARRIERS[x.carrier] ? SH.t(SH.CARRIERS[x.carrier].name, lang) : "–" }, { label: L().shTracking, value: x.tracking || "–" },
+      { label: L().shFrom, value: name(x.from) }, { label: L().shTo, value: name(x.to) });
+    const run = (cmd) => {
+      const fresh = src ? shipSources().find((y) => y.sc.id === src.sc.id) : null;
+      const res = shipRun(fresh, cmd);
+      shipOut = { id: x.id, cmd, lines: res.lines };
+      shippingPage(x.id);
+    };
+    const out = shipOut && shipOut.id === x.id ? shipOut : null;
+    const labels = FIELD_LABEL();
+    put(box,
+      el("div", { class: "row" }, el("h2", { class: "dtitle mono", text: x.id }), shipPill(x)),
+      src ? el("p", { class: "dir-ticket" }, el("span", { text: L().dTicket + " " }), ticketPill(src.sc)) : el("p", { class: "sub", text: L().shNoTicket }),
+      src ? el("p", { class: "fine", id: "ship-sla", text: !can ? L().shNeedAssign(src.sc.ticket.id) : W.isPending(r.status) ? L().shPaused : L().shRunning }) : null,
+      fieldsDl(fields),
+      x.state === "draft" && v.errors.length ? el("div", { class: "ship-missing" }, el("b", { text: L().shMissing }), el("ul", { class: "missing" }, v.errors.map((k) => el("li", { text: labels[k] || k })))) : null,
+      can && SH.next(x).length ? el("div", { class: "acts" }, shipButtons(x, run)) : null,
+      out ? el("div", { class: "ship-out", id: "ship-out", "aria-live": "polite" }, el("p", { class: "pc-eq" }, el("span", { text: L().equivalent + " " }), el("code", { text: out.cmd })),
+        (() => { const ls = out.lines.filter((l) => ["say", "err", "ok", "event"].includes(l.kind)); return ls.length ? el("div", { class: "pc-msg" }, ls.map((l) => el("p", { class: "line " + l.kind, text: l.text }))) : null; })()) : null,
+      el("h3", { text: L().shEvents }),
+      el("ol", { class: "tl ship-tl" }, x.events.slice().reverse().map((e) => el("li", { class: "tl-" + (e.state === "closed" ? "closed" : e.state === "incident" ? "new" : "progress") },
+        el("p", { class: "tl-head" }, el("time", { text: SH.stamp(e.at) }), el("span", { class: "strong", text: SH.stateLabel(x, lang, e.state) })),
+        el("p", { class: "tl-reason", text: SH.eventText(x, e, lang) })))));
+  }
+
+  // the form: the ticket (or practice), what ships, and the details the vendor and the carrier need
+  function renderShipForm(box, deskId) {
+    const sources = shipSources().filter(canShip);
+    const ticket = el("select", { id: "ship-ticket", name: "ticket" }, el("option", { value: "", text: L().shTicketNone }),
+      SCENARIOS.filter((sc) => sc.ship).map((sc) => {
+        const ok = sources.some((x) => x.sc.id === sc.id);
+        return el("option", { value: sc.id, disabled: ok ? null : true, selected: deskId === sc.id && ok ? true : null, text: `${sc.ticket.id} · ${t(sc.title, lang)}${ok ? "" : " (" + L().unassigned.toLowerCase() + ")"}` });
+      }));
+    const opt = (v, text, on) => el("option", { value: v, text, selected: on ? true : null });
+    const type = el("select", { id: "ship-type", name: "type" }, Object.keys(SH.TYPES).map((k) => opt(k, SH.t(SH.TYPES[k], lang))));
+    const asset = el("select", { id: "ship-asset", name: "serial" }, el("option", { value: "", text: L().shDataPick }),
+      SH.ASSETS.map((a) => opt(a.serial, `${a.id} · ${a.serial} · ${SH.t(SH.DEVICE[SH.deviceState(allStores(), a.serial)], lang)}`)));
+    const vendor = el("select", { id: "ship-vendor", name: "vendor" }, opt("", L().shVendorNone), Object.keys(SH.VENDORS).map((k) => opt(k, SH.t(SH.VENDORS[k].name, lang))));
+    const txt = (idn, ph, max) => el("input", { type: "text", id: idn, autocomplete: "off", maxlength: String(max || 200), placeholder: ph || null });
+    const fault = txt("ship-fault", L().shFaultPh);
+    const evidence = txt("ship-evidence", L().shEvidencePh);
+    const contract = txt("ship-contract", "", 60);
+    const carrier = el("select", { id: "ship-carrier", name: "carrier" }, Object.keys(SH.CARRIERS).map((k) => opt(k, SH.t(SH.CARRIERS[k].name, lang))));
+    const place = (idn, def) => el("select", { id: idn }, Object.keys(SH.ADDRESSES).map((k) => opt(k, SH.t(SH.ADDRESSES[k].name, lang), k === def)));
+    const from = place("ship-from", "hq-it");
+    const to = place("ship-to", "home-jruiz");
+    const data = el("select", { id: "ship-data", name: "data" }, opt("", L().shDataPick), Object.keys(SH.DATA).map((k) => opt(k, SH.t(SH.DATA[k], lang))));
+    const escrow = el("input", { type: "checkbox", id: "ship-escrow" });
+    const items = Object.keys(SH.ITEMS).map((k) => el("label", { class: "ship-check" }, el("input", { type: "checkbox", value: k, "data-item": k }), el("span", { text: SH.t(SH.ITEMS[k], lang) })));
+    const msg = el("p", { class: "form-msg", role: "alert" });
+    const field = (label, input, cls) => el("label", { class: "field" + (cls ? " " + cls : "") }, el("span", { class: "field-label", text: label }), input);
+    const rmaOnly = el("div", { class: "ship-rma" }, field(L().shVendor, vendor), field(L().shContract, contract), field(L().shFault, fault, "wide"), field(L().shEvidence, evidence, "wide"));
+    const itemsBox = el("fieldset", { class: "ship-items" }, el("legend", { text: L().shItems }), items);
+    const sync = () => { rmaOnly.hidden = type.value !== "rma"; itemsBox.hidden = type.value !== "return"; };
+    type.addEventListener("change", sync);
+    sync();
+    const submit = (ev) => {
+      ev.preventDefault();
+      const src = ticket.value ? shipSources().find((x) => x.sc.id === ticket.value) : null;
+      if (ticket.value && !canShip(src)) { msg.textContent = L().shNeedAssign(ticket.value); return; }
+      if (!asset.value) { msg.textContent = L().shMissing + " " + L().shAsset; asset.focus(); return; }
+      const fields = { serial: asset.value, carrier: carrier.value, from: from.value, to: to.value };
+      if (type.value === "rma") Object.assign(fields, { vendor: vendor.value, fault: fault.value.trim(), evidence: evidence.value.trim(), contract: contract.value.trim() });
+      if (type.value === "return") fields.items = items.map((l) => l.querySelector("input")).filter((i) => i.checked).map((i) => i.value);
+      if (data.value) fields.data = data.value;
+      fields.escrow = escrow.checked;
+      const cmd = SH.command("new", type.value, fields);
+      const res = shipRun(src, cmd);
+      if (!res.ship) { msg.textContent = res.lines.map((l) => l.text).join(" "); return; }
+      shipOut = { id: res.ship.id, cmd, lines: [{ text: L().shCreated(res.ship.id), kind: "ok" }].concat(res.lines) };
+      shipSel = res.ship.id;
+      location.hash = "#/shipping/" + res.ship.id;
+    };
+    box.replaceChildren(el("section", { class: "panel note ship-form", id: "ship-form", "aria-label": L().shNew }, el("h2", { text: L().shNew }),
+      el("form", { onsubmit: submit, novalidate: true },
+        el("div", { class: "ship-grid-f" }, field(L().shTicketLabel, ticket, "wide"), field(L().shType, type), field(L().shAsset, asset),
+          rmaOnly, field(L().shCarrier, carrier), field(L().shFrom, from), field(L().shTo, to), field(L().shData, data)),
+        el("label", { class: "ship-check ship-escrow" }, escrow, el("span", { text: L().shEscrow })),
+        itemsBox, msg,
+        el("div", { class: "row" }, el("button", { type: "submit", class: "btn", id: "ship-create", text: L().shCreate })))));
+  }
+
+  /* ---------- v0.8: the documentation library (#/library, #/library/<area>): one reference article per area (library.js) */
+  let libQuery = "";
+  const deskById = (id) => SCENARIOS.find((s) => s.id === id);
+  const labTitle = (id) => t(Lb.lab(id).title, lang);
+  const labStore = () => Lb.normalise(load("labs", {}));
+  function download(name, text, msg, done) {
+    try {
+      const url = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
+      const link = el("a", { href: url, download: name, class: "kb-dl" });
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      msg.textContent = done(name);
+    } catch (e) { msg.textContent = L().errors.server; }
+  }
+  function deskChip(id) {
+    const sc = deskById(id);
+    const p = progress[id];
+    return el("li", { class: "lib-desk" }, el("a", { href: "#/desk/" + id }, el("span", { class: "mono", text: sc.ticket.id }), " ", el("span", { text: t(sc.title, lang) })),
+      el("span", { class: "sub", text: " · " + t(sc.topic, lang) + " · " + L().level + " " + sc.level + " " }),
+      p ? pill("resolved", L().libSolved + " · " + p.points) : pill("new", L().libOpen));
+  }
+  function labChip(id) {
+    const pr = Lb.progressOf(labStore(), id);
+    return el("li", { class: "lib-desk" }, el("a", { href: "#/labs/" + id, text: labTitle(id) }), " ",
+      pr.complete ? pill("resolved", L().labDone) : el("span", { class: "count-pill", text: L().labTasks(pr.done, pr.total) }));
+  }
+  function libraryPage(id) {
+    const view = shell("library");
+    if (id) return libArticle(view, Lib.article(id));
+    document.title = L().libTitle + " · SysAdmin Desks";
+    const listBox = el("div", { id: "lib-list" });
+    const search = el("input", { type: "search", class: "dir-search kb-search", id: "lib-search", placeholder: L().libSearch, "aria-label": L().libSearch, value: libQuery });
+    search.addEventListener("input", () => { libQuery = search.value; renderList(); });
+    function renderList() {
+      const hits = Lib.search(libQuery, lang);
+      put(listBox, el("p", { class: "sub kb-count", "aria-live": "polite", text: L().libCount(hits.length) }),
+        hits.length ? el("ul", { class: "lib-grid" }, hits.map((x) => {
+          const a = x.article;
+          const ar = Lib.area(a.id);
+          return el("li", { class: "lib-card" }, el("a", { href: "#/library/" + a.id, class: "lib-link" },
+            el("span", { class: "lib-ico", "aria-hidden": "true", text: ar.icon }),
+            el("span", { class: "lib-txt" }, el("span", { class: "lib-area", text: t(ar.name, lang) }), el("b", { text: t(a.title, lang) }),
+              el("span", { class: "sub", text: libQuery.trim() ? x.snippet : t(a.summary, lang) }),
+              el("span", { class: "lib-meta", text: `${a.desks.length} tickets · ${a.labs.length ? labTitle(a.labs[0]) : "–"}` }))));
+        })) : el("p", { class: "empty", text: L().libNone }));
+    }
+    renderList();
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().libTitle }), el("p", { class: "sub", text: L().libSub })),
+      el("a", { class: "btn ghost sm", href: "/tickets/", id: "lib-tickets", text: L().libTickets })),
+      el("div", { class: "kb-filters" }, search), listBox);
+  }
+  function libArticle(view, a) {
+    if (!a) { view.append(el("p", { class: "kb-back" }, el("a", { href: "#/library", text: L().libBack })), el("p", { class: "empty", text: L().notFound })); return; }
+    const ar = Lib.area(a.id);
+    document.title = t(a.title, lang) + " · " + L().libTitle + " · SysAdmin Desks";
+    const msg = el("p", { class: "kb-msg", role: "status" });
+    const placeLabel = (tool) => {
+      const w = Lib.toolPlace(tool);
+      if (w.kind === "ad") return el("a", { href: "#/directory", text: L().libPlace.ad });
+      if (w.kind === "lab") return el("a", { href: "#/labs/" + w.id, text: labTitle(w.id) });
+      if (w.kind === "desk") { const sc = deskById(w.id); return el("a", { href: "#/desk/" + w.id, text: sc.ticket.id + " · " + t(sc.title, lang) }); }
+      if (w.kind === "page") return el("a", { href: w.id, text: tool.cmd });
+      return el("a", { href: "#/network/" + w.id, text: L().libPlace.device(w.id) });
+    };
+    const ul = (list) => el("ul", {}, list.map((x) => el("li", { text: x })));
+    view.append(
+      el("p", { class: "kb-back" }, el("a", { href: "#/library", text: L().libBack })),
+      el("article", { class: "panel kb-article lib-article", id: "lib-article", "aria-labelledby": "lib-h" },
+        el("p", { class: "kb-kicker", text: `${L().libKicker} · ${t(ar.name, lang)}` }),
+        el("h1", { id: "lib-h", text: t(a.title, lang) }),
+        el("p", { class: "lib-summary", text: t(a.summary, lang) }),
+        el("h2", { text: L().libWhat }), a.what[lang === "es" ? "es" : "en"].map((p) => el("p", { text: p })),
+        el("h2", { text: L().libTools }),
+        el("div", { class: "qwrap lib-tools" }, el("table", { class: "qtable" },
+          el("thead", {}, el("tr", {}, [L().libCmd, L().libGives, L().libWhere].map((x) => el("th", { scope: "col", text: x })))),
+          el("tbody", {}, a.tools.map((x) => el("tr", {},
+            el("td", { "data-label": L().libCmd }, Lib.toolPlace(x).kind === "page" ? el("b", { text: x.cmd }) : el("code", { class: "lib-cmd", text: x.cmd })),
+            el("td", { "data-label": L().libGives, text: t(x.what, lang) }),
+            el("td", { "data-label": L().libWhere }, placeLabel(x))))))),
+        el("h2", { text: L().libCauses }), ul(a.causes[lang === "es" ? "es" : "en"]),
+        el("h2", { text: L().libTips }), ul(a.tips[lang === "es" ? "es" : "en"]),
+        el("h2", { text: L().libDesks }), el("ul", { class: "lib-desks", id: "lib-desks" }, a.desks.map(deskChip)),
+        el("h2", { text: L().libLabs }), a.labs.length ? el("ul", { class: "lib-desks", id: "lib-labs" }, a.labs.map(labChip)) : el("p", { class: "muted", text: L().libNoLab }),
+        el("h2", { text: L().libGuides }), el("ul", { class: "lib-guides", id: "lib-guides" }, a.guides.map((g) => el("li", {}, el("a", { href: Lib.guideUrl(g), target: "_blank", rel: "noopener noreferrer", text: (g.charAt(0).toUpperCase() + g.slice(1)).replace(/-/g, " ") })))),
+        el("p", { class: "kb-foot", text: L().libNotSpoiler })),
+      el("div", { class: "row kb-tools" },
+        el("button", { type: "button", class: "btn", id: "lib-download", text: L().libDownload, onclick: () => download("library-" + a.id + "-" + lang + ".md",
+          Lib.toMarkdown(a, lang, (d) => deskById(d).ticket.id + " · " + t(deskById(d).title, lang), labTitle), msg, L().kbDownloaded) }),
+        el("button", { type: "button", class: "btn ghost", text: L().kbPrint, onclick: () => window.print() })),
+      msg);
+  }
+
+  /* ---------- v0.8: labs by area (#/labs, #/labs/<id>): a console and guided tasks that tick themselves (labs.js). The sandbox lives in
+     this page; the tasks done are kept in this browser (sd.labs) */
+  const labLive = {};        // labId -> {s: the lab session, log: [{text, kind}], hist: [], pos}
+  function labOf(id) {
+    if (!labLive[id]) labLive[id] = { s: Lb.create(id, lang), log: [{ text: L().labWelcome, kind: "dim" }], hist: [], pos: 0 };
+    return labLive[id];
+  }
+  function labsPage(id) {
+    const view = shell("labs");
+    if (id && Lb.lab(id)) return labPage(view, id);
+    document.title = L().labsTitle + " · SysAdmin Desks";
+    const store = labStore();
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().labsTitle }), el("p", { class: "sub", text: L().labsSub }))),
+      el("ul", { class: "lib-grid labs-grid", id: "labs-list" }, Lb.LABS.map((l) => {
+        const pr = Lb.progressOf(store, l.id);
+        const ar = Lib.area(l.area);
+        return el("li", { class: "lib-card lab-card" + (pr.complete ? " done" : "") }, el("a", { href: "#/labs/" + l.id, class: "lib-link" },
+          el("span", { class: "lib-ico", "aria-hidden": "true", text: ar.icon }),
+          el("span", { class: "lib-txt" }, el("span", { class: "lib-area", text: t(ar.name, lang) }), el("b", { text: t(l.title, lang) }), el("span", { class: "sub", text: t(l.summary, lang) }),
+            el("progress", { class: "goal-bar", max: String(pr.total), value: String(pr.done), "aria-label": L().labTasks(pr.done, pr.total) }),
+            el("span", { class: "lib-meta" }, pr.complete ? pill("resolved", L().labDone + (pr.completed ? " · " + pr.completed : "")) : el("span", { text: L().labTasks(pr.done, pr.total) + " · " + (pr.done ? L().labContinue : L().labOpen) })))));
+      })),
+      el("p", { class: "fine", text: L().labStored }));
+  }
+  function labPage(view, id) {
+    const def = Lb.lab(id);
+    const lv = labOf(id);
+    document.title = t(def.title, lang) + " · " + L().labsTitle + " · SysAdmin Desks";
+    const out = el("div", { class: "out", "aria-live": "polite" });
+    const input = el("input", { type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", id: "lab-input", "aria-label": L().labConsole(t(def.title, lang)) });
+    const ps = el("span", { class: "ps", text: Lb.prompt(lv.s) });
+    const tasksBox = el("section", { class: "panel lab-tasks", id: "lab-tasks" });
+    const doneBox = el("div", { role: "status" });
+    const print = (text, kind) => { lv.log.push({ text, kind }); if (lv.log.length > 600) lv.log = lv.log.slice(-400); out.append(el("div", { class: "line " + (kind || "out"), text })); };
+    lv.log.forEach((l) => out.append(el("div", { class: "line " + (l.kind || "out"), text: l.text })));
+    function renderTasks() {
+      const list = Lb.tasks(lv.s, lang);
+      const pr = Lb.progressOf(labStore(), id);
+      const stored = (labStore()[id] || { done: [] }).done;
+      put(tasksBox, el("div", { class: "row" }, el("h2", { text: L().labTasksT }), el("span", { class: "count-pill", id: "lab-count", text: `${pr.done}/${pr.total}` }), el("span", { class: "grow" }),
+        el("button", { type: "button", class: "link-btn", id: "lab-reset", text: L().labReset, onclick: () => {
+          delete labLive[id]; save("labs", Lb.reset(load("labs", {}), id)); labOf(id).log.push({ text: L().labResetDone, kind: "say" }); labsPage(id);
+        } })),
+        el("ol", { class: "stages lab-list" }, list.map((x) => {
+          const done = x.done || stored.includes(x.id);
+          return el("li", { class: done ? "done" : "", "data-task": x.id }, el("span", { class: "box", "aria-hidden": "true", text: done ? "✓" : "" }),
+            el("div", { class: "lab-task" }, el("span", { text: x.label }),
+              el("details", { class: "lab-how" }, el("summary", { text: L().labHow }), el("code", { text: x.hint }))));
+        })),
+        el("p", { class: "fine", text: L().labNoPressure }));
+      put(doneBox, pr.complete ? el("p", { class: "badge-new lab-complete", id: "lab-complete" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "★" }), el("span", { text: L().labComplete })) : null);
+    }
+    function exec(cmd) {
+      cmd = String(cmd || "").trim();
+      if (!cmd) return;
+      lv.hist.push(cmd); lv.pos = lv.hist.length;
+      print(Lb.prompt(lv.s) + cmd, "cmd");
+      const r = Lb.run(lv.s, cmd, lang);
+      if (r.clear) { out.replaceChildren(); lv.log = []; }
+      r.lines.forEach((l) => print(l.text, l.kind));
+      const now = Lb.tasks(lv.s, lang).filter((x) => x.done);
+      const rec = Lb.record(load("labs", {}), id, now.map((x) => x.id), G.dayOf());
+      if (rec.fresh.length) {
+        save("labs", rec.store);
+        rec.fresh.forEach((tid) => print(L().labTaskDone(now.find((x) => x.id === tid).label), "ok"));
+        if (rec.completedNow) print(L().labComplete, "ok");
+      }
+      ps.textContent = Lb.prompt(lv.s);
+      renderTasks();
+      term.scrollTop = term.scrollHeight;
+    }
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "ArrowUp" && lv.pos > 0) { lv.pos -= 1; input.value = lv.hist[lv.pos]; ev.preventDefault(); }
+      else if (ev.key === "ArrowDown") { lv.pos = Math.min(lv.hist.length, lv.pos + 1); input.value = lv.hist[lv.pos] || ""; ev.preventDefault(); }
+    });
+    const term = el("div", { class: "term lab-term", onclick: () => { if (!window.getSelection().toString()) input.focus(); } }, out,
+      el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, ps, input));
+    const art = Lib.forLab(id)[0];
+    renderTasks();
+    view.append(el("p", { class: "kb-back" }, el("a", { href: "#/labs", text: L().labBack })),
+      el("header", { class: "view-head" }, el("div", {}, el("h1", { text: t(def.title, lang) }), el("p", { class: "sub", text: t(def.summary, lang) })),
+        art ? el("a", { class: "btn ghost sm", href: "#/library/" + art.id, id: "lab-library", text: L().labRead }) : null),
+      doneBox,
+      el("div", { class: "lab-grid" }, tasksBox,
+        el("div", {}, el("h2", { class: "dir-ps", text: L().labConsole(t(def.title, lang)) }), term, el("p", { class: "term-help", text: L().labHelp }))));
+    term.scrollTop = term.scrollHeight;
+    input.focus({ preventScroll: true });
+  }
+
+  /* ---------- v0.8: profile and career (#/profile): progress per area, a radar, the career path and a Markdown summary (profile.js) */
+  function profileInput() {
+    return { desks: SCENARIOS.map((s) => s.id), levels: Object.fromEntries(SCENARIOS.map((s) => [s.id, s.level])), progress, activity: activity(), labs: load("labs", {}) };
+  }
+  function radarSvg(agg) {
+    const NS = "http://www.w3.org/2000/svg";
+    const svg = (tag, attrs, ...kids) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); kids.forEach((k) => n.append(k)); return n; };
+    const g = PF.radar(agg.areas.map((a) => a.skill), 300);
+    const short = (id) => ({ ad: "AD", windows: "Windows", m365: "M365", endpoint: "Intune", linux: "Linux", vdi: "Citrix", data: lang === "es" ? "Copias/SQL" : "Backup/SQL", network: lang === "es" ? "Red" : "Network", hardware: "RMA", itsm: "ITSM" })[id];
+    const title = svg("title", {}); title.textContent = L().pfRadar;
+    return svg("svg", { viewBox: `-30 0 ${g.size + 60} ${g.size}`, class: "radar", role: "img", "aria-labelledby": "radar-t", id: "pf-radar" },
+      Object.assign(title, { id: "radar-t" }),
+      ...g.rings.map((p) => svg("polygon", { points: p, class: "radar-ring" })),
+      ...g.axes.map((x) => svg("line", { x1: g.center, y1: g.center, x2: x.end[0], y2: x.end[1], class: "radar-axis" })),
+      svg("polygon", { points: g.shape, class: "radar-shape" }),
+      ...g.axes.map((x, i) => { const tx = svg("text", { x: x.label[0], y: x.label[1] + 4, class: "radar-label", "text-anchor": Math.abs(x.label[0] - g.center) < 8 ? "middle" : x.label[0] > g.center ? "start" : "end" }); tx.textContent = short(agg.areas[i].id); return tx; }));
+  }
+  function profilePage() {
+    const view = shell("profile");
+    document.title = L().pfTitle + " · SysAdmin Desks";
+    const input = profileInput();
+    const agg = PF.aggregate(input);
+    const car = PF.career(input);
+    const tt = agg.totals;
+    const tile = (n, label, id) => el("div", { class: "tile", id: id || null }, el("p", { class: "tile-n", text: n }), el("p", { class: "tile-l", text: label }));
+    const h2 = (text, extra) => el("div", { class: "p-h" }, el("h2", { text }), extra || null);
+    const areaName = (id) => t(Lib.area(id).name, lang);
+    const msg = el("p", { class: "kb-msg", role: "status" });
+    const next = car.next;
+    const nextText = !next ? L().pfAllDone : next.kind === "desk" ? L().pfNextDesk(t(deskById(next.id).title, lang)) : L().pfNextLab(labTitle(next.id));
+    const stLabel = { done: L().pfStepDone, current: L().pfStepNow, later: L().pfStepLater };
+    view.append(
+      el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().pfTitle }), el("p", { class: "sub", text: L().pfSub }))),
+      el("div", { class: "tiles", id: "pf-tiles" }, tile(`${tt.solved}/${tt.desks}`, L().pfSolved, "pf-solved"), tile(tt.avgPoints == null ? "–" : String(tt.avgPoints), L().pfAvg, "pf-avg"),
+        tile(tt.comms == null ? "–" : `${tt.comms}/5`, L().pfComms, "pf-comms"), tile(`${tt.labsComplete}/${tt.labs}`, L().pfLabs, "pf-labs")),
+      el("section", { class: "panel pf-next", id: "pf-next" }, el("h2", { text: L().pfNext }), el("p", { class: "pf-next-t", text: nextText }),
+        next ? el("a", { class: "btn", id: "pf-next-go", href: next.kind === "desk" ? "#/desk/" + next.id : "#/labs/" + next.id, text: L().pfNextGo }) : null),
+      h2(L().pfSkills),
+      el("div", { class: "pf-skills" },
+        el("figure", { class: "panel pf-radar" }, radarSvg(agg), el("figcaption", { class: "fine", text: L().pfSkillsNote })),
+        el("ul", { class: "panel pf-bars", id: "pf-bars", "aria-label": L().pfRadar }, agg.areas.map((a) => el("li", {},
+          el("span", { class: "pf-bar-l" }, el("a", { href: "#/library/" + a.id, text: areaName(a.id) }), el("span", { class: "mono", text: String(a.skill) })),
+          el("progress", { class: "goal-bar", max: "100", value: String(a.skill), "aria-label": `${areaName(a.id)}: ${a.skill} / 100` }))))),
+      h2(L().pfAreas),
+      el("div", { class: "qwrap" }, el("table", { class: "qtable", id: "pf-areas" },
+        el("thead", {}, el("tr", {}, [L().colArea, L().colTickets, L().colAvg, L().colComms, L().colLabTasks, L().colLevel].map((x) => el("th", { scope: "col", text: x })))),
+        el("tbody", {}, agg.areas.map((a) => el("tr", { "data-area": a.id },
+          el("td", { class: "subj", "data-label": L().colArea }, el("a", { href: "#/library/" + a.id, text: areaName(a.id) })),
+          el("td", { "data-label": L().colTickets, text: a.desks ? `${a.solved}/${a.desks}` : "–" }),
+          el("td", { "data-label": L().colAvg, text: a.avgPoints == null ? "–" : String(a.avgPoints) }),
+          el("td", { "data-label": L().colComms, text: a.comms == null ? "–" : `${a.comms}/5` }),
+          el("td", { "data-label": L().colLabTasks }, a.labTotal ? el("a", { href: "#/labs/" + a.labs[0], text: `${a.labDone}/${a.labTotal}` }) : el("span", { class: "muted", text: "–" })),
+          el("td", { "data-label": L().colLevel, class: "mono", text: `${a.skill}/100` })))))),
+      h2(L().pfCareer),
+      el("p", { class: "sub pf-career-sub", text: L().pfCareerSub }),
+      el("ol", { class: "career", id: "pf-career" }, car.steps.map((s, i) => el("li", { class: "career-step " + s.status, "data-step": s.id },
+        el("p", { class: "career-h" }, el("span", { class: "career-n", "aria-hidden": "true", text: s.status === "done" ? "✓" : String(i + 1) }), el("b", { text: t(s.title, lang) }),
+          el("span", { class: "pill " + (s.status === "done" ? "resolved" : s.status === "current" ? "progress" : "new"), text: stLabel[s.status] })),
+        el("p", { class: "sub", text: t(s.what, lang) }),
+        el("progress", { class: "goal-bar", max: String(s.total), value: String(s.done), "aria-label": `${t(s.title, lang)}: ${s.done} / ${s.total}` }),
+        el("p", { class: "fine", text: `${s.done}/${s.total} · ${s.areas.map(areaName).join(" · ")}` }),
+        el("ul", { class: "career-items" },
+          s.desks.map((d) => el("li", { class: d.solved ? "on" : "" }, el("span", { "aria-hidden": "true", text: d.solved ? "✓ " : "○ " }), el("a", { href: "#/desk/" + d.id, text: t(deskById(d.id).title, lang) }))),
+          s.labs.map((l) => el("li", { class: l.complete ? "on" : "" }, el("span", { "aria-hidden": "true", text: l.complete ? "✓ " : "⚗ " }), el("a", { href: "#/labs/" + l.id, text: labTitle(l.id) + ` (${l.done}/${l.total})` }))))))),
+      h2(L().pfExport),
+      el("section", { class: "panel pf-export", id: "pf-export" }, el("p", { class: "pf-label" }, el("b", { text: L().pfLabel })), el("p", { class: "sub", text: L().pfExportText }),
+        el("div", { class: "row" }, el("button", { type: "button", class: "btn", id: "pf-download", text: L().pfExportBtn, onclick: () => {
+          const day = G.dayOf();
+          download(PF.fileName(day), PF.toMarkdown(profileInput(), { lang, name: user ? user.name : "", date: day, site: location.origin + "/",
+            deskTitle: (d) => deskById(d).ticket.id + " · " + t(deskById(d).title, lang), deskTopic: (d) => t(deskById(d).topic, lang), labTitle }), msg, L().pfDownloaded);
+        } })), msg));
+  }
+
+  /* ---------- the tour (v0.8): a guided first ticket for a new technician. A card at the bottom and the element it talks about
+     highlighted; it moves between the queue and one ticket, waits while you assign it, and can be skipped or taken again from the sidebar.
+     A technician who already took the earlier tour sees one "what's new" card instead (sd.whatsNew). */
+  const WHATS_NEW = "0.8";
+  const TOUR = [
+    { route: "#/", targets: [] }, { route: "#/", targets: ["side-nav"] }, { route: "#/", targets: ["tour-queue"] }, { route: "#/", targets: ["tour-row"] },
+    { route: "desk", targets: ["assign", "wf-pend", "wf-resume"] }, { route: "desk", targets: ["tour-term"] },
+    { route: "desk", targets: ["resolve-panel"], wait: true }, { route: "desk", targets: ["user-note"], wait: true }, { route: "#/", targets: ["nav-library"] },
+  ];
+  let tourAt = null;         // the step on show (or about to show after a page change)
+  let tourDeskId = null;     // the ticket the tour works on
+  function tourDesk() {
+    if (tourDeskId) return tourDeskId;
+    const pick = ["ad-lockout", "print-queue", "disk-full", "dns-intranet"].map(deskById).find((sc) => sc && isOpen(sc)) || SCENARIOS.find(isOpen) || SCENARIOS[0];
+    return pick.id;
+  }
+  const tourRoute = (i) => (TOUR[i].route === "desk" ? "#/desk/" + tourDesk() : "#/");
   function closeTour(done) {
     document.querySelectorAll(".tour").forEach((n) => n.remove());
     document.querySelectorAll(".tour-focus").forEach((n) => n.classList.remove("tour-focus"));
     document.removeEventListener("keydown", tourKeys);
-    if (done) save("tourDone", true);
+    if (done) { save("tourDone", true); save("whatsNew", WHATS_NEW); tourAt = null; tourDeskId = null; }
   }
   function tourKeys(ev) { if (ev.key === "Escape") closeTour(true); }
-  function tour(i) {
-    closeTour(false);
-    const steps = L().tour;
-    const targets = [null, "tour-queue", "tour-sla", "tour-row", "nav-progress", "nav-mail", "nav-tour"];
-    const step = steps[i];
-    const target = targets[i] && document.getElementById(targets[i]);
-    if (target) { target.classList.add("tour-focus"); target.scrollIntoView({ behavior: "smooth", block: "center" }); }
-    const last = i === steps.length - 1;
-    const card = el("div", { class: "tour", role: "dialog", "aria-labelledby": "tour-h" },
-      el("p", { class: "tour-step", text: L().tourStep(i + 1, steps.length) }),
-      el("h2", { id: "tour-h", text: step[0] }), el("p", { text: step[1] }),
-      el("div", { class: "row" },
-        el("button", { type: "button", class: "link-btn", text: L().tourSkip, onclick: () => closeTour(true) }),
-        el("span", { class: "grow" }),
-        i ? el("button", { type: "button", class: "btn ghost sm", text: L().tourBack, onclick: () => tour(i - 1) }) : null,
-        el("button", { type: "button", class: "btn sm", text: last ? L().tourDone : L().tourNext, onclick: () => last ? closeTour(true) : tour(i + 1) })));
+  function tourCard(stepText, title, text, buttons) {
+    const card = el("div", { class: "tour", role: "dialog", "aria-labelledby": "tour-h", id: "tour-card" },
+      stepText ? el("p", { class: "tour-step", text: stepText }) : null, el("h2", { id: "tour-h", text: title }), el("p", { text }), el("div", { class: "row" }, buttons));
     document.body.append(card);
     document.addEventListener("keydown", tourKeys);
-    card.querySelector(".btn.sm:last-child").focus();
+    const main = card.querySelector(".btn.sm:last-child");
+    if (main) main.focus({ preventScroll: true });
+    return card;
+  }
+  function tour(i) {
+    closeTour(false);
+    if (i === 0 && tourAt == null) tourDeskId = null;
+    tourDeskId = tourDesk();
+    tourAt = i;
+    const want = tourRoute(i);
+    if ((location.hash || "#/") !== want) { location.hash = want; return; }   // route() shows it once the page is there
+    const steps = L().tourGuided;
+    const meta = TOUR[i];
+    const target = meta.targets.map((x) => document.getElementById(x)).find(Boolean);
+    if (target) { target.classList.add("tour-focus"); target.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    const last = i === steps.length - 1;
+    tourCard(L().tourStep(i + 1, steps.length), steps[i][0], steps[i][1] + (meta.wait && !target ? " " + L().tourWait : ""), [
+      el("button", { type: "button", class: "link-btn", id: "tour-skip", text: L().tourSkip, onclick: () => closeTour(true) }),
+      el("span", { class: "grow" }),
+      i ? el("button", { type: "button", class: "btn ghost sm", id: "tour-back", text: L().tourBack, onclick: () => tour(i - 1) }) : null,
+      el("button", { type: "button", class: "btn sm", id: "tour-next", text: last ? L().tourDone : L().tourNext, onclick: () => last ? closeTour(true) : tour(i + 1) })]);
+  }
+  // after a page change: the tour carries on if the page is the one its step needs; leaving it elsewhere ends the tour
+  function tourResume() {
+    if (tourAt == null) return;
+    const here = location.hash || "#/";
+    // opening the ticket yourself at "Open a ticket" (or going back to the queue from it) moves the tour along
+    const i = here === tourRoute(tourAt) ? tourAt : TOUR[tourAt + 1] && here === tourRoute(tourAt + 1) ? tourAt + 1 : tourAt > 0 && here === tourRoute(tourAt - 1) ? tourAt - 1 : null;
+    if (user && i != null) { tourAt = i; setTimeout(() => { if (tourAt === i) tour(i); }, 150); }
+    else closeTour(true);
+  }
+  function whatsNew() {
+    closeTour(false);
+    const done = () => { save("whatsNew", WHATS_NEW); closeTour(false); };
+    const go = (href) => () => { done(); location.hash = href; };
+    tourCard(null, L().newTitle, L().newText, [
+      el("button", { type: "button", class: "btn ghost sm", id: "new-library", text: L().navLibrary, onclick: go("#/library") }),
+      el("button", { type: "button", class: "btn ghost sm", id: "new-labs", text: L().navLabs, onclick: go("#/labs") }),
+      el("button", { type: "button", class: "btn ghost sm", id: "new-profile", text: L().navProfile, onclick: go("#/profile") }),
+      el("span", { class: "grow" }),
+      el("button", { type: "button", class: "btn sm", id: "new-ok", text: L().newGot, onclick: done })]).classList.add("tour-new");
   }
 
 
@@ -1939,6 +2827,10 @@
     const m = h.match(/^#\/desk\/([a-z0-9-]+)$/);
     const km = h.match(/^#\/kb(?:\/([a-z0-9-]+))?$/);
     const mm = h.match(/^#\/mail(?:\/([a-z0-9-]+))?$/);
+    const nm = h.match(/^#\/network(?:\/([A-Za-z0-9-]+))?$/);
+    const lbm = h.match(/^#\/library(?:\/([a-z0-9-]+))?$/);
+    const lam = h.match(/^#\/labs(?:\/([a-z0-9-]+))?$/);
+    const sm = h.match(/^#\/shipping(?:\/([A-Za-z0-9-]+))?(?:\/([a-z0-9-]+))?$/);
     const rm = h.match(/^#\/reset(?:\?token=([A-Za-z0-9_-]{20,128}))?$/);
     if (rm && rm[1]) { resetToken = rm[1]; history.replaceState(null, "", location.pathname + location.search + "#/reset"); }
     document.body.classList.toggle("landing-on", !user && (h === "" || h === "#/"));
@@ -1952,12 +2844,18 @@
     else if (h === "#/progress" && user) progressPage();
     else if (h === "#/directory" && user) directory();
     else if (h === "#/inventory" && user) inventory();
+    else if (nm && user) networkRoom(nm[1] || null);
+    else if (sm && user) shippingPage(sm[1] || null, sm[2] || null);
     else if (km && user) kbPage(km[1] || null);
+    else if (lbm && user) libraryPage(lbm[1] || null);
+    else if (lam && user) labsPage(lam[1] || null);
+    else if (h === "#/profile" && user) profilePage();
     else if (mm && user) mailPage(mm[1] || null);
     else if (user) queue();
     else landing();
     if (user) ticker = setInterval(tick, 1000);
     window.scrollTo(0, 0);
+    tourResume();
   }
   document.getElementById("lang").addEventListener("click", () => {
     lang = lang === "es" ? "en" : "es";

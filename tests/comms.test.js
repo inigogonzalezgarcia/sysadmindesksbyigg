@@ -34,6 +34,15 @@ const TEMPTING = {
   "sso-saml": ["Connect-MgGraph", "Add-MgServicePrincipalTokenSigningCertificate -ServicePrincipalId 3e9b7a21-6c4d-4f80-9a15-d2c8e07b4f6a"],
   "linux-sssd": ["systemctl restart sssd"],
   "sql-log-full": ["sqlcmd -S SQL-ERP01 -E -Q \"DBCC SHRINKFILE(2, 1024)\""],
+  // v0.7a: the network desks (bounce the port with the switch still there; an IP typed on the printer; an any-any rule, tried and removed)
+  "net-err-disabled": ["ssh SW-ACC-2F", "enable", "configure terminal", "interface Gi1/0/14", "shutdown", "no shutdown", "end", "exit"],
+  "net-wrong-vlan": ["onsite printer static 10.20.3.43"],
+  "net-fortigate-branch": ["ssh FGT-HQ-01", "config firewall policy", "edit 0", "set srcintf to-VLC", "set dstintf port1", "set srcaddr all", "set dstaddr all",
+    "set service ALL", "set action accept", "next", "delete 14", "end", "exit"],
+  // v0.7b: the shipment desks (a new laptop instead of the warranty; the alarm acknowledged; the laptop marked returned before it arrives)
+  "laptop-rma": ["vendor order Latitude 7450"],
+  "net-psu-rma": ["alarm ack"],
+  "leaver-return": ["ship mark 3FJ7WR3 stock"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

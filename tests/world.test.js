@@ -86,7 +86,8 @@ test("the directory answers mistakes like PowerShell does, and changes nothing",
 });
 
 test("tickets show up in the directory and the inventory, and the directory can hand a command to the ticket", () => {
-  const kinds = { user: (id) => W.user(W.createWorld(), id), server: (id) => W.SERVERS.find((s) => s.id === id), printer: (id) => W.PRINTERS.find((p) => p.id === id) };
+  const kinds = { user: (id) => W.user(W.createWorld(), id), server: (id) => W.SERVERS.find((s) => s.id === id), printer: (id) => W.PRINTERS.find((p) => p.id === id),
+    network: (id) => require("../public/assets/netcli.js").createNet().devices[id] };   // v0.7a: switches, the router and the firewall
   for (const sc of SCENARIOS) {
     const keys = new Set(Object.keys(sc.state));
     for (const b of sc.bind || []) {
