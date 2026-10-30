@@ -162,7 +162,7 @@ test("weekly goal: different tickets and exercises in this ISO week, target 1 to
 });
 
 test("badges: computed from the activity, earned once and kept with the day", () => {
-  assert.ok(G.BADGES.length >= 8 && G.BADGES.length <= 10);
+  assert.ok(G.BADGES.length >= 8 && G.BADGES.length <= 11);
   for (const b of G.BADGES) assert.ok(b.name.en && b.name.es && b.rule.en && b.rule.es && b.icon, b.id);
   const desks = SCENARIOS.map((s) => s.id);
   const base = { progress: {}, desks, kb: {}, mail: {}, today: "2026-10-28" };

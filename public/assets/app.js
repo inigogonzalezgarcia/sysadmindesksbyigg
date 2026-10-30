@@ -3,6 +3,7 @@
   "use strict";
   const E = window.SDEngine;
   const W = window.SDWorkflow;
+  const C = window.SDComms;
   const SCENARIOS = window.SDScenarios;
   const t = E.t;
 
@@ -84,7 +85,7 @@
         ["Welcome to the Contoso help desk", "You are the technician on the morning shift. In two minutes: where the tickets are, how the SLA works and how a ticket is closed."],
         ["Your ticket queue", "Every row is a ticket from a user of the fictional company, with its priority and status. Open shows what is waiting; Closed, what you have solved and how."],
         ["The SLA", "The clock starts when you assign a ticket to yourself: 20 minutes for a P1, 30 for a P2, 45 for a P3. Closing in time counts. Waiting for the user or a vendor? Set the ticket to Pending with a reason and the SLA pauses until you resume it."],
-        ["Open a ticket", "On the ticket page, press Assign to me and the console comes alive. Investigate, fix the cause, prove it works, then choose the resolution code and write the note."],
+        ["Open a ticket", "On the ticket page, press Assign to me and the console comes alive. Need details? Contact the requester (each question takes a minute). Investigate, fix the cause, prove it works, then choose the resolution code and write the work note and the note to the user."],
         ["Your progress", "Points and stars for your best result on each ticket, saved in your account, plus your day streak, your weekly goal and your badges."],
         ["Mail and knowledge base", "Mail has messages to triage: requests, notices and the odd phishing email. Every ticket you close with a complete note becomes an article in your knowledge base."],
         ["Take the tour again", "This button shows the tour whenever you want. Each ticket also links to its step-by-step guide. Good shift!"],
@@ -133,6 +134,22 @@
       mWhat: "What do you do?", mCreate: "Create ticket from this message", mHandled: (id) => `Ticket ${id} created from this message.`, mOpenTicket: (id) => `Open ${id}`,
       mClues: "The clues", mProcedure: "The right procedure", mRetry: "Try again", mBack: "← Inbox", mNext: "Next message",
       iOs: "Operating system", iOwner: "Owner", iPatched: "Last patched", iQueue: "Print server", iJobs: "Jobs in the queue", iNone: "No tickets.", iInDir: "Show in the directory",
+      // v0.6a: contacting the requester and the note for the user
+      cContact: "Contact the requester", cOff: { unassigned: "Assign the ticket to yourself to contact the requester.", pending: "The ticket is on hold: resume it to contact the requester.", closed: "" },
+      cTitle: (n) => `Conversation with ${n}`, cIntro: "Pick a question. Each one takes 1 minute of the SLA. Some help, some do not, and some are bad practice.",
+      cQuestions: "What do you ask?", cCost: "+1 min", cNoMore: "No more questions for now.", cConfirmLater: "Once a fix is in, you can ask them to confirm it works.",
+      cClose: "Close the conversation", cYou: "You", cBad: "Bad practice", cPassword: "Never ask for a password", cClueAdded: "Added to What you know",
+      cConfirm: "Ask to confirm", cOk: "Confirmed: it works", cFailed: "It still fails", cTimeAdded: (n) => `Talking to the requester: +${n} min of SLA`,
+      cVia: (n, tm) => `You will talk to ${n} (${tm}).`, kTitle: "What you know", kNone: "Nothing yet from the requester.",
+      tlContact: "Contact", tlContactQ: (q) => `Contact: ${q}`,
+      uNote: "Note to the user", uHelp: "What the requester will read: what was wrong, in plain words, and what they need to do (or that nothing is needed). No server names, admin accounts or passwords. Start from a template and replace every [gap].",
+      uTemplates: "Insert a template:", uPh: "Hi …,", uLive: (n) => `Note to the user: ${n}/5 so far`,
+      mWork: "Work note", mUser: "Note to the user", mUserNone: "not written",
+      commsT: "Communication", commsBonus: (n) => `Communication bonus: +${n} (apart from the ticket score)`,
+      commsCredit: { note: (p) => `Note to the user, +${p}`, questions: (n, p) => `${n === 1 ? "A useful question" : n + " useful questions"} and no bad ones, +${p}`, confirmed: (p) => `The requester confirmed it works, +${p}` },
+      commsRemark: { "no-note": "No note for the user: they do not know what happened or what to do next.", password: "You asked the requester for a password: never do it, not even from IT.",
+        bad: (n) => n === 1 ? "One question was bad practice (leading, blaming or jargon)." : `${n} questions were bad practice (leading, blaming or jargon).` },
+      gComms: "Communication", gCommsX: (u, a) => `${u} useful ${u === 1 ? "question" : "questions"} asked · user note average ${a == null ? "–" : a + "/5"}`,
       land: {
         tag: "IT support simulator · free", title: "SysAdmin Desks",
         lead: "Practise the job of a support technician in your browser. Take a ticket from a fictional company, investigate in a console that answers like a real machine, fix the cause, prove it works and write the work note. Free, with your own account and nothing to install.",
@@ -239,7 +256,7 @@
         ["Bienvenido a la mesa de soporte de Contoso", "Eres el técnico del turno de mañana. En dos minutos: dónde están los tickets, cómo funciona el SLA y cómo se cierra un ticket."],
         ["Tu cola de tickets", "Cada fila es un ticket de un usuario de la empresa ficticia, con su prioridad y su estado. En Abiertos ves lo que espera; en Cerrados, lo que has resuelto y cómo."],
         ["El SLA", "El reloj empieza cuando te asignas un ticket: 20 minutos para una P1, 30 para una P2 y 45 para una P3. Cerrar a tiempo cuenta. ¿Esperas al usuario o a un proveedor? Pon el ticket en Pendiente con un motivo y el SLA se pausa hasta que lo reanudes."],
-        ["Abre un ticket", "En la ficha, pulsa Asignarme y la consola se activa. Investiga, arregla la causa, demuestra que funciona y después elige el código de resolución y escribe la nota."],
+        ["Abre un ticket", "En la ficha, pulsa Asignarme y la consola se activa. ¿Te faltan datos? Contacta al solicitante (cada pregunta cuesta un minuto). Investiga, arregla la causa, demuestra que funciona y después elige el código de resolución y escribe la nota de trabajo y la nota para el usuario."],
         ["Tu progreso", "Puntos y estrellas de tu mejor resultado en cada ticket, guardados en tu cuenta, y además tu racha de días, tu objetivo semanal y tus insignias."],
         ["Correo y base de conocimiento", "En Correo hay mensajes que clasificar: peticiones, avisos y algún phishing. Cada ticket que cierras con una nota completa se convierte en un artículo de tu base de conocimiento."],
         ["Repite el tour", "Este botón vuelve a mostrar el tour cuando quieras. Cada ticket enlaza también con su guía paso a paso. ¡Buen turno!"],
@@ -288,6 +305,22 @@
       mWhat: "¿Qué haces?", mCreate: "Crear ticket desde este mensaje", mHandled: (id) => `Ticket ${id} creado desde este mensaje.`, mOpenTicket: (id) => `Abrir ${id}`,
       mClues: "Las pistas", mProcedure: "Lo que toca hacer", mRetry: "Intentarlo de nuevo", mBack: "← Bandeja de entrada", mNext: "Siguiente mensaje",
       iOs: "Sistema operativo", iOwner: "Responsable", iPatched: "Último parcheo", iQueue: "Servidor de impresión", iJobs: "Trabajos en cola", iNone: "Sin tickets.", iInDir: "Ver en el directorio",
+      // v0.6a: contactar al solicitante y la nota para el usuario
+      cContact: "Contactar al solicitante", cOff: { unassigned: "Asígnate el ticket para contactar al solicitante.", pending: "El ticket está en espera: reanúdalo para contactar al solicitante.", closed: "" },
+      cTitle: (n) => `Conversación con ${n}`, cIntro: "Elige una pregunta. Cada una consume 1 minuto del SLA. Unas ayudan, otras no, y algunas son mala práctica.",
+      cQuestions: "¿Qué preguntas?", cCost: "+1 min", cNoMore: "No quedan preguntas por ahora.", cConfirmLater: "Cuando hayas aplicado un arreglo, podrás pedirle que confirme que funciona.",
+      cClose: "Cerrar la conversación", cYou: "Tú", cBad: "Mala práctica", cPassword: "Nunca pidas una contraseña", cClueAdded: "Añadido a Lo que sabes",
+      cConfirm: "Pedir confirmación", cOk: "Confirmado: funciona", cFailed: "Sigue fallando", cTimeAdded: (n) => `Hablando con el solicitante: +${n} min de SLA`,
+      cVia: (n, tm) => `Hablarás con ${n} (${tm}).`, kTitle: "Lo que sabes", kNone: "Aún nada del solicitante.",
+      tlContact: "Contacto", tlContactQ: (q) => `Contacto: ${q}`,
+      uNote: "Nota para el usuario", uHelp: "Lo que leerá el solicitante: qué pasaba, con palabras sencillas, y qué tiene que hacer (o que no tiene que hacer nada). Sin nombres de servidores, cuentas de administración ni contraseñas. Parte de una plantilla y sustituye cada [hueco].",
+      uTemplates: "Insertar una plantilla:", uPh: "Hola …:", uLive: (n) => `Nota para el usuario: ${n}/5 por ahora`,
+      mWork: "Nota de trabajo", mUser: "Nota al usuario", mUserNone: "sin escribir",
+      commsT: "Comunicación", commsBonus: (n) => `Bonus de comunicación: +${n} (aparte de la puntuación del ticket)`,
+      commsCredit: { note: (p) => `Nota para el usuario, +${p}`, questions: (n, p) => `${n === 1 ? "Una pregunta útil" : n + " preguntas útiles"} y ninguna inadecuada, +${p}`, confirmed: (p) => `El solicitante confirmó que funciona, +${p}` },
+      commsRemark: { "no-note": "Sin nota para el usuario: no sabe qué ha pasado ni qué tiene que hacer.", password: "Pediste una contraseña al solicitante: nunca se hace, tampoco desde IT.",
+        bad: (n) => n === 1 ? "Una pregunta fue mala práctica (dirigida, culpabilizadora o con jerga)." : `${n} preguntas fueron mala práctica (dirigidas, culpabilizadoras o con jerga).` },
+      gComms: "Comunicación", gCommsX: (u, a) => `${u} ${u === 1 ? "pregunta útil" : "preguntas útiles"} · media de la nota al usuario ${a == null ? "–" : a + "/5"}`,
       land: {
         tag: "Simulador de soporte IT · gratis", title: "SysAdmin Desks",
         lead: "Practica el trabajo de un técnico de soporte en el navegador. Coge un ticket de una empresa ficticia, investiga en una consola que responde como un equipo de verdad, arregla la causa, demuestra que funciona y escribe la nota de trabajo. Gratis, con tu propia cuenta y sin instalar nada.",
@@ -673,6 +706,10 @@
     const resultBox = el("div");
     const pendBox = el("div");
     const timelineBox = el("div");
+    const chatBox = el("div");        // v0.6a: the conversation with the requester
+    const knowBox = el("div");        // v0.6a: "What you know", the clues from the conversation
+    const contactBox = el("div", { class: "contact-cta" });
+    const person = C.who(sc, lang);
 
     function print(text, kind, keep) {
       out.append(el("div", { class: "line " + (kind || "out"), text }));
@@ -727,7 +764,60 @@
       }
     }
     function refreshWork() {
-      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderDesk(); tick();
+      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderDesk(); renderContact(); tick();
+    }
+
+    /* ---------- v0.6a: contacting the requester. Scripted questions (comms.js), 1 minute of SLA each, kept in the ticket record */
+    function renderContact() { renderContactBtn(); renderChat(); renderKnow(); }
+    function renderContactBtn() {
+      if (lv.closed) { contactBox.replaceChildren(); return; }
+      const can = C.canContact(rec(id));
+      put(contactBox,
+        el("button", { type: "button", class: "btn ghost sm contact-btn", id: "contact-btn", disabled: can.ok ? null : true,
+          "aria-expanded": lv.chatOpen && can.ok ? "true" : "false", "aria-controls": "chat-box", "aria-describedby": can.ok ? null : "contact-why",
+          onclick: () => { lv.chatOpen = !lv.chatOpen; renderContact(); if (lv.chatOpen) chatBox.scrollIntoView({ behavior: "smooth", block: "nearest" }); } },
+          el("span", { "aria-hidden": "true", text: "✆ " }), L().cContact),
+        can.ok ? null : el("p", { class: "fine contact-why", id: "contact-why", text: L().cOff[can.reason] || "" }),
+        (sc.contact || {}).who ? el("p", { class: "fine", text: L().cVia(person.name, person.team) }) : null);
+    }
+    function renderChat() {
+      const r = rec(id);
+      if (!lv.chatOpen || lv.closed || !C.canContact(r).ok) { chatBox.replaceChildren(); return; }
+      const conv = C.conversation(r, sc, lang);
+      const qs = C.questions(sc, sess, r, lang);
+      const open = qs.filter((q) => q.available);
+      const confirmLater = qs.some((q) => q.confirm && !q.available && !q.asked);
+      const bubbles = conv.map((x) => el("li", { class: "chat-ex" + (x.kind === "bad" ? " bad" : "") },
+        el("div", { class: "bub me" }, el("span", { class: "bub-who", text: L().cYou }), el("p", { text: x.q }),
+          x.kind === "bad" ? el("p", { class: "bub-flag" }, el("b", { text: (x.password ? L().cPassword : L().cBad) + ". " }), x.why) : null),
+        el("div", { class: "bub them" + (x.result ? " " + x.result : "") }, el("span", { class: "bub-who", text: person.name }), el("p", { text: x.a }),
+          x.result ? el("p", { class: "bub-tag " + x.result, text: x.result === "ok" ? "✓ " + L().cOk : "✗ " + L().cFailed }) : null,
+          x.clue ? el("p", { class: "bub-clue", text: "+ " + L().cClueAdded }) : null)));
+      chatBox.replaceChildren(el("section", { class: "panel chat", id: "chat-box", "aria-label": L().cTitle(person.name) },
+        el("div", { class: "chat-head" }, el("span", { class: "initials", "aria-hidden": "true", text: person.initials }),
+          el("span", { class: "chat-h" }, el("b", { text: L().cTitle(person.name) }), el("span", { class: "sub", text: person.team })),
+          el("button", { type: "button", class: "pc-x chat-x", "aria-label": L().cClose, title: L().cClose, text: "×", onclick: () => { lv.chatOpen = false; renderContact(); } })),
+        el("p", { class: "chat-intro", text: L().cIntro }),
+        conv.length ? el("ol", { class: "chat-log", "aria-live": "polite" }, bubbles) : null,
+        el("p", { class: "chat-q-h", text: L().cQuestions }),
+        open.length ? el("div", { class: "chat-qs" }, open.map((q) => el("button", { type: "button", class: "chat-q" + (q.confirm ? " confirm" : ""), "data-q": q.id,
+          onclick: () => askQ(q.id) }, q.confirm ? el("b", { text: L().cConfirm + ": " }) : null, el("span", { text: q.text }), el("span", { class: "chat-cost", text: L().cCost }))))
+          : el("p", { class: "sub", text: L().cNoMore }),
+        confirmLater ? el("p", { class: "fine", text: L().cConfirmLater }) : null,
+        conv.length ? el("p", { class: "fine chat-time", text: L().cTimeAdded(conv.length) }) : null));
+    }
+    function renderKnow() {
+      const list = lv.closed && lv.result && lv.result.clues ? lv.result.clues : C.clues(rec(id), sc, lang);
+      put(knowBox, list.length ? el("section", { class: "panel know", id: "know-box" }, el("h2", { text: L().kTitle }),
+        el("ul", { class: "know-list" }, list.map((c) => el("li", { text: c })))) : null);
+    }
+    function askQ(qid) {
+      const res = C.ask(rec(id), sess, qid, { now: Date.now(), lang });
+      if (!res.ok) { renderContact(); return; }
+      setWork(id, res.rec);
+      renderContact(); renderTimeline(); tick();
+      const log = chatBox.querySelector(".chat-log");
+      if (log && log.lastElementChild) log.lastElementChild.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
     function assign() {
       setWork(id, W.assign(work()[id], Date.now()));
@@ -770,7 +860,12 @@
       const items = lv.closed && lv.timeline ? lv.timeline : r ? r.timeline : [];
       const time = (ts) => { const d = new Date(ts); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
       timelineBox.replaceChildren(el("section", { class: "panel timeline", id: "wf-timeline" }, el("h2", { text: L().tlTitle }),
-        items.length ? el("ol", { class: "tl" }, items.slice().reverse().map((x) => el("li", { class: "tl-" + x.to },
+        items.length ? el("ol", { class: "tl" }, items.slice().reverse().map((x) => x.contact
+          // v0.6a: a question to the requester
+          ? el("li", { class: "tl-contact" }, el("p", { class: "tl-head" }, el("time", { datetime: new Date(x.at).toISOString(), text: time(x.at) }),
+              el("span", { text: L().tlContact }), el("span", { class: "tl-cost", text: L().cCost })),
+            el("p", { class: "tl-reason", text: L().tlContactQ(C.questionText(sc, x.contact, lang)) }))
+          : el("li", { class: "tl-" + x.to },
           el("p", { class: "tl-head" }, el("time", { datetime: new Date(x.at).toISOString(), text: time(x.at) }),
             el("span", { text: `${L().status[x.from] || x.from} → ${L().status[x.to] || x.to}` })),
           x.reason ? el("p", { class: "tl-reason", text: x.reason }) : null)))
@@ -781,6 +876,7 @@
       if (r.ticket) ticketLines();
       r.lines.forEach((l) => print(l.text, l.kind));
       renderStages(); renderAsset(); renderDesk();
+      if (lv.chatOpen) renderChat();   // the confirmation question appears once a fix is in
       if (r.resolvedNow) { print(L().readyMsg, "ok"); const ta = resolveBox.querySelector("textarea"); if (ta) ta.scrollIntoView({ behavior: "smooth", block: "center" }); }
       term.scrollTop = term.scrollHeight;
     }
@@ -817,28 +913,57 @@
       const code = el("select", { "aria-label": L().resCode },
         el("option", { value: "", text: L().resPick }), E.CODES.map((c) => el("option", { value: c.id, text: t(c.label, lang) })));
       const ta = el("textarea", { "aria-label": L().resNote, maxlength: "2000", placeholder: L().resPlaceholder });
-      if (lv.draft) { ta.value = lv.draft.note; code.value = lv.draft.code; }
-      const keep = () => { lv.draft = { note: ta.value, code: code.value }; };
+      // v0.6a: the note the requester reads, marked apart (comms.js), with closing templates whose [gaps] must be replaced
+      const ua = el("textarea", { id: "user-note", "aria-label": L().uNote, "aria-describedby": "user-note-help user-note-live", maxlength: "1500", placeholder: L().uPh });
+      if (lv.draft) { ta.value = lv.draft.note; code.value = lv.draft.code; ua.value = lv.draft.userNote || ""; }
+      const live = el("div", { class: "unote-live", id: "user-note-live", "aria-live": "polite" });
+      const ctx = { name: person.first, device: sc.requester.device, lang };
+      const updLive = () => {
+        if (!ua.value.trim()) { live.replaceChildren(); return; }
+        const chk = C.checkUserNote(ua.value, ctx);
+        live.replaceChildren(el("p", { class: "unote-score", text: L().uLive(chk.score) }),
+          el("ul", { class: "unote-rules" }, C.describe(chk, lang).map((rl) => el("li", { class: rl.ok ? "ok" : "no" },
+            el("span", { "aria-hidden": "true", text: rl.ok ? "✓ " : "✗ " }), rl.label, rl.problems.length ? el("span", { class: "sub", text: " · " + rl.problems.join(" · ") }) : null))));
+      };
+      const keep = () => { lv.draft = { note: ta.value, code: code.value, userNote: ua.value }; };
       ta.addEventListener("input", keep); code.addEventListener("change", keep);
+      ua.addEventListener("input", () => { keep(); updLive(); });
+      const insert = (tid) => {
+        const text = C.template(tid, lang, { name: person.first, me: user ? user.name : "" });
+        ua.value = ua.value.trim() ? ua.value.replace(/\s+$/, "") + "\n\n" + text : text;
+        keep(); updLive(); ua.focus();
+        const gap = ua.value.indexOf("[");
+        if (gap !== -1) ua.setSelectionRange(gap, ua.value.indexOf("]", gap) + 1);
+      };
+      updLive();
       const msg = el("p", { class: "form-msg", role: "alert" });
       resolveBox.replaceChildren(el("section", { class: "panel note" }, el("h2", { text: L().resTitle }), el("p", { text: L().resText }),
         el("label", { class: "field" }, el("span", { class: "field-label", text: L().resCode }), code),
-        el("label", { class: "field" }, el("span", { class: "field-label", text: L().resNote }), ta), msg,
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().resNote }), ta),
+        el("div", { class: "field unote" }, el("label", { class: "field-label", for: "user-note", text: L().uNote }),
+          el("p", { class: "fine", id: "user-note-help", text: L().uHelp }),
+          el("div", { class: "tpl-row", role: "group", "aria-label": L().uTemplates }, el("span", { class: "tpl-h", text: L().uTemplates }),
+            C.TEMPLATES.map((tp) => el("button", { type: "button", class: "chip-btn", "data-tpl": tp.id, text: t(tp.label, lang), onclick: () => insert(tp.id) }))),
+          ua, live), msg,
         el("div", { class: "row" }, el("button", { type: "button", class: "btn", text: L().resolveBtn, onclick: () => {
           if (!code.value) { msg.textContent = L().needCode; code.focus(); return; }
           if (ta.value.trim().length < 10) { msg.textContent = L().noteEmpty; ta.focus(); return; }
-          close(code.value, ta.value);
+          close(code.value, ta.value, ua.value);
         } }))));
     }
 
-    function close(codeId, text) {
+    function close(codeId, text, userText) {
       if (!W.canResolve(rec(id))) { renderResolve(); return; }   // pending: resume first
       const note = E.checkNote(sc, text, lang);
       const now = Date.now();
-      const minutes = minutesOn(id);                   // without the pauses: a legitimate wait is never penalised
+      const minutes = minutesOn(id);                   // without the pauses: a legitimate wait is never penalised (talking to the requester counts)
       const paused = W.pausedMs(rec(id), now) / 60000;
       const v = E.verdict(sess, note, { code: codeId, minutes });
-      lv.result = { v, note, minutes, code: codeId, paused };
+      // v0.6a: the user note and the conversation are marked apart: they never change the verdict or the points
+      const uCheck = String(userText || "").trim() ? C.checkUserNote(userText, { name: person.first, device: sc.requester.device, lang }) : null;
+      const cSum = C.summary(rec(id), sc);
+      const comms = C.evaluate(cSum, uCheck);
+      lv.result = { v, note, minutes, code: codeId, paused, uCheck, cSum, comms, clues: C.clues(rec(id), sc, lang) };
       if (v.level !== "unresolved") {
         lv.closed = true;
         const fin = W.transition(work()[id], "closed", { now });
@@ -856,12 +981,13 @@
           lv.result.kb = { saved: k.changed, version: k.entry.version };
         }
         lv.result.fresh = logActivity({ type: "ticket", id: sc.id, level: v.level, points: v.points, hints: sess.hints, slaOk: v.slaOk, codeOk: v.codeOk,
-          code: codeId, noteComplete: note.missing.length === 0 && note.words >= 15 });
+          code: codeId, noteComplete: note.missing.length === 0 && note.words >= 15,
+          userNote: comms.userNote, useful: cSum.useful, bad: cSum.bad, asked: cSum.asked, bonus: comms.bonus });
         setWork(id, null);
         lv.draft = null;
         refreshBadge();
       }
-      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); showResult();
+      renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderContact(); showResult();
       resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
@@ -888,6 +1014,7 @@
           el("span", { text: L().hintsUsed(sess.hints) }), paused >= 1 / 60 ? el("span", { class: "wf-paused", text: L().pausedUsed(mmss(paused)) }) : null),
         list(L().obsT, v.reasons, "missing"),
         list(L().found, note.found, "found"),
+        commsResult(lv.result, note),
         lv.result.kb ? el("p", { class: "kb-saved" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "▧" }),
           el("span", { text: (lv.result.kb.saved ? L().kbSaved(lv.result.kb.version) : L().kbSame) + " " }), el("a", { href: "#/kb/" + sc.id, text: L().kbOpenArticle }))
           : el("p", { class: "kb-saved muted", text: L().kbNotSaved }),
@@ -897,6 +1024,27 @@
         el("div", { class: "row" }, nextSc ? el("a", { class: "btn", href: "#/desk/" + nextSc.id, text: L().next }) : null,
           el("a", { class: "btn ghost", href: "#/", text: L().queueBtn }),
           el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))));
+    }
+
+    // v0.6a: the two marks side by side (work note, note to the user), then the communication bonus and remarks
+    function commsResult(res, note) {
+      const total = note.found.length + note.missing.length;
+      const u = res.uCheck;
+      const words = u ? C.describe(u, lang) : [];
+      const cm = res.comms || { bonus: 0, credits: [], remarks: [] };
+      const credit = (cr) => cr.id === "questions" ? L().commsCredit.questions(cr.n, cr.points) : L().commsCredit[cr.id](cr.points);
+      const remark = (rm) => rm.id === "bad" ? L().commsRemark.bad(rm.n) : L().commsRemark[rm.id];
+      return el("div", { class: "comms-res", id: "comms-result" },
+        el("div", { class: "marks" },
+          el("p", { class: "mark" + (note.missing.length ? " part" : " full"), id: "mark-work" }, el("span", { class: "mark-l", text: L().mWork + ": " }),
+            el("span", { class: "mark-n", text: `${note.found.length}/${total}` })),
+          el("p", { class: "mark" + (!u ? " none" : u.score === 5 ? " full" : " part"), id: "mark-user" }, el("span", { class: "mark-l", text: L().mUser + ": " }),
+            el("span", { class: "mark-n", text: u ? `${u.score}/5` : L().mUserNone }))),
+        u && u.score < 5 ? el("ul", { class: "missing unote-miss" }, words.filter((w) => !w.ok).map((w) => el("li", {}, w.label, w.problems.length ? el("span", { class: "sub", text: " · " + w.problems.join(" · ") }) : null))) : null,
+        el("b", { text: L().commsT }),
+        el("p", { class: "comms-bonus" + (cm.bonus ? "" : " muted"), text: L().commsBonus(cm.bonus) }),
+        cm.credits.length ? el("ul", { class: "found" }, cm.credits.map((cr) => el("li", { text: credit(cr) }))) : null,
+        cm.remarks.length ? el("ul", { class: "missing" }, cm.remarks.map((rm) => el("li", { class: rm.id === "password" ? "pw" : null, text: remark(rm) }))) : null);
     }
 
     const c = E.cards(sess);
@@ -912,7 +1060,9 @@
             el("p", { class: "req-name" }, el("span", { class: "initials", "aria-hidden": "true", text: r.name.split(" ").map((x) => x[0]).join("").slice(0, 2) }),
               el("span", {}, el("b", { text: r.name }), el("span", { class: "sub", text: r.team }))),
             el("dl", { class: "fields" }, el("dt", { text: L().fUser }), el("dd", { class: "mono", text: r.user }),
-              el("dt", { text: L().fLocation }), el("dd", { text: r.location }), el("dt", { text: L().fDevice }), el("dd", { class: "mono", text: r.device }))),
+              el("dt", { text: L().fLocation }), el("dd", { text: r.location }), el("dt", { text: L().fDevice }), el("dd", { class: "mono", text: r.device })),
+            contactBox),
+          knowBox,
           assetBox,
           el("section", { class: "panel" }, el("h2", { text: L().context }), el("p", { class: "intro", text: t(sc.intro, lang) })),
           el("section", { class: "panel" }, el("h2", { text: L().stages }), stagesList),
@@ -921,13 +1071,13 @@
             el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { if (working() && !lv.closed) { exec("hint"); input.focus(); } } }),
             el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => { delete live[id]; desk(id); } }),
             el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))),
-        el("div", {}, pendBox, tabsBox, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
+        el("div", {}, pendBox, chatBox, tabsBox, termBox, el("p", { class: "term-help", text: L().termHelp }), resolveBox, resultBox)));
 
     if (!lv.log.length) {
       print(L().welcome.replace("{host}", sc.machine.host).replace("{user}", sc.machine.domain + "\\" + sc.machine.user), "dim");
       print("", "out");
     } else lv.log.forEach((l) => print(l.text, l.kind, false));
-    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); showResult();
+    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderContact(); showResult();
     if (hasDesk) setView(lv.view || "console");
     term.scrollTop = term.scrollHeight;
     if (working() && !lv.closed) input.focus();
@@ -951,6 +1101,7 @@
     const answers = mailAnswers();
     const ms = G.mailScore(answers);
     const kbN = Object.keys(load("kb", {}) || {}).length;
+    const cs = G.commsStats(act);
     const goalSel = el("select", { class: "goal-sel", id: "goal-sel", onchange: (ev) => { save("goal", G.goalValue(ev.target.value)); progressPage(); } },
       Array.from({ length: G.GOAL.max - G.GOAL.min + 1 }, (_, i) => G.GOAL.min + i).map((n) => el("option", { value: String(n), selected: n === goal, text: String(n) })));
     const bar = el("progress", { class: "goal-bar", max: String(wk.target), value: String(Math.min(wk.done, wk.target)), "aria-label": `${L().gWeek}: ${wk.done} / ${wk.target}` });
@@ -965,7 +1116,9 @@
           el("p", { class: "tile-x goal-row" }, el("label", { for: "goal-sel", text: L().gGoalLabel }), goalSel),
           el("p", { class: "tile-x", text: wk.met ? L().gGoalMet : L().gGoalHelp })),
         tile(`${ms.correct}/${ms.total}`, L().gMail, el("p", { class: "tile-x" }, el("a", { href: "#/mail", text: L().gOpen + " " + L().navMail.toLowerCase() }))),
-        tile(String(kbN), L().gKb, el("p", { class: "tile-x" }, el("a", { href: "#/kb", text: L().gOpen + " " + L().navKb.toLowerCase() })))),
+        tile(String(kbN), L().gKb, el("p", { class: "tile-x" }, el("a", { href: "#/kb", text: L().gOpen + " " + L().navKb.toLowerCase() }))),
+        // v0.6a: useful questions asked and the average mark of the notes for the user
+        tile(cs.average == null ? "–" : `${cs.average}/5`, L().gComms, el("p", { class: "tile-x", id: "comms-tile", text: L().gCommsX(cs.useful, cs.average) }))),
       h2(L().pTickets),
       el("div", { class: "tiles" }, tile(`${done.length}/${SCENARIOS.length}`, L().tClosed), tile(`${starsSum}/${SCENARIOS.length * 3}`, L().tStars),
         tile(String(pointsSum), L().tPoints), tile(done.length ? String(Math.round(pointsSum / done.length)) : "–", L().tAvg)),

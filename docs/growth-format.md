@@ -7,7 +7,7 @@
 | Key | What |
 |---|---|
 | `sd.kb` | `{deskId: {deskId, ticketId, version, day, code, points, lang, note, history: [{version, day, points}]}}`: one article per desk; the note is the user's text |
-| `sd.activity` | `[{type: "ticket" \| "mail", id, day, ...}]`: a ticket closed fixed (with `level`, `points`, `hints`, `slaOk`, `codeOk`, `code`, `noteComplete`) or a mail exercise answered (`result`). Days are local `YYYY-MM-DD` |
+| `sd.activity` | `[{type: "ticket" \| "mail", id, day, ...}]`: a ticket closed fixed (with `level`, `points`, `hints`, `slaOk`, `codeOk`, `code`, `noteComplete`, and since v0.6.1 `userNote` (0-5 or null), `useful`, `bad`, `asked`, `bonus`) or a mail exercise answered (`result`). Days are local `YYYY-MM-DD` |
 | `sd.mail` | `{mailId: {answer, result, day, tries}}`: the latest answer to each message |
 | `sd.mailRead` | ids of the messages opened (for the unread count) |
 | `sd.badges` | `{badgeId: day}`: badges stay earned once awarded |
@@ -44,3 +44,5 @@
 ## Badges (`BADGES`)
 
 Each badge has `id`, `icon`, `name {en, es}`, `rule {en, es}` and `test(facts)`, where `facts(...)` gathers the tickets closed, the desks with a best result, the number of articles, the mail answers and the best streak. `award(prev, facts, day)` adds the new ones with the day.
+
+v0.6.1 adds the badge `communicator` (*Clear communicator*: three different tickets with `userNote` 5) and `commsStats(activity)` → `{useful, notes, average}` for the *Communication* tile on the progress page.

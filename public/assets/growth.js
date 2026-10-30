@@ -451,7 +451,18 @@
       test: (f) => f.kb >= 1 },
     { id: "librarian", icon: "▥", name: { en: "Librarian", es: "Biblioteca propia" }, rule: { en: "Have five articles in your knowledge base.", es: "Ten cinco artículos en tu base de conocimiento." },
       test: (f) => f.kb >= 5 },
+    // v0.6a: the note for the user (comms.js), recorded as userNote (0-5) on each ticket closed
+    { id: "communicator", icon: "✉", name: { en: "Clear communicator", es: "Buen comunicador/a" },
+      rule: { en: "Close three different tickets with a 5/5 note for the user.", es: "Cierra tres tickets distintos con la nota para el usuario en 5/5." },
+      test: (f) => new Set(f.closes.filter((c) => c.userNote === 5).map((c) => c.id)).size >= 3 },
   ];
+  /* v0.6a: communication on the progress page: useful questions asked (summed over the tickets closed) and the average user-note mark */
+  function commsStats(activity) {
+    const closes = (activity || []).filter((a) => a.type === "ticket");
+    const notes = closes.filter((c) => Number.isFinite(c.userNote));
+    return { useful: closes.reduce((n, c) => n + (Number(c.useful) || 0), 0), notes: notes.length,
+      average: notes.length ? Math.round(10 * notes.reduce((n, c) => n + c.userNote, 0) / notes.length) / 10 : null };
+  }
   function facts(o) {
     const activity = o.activity || [];
     return {
@@ -473,5 +484,5 @@
   }
 
   return { t, fold, dayOf, dayNum, isoWeek, activeDays, streak, GOAL, goalValue, week, ROLES, LABELS, splitNote, structure, qualifies, saveArticle,
-    buildArticle, fileName, toMarkdown, searchKb, MAIL, mail, paragraph, domainOf, grade, mailScore, BADGES, facts, award, badges };
+    buildArticle, fileName, toMarkdown, searchKb, MAIL, mail, paragraph, domainOf, grade, mailScore, BADGES, facts, award, badges, commsStats };
 });

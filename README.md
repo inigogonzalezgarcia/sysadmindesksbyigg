@@ -40,6 +40,14 @@ Each desk has an investigate / fix / verify checklist, hints that cost points, o
   - *Unassign* sends the ticket back to New; the SLA keeps running, as on a real desk, and the console stays as it was.
   - Every change goes into the ticket's **Activity** timeline (time, from → to, reason). It lives in the browser with the ticket (`localStorage`, `sd.work[<desk>]`) and starts again when the ticket is replayed.
   - Scoring: the SLA minutes exclude the paused time, so a pause is never penalised; the result shows the total time on hold. The state machine and the SLA arithmetic are in [assets/workflow.js](public/assets/workflow.js) (no DOM), tested in `tests/workflow.test.js`.
+- **Contact the requester (v0.6.1):** on a ticket in progress, *Contact the requester* opens a conversation with them (the requester card's name and initials; a named receptionist or night operator on the two desks whose requester is a desk or a report). You pick from 5-7 scripted questions per desk, in Spanish and English (no free text, no AI):
+  - *useful* ones reveal a clue the console does not give, which goes into **What you know** on the ticket page; *neutral* ones are true but do not help; *bad* ones (leading, blaming, jargon, or asking for the password, which is a bad option on every desk) get a realistic answer and are flagged with the reason;
+  - each question costs **1 minute of SLA** (added to the SLA used, so the counter jumps) and goes into the Activity timeline as "Contact: <question>"; a ticket that is New or pending cannot contact (the button says why);
+  - **Ask to confirm** appears only after a fix: the requester says it works, or, after the tempting fix, that it fails again. It is never required: the console still solves every ticket on its own, and the conversation never changes the console;
+  - the conversation lives in the ticket's record in the browser (`sd.work[<desk>].contact`, with the extra minutes in `extraMs`) and starts again when the ticket is replayed. Logic in [assets/comms.js](public/assets/comms.js) (no DOM), tested in `tests/comms.test.js`.
+- **Note to the user (v0.6.1):** the resolve panel has a second field, what the requester will read, with four templates (resolved with an explanation, resolved with one step for the user, workaround and follow-up, could not reproduce) whose `[gaps]` must be replaced. It is marked x/5 with five plain rules: the requester's name; what was wrong in plain words (a cause phrase, and no jargon such as spooler, GPO, SPN, Kerberos, DNS, registry or PowerShell unless explained right after, in brackets or with "that is"); what they have to do next or that nothing is needed; no internal details (server names, admin and service accounts, passwords and keys, private IPs, GUIDs, UNC paths); and ready to send (no gaps, 120-900 characters). A live checklist shows the rules while you type.
+  - **Scoring:** the verdict and the 0-100 ticket score do not change. The result shows *Work note x/y* and *Note to the user x/5* side by side and a separate **communication bonus** (0-10, not added to the score): note 5/5 +5, 4/5 +3, 3/5 +1; at least one useful question and no bad one +3; the requester confirmed it works +2. Remarks: no note for the user, asking for a password, other bad questions. The user note is not saved in the knowledge base.
+  - **Progress** shows a *Communication* tile (useful questions asked, average user-note mark) and the badge *Clear communicator* (three different tickets with a 5/5 note for the user), kept in the browser like the rest of the growth data.
 - **Closing:** choose a resolution code and write the work note. The result has three levels: *Resolved*, *Resolved with observations* (note, code, SLA or an earlier early close) or *Not resolved* (what is still to do; the ticket stays open).
 - **Progress page** with your best result per ticket, and a 7-step **welcome tour** you can skip or take again from the sidebar.
 
@@ -101,7 +109,7 @@ Until `BREVO_API_KEY` and `MAIL_FROM` exist, `/api/auth/forgot` answers 503 `{er
 Everything here is kept only in the browser (`localStorage`, keys `sd.kb`, `sd.activity`, `sd.mail`, `sd.mailRead`, `sd.badges`, `sd.goal`); the account backend is unchanged.
 
 - **Knowledge base** (`#/kb`, `#/kb/<desk>`): closing a ticket fixed with a note that covers every element saves an article for that desk: title, symptom and environment from the ticket, and the cause, fix, verification and follow-up taken from your own sentences (sorted by the note elements, never reworded), with the resolution code, date, ticket, version and the related guide. A newer approved note is a new version (v1.0, v1.1…). Search and filter by topic, **Download Markdown** (`kb-<ticket>-v<version>.md`) and **Print or save as PDF** (a print stylesheet that shows only the article).
-- **Progress page:** a day streak (current and best, local days), a weekly goal (different tickets and mail exercises in the ISO week, target 1-7, default 3) and ten **badges** with their rule and the day they were earned, plus the mail score.
+- **Progress page:** a day streak (current and best, local days), a weekly goal (different tickets and mail exercises in the ISO week, target 1-7, default 3) and eleven **badges** with their rule and the day they were earned, plus the mail score.
 - **Mail** (`#/mail`, `#/mail/<id>`, unread count in the sidebar): six messages with *Show headers* (From, Reply-To, Return-Path, Received, SPF/DKIM/DMARC, real link targets, directory check). Two user requests become tickets (*Create ticket from this message*), one executive phishing from a look-alike domain, one service desk impersonation asking for an MFA and password reset by email, one maintenance notice and one urgent internal request that passes every check. Each answer is graded correct, partly correct or wrong, with the clues and the right procedure, and can be retried.
 - The logic and the mail data are in [assets/growth.js](public/assets/growth.js) (no DOM), tested in `tests/growth.test.js`; [docs/growth-format.md](docs/growth-format.md) describes the data.
 
@@ -110,15 +118,15 @@ Everything here is kept only in the browser (`localStorage`, keys `sd.kb`, `sd.a
 Static pages next to the app, in both languages (`assets/doc.js` shows the one picked in the simulator and adds the switch), with the same strict CSP:
 
 - [about.html](public/about.html): what SysAdmin Desks is, who it is for, how a ticket is checked, and what it is not (not work experience, not a real system, not affiliated with any vendor or certification body);
-- [help.html](public/help.html): getting started, a ticket from start to finish, how scoring works, each tool, and what to do if something goes wrong;
-- [faq.html](public/faq.html): seventeen short questions and answers;
+- [help.html](public/help.html): getting started, a ticket from start to finish, contacting the requester and the note to the user, how scoring works, each tool, and what to do if something goes wrong;
+- [faq.html](public/faq.html): nineteen short questions and answers;
 - [terms.html](public/terms.html) and [privacy.html](public/privacy.html).
 
 Every page, the app footer, the sidebar and *My account* link to them and to **Report a problem**, which opens the contact form on my website with the subject filled in. `tests/pages.test.js` checks both languages, the CSP, that there is no inline code or email address, and that every local link exists.
 
 ## How it is built
 
-- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/workflow.js` (ticket states and SLA with pauses, no DOM), `assets/scenarios.js` (the desks as data), `assets/world.js` (the directory, its PowerShell and the inventory, no DOM), `assets/growth.js` (knowledge base, streak, goal, badges and mail, no DOM) and `assets/style.css`.
+- Static site in `public/`: `index.html`, `assets/app.js` (interface), `assets/engine.js` (scenario engine, no DOM), `assets/workflow.js` (ticket states and SLA with pauses, no DOM), `assets/scenarios.js` (the desks as data), `assets/world.js` (the directory, its PowerShell and the inventory, no DOM), `assets/growth.js` (knowledge base, streak, goal, badges and mail, no DOM), `assets/comms.js` (the conversation with the requester and the note for the user, no DOM) and `assets/style.css`.
 - No framework, no build step, no external requests. A strict Content Security Policy (no inline scripts or styles) in the page and in `public/_headers`, and no HTML strings: every text is set with `textContent`.
 - The engine and the scenarios are shared with the Node tests: `npm test` checks that every desk is complete in both languages, that the reference solution resolves it exactly at its last step, that the example note scores 100, and that the wrong paths do not resolve it.
 - [docs/scenario-format.md](docs/scenario-format.md) explains how to write a new desk.
@@ -126,7 +134,7 @@ Every page, the app footer, the sidebar and *My account* link to them and to **R
 ## Run it locally
 
 ```bash
-npm test                 # 72 tests: the desks, the ticket page and its workflow, the directory and desktops, progress and knowledge, the pages, and the accounts and password reset against an in-memory database (Node 22+)
+npm test                 # 85 tests: the desks, the ticket page and its workflow, contacting the requester and the note for the user, the directory and desktops, progress and knowledge, the pages, and the accounts and password reset against an in-memory database (Node 22+)
 npm run dev              # http://localhost:8788 with accounts, in-memory database; reset answers 503 unless BREVO_API_KEY and MAIL_FROM are set
 npm run dev:reset        # the same, but reset emails are not sent: the link is printed in this console (DEV_RESET_LOG=1, only in scripts/dev-server.mjs)
 npm run serve            # http://localhost:8080, static only (no accounts)
@@ -147,7 +155,7 @@ Ideas for later: more desks per guide topic.
 
 ## Status
 
-Version 0.6.0: workflow states with the SLA paused while pending and an activity timeline per ticket, and password reset by email (Brevo), on top of 18 desks (first and second line), landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), a personal knowledge base, streak, weekly goal, badges and mail exercises, and the about, help, FAQ, terms and privacy pages. Each desk links to its guide, and the guides on the website link back with a "Practise it" button. Fictional company (Contoso) and people; no real systems or data.
+Version 0.6.1: contacting the requester (scripted questions, clues, a minute of SLA each, confirmation after the fix) and a marked note for the user with closing templates; 0.6.0 added workflow states with the SLA paused while pending and an activity timeline per ticket, and password reset by email (Brevo), on top of 18 desks (first and second line), landing page, accounts, ticket queue with SLA, ticket page with a three-level result, the tools (directory, desktop and inventory), a personal knowledge base, streak, weekly goal, badges and mail exercises, and the about, help, FAQ, terms and privacy pages. Each desk links to its guide, and the guides on the website link back with a "Practise it" button. Fictional company (Contoso) and people; no real systems or data.
 
 ## Contact
 

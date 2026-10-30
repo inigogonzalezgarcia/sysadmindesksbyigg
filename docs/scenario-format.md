@@ -28,6 +28,7 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 | `actions` | Buttons on the ticket page: `id`, `label {en, es}`, `cmd` (the console command it runs) and an optional `when` |
 | `codes` | The resolution codes that fit this ticket (ids from `CODES` in the engine); the first one is suggested when another is chosen |
 | `bind` | Optional: what the ticket changes in the shared directory and inventory while it is open (see below) |
+| `contact` | The conversation with the requester (v0.6.1, see below) |
 | `desktop` | Optional: the user's machine for "Go to the desk": apps and an event log (see below) |
 
 ## Command rules
@@ -89,9 +90,32 @@ desktop: {
 - Opening an app runs its `look` command (what you would type to see the same thing) and each button runs its `cmd`, all through the engine and shown in the console. The tests check that every one is understood whenever it is offered, that something shows as wrong at the start and nothing once solved.
 - `log` is the Event Viewer: realistic source and event IDs only. `logNote` explains an empty or unhelpful log.
 
+## Contact: `contact`
+
+```js
+contact: {
+  who: { name: "Nuria Vega", team: { en, es } },     // optional: who answers when the requester is not a person (Reception, a report)
+  fixed: { encrypted: true, escrowed: true },         // optional: when the fix counts as done; default: the "fix" stage's flags
+  tempting: ["unlock-early"],                         // ids of the command rules of the tempting fix
+  temptingWhen: { taskDisabled: false },              // optional: flags that must still hold for "it fails again" to be true
+  questions: [
+    { id: "scan", kind: "useful", text: { en, es }, answer: { en, es }, clue: { en, es } },
+    { id: "restart", kind: "neutral", text: { en, es }, answer: { en, es } },
+    { id: "password", kind: "bad", password: true, text: { en, es }, answer: { en, es }, why: { en, es } },
+    { id: "confirm", kind: "useful", requires: "fixed", text: { en, es }, answer: { en, es }, failed: { en, es } },
+  ],
+},
+```
+
+- 5 to 7 questions in both languages: at least 2 *useful* (each with a `clue` that the console does not give and that never contradicts its output), 1 *neutral* and 1 *bad* (with `why`); asking for the password must be one of the bad options (`password: true`). Mix the kinds in the list: it is shown in this order.
+- One question has `requires: "fixed"` (*Ask to confirm*): it appears once the fix is in (`fixed`) or once a `tempting` rule has run and `temptingWhen` still matches; the requester answers `answer` when it is fixed and `failed` otherwise. Pick a tempting path after which the user really would see it fail (not one that works for now).
+- Asking never changes the scenario state. Each question costs one minute of SLA; the logic is in `public/assets/comms.js` and the tests in `tests/comms.test.js` check every desk (including that each tempting path gets `failed` and the solution gets `answer`).
+- In `scenarios.js` the 18 desks take their `contact` from the `CONTACT` table at the end of the file; a new desk can write the field inline.
+
 ## Closing a ticket
 
 - **SLA:** it starts when the user assigns the ticket: 20 minutes for P1, 30 for P2 and 45 for P3. Since v0.6 the ticket page has workflow states (New, In progress, Pending user, Pending vendor, Closed), kept per ticket in the browser (`sd.work[<id>]`) and handled by the pure module `public/assets/workflow.js`: while a ticket is pending the SLA is paused, *Unassign* sends it back to New with the SLA still running, and the minutes passed to `verdict` are the SLA minutes without the pauses. Scenarios need nothing new for this.
+- **Note to the user (v0.6.1):** a second note, marked x/5 apart from the work note by `checkUserNote` in `comms.js`. It never changes the verdict or the points; it gives a separate communication bonus.
 - **Resolution codes:** root cause removed, configuration corrected, space or quota freed, device brought into compliance, workaround, user guidance, no fault found.
 - **Result** (`verdict` in the engine), in three levels:
   - *Not resolved* when the goal is not met: it lists the stages not done, the ticket stays open and each early close costs 10 points later.
