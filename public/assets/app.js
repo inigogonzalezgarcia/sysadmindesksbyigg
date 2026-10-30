@@ -446,7 +446,7 @@
       ["Learn and practise", "Stuck? The library explains each area, the labs let you practise without an SLA, and your profile shows your progress by area and the next step. Good shift!"],
     ],
     tourWait: "Assign the ticket to see this part, or press Next.",
-    newTitle: "New in 0.8: learning", newText: "A library with one reference per area, labs to practise without an SLA (Active Directory, network, Windows, Microsoft 365 and Linux), and a profile with your progress by area, a career path and a summary you can download.",
+    newTitle: "New in 0.9", newText: "0.9a: your work survives a reload (a ticket's console, the network room and the labs), a fuller mailbox (folders, replies, report as spam), Preferences in My account (reminder, sounds, time zone, reduced motion), a folding sidebar, full screen on the user's desktop and free tickets you log yourself. 0.9b: levels from Support intern to Infrastructure engineer with a progress bar, three weekly goals with rewards, clean / with observations / false closure counters, badges by area and a Full shift at the end of each lab.",
     newGot: "Got it",
   });
   Object.assign(UI.es, {
@@ -486,8 +486,130 @@
       ["Aprende y practica", "¿Atascado? La biblioteca explica cada área, los laboratorios te dejan practicar sin SLA y tu perfil muestra tu progreso por área y el siguiente paso. ¡Buen turno!"],
     ],
     tourWait: "Asígnate el ticket para ver esta parte, o pulsa Siguiente.",
-    newTitle: "Novedades de la 0.8: aprendizaje", newText: "Una biblioteca con una referencia por área, laboratorios para practicar sin SLA (Active Directory, red, Windows, Microsoft 365 y Linux) y un perfil con tu progreso por área, un itinerario profesional y un resumen que puedes descargar.",
+    newTitle: "Novedades de la 0.9", newText: "0.9a: tu trabajo sobrevive a una recarga (la consola de un ticket, la sala de red y los laboratorios), un correo más completo (carpetas, respuestas, reportar como spam), Preferencias en Mi cuenta (recordatorio, sonidos, zona horaria, menos movimiento), barra lateral plegable, pantalla completa en el escritorio del usuario y tickets libres que registras tú. 0.9b: niveles de Becario/a de soporte a Ingeniero/a de infraestructura con barra de progreso, tres objetivos semanales con recompensa, contadores de cierres limpios / con observaciones / en falso, insignias por área y un Turno completo al final de cada laboratorio.",
     newGot: "Entendido",
+  });
+
+  /* ---------- v0.9: persistence after a reload, the fuller mailbox, preferences, the folding sidebar, the desk's taskbar and free tickets */
+  Object.assign(UI.en, {
+    sideFold: "Fold the sidebar", sideUnfold: "Unfold the sidebar",
+    // the desktop: taskbar, full screen and leaving the desk
+    pcFull: "Full screen", pcFullExit: "Exit full screen", pcLeave: "Leave the desk", pcWindows: "Open windows", pcClock: (z) => `Time zone: ${z}`,
+    pcMin: "Minimise", pcRestore: (x) => `Show ${x}`,
+    slaDue: (h) => `due ${h}`, slaDueTitle: (z) => `Time zone: ${z} (My account → Preferences)`,
+    restored: "Restored after the reload: your console, the devices and the shipments are as you left them.",
+    // mail
+    mFolders: "Folders", mCompose: "New message", mStar: "Star", mUnstar: "Remove star", mArchive: "Archive", mToInbox: "Move to Inbox",
+    mReport: "Report as spam / phishing", mNotSpam: "Not spam", mReply: "Reply", mReplyTo: (a) => `To: ${a} (the Reply-To)`,
+    mReported: (r) => `Moved to Spam and reported to security. Exercise: ${r}.`, mArchived: "Archived.", mMoved: "Moved to the Inbox.",
+    mEmptyFolder: "Nothing in this folder.", mSentEmpty: "You have not sent anything yet.", mTemplates: "Templates", mReplyPh: "Write your reply…",
+    mSend: "Send", mCancel: "Cancel", mSentOk: "Sent. You can find it in Sent.", mErr: { empty: "Write at least 10 characters.", gaps: "Replace the [gaps] first.", to: "Pick a contact from the list.", subject: "Write a subject." },
+    mFlags: { "phish-reply": "Bad practice: you replied to a phishing or impersonation email. The reply went to the attacker's Reply-To and confirms the mailbox is read. Report it instead.",
+      password: "Bad practice: this message contains a password. Passwords are never sent by email.", secret: "Bad practice: this message contains a verification code. Codes are never shared." },
+    mNewTitle: "New message", mToLabel: "To", mSubject: "Subject", mBody: "Message", mPickContact: "Pick a contact", mContactsNote: "Fictional internal contacts: the team mailboxes and the people in the directory.",
+    mSentTitle: "Sent message", mRepliesSent: (n) => `You have replied ${n === 1 ? "once" : n + " times"}.`, mLintLive: "Careful:",
+    // preferences
+    prTitle: "Preferences", prSub: "Kept in this browser only.", prReminder: "Daily practice reminder", prReminderOn: "Remind me to practise every day",
+    prReminderAt: "At", prNotify: "Also with a browser notification (while the site is open)", prNotifyDenied: "The browser did not allow notifications: the reminder stays as a banner.",
+    prNotifyNo: "This browser has no notifications: the reminder stays as a banner.", prSounds: "Celebration sounds", prSoundsOn: "Play a short sound when you solve a ticket, earn a badge or finish a lab task",
+    prTest: "Try it", prZone: "Time zone", prZoneAuto: (z) => `Automatic (this browser: ${z})`, prZoneNow: (h, o) => `Now: ${h} (${o}). Used for the SLA due time, the timelines, the desk clock and the days of your streak.`,
+    prMotion: "Reduce motion", prMotionOn: "Fewer animations and no smooth scrolling", prMotionSys: "Your system already asks for reduced motion.",
+    prSaved: "Saved.", prData: "Work kept in this browser", prDataText: "Tickets in progress keep their console, the network room its changes and the labs their sandbox after a reload. This clears all of that (the tickets stay assigned; your results are not touched).",
+    prDataBtn: "Clear saved work", prDataDone: "Saved work cleared.",
+    remTitle: "Time to practise", remText: "Your daily practice: one ticket, one lab task or one email is enough to keep your streak.", remGo: "Open the queue", remLater: "Not today",
+    notifTitle: "SysAdmin Desks", notifText: "Your daily practice is waiting: one ticket keeps your streak.",
+    // free tickets
+    ftNew: "New ticket", ftNewTitle: "Log a free ticket", ftNewSub: "A practice ticket of your own: it has an SLA, states, notes and a closure, but no automatic grading and it does not count in your scores.",
+    ftSubject: "Subject", ftRequester: "Requester", ftPriority: "Priority", ftCategory: "Category", ftDesc: "Description", ftPick: "Pick one",
+    ftCreate: "Create ticket", ftCancel: "Cancel", ftFree: "free ticket", ftFreeLong: "Free ticket · not graded",
+    ftErr: { subject: "Write a subject (5+ characters).", requester: "Pick a requester from the directory.", priority: "Pick a priority.", category: "Pick a category.", description: "Describe the problem (10+ characters).", full: "You have too many free tickets open." },
+    ftNotes: "Work notes", ftNotePh: "What you did or found…", ftAddNote: "Add note", ftNoNotes: "No notes yet.", ftNoteShort: "Write at least 5 characters.",
+    ftClose: "Close the ticket", ftCloseText: "Pick a code and write how it was solved. A free ticket is not graded.", ftCode: "Resolution code", ftCloseNote: "Resolution", ftCloseBtn: "Close ticket",
+    ftCloseErr: { code: "Pick a resolution code.", note: "Write the resolution (10+ characters).", state: "Resume the ticket first." },
+    ftClosed: (m, sla) => `Closed in ${m} min of SLA (${sla} min). No score: free tickets do not count.`, ftDelete: "Delete this free ticket", ftDeleted: "Free ticket deleted.",
+    ftNoScore: "—", ftDescT: "Description", ftOpen: "Open",
+  });
+  Object.assign(UI.es, {
+    sideFold: "Plegar la barra lateral", sideUnfold: "Desplegar la barra lateral",
+    pcFull: "Pantalla completa", pcFullExit: "Salir de pantalla completa", pcLeave: "Salir del puesto", pcWindows: "Ventanas abiertas", pcClock: (z) => `Zona horaria: ${z}`,
+    pcMin: "Minimizar", pcRestore: (x) => `Mostrar ${x}`,
+    slaDue: (h) => `vence a las ${h}`, slaDueTitle: (z) => `Zona horaria: ${z} (Mi cuenta → Preferencias)`,
+    restored: "Recuperado tras la recarga: tu consola, los equipos y los envíos están como los dejaste.",
+    mFolders: "Carpetas", mCompose: "Redactar", mStar: "Destacar", mUnstar: "Quitar destacado", mArchive: "Archivar", mToInbox: "Mover a la bandeja de entrada",
+    mReport: "Reportar como spam / phishing", mNotSpam: "No es spam", mReply: "Responder", mReplyTo: (a) => `Para: ${a} (el Reply-To)`,
+    mReported: (r) => `Movido a Spam y reportado a seguridad. Ejercicio: ${r}.`, mArchived: "Archivado.", mMoved: "Movido a la bandeja de entrada.",
+    mEmptyFolder: "No hay nada en esta carpeta.", mSentEmpty: "Todavía no has enviado nada.", mTemplates: "Plantillas", mReplyPh: "Escribe tu respuesta…",
+    mSend: "Enviar", mCancel: "Cancelar", mSentOk: "Enviado. Lo tienes en Enviados.", mErr: { empty: "Escribe al menos 10 caracteres.", gaps: "Sustituye antes los [huecos].", to: "Elige un contacto de la lista.", subject: "Escribe un asunto." },
+    mFlags: { "phish-reply": "Mala práctica: has respondido a un correo de phishing o de suplantación. La respuesta ha ido al Reply-To del atacante y le confirma que el buzón se lee. Lo correcto es reportarlo.",
+      password: "Mala práctica: este mensaje contiene una contraseña. Las contraseñas no se envían nunca por correo.", secret: "Mala práctica: este mensaje contiene un código de verificación. Los códigos no se comparten nunca." },
+    mNewTitle: "Mensaje nuevo", mToLabel: "Para", mSubject: "Asunto", mBody: "Mensaje", mPickContact: "Elige un contacto", mContactsNote: "Contactos internos ficticios: los buzones de equipo y las personas del directorio.",
+    mSentTitle: "Mensaje enviado", mRepliesSent: (n) => `Has respondido ${n === 1 ? "una vez" : n + " veces"}.`, mLintLive: "Cuidado:",
+    prTitle: "Preferencias", prSub: "Se guardan solo en este navegador.", prReminder: "Recordatorio diario de práctica", prReminderOn: "Recordarme practicar cada día",
+    prReminderAt: "A las", prNotify: "También con una notificación del navegador (con la web abierta)", prNotifyDenied: "El navegador no ha permitido las notificaciones: el recordatorio se queda como aviso en la página.",
+    prNotifyNo: "Este navegador no tiene notificaciones: el recordatorio se queda como aviso en la página.", prSounds: "Sonidos de celebración", prSoundsOn: "Un sonido corto al resolver un ticket, ganar una insignia o terminar una tarea de laboratorio",
+    prTest: "Probar", prZone: "Zona horaria", prZoneAuto: (z) => `Automática (este navegador: ${z})`, prZoneNow: (h, o) => `Ahora: ${h} (${o}). Se usa para la hora de vencimiento del SLA, las actividades, el reloj del puesto y los días de tu racha.`,
+    prMotion: "Reducir el movimiento", prMotionOn: "Menos animaciones y sin desplazamiento suave", prMotionSys: "Tu sistema ya pide reducir el movimiento.",
+    prSaved: "Guardado.", prData: "Trabajo guardado en este navegador", prDataText: "Los tickets en curso conservan su consola, la sala de red sus cambios y los laboratorios su entorno después de recargar. Esto lo borra todo (los tickets siguen asignados; tus resultados no se tocan).",
+    prDataBtn: "Borrar el trabajo guardado", prDataDone: "Trabajo guardado borrado.",
+    remTitle: "Hora de practicar", remText: "Tu práctica diaria: con un ticket, una tarea de laboratorio o un correo mantienes la racha.", remGo: "Abrir la cola", remLater: "Hoy no",
+    notifTitle: "SysAdmin Desks", notifText: "Tu práctica diaria te espera: con un ticket mantienes la racha.",
+    ftNew: "Crear ticket", ftNewTitle: "Registrar un ticket libre", ftNewSub: "Un ticket de práctica tuyo: tiene SLA, estados, notas y cierre, pero no se corrige automáticamente ni cuenta en tus puntuaciones.",
+    ftSubject: "Asunto", ftRequester: "Solicitante", ftPriority: "Prioridad", ftCategory: "Categoría", ftDesc: "Descripción", ftPick: "Elige uno",
+    ftCreate: "Crear ticket", ftCancel: "Cancelar", ftFree: "ticket libre", ftFreeLong: "Ticket libre · sin corrección",
+    ftErr: { subject: "Escribe un asunto (5 caracteres o más).", requester: "Elige un solicitante del directorio.", priority: "Elige una prioridad.", category: "Elige una categoría.", description: "Describe el problema (10 caracteres o más).", full: "Tienes demasiados tickets libres abiertos." },
+    ftNotes: "Notas de trabajo", ftNotePh: "Qué has hecho o encontrado…", ftAddNote: "Añadir nota", ftNoNotes: "Todavía no hay notas.", ftNoteShort: "Escribe al menos 5 caracteres.",
+    ftClose: "Cerrar el ticket", ftCloseText: "Elige un código y escribe cómo se resolvió. Un ticket libre no se corrige.", ftCode: "Código de resolución", ftCloseNote: "Resolución", ftCloseBtn: "Cerrar ticket",
+    ftCloseErr: { code: "Elige un código de resolución.", note: "Escribe la resolución (10 caracteres o más).", state: "Reanuda antes el ticket." },
+    ftClosed: (m, sla) => `Cerrado con ${m} min de SLA (${sla} min). Sin puntuación: los tickets libres no cuentan.`, ftDelete: "Eliminar este ticket libre", ftDeleted: "Ticket libre eliminado.",
+    ftNoScore: "—", ftDescT: "Descripción", ftOpen: "Abrir",
+  });
+
+  /* ---------- v0.9b: levels, weekly goals, close counters, badges by area and the labs' full shift (levels.js) */
+  Object.assign(UI.en, {
+    lvChip: (l) => `Level: ${l.name}, ${l.total} points` + (l.next ? `, ${l.toNext} to ${l.next.name}` : ""),
+    lvTitle: "Your level", lvPoints: (n) => `${n} points`, lvNext: (n, name) => `${n} points to ${name}`, lvTop: "Top level: well done.",
+    lvBreak: (p) => `Tickets ${p.tickets} · Labs ${p.labs} · Communication ${p.comms} · Weekly goals ${p.goals} · Full shifts ${p.shifts}`,
+    lvHow: "Points: the best result of each ticket (a replay counts only if it beats it), 10 per lab task, the best communication bonus of each ticket, the weekly goals' rewards and each lab's first full shift. Free tickets never count.",
+    lvLadder: "The levels", lvFrom: (n) => `from ${n}`, lvUpTitle: "New level!", lvUpText: (n) => `You are now ${n}. Keep it up.`, lvUpOk: "Great",
+    ccTitle: "How you close tickets", ccClean: "Clean closes", ccCleanX: "Resolved the first time, with no remarks", ccRemarks: "With observations", ccRemarksX: "Resolved with observations to improve",
+    ccFalse: "False closures", ccFalseX: "Closing attempts before it was fixed (Not resolved)",
+    wgTitle: "This week's goals", wgSub: (w) => `Three goals for ${w}, the same for everyone. They change on Monday at 00:00 in your time zone; each reward counts once.`,
+    wgReward: (n) => `+${n} points`, wgDone: (d) => `Done · ${d}`, wgOpen: "To do", wgHistory: "Past weeks", wgNoHistory: "No past weeks yet: they appear here from next Monday.",
+    wgRow: (done, total, pts) => `${done}/${total} goals · +${pts} points`, wgFull: "every goal", wgFresh: (label, n) => `Weekly goal done: ${label} (+${n} points)`,
+    bGroups: { core: "General", area: "Mastery by area", docs: "Documentation", goals: "Weekly goals", shift: "Full shifts" },
+    shTitle: "Full shift", shSub: "The end of the lab: four real tickets of this area (or the nearest ones) in a row, against a shift timer. A ticket counts when you close it fixed, in order, after the shift starts.",
+    shLocked: "Finish every task of this lab to unlock its full shift.", shStart: "Start the full shift", shBusy: (lab) => `You already have a full shift running: ${lab}. Finish or abandon it first.`,
+    shNotEnough: "There are not enough tickets free for this shift right now (some are in progress in the queue). Finish them and come back.",
+    shTimer: "Shift time", shGo: "Open the next ticket", shAbandon: "Abandon the shift", shAbandoned: "Shift abandoned. You can start it again whenever you like.",
+    shState: { done: "Done", now: "Now", later: "Next" }, shSummaryT: "Shift summary",
+    shSummary: (s) => `${s.tickets} tickets in ${s.minutes} min · average ${s.avg == null ? "–" : s.avg} · clean ${s.clean} · with remarks ${s.remarks} · hints ${s.hints}`,
+    shReward: (n, b) => `+${n} points and the badge ${b}.`, shRewardOnce: "The points and the badge come with the first full shift of each lab; this one goes into the log.",
+    shAgain: "Start another shift", shBest: (d) => `First full shift finished on ${d}.`, shStrip: (lab, k, n) => `Full shift · ${lab}: ticket ${k} of ${n}`,
+    shCounted: (k, n) => `Counted for the full shift (${k} of ${n}).`, shFinished: "Full shift finished!", shSeeSummary: "See the summary", shCard: "Full shift done", shCardRun: "Full shift running",
+    shOther: "This ticket is not the shift's next one: it will not count for the shift.",
+  });
+  Object.assign(UI.es, {
+    lvChip: (l) => `Nivel: ${l.name}, ${l.total} puntos` + (l.next ? `, faltan ${l.toNext} para ${l.next.name}` : ""),
+    lvTitle: "Tu nivel", lvPoints: (n) => `${n} puntos`, lvNext: (n, name) => `Faltan ${n} puntos para ${name}`, lvTop: "Nivel máximo: buen trabajo.",
+    lvBreak: (p) => `Tickets ${p.tickets} · Laboratorios ${p.labs} · Comunicación ${p.comms} · Objetivos semanales ${p.goals} · Turnos completos ${p.shifts}`,
+    lvHow: "Puntos: el mejor resultado de cada ticket (repetirlo solo cuenta si lo mejora), 10 por tarea de laboratorio, el mejor bonus de comunicación de cada ticket, las recompensas de los objetivos semanales y el primer turno completo de cada laboratorio. Los tickets libres nunca cuentan.",
+    lvLadder: "Los niveles", lvFrom: (n) => `desde ${n}`, lvUpTitle: "¡Nivel nuevo!", lvUpText: (n) => `Ahora eres ${n}. Sigue así.`, lvUpOk: "Genial",
+    ccTitle: "Cómo cierras los tickets", ccClean: "Cierres limpios", ccCleanX: "Resueltos a la primera y sin observaciones", ccRemarks: "Con observaciones", ccRemarksX: "Resueltos, con observaciones que mejorar",
+    ccFalse: "Cierres en falso", ccFalseX: "Intentos de cierre antes de estar arreglado (No resuelto)",
+    wgTitle: "Objetivos de la semana", wgSub: (w) => `Tres objetivos para la ${w}, los mismos para todo el mundo. Cambian el lunes a las 00:00 de tu zona horaria; cada recompensa cuenta una vez.`,
+    wgReward: (n) => `+${n} puntos`, wgDone: (d) => `Hecho · ${d}`, wgOpen: "Pendiente", wgHistory: "Semanas anteriores", wgNoHistory: "Todavía no hay semanas anteriores: aparecerán aquí a partir del lunes.",
+    wgRow: (done, total, pts) => `${done}/${total} objetivos · +${pts} puntos`, wgFull: "todos los objetivos", wgFresh: (label, n) => `Objetivo semanal cumplido: ${label} (+${n} puntos)`,
+    bGroups: { core: "Generales", area: "Dominio por área", docs: "Documentación", goals: "Objetivos semanales", shift: "Turnos completos" },
+    shTitle: "Turno completo", shSub: "El final del laboratorio: cuatro tickets reales de esta área (o de las más cercanas) seguidos, con un cronómetro de turno. Un ticket cuenta cuando lo cierras arreglado, en orden y después de empezar el turno.",
+    shLocked: "Termina todas las tareas de este laboratorio para desbloquear su turno completo.", shStart: "Empezar el turno completo", shBusy: (lab) => `Ya tienes un turno completo en marcha: ${lab}. Termínalo o abandónalo antes.`,
+    shNotEnough: "Ahora mismo no hay tickets libres suficientes para este turno (algunos están en curso en la cola). Termínalos y vuelve.",
+    shTimer: "Tiempo de turno", shGo: "Abrir el siguiente ticket", shAbandon: "Abandonar el turno", shAbandoned: "Turno abandonado. Puedes empezarlo otra vez cuando quieras.",
+    shState: { done: "Hecho", now: "Ahora", later: "Después" }, shSummaryT: "Resumen del turno",
+    shSummary: (s) => `${s.tickets} tickets en ${s.minutes} min · media ${s.avg == null ? "–" : s.avg} · limpios ${s.clean} · con observaciones ${s.remarks} · pistas ${s.hints}`,
+    shReward: (n, b) => `+${n} puntos y la insignia ${b}.`, shRewardOnce: "Los puntos y la insignia llegan con el primer turno completo de cada laboratorio; este queda en el registro.",
+    shAgain: "Empezar otro turno", shBest: (d) => `Primer turno completo terminado el ${d}.`, shStrip: (lab, k, n) => `Turno completo · ${lab}: ticket ${k} de ${n}`,
+    shCounted: (k, n) => `Cuenta para el turno completo (${k} de ${n}).`, shFinished: "¡Turno completo terminado!", shSeeSummary: "Ver el resumen", shCard: "Turno completo hecho", shCardRun: "Turno completo en marcha",
+    shOther: "Este ticket no es el siguiente del turno: no contará para el turno.",
   });
 
   /* ---------- storage (per-viewer convenience only; the page works without it) */
@@ -514,6 +636,57 @@
   // the static pages next to the app, and the contact form with the subject filled in
   const DOCS = [["about", "/about"], ["help", "/help"], ["faq", "/faq"], ["terms", "/terms"], ["privacy", "/privacy"]];
   const REPORT = SITE + "about.html?tema=sysadmindesks#contacto";
+
+  /* ---------- v0.9: preferences (prefs.js, sd.prefs): time zone, reduced motion, sounds and the daily reminder */
+  const Pf = window.SDPrefs;
+  const PS = window.SDPersist;
+  const MB = window.SDMail;
+  const FT = window.SDFree;
+  let prefsCache = null;
+  function prefs() { if (!prefsCache) prefsCache = Pf.normalise(load("prefs", null)); return prefsCache; }
+  function setPrefs(p) { prefsCache = Pf.normalise(p); save("prefs", prefsCache); applyMotion(); }
+  function zone() { return Pf.zoneOf(prefs()); }
+  // the calendar day in the chosen zone (the streak, the weekly goal and the badges count these days)
+  function today() { return Pf.dayIn(Date.now(), zone()); }
+  // "HH:MM" in the chosen zone
+  function clock(ms, seconds) { return Pf.timeIn(ms == null ? Date.now() : ms, zone(), seconds); }
+  const sysReduce = () => Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  function motion() { return prefs().motion || sysReduce() ? "auto" : "smooth"; }
+  function applyMotion() { document.documentElement.classList.toggle("reduce-motion", prefs().motion); }
+  applyMotion();
+  // celebration sounds: short WebAudio blips, only when turned on (off by default)
+  let audioCtx = null;
+  function celebrate(kind) {
+    const notes = Pf.sound(prefs(), kind);
+    if (!notes.length) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = audioCtx || new AC();
+      const t0 = audioCtx.currentTime + 0.01;
+      notes.forEach((n) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = "sine"; o.frequency.value = n.f;
+        g.gain.setValueAtTime(0.0001, t0 + n.at);
+        g.gain.exponentialRampToValueAtTime(0.12, t0 + n.at + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + n.at + n.d);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t0 + n.at); o.stop(t0 + n.at + n.d + 0.03);
+      });
+      document.documentElement.setAttribute("data-sound", kind);
+    } catch (e) { /* no audio: ignore */ }
+  }
+
+  /* ---------- v0.9: work kept across a reload (persist.js). Each piece is an envelope with the format and the owner (a hash of the
+     signed-in email), so another account in this browser starts clean. sd.live: {deskId: envelope} for the tickets in progress;
+     sd.room: the network room outside tickets; sd.labbox: {labId: envelope} for the labs' sandboxes. */
+  const SAVED_KEYS = ["live", "room", "labbox"];
+  const ownerTag = () => (user ? PS.owner(user.email) : "");
+  function envOf(env) { return PS.unpack(env, { owner: ownerTag() }); }
+  function packed(data) { return PS.pack(data, { owner: ownerTag() }); }
+  function mapOf(key) { const m = load(key, {}); return m && typeof m === "object" && !Array.isArray(m) ? m : {}; }
+  function clearSaved() { SAVED_KEYS.forEach((k) => { try { localStorage.removeItem("sd." + k); } catch (e) { /* ignore */ } }); }
 
   /* ---------- accounts (Pages Functions under /api; the page still works if they are not there) */
   async function api(path, method, body) {
@@ -577,13 +750,15 @@
     ["about", "help", "faq", "terms", "privacy", "report", "cookies"].forEach((k) => { const a = document.getElementById("foot-" + k); if (a) a.textContent = L()[k]; });
     const nh = document.getElementById("nav-help"); if (nh) nh.textContent = L().navHelp;
     const who = document.getElementById("who");
-    who.replaceChildren(user
-      ? el("a", { class: "who", href: "#/account", title: L().account }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
-      : el("a", { class: "who signin", href: "#/start", text: L().signIn }));
+    who.replaceChildren(...(user
+      ? [levelChip(), el("a", { class: "who", href: "#/account", title: L().account }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))]
+      : [el("a", { class: "who signin", href: "#/start", text: L().signIn })]));
   }
 
   /* ---------- tickets in progress: when each one was assigned (this browser), and the live console of each one (this page) */
   let ticker = null;      // updates the SLA counters every second
+  let fsHandler = null;   // v0.9: the open desk's reaction to entering or leaving full screen
+  document.addEventListener("fullscreenchange", () => { if (fsHandler) fsHandler(); });
   let queueTab = "open";
   const live = {};        // deskId -> {sess, log: [{text, kind}], hist: [], pos: 0, closed: false, result: null}
   function work() { return load("work", {}); }
@@ -593,9 +768,27 @@
     save("work", w);
   }
   function liveOf(id, sc) {
-    if (!live[id]) live[id] = { sess: E.createSession(sc, lang), log: [], hist: [], pos: 0, closed: false, result: null };
+    if (!live[id]) {
+      // v0.9: a ticket still open in the workflow comes back as it was before the reload
+      let back = null;
+      if (work()[id]) {
+        const data = envOf(mapOf("live")[id]);
+        if (data) back = PS.ticketFromJSON(sc, data, lang);
+        if (back) back.restored = true;
+      }
+      live[id] = back || { sess: E.createSession(sc, lang), log: [], hist: [], pos: 0, closed: false, result: null };
+    }
     return live[id];
   }
+  // v0.9: write a ticket in progress (or forget it once it is closed or gone from the workflow)
+  function persistLive(id) {
+    const lv = live[id];
+    const m = mapOf("live");
+    if (!lv || lv.closed || !work()[id]) { if (id in m) { delete m[id]; save("live", m); } return; }
+    m[id] = packed(PS.ticketToJSON(lv));
+    save("live", PS.prune(m, Object.keys(work())));
+  }
+  function dropLive(id) { delete live[id]; persistLive(id); }
   // v0.6: the workflow record of a ticket (state, SLA start, pauses and activity), or null when nobody has assigned it yet
   function rec(id) { return W.normalise(work()[id]); }
   // SLA minutes used: since the first assignment, without the time spent pending
@@ -613,9 +806,9 @@
     return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
   }
   // {text, tone} for the SLA of a ticket; long: mm:ss for the ticket page
-  function slaInfo(sc, long) {
-    const limit = E.sla(sc);
-    const r = rec(sc.id);
+  function slaInfo(sc, long) { return slaOf(rec(sc.id), E.sla(sc), long); }
+  // v0.9: the same for any workflow record and SLA (the desks and the free tickets)
+  function slaOf(r, limit, long) {
     if (!r) return { text: L().slaTarget(limit), tone: "" };
     const now = Date.now();
     const left = W.slaRemaining(r, limit, now);
@@ -624,7 +817,26 @@
     if (left < 0) return { text: leftText, tone: "bad" };
     return { text: leftText, tone: left < limit / 4 ? "warn" : "ok" };
   }
+  // v0.9: the wall-clock time the SLA runs out, in the chosen time zone ("" while paused or not started)
+  function dueOf(r, limit) {
+    if (!r || W.isPaused(r) || r.status === "closed") return "";
+    const now = Date.now();
+    return L().slaDue(clock(now + W.slaRemaining(r, limit, now) * 60000));
+  }
+  function slaDueEl(key, r, limit) {
+    return el("span", { class: "sla-due mono", "data-sla-due": key, title: L().slaDueTitle(zone()), text: dueOf(r, limit) });
+  }
+  function freeRec(id) { const tk = FT.find(freeStore(), id); return tk ? { tk, r: tk.rec, limit: FT.sla(tk) } : null; }
+  // v0.9b: a shift timer, "MM:SS" (or "H:MM:SS" past an hour)
+  function mmssMs(ms) {
+    const sec = Math.floor(ms / 1000);
+    const h = Math.floor(sec / 3600);
+    const p2 = (n) => String(n).padStart(2, "0");
+    return (h ? h + ":" : "") + p2(Math.floor((sec % 3600) / 60)) + ":" + p2(sec % 60);
+  }
   function tick() {
+    const shA = document.querySelector("[data-shift-timer]") ? shiftStore().active : null;
+    document.querySelectorAll("[data-shift-timer]").forEach((n) => { if (shA) n.textContent = mmssMs(Lv.elapsed(shA, Date.now())); });
     document.querySelectorAll("[data-sla]").forEach((n) => {
       const sc = SCENARIOS.find((s) => s.id === n.getAttribute("data-sla"));
       if (!sc) return;
@@ -632,6 +844,20 @@
       n.textContent = info.text;
       n.className = "sla " + info.tone;
     });
+    document.querySelectorAll("[data-free-sla]").forEach((n) => {
+      const f = freeRec(n.getAttribute("data-free-sla"));
+      if (!f || f.tk.closed) return;
+      const info = slaOf(f.r, f.limit, n.hasAttribute("data-long"));
+      n.textContent = info.text;
+      n.className = "sla " + info.tone;
+    });
+    document.querySelectorAll("[data-sla-due]").forEach((n) => {
+      const k = n.getAttribute("data-sla-due");
+      const sc = SCENARIOS.find((x) => x.id === k);
+      const f = sc ? null : freeRec(k);
+      n.textContent = sc ? dueOf(rec(sc.id), E.sla(sc)) : f ? dueOf(f.r, f.limit) : "";
+    });
+    document.querySelectorAll("[data-clock]").forEach((n) => { n.textContent = clock(); });
   }
   function isOpen(sc) { return !progress[sc.id] || Boolean(work()[sc.id]); }
   function statusOf(sc) { const r = rec(sc.id); return r ? r.status : progress[sc.id] ? "closed" : "new"; }
@@ -641,7 +867,7 @@
   function prioPill(p) { return el("span", { class: "prio " + p, text: p }); }
 
   function refreshBadge() {
-    const n = SCENARIOS.filter(isOpen).length;
+    const n = SCENARIOS.filter(isOpen).length + freeStore().list.filter(FT.isOpen).length;
     const item = document.getElementById("nav-tickets");
     if (!item) return;
     let badge = item.querySelector(".badge");
@@ -652,10 +878,10 @@
 
   /* ---------- v0.4: progress and knowledge, kept only in this browser (sd.activity, sd.kb, sd.mail, sd.mailRead, sd.badges, sd.goal) */
   const G = window.SDGrowth;
-  const GROWTH_KEYS = ["activity", "kb", "mail", "mailRead", "badges", "goal", "ships", "labs"];
+  const GROWTH_KEYS = ["activity", "kb", "mail", "mailRead", "badges", "goal", "ships", "labs", "mailbox", "free", "prefs", "remind", "side", "live", "room", "labbox", "level", "weekly", "shifts"];
   const activity = () => { const a = load("activity", []); return Array.isArray(a) ? a : []; };
   const mailAnswers = () => load("mail", {}) || {};
-  const unread = () => { const r = load("mailRead", []); return G.MAIL.filter((m) => !(Array.isArray(r) && r.includes(m.id))).length; };
+  const unread = () => { const r = load("mailRead", []); return MB.counts(mbox(), Array.isArray(r) ? r : []).unread; };
   function markRead(id) {
     const r = load("mailRead", []);
     const list = Array.isArray(r) ? r : [];
@@ -664,28 +890,134 @@
   // a day with something done: a ticket closed fixed or a mail exercise answered; then any badge it unlocks (returns the new ones)
   function logActivity(entry) {
     const a = activity();
-    a.push(Object.assign({ day: G.dayOf() }, entry));
+    a.push(Object.assign({ day: today() }, entry));
     save("activity", a.slice(-1000));
     return awardNow();
   }
+  // v0.9b: the weekly goals are credited first (their rewards and the goal-cycle badges), then every badge (growth.js + levels.js),
+  // then the level in the header (with its celebration)
   function awardNow() {
-    const f = G.facts({ activity: activity(), progress, desks: SCENARIOS.map((s) => s.id), kb: load("kb", {}), mail: mailAnswers(), today: G.dayOf() });
-    const r = G.award(load("badges", {}), f, G.dayOf());
+    const day = today();
+    const c = Lv.claim(load("weekly", null), Lv.weekAt(Date.now(), zone()), activity(), { day, levels: DESK_LEVELS() });
+    save("weekly", c.store);
+    if (c.fresh.length) { freshGoals = freshGoals.concat(c.fresh); celebrate("task"); }
+    const f = Lv.facts({ activity: activity(), progress, desks: SCENARIOS.map((s) => s.id), kb: load("kb", {}), mail: mailAnswers(), today: day,
+      weekly: c.store, shifts: shiftStore() });
+    const r = Lv.award(load("badges", {}), f, day);
     if (r.fresh.length) save("badges", r.awards);
+    setTimeout(refreshLevel, 0);
     return r.fresh;
   }
-  const badgeName = (id) => (G.badges({}, lang).find((b) => b.id === id) || {}).name || id;
+  const badgeName = (id) => (Lv.badges({}, lang).find((b) => b.id === id) || {}).name || id;
+
+  /* ---------- v0.9b: levels by points, weekly goals and the labs' full shift (levels.js). sd.level: the level last shown (so a level-up is
+     celebrated once); sd.weekly: the weekly goals credited; sd.shifts: the full shifts, in an envelope with the owner like persist.js's keys */
+  const Lv = window.SDLevels;
+  const DESK_LEVELS = () => Object.fromEntries(SCENARIOS.map((s) => [s.id, s.level]));
+  let freshGoals = [];   // goals credited since the last time they were shown
+  function shiftStore() {
+    const raw = load("shifts", null);
+    const d = raw && raw.v === PS.FORMAT && "u" in raw ? envOf(raw) : null;
+    return Lv.normaliseShifts(d, SCENARIOS.map((s) => s.id));
+  }
+  // a ticket of the shift closed earlier in this page starts again when the shift sends you to it
+  function freeShiftDesk(d) { if (d && live[d] && live[d].closed) delete live[d]; }
+  function setShifts(st) { if (user) save("shifts", packed(Lv.normaliseShifts(st, SCENARIOS.map((s) => s.id)))); }
+  function levelInput() {
+    return { desks: SCENARIOS.map((s) => s.id), progress, activity: activity(), labs: load("labs", {}), weekly: load("weekly", null), shifts: shiftStore() };
+  }
+  function levelNow() { const p = Lv.points(levelInput()); return Object.assign(Lv.level(p.total, lang), { parts: p }); }
+  function levelBar(l, id) {
+    return el("progress", { class: "goal-bar lvl-bar", id: id || null, max: String(l.span || 1), value: String(l.next ? l.into : 1), "aria-label": L().lvChip(l) });
+  }
+  function levelChip() {
+    const l = levelNow();
+    return el("a", { class: "lvl-chip", id: "lvl-chip", href: "#/profile", title: L().lvChip(l), "aria-label": L().lvChip(l) },
+      el("span", { class: "lvl-name" }, el("span", { class: "lvl-long", text: l.name }), el("span", { class: "lvl-short", text: l.short })),
+      el("span", { class: "lvl-pts mono", text: String(l.total) }), levelBar(l));
+  }
+  // the header chip follows every change; a level higher than the one last shown is celebrated once (sound and motion follow Preferences)
+  function refreshLevel() {
+    if (!user) return;
+    const chip = document.getElementById("lvl-chip");
+    if (chip) chip.replaceWith(levelChip());
+    const l = levelNow();
+    const r = Lv.levelUp(load("level", null), l.total);
+    save("level", r.seen);
+    if (r.up) levelUpCard(l);
+  }
+  function levelUpCard(l) {
+    const old = document.getElementById("lvl-up");
+    if (old) old.remove();
+    celebrate("level");
+    const box = el("div", { class: "lvl-up", id: "lvl-up", role: "status", "aria-live": "polite" },
+      el("span", { class: "lvl-up-ico", "aria-hidden": "true", text: "▲" }),
+      el("div", { class: "grow" }, el("b", { text: L().lvUpTitle }), el("p", { text: L().lvUpText(l.name) }), levelBar(l)),
+      el("button", { type: "button", class: "btn sm", id: "lvl-up-ok", text: L().lvUpOk, onclick: () => box.remove() }));
+    document.body.append(box);
+    setTimeout(() => { if (box.isConnected) box.remove(); }, 9000);
+  }
+  function goalToast() {
+    if (!freshGoals.length) return null;
+    const items = freshGoals.map((id) => { const g = Lv.goal(id); return el("p", { class: "badge-new goal-new" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "◔" }), el("span", { text: L().wgFresh(t(g.label, lang), g.points) })); });
+    freshGoals = [];
+    return items;
+  }
+
+  /* ---------- v0.9: the daily practice reminder: a banner at the chosen time (prefs.js decides), and a browser notification only if the
+     user turned it on and the browser allowed it. sd.remind: {lastShown, notified} (local days in the chosen zone). */
+  function practisedToday() { const d = today(); return activity().some((a) => a.day === d); }
+  function reminderState() { const r = load("remind", null); return r && typeof r === "object" ? r : {}; }
+  function dismissReminder() { save("remind", Object.assign(reminderState(), Pf.reminderShown(prefs(), Date.now()))); }
+  function maybeNotify() {
+    const p = prefs();
+    const st = reminderState();
+    if (!p.reminder.notify || st.notified === today() || !("Notification" in window) || Notification.permission !== "granted") return;
+    try { new Notification(L().notifTitle, { body: L().notifText, icon: "assets/icon.svg", tag: "sd-reminder" }); } catch (e) { /* ignore */ }
+    save("remind", Object.assign(st, { notified: today() }));
+  }
+  function reminderBanner() {
+    if (!user || !Pf.reminderDue(prefs(), Date.now(), reminderState(), practisedToday())) return null;
+    maybeNotify();
+    const box = el("aside", { class: "reminder", id: "reminder", role: "status", "aria-label": L().remTitle },
+      el("span", { class: "side-ico", "aria-hidden": "true", text: "⏰" }),
+      el("div", { class: "grow" }, el("b", { text: L().remTitle }), el("p", { text: L().remText })),
+      el("div", { class: "row" }, el("a", { class: "btn sm", href: "#/", id: "reminder-go", text: L().remGo, onclick: () => dismissReminder() }),
+        el("button", { type: "button", class: "btn ghost sm", id: "reminder-later", text: L().remLater, onclick: () => { dismissReminder(); box.remove(); } })));
+    return box;
+  }
+  // checked every 30 seconds while signed in, so the banner appears at the time even if the page stays open
+  setInterval(() => {
+    if (!user || document.getElementById("reminder")) return;
+    const v = document.querySelector(".shell .view");
+    const b = v && reminderBanner();
+    if (b) v.prepend(b);
+  }, 30000);
 
   /* ---------- the signed-in shell: sidebar + view */
   function shell(active) {
     const app = document.getElementById("app");
     app.replaceChildren();
-    const open = SCENARIOS.filter(isOpen).length;
+    const open = SCENARIOS.filter(isOpen).length + freeStore().list.filter(FT.isOpen).length;
     const unreadN = unread();
-    const item = (href, icon, text, key, extra) => el("a", { href, class: "side-item" + (active === key ? " on" : ""), id: "nav-" + key,
-      "aria-current": active === key ? "page" : null }, el("span", { class: "side-ico", "aria-hidden": "true", text: icon }), el("span", { text }), extra || null);
+    // v0.9: the sidebar folds to icons only (remembered in sd.side); the labels stay for screen readers and as tooltips
+    const mini = load("side", "open") === "mini";
+    const item = (href, icon, text, key, extra) => el("a", { href, class: "side-item" + (active === key ? " on" : ""), id: "nav-" + key, title: mini ? text : null,
+      "aria-current": active === key ? "page" : null }, el("span", { class: "side-ico", "aria-hidden": "true", text: icon }), el("span", { class: "side-txt", text }), extra || null);
+    const fold = el("button", { type: "button", class: "side-fold", id: "side-fold", "aria-controls": "side-nav", "aria-expanded": mini ? "false" : "true",
+      "aria-label": mini ? L().sideUnfold : L().sideFold, title: mini ? L().sideUnfold : L().sideFold, onclick: () => {
+        const now = load("side", "open") === "mini" ? "open" : "mini";
+        save("side", now);
+        const sh = document.querySelector(".shell");
+        if (sh) sh.classList.toggle("side-mini", now === "mini");
+        fold.setAttribute("aria-expanded", now === "mini" ? "false" : "true");
+        fold.setAttribute("aria-label", now === "mini" ? L().sideUnfold : L().sideFold);
+        fold.title = now === "mini" ? L().sideUnfold : L().sideFold;
+        fold.firstChild.textContent = now === "mini" ? "»" : "«";
+        document.querySelectorAll("#side-nav .side-item").forEach((n) => { const tx = n.querySelector(".side-txt"); if (now === "mini" && tx) n.title = tx.textContent; else n.removeAttribute("title"); });
+      } }, el("span", { "aria-hidden": "true", text: mini ? "»" : "«" }));
     const nav = el("nav", { class: "side", id: "side-nav", "aria-label": L().navLabel },
-      el("p", { class: "side-h", text: L().deskName }),
+      el("div", { class: "side-top" }, el("p", { class: "side-h", text: L().deskName }), fold),
       item("#/", "▤", L().navTickets, "tickets", open ? el("span", { class: "badge", text: String(open) }) : null),
       item("#/mail", "✉", L().navMail, "mail", unreadN ? el("span", { class: "badge", "aria-label": L().unreadN(unreadN), text: String(unreadN) }) : null),
       item("#/directory", "◫", L().navDirectory, "directory"),
@@ -697,15 +1029,17 @@
       item("#/labs", "⚗", L().navLabs, "labs"),
       item("#/progress", "★", L().navProgress, "progress"),
       item("#/profile", "◎", L().navProfile, "profile"),
-      el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer" },
-        el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { text: L().navGuides })),
-      el("a", { class: "side-item", href: "/help", id: "nav-side-help" },
-        el("span", { class: "side-ico", "aria-hidden": "true", text: "i" }), el("span", { text: L().navHelp })),
+      el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer", title: mini ? L().navGuides : null },
+        el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { class: "side-txt", text: L().navGuides })),
+      el("a", { class: "side-item", href: "/help", id: "nav-side-help", title: mini ? L().navHelp : null },
+        el("span", { class: "side-ico", "aria-hidden": "true", text: "i" }), el("span", { class: "side-txt", text: L().navHelp })),
       item("#/account", "●", L().navAccount, "account"),
-      el("button", { type: "button", class: "side-item side-tour", id: "nav-tour", onclick: () => tour(0) },
-        el("span", { class: "side-ico", "aria-hidden": "true", text: "?" }), el("span", { text: L().navTour })));
+      el("button", { type: "button", class: "side-item side-tour", id: "nav-tour", title: mini ? L().navTour : null, onclick: () => tour(0) },
+        el("span", { class: "side-ico", "aria-hidden": "true", text: "?" }), el("span", { class: "side-txt", text: L().navTour })));
     const view = el("section", { class: "view" });
-    app.append(el("div", { class: "shell" }, nav, view));
+    app.append(el("div", { class: "shell" + (mini ? " side-mini" : "") }, nav, view));
+    const rem = reminderBanner();
+    if (rem) view.append(rem);
     return view;
   }
 
@@ -716,13 +1050,19 @@
     const w = work();
     const open = SCENARIOS.filter(isOpen).sort((a, b) => (w[b.id] ? 1 : 0) - (w[a.id] ? 1 : 0) || a.ticket.priority.localeCompare(b.ticket.priority));
     const closed = SCENARIOS.filter((s) => progress[s.id] && !w[s.id]);
-    const tabs = el("div", { class: "qtabs", role: "tablist" }, [["open", L().tabOpen, open.length], ["closed", L().tabClosed, closed.length]].map(([k, text, n]) =>
+    // v0.9: free tickets (freetix.js): the user's own practice tickets, marked and never graded
+    const frees = freeStore().list;
+    const freeOpen = frees.filter(FT.isOpen).sort((a, b) => a.priority.localeCompare(b.priority));
+    const freeClosed = frees.filter((x) => !FT.isOpen(x)).sort((a, b) => b.closed.at - a.closed.at);
+    const person = (sam) => { const u = Wd.user(world, sam); return u ? u.name : sam; };
+    const freeTag = () => el("span", { class: "pill free-pill", text: L().ftFree });
+    const tabs = el("div", { class: "qtabs", role: "tablist" }, [["open", L().tabOpen, open.length + freeOpen.length], ["closed", L().tabClosed, closed.length + freeClosed.length]].map(([k, text, n]) =>
       el("button", { type: "button", role: "tab", class: "qtab" + (queueTab === k ? " on" : ""), "aria-selected": queueTab === k ? "true" : "false",
         onclick: () => { queueTab = k; queue(); } }, text + " ", el("span", { class: "count", text: String(n) }))));
     const th = (text, id) => el("th", { scope: "col", id: id || null, text });
     let table;
     if (queueTab === "open") {
-      table = open.length ? el("table", { class: "qtable", id: "tour-queue" },
+      table = open.length || freeOpen.length ? el("table", { class: "qtable", id: open.length ? "tour-queue" : null },
         el("thead", {}, el("tr", {}, th(L().colTicket), th(L().colSubject), th(L().colRequester), th(L().colPriority), th("SLA", "tour-sla"), th(L().colStatus), th(L().colAssignee))),
         el("tbody", {}, open.map((sc, i) => {
           const st = statusOf(sc);
@@ -737,9 +1077,22 @@
             el("td", { "data-label": L().colStatus }, pill(st, L().status[st])),
             el("td", { "data-label": L().colAssignee }, mine(sc.id) && user ? el("span", { class: "assignee" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
               : el("span", { class: "muted", text: L().unassigned })));
-        }))) : el("p", { class: "empty", text: L().emptyOpen });
+        }).concat(freeOpen.map((tk) => {
+          const st = FT.status(tk);
+          const sla = slaOf(tk.rec, FT.sla(tk), false);
+          return el("tr", { class: (["progress"].includes(st) ? "active free-row" : W.isPending(st) ? "active paused free-row" : "free-row"), "data-free": tk.id },
+            el("td", { class: "mono", "data-label": L().colTicket, text: tk.id }),
+            el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/free/" + tk.id, text: tk.subject }),
+              el("span", { class: "sub" }, freeTag(), " " + FT.t((FT.CATEGORIES.find((c) => c.id === tk.category) || {}).name, lang))),
+            el("td", { "data-label": L().colRequester, text: person(tk.requester) }),
+            el("td", { "data-label": L().colPriority }, prioPill(tk.priority)),
+            el("td", { "data-label": "SLA" }, el("span", { class: "sla " + sla.tone, "data-free-sla": tk.id, text: sla.text })),
+            el("td", { "data-label": L().colStatus }, pill(st, L().status[st])),
+            el("td", { "data-label": L().colAssignee }, tk.rec && st !== "new" && user ? el("span", { class: "assignee" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
+              : el("span", { class: "muted", text: L().unassigned })));
+        })))) : el("p", { class: "empty", text: L().emptyOpen });
     } else {
-      table = closed.length ? el("table", { class: "qtable" },
+      table = closed.length || freeClosed.length ? el("table", { class: "qtable" },
         el("thead", {}, el("tr", {}, th(L().colTicket), th(L().colSubject), th(L().colResult), th(L().colPoints), th(L().colDate), th(""))),
         el("tbody", {}, closed.map((sc) => {
           const p = progress[sc.id];
@@ -750,18 +1103,143 @@
             el("td", { "data-label": L().colResult }, pill(lvl, L().lvl[lvl])),
             el("td", { "data-label": L().colPoints }, stars(p.stars), " ", el("span", { text: String(p.points) })),
             el("td", { "data-label": L().colDate, text: p.date || "" }),
-            el("td", {}, el("a", { class: "btn ghost sm", href: "#/desk/" + sc.id, text: L().replay, onclick: () => { delete live[sc.id]; } })));
-        }))) : el("p", { class: "empty", text: L().emptyClosed });
+            el("td", {}, el("a", { class: "btn ghost sm", href: "#/desk/" + sc.id, text: L().replay, onclick: () => { dropLive(sc.id); } })));
+        }).concat(freeClosed.map((tk) => el("tr", { class: "free-row", "data-free": tk.id },
+          el("td", { class: "mono", "data-label": L().colTicket, text: tk.id }),
+          el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/free/" + tk.id, class: "strong", text: tk.subject }), el("span", { class: "sub" }, freeTag())),
+          el("td", { "data-label": L().colResult }, pill("closed", L().status.closed)),
+          el("td", { "data-label": L().colPoints }, el("span", { class: "muted", title: L().ftFreeLong, text: L().ftNoScore })),
+          el("td", { "data-label": L().colDate, text: Pf.dayIn(tk.closed.at, zone()) }),
+          el("td", {}, el("a", { class: "btn ghost sm", href: "#/free/" + tk.id, text: L().ftOpen }))))))) : el("p", { class: "empty", text: L().emptyClosed });
     }
     view.append(
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().qTitle }), el("p", { class: "sub", text: user ? L().hello(user.name) : "" })),
-        el("p", { class: "shift" }, el("span", { class: "dot", "aria-hidden": "true" }), L().shift)),
+        el("div", { class: "q-head-r" }, el("p", { class: "shift" }, el("span", { class: "dot", "aria-hidden": "true" }), L().shift),
+          el("a", { class: "btn sm", href: "#/free/new", id: "free-new", text: "＋ " + L().ftNew }))),
       tabs, el("div", { class: "qwrap" }, table));
     // v0.8: the guided first ticket for a new technician; "what's new" once for one who already took the tour
     if (queueTab === "open" && tourAt == null) setTimeout(() => {
       if (!document.getElementById("tour-queue") || document.querySelector(".tour")) return;
       if (!load("tourDone", false)) tour(0); else if (load("whatsNew", "") !== WHATS_NEW) whatsNew();
     }, 400);
+  }
+
+  /* ---------- v0.9: free tickets (#/free/new, #/free/<id>): logged by the user, with an SLA, states, notes and a closure, never graded */
+  let freeCache = null;
+  function freeStore() { if (!freeCache) freeCache = FT.normalise(load("free", null)); return freeCache; }
+  function setFree(st) { freeCache = FT.normalise(st); save("free", freeCache); }
+  const requesters = () => world.users.filter((u) => !/^(svc-|it\.admin$)/.test(u.sam));
+  let freeUi = { pendOpen: false };
+  function freeNew() {
+    const view = shell("tickets");
+    document.title = L().ftNewTitle + " · SysAdmin Desks";
+    const field = (label, ctl, idf) => el("label", { class: "field", for: idf }, el("span", { class: "field-label", text: label }), ctl);
+    const subject = el("input", { type: "text", id: "ft-subject", maxlength: String(FT.LIMITS.subject), autocomplete: "off" });
+    const reqSel = el("select", { id: "ft-requester" }, el("option", { value: "", text: L().ftPick }),
+      requesters().map((u) => el("option", { value: u.sam, text: `${u.name} · ${Wd.t(u.title, lang)} (${u.sam})` })));
+    const prio = el("select", { id: "ft-priority" }, FT.PRIORITIES.map((p) => el("option", { value: p, selected: p === "P3", text: `${p} · SLA ${FT.SLA[p]} min` })));
+    const cat = el("select", { id: "ft-category" }, el("option", { value: "", text: L().ftPick }), FT.CATEGORIES.map((c) => el("option", { value: c.id, text: FT.t(c.name, lang) })));
+    const desc = el("textarea", { id: "ft-desc", rows: "5", maxlength: String(FT.LIMITS.desc) });
+    const msg = el("p", { class: "form-msg", role: "alert", id: "ft-msg" });
+    view.append(el("p", { class: "kb-back" }, el("a", { href: "#/", text: L().back })),
+      el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().ftNewTitle }), el("p", { class: "sub", text: L().ftNewSub }))),
+      el("section", { class: "panel note free-form" },
+        field(L().ftSubject, subject, "ft-subject"), field(L().ftRequester, reqSel, "ft-requester"),
+        el("div", { class: "free-2" }, field(L().ftPriority, prio, "ft-priority"), field(L().ftCategory, cat, "ft-category")),
+        field(L().ftDesc, desc, "ft-desc"), msg,
+        el("div", { class: "row" }, el("button", { type: "button", class: "btn", id: "ft-create", text: L().ftCreate, onclick: () => {
+          const r = FT.create(freeStore(), { subject: subject.value, requester: reqSel.value, priority: prio.value, category: cat.value, description: desc.value }, requesters(), Date.now());
+          if (!r.ok) { msg.textContent = r.errors.map((e) => L().ftErr[e]).join(" "); return; }
+          setFree(r.store); location.hash = "#/free/" + r.ticket.id;
+        } }), el("a", { class: "btn ghost", href: "#/", text: L().ftCancel }))));
+    subject.focus();
+  }
+  function freePage(fid) {
+    const view = shell("tickets");
+    const tk = FT.find(freeStore(), fid);
+    if (!tk) { view.append(el("p", { text: L().notFound }), el("a", { class: "btn", href: "#/", text: L().home })); return; }
+    document.title = tk.id + " · " + tk.subject + " · SysAdmin Desks";
+    const u = Wd.user(world, tk.requester);
+    const st = FT.status(tk);
+    const r = tk.rec;
+    const sla = slaOf(r, FT.sla(tk), true);
+    const commit = (res, keepOpen) => { if (!res.ok) return res; setFree(res.store); freeUi.pendOpen = Boolean(keepOpen); freePage(fid); refreshBadge(); return res; };
+    const who = user ? el("span", { class: "assignee" }, el("span", { class: "muted", text: L().assignedTo + " " }), avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name })) : null;
+    let buttons;
+    if (tk.closed) buttons = [who];
+    else if (st === "progress") buttons = [who,
+      el("button", { type: "button", class: "btn ghost sm", id: "ft-pend", "aria-expanded": freeUi.pendOpen ? "true" : "false", text: L().pendBtn, onclick: () => { freeUi.pendOpen = !freeUi.pendOpen; freePage(fid); } }),
+      el("button", { type: "button", class: "btn ghost sm", id: "ft-unassign", text: L().unassignBtn, onclick: () => commit(FT.move(freeStore(), fid, "new", { now: Date.now() })) })];
+    else if (W.isPending(st)) buttons = [who, el("button", { type: "button", class: "btn sm", id: "ft-resume", text: L().resumeBtn, onclick: () => commit(FT.move(freeStore(), fid, "progress", { now: Date.now() })) })];
+    else buttons = [el("button", { type: "button", class: "btn", id: "ft-assign", text: L().assign, onclick: () => commit(FT.assign(freeStore(), fid, Date.now())) })];
+    const head = el("div", { class: "tbar" }, el("span", { class: "mono strong", text: tk.id }), prioPill(tk.priority), pill(st, L().status[st]), el("span", { class: "pill free-pill", text: L().ftFreeLong }),
+      tk.closed ? null : el("span", { class: "sla-wrap" }, el("span", { class: "muted", text: "SLA " }), el("span", { class: "sla " + sla.tone, "data-free-sla": tk.id, "data-long": "", text: sla.text }), " ", slaDueEl(tk.id, r, FT.sla(tk))),
+      el("span", { class: "grow" }), el("span", { class: "wf-btns" }, buttons));
+    // pending: state and reason, like a desk
+    let pend = null;
+    if (freeUi.pendOpen && st === "progress") {
+      const state = el("select", { id: "ft-pend-state", "aria-label": L().pendState }, W.PENDING.map((k) => el("option", { value: k, text: L().status[k] })));
+      const ta = el("textarea", { id: "ft-pend-reason", maxlength: String(W.REASON_MAX), placeholder: L().pendPh });
+      const m = el("p", { class: "form-msg", role: "alert" });
+      pend = el("section", { class: "panel note wf-pend" }, el("h2", { text: L().pendTitle }), el("p", { text: L().pendText }),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().pendState }), state),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().pendReason }), ta), m,
+        el("div", { class: "row" }, el("button", { type: "button", class: "btn", id: "ft-pend-ok", text: L().pendOk, onclick: () => {
+          const res = commit(FT.move(freeStore(), fid, state.value, { now: Date.now(), reason: ta.value }), true);
+          if (!res.ok) m.textContent = res.error === "reason" ? L().pendNeedReason(W.REASON_MIN) : L().errors.bad_request;
+          else { freeUi.pendOpen = false; freePage(fid); }
+        } }), el("button", { type: "button", class: "btn ghost", text: L().accCancel, onclick: () => { freeUi.pendOpen = false; freePage(fid); } })));
+    }
+    // notes
+    const notes = el("section", { class: "panel ft-notes", id: "ft-notes" }, el("h2", { text: L().ftNotes }),
+      tk.notes.length ? el("ol", { class: "tl" }, tk.notes.slice().reverse().map((n) => el("li", {}, el("p", { class: "tl-head" }, el("time", { datetime: new Date(n.at).toISOString(), text: clock(n.at) })), el("p", { class: "tl-reason", text: n.text }))))
+        : el("p", { class: "sub", text: L().ftNoNotes }));
+    if (!tk.closed && r && st !== "new") {
+      const ta = el("textarea", { id: "ft-note", rows: "3", maxlength: String(FT.LIMITS.note), placeholder: L().ftNotePh, "aria-label": L().ftNotes });
+      const m = el("p", { class: "form-msg", role: "alert" });
+      notes.append(ta, m, el("div", { class: "row" }, el("button", { type: "button", class: "btn ghost sm", id: "ft-add-note", text: L().ftAddNote, onclick: () => {
+        const res = FT.addNote(freeStore(), fid, ta.value, Date.now());
+        if (!res.ok) { m.textContent = L().ftNoteShort; return; }
+        commit(res);
+      } })));
+    }
+    // closing (in progress only) or the closed summary
+    let closeBox = null;
+    if (tk.closed) {
+      closeBox = el("section", { class: "panel result lvl-resolved", id: "ft-result" }, el("p", { class: "lvl" }, pill("closed", L().status.closed), " ", el("span", { class: "pill free-pill", text: L().ftFreeLong })),
+        el("p", { text: L().ftClosed(Math.ceil(tk.closed.minutes), FT.sla(tk)) }),
+        el("p", {}, el("b", { text: FT.t((FT.CODES.find((c) => c.id === tk.closed.code) || {}).name, lang) + ": " }), tk.closed.note),
+        el("div", { class: "row" }, el("a", { class: "btn ghost", href: "#/", text: L().queueBtn }),
+          el("button", { type: "button", class: "link-btn", id: "ft-delete", text: L().ftDelete, onclick: () => { setFree(FT.remove(freeStore(), fid)); location.hash = "#/"; } })));
+    } else if (st === "progress") {
+      const code = el("select", { id: "ft-code", "aria-label": L().ftCode }, el("option", { value: "", text: L().resPick }), FT.CODES.map((c) => el("option", { value: c.id, text: FT.t(c.name, lang) })));
+      const ta = el("textarea", { id: "ft-close-note", rows: "4", maxlength: String(FT.LIMITS.note), "aria-label": L().ftCloseNote });
+      const m = el("p", { class: "form-msg", role: "alert" });
+      closeBox = el("section", { class: "panel note", id: "ft-close" }, el("h2", { text: L().ftClose }), el("p", { text: L().ftCloseText }),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().ftCode }), code),
+        el("label", { class: "field" }, el("span", { class: "field-label", text: L().ftCloseNote }), ta), m,
+        el("div", { class: "row" }, el("button", { type: "button", class: "btn", id: "ft-close-btn", text: L().ftCloseBtn, onclick: () => {
+          const res = FT.close(freeStore(), fid, { code: code.value, note: ta.value }, Date.now());
+          if (!res.ok) { m.textContent = L().ftCloseErr[res.error] || L().errors.bad_request; return; }
+          commit(res);
+        } })));
+    } else if (W.isPending(st)) closeBox = el("section", { class: "panel note" }, el("h2", { text: L().ftClose }), el("p", { class: "wf-hold", text: L().resolvePending }));
+    const items = r ? r.timeline : [];
+    const timeline = el("section", { class: "panel timeline", id: "ft-timeline" }, el("h2", { text: L().tlTitle }),
+      items.length ? el("ol", { class: "tl" }, items.slice().reverse().map((x) => el("li", { class: "tl-" + x.to },
+        el("p", { class: "tl-head" }, el("time", { datetime: new Date(x.at).toISOString(), text: clock(x.at) }), el("span", { text: `${L().status[x.from] || x.from} → ${L().status[x.to] || x.to}` })),
+        x.reason ? el("p", { class: "tl-reason", text: x.reason }) : null))) : el("p", { class: "sub", text: L().tlEmpty }));
+    view.append(el("div", { class: "desk-bar" }, el("a", { href: "#/", text: L().back }), el("h1", { text: tk.subject })), head,
+      el("div", { class: "desk" },
+        el("aside", {},
+          el("section", { class: "panel" }, el("h2", { text: L().ftDescT }), el("p", { class: "ticket-body", text: tk.description }),
+            el("p", { class: "sub", text: FT.t((FT.CATEGORIES.find((c) => c.id === tk.category) || {}).name, lang) })),
+          el("section", { class: "panel" }, el("h2", { text: L().requester }),
+            u ? el("p", { class: "req-name" }, el("span", { class: "initials", "aria-hidden": "true", text: u.name.split(" ").map((x) => x[0]).join("").slice(0, 2) }),
+              el("span", {}, el("b", { text: u.name }), el("span", { class: "sub", text: Wd.t(u.title, lang) + " · " + u.dept }))) : el("p", { text: tk.requester }),
+            u ? el("dl", { class: "fields" }, el("dt", { text: L().fUser }), el("dd", { class: "mono", text: u.sam }), el("dt", { text: L().fDevice }), el("dd", { class: "mono", text: u.device || "–" })) : null),
+          timeline),
+        el("div", {}, pend, notes, closeBox)));
   }
 
   /* ---------- ticket page */
@@ -789,9 +1267,24 @@
       lv.view = v;
       term.hidden = v !== "console";
       pc.hidden = v !== "desk";
+      if (v !== "desk") deskFull(false);
       renderTabs();
       if (v === "desk") renderDesk(); else if (working() && !lv.closed) input.focus();
+      persistLive(id);
     }
+    /* v0.9: full screen for the desk (Fullscreen API on the desk box; where it is not available, the box fills the window) */
+    const isFull = () => document.fullscreenElement === termBox || termBox.classList.contains("pc-max");
+    function deskFull(on) {
+      if (on) {
+        if (termBox.requestFullscreen && document.fullscreenEnabled) termBox.requestFullscreen().then(() => renderDesk()).catch(() => { termBox.classList.add("pc-max"); renderDesk(); });
+        else { termBox.classList.add("pc-max"); renderDesk(); }
+      } else {
+        termBox.classList.remove("pc-max");
+        if (document.fullscreenElement === termBox && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      }
+    }
+    fsHandler = () => { if (!document.fullscreenElement) termBox.classList.remove("pc-max"); renderDesk(); };
+    function leaveDesk() { deskFull(false); setView("console"); const tb = tabsBox.querySelector(".qtab"); if (tb) tb.focus(); }
     function renderTabs() {
       if (!hasDesk) return;
       const tab = (k, text) => el("button", { type: "button", role: "tab", class: "qtab" + ((lv.view || "console") === k ? " on" : ""), "aria-selected": (lv.view || "console") === k ? "true" : "false",
@@ -803,6 +1296,7 @@
     }
     function openApp(id) {
       if (!working() || lv.closed) return;
+      lv.wins = (lv.wins || []).filter((x) => x !== id).concat(id);   // v0.9: the taskbar's open windows
       lv.app = id;
       lv.deskMsg = null;
       const r = id === "log" ? null : E.deskOpen(sess, id);
@@ -850,16 +1344,34 @@
             app.look ? el("p", { class: "pc-eq" }, el("span", { text: L().equivalent + " " }), el("code", { text: app.look })) : null);
         }
         win = el("div", { class: "pc-win", role: "dialog", "aria-label": title },
-          el("div", { class: "pc-title" }, el("span", { text: title }), el("button", { type: "button", class: "pc-x", "aria-label": L().accCancel, text: "×", onclick: () => { lv.app = null; renderDesk(); } })),
+          el("div", { class: "pc-title" }, el("span", { text: title }), el("span", { class: "pc-title-btns" },
+            el("button", { type: "button", class: "pc-x pc-min", "aria-label": L().pcMin, title: L().pcMin, text: "–", onclick: () => { lv.app = null; renderDesk(); persistLive(id); } }),
+            el("button", { type: "button", class: "pc-x", "aria-label": L().accCancel, title: L().accCancel, text: "×", onclick: () => {
+              lv.wins = (lv.wins || []).filter((x) => x !== (app === "log" ? "log" : app.id)); lv.app = lv.wins[lv.wins.length - 1] || null; renderDesk(); persistLive(id); } }))),
           el("div", { class: "pc-body" }, body));
       }
+      // v0.9: the taskbar: the open windows (the active one pressed), full screen, leaving the desk and a clock in the chosen time zone
+      const winTitle = (w) => (w === "log" ? L().evTitle : (d.apps.find((a) => a.id === w) || {}).title || w);
+      lv.wins = (lv.wins || []).filter((w) => w === "log" || d.apps.some((a) => a.id === w));
+      if (app && !lv.wins.includes(app === "log" ? "log" : app.id)) lv.wins.push(app === "log" ? "log" : app.id);
+      const activeId = app ? (app === "log" ? "log" : app.id) : null;
+      const full = isFull();
       pc.replaceChildren(el("div", { class: "pc-screen" }, icons, win),
-        el("div", { class: "pc-bar" }, el("span", { class: "pc-brand", text: ">_ " + d.host }), app ? el("span", { class: "pc-task", text: app === "log" ? L().evTitle : app.title }) : null,
-          el("span", { class: "grow" }), el("span", { text: sc.machine.domain + "\\" + sc.machine.user }), el("span", { class: "pc-clock", text: "09:41" })));
+        el("div", { class: "pc-bar", role: "toolbar", "aria-label": L().pcWindows },
+          el("span", { class: "pc-brand", text: ">_ " + d.host }),
+          el("span", { class: "pc-tasks", role: "group", "aria-label": L().pcWindows }, lv.wins.map((w) => el("button", { type: "button", class: "pc-task" + (w === activeId ? " on" : ""),
+            "aria-pressed": w === activeId ? "true" : "false", title: w === activeId ? L().pcMin : L().pcRestore(winTitle(w)), "data-win": w,
+            onclick: () => { lv.app = w === activeId ? null : w; lv.deskMsg = null; renderDesk(); persistLive(id); } }, winTitle(w)))),
+          el("span", { class: "pc-user", text: sc.machine.domain + "\\" + sc.machine.user }),
+          el("button", { type: "button", class: "pc-bar-btn", id: "pc-full", "aria-pressed": full ? "true" : "false", onclick: () => deskFull(!isFull()) },
+            el("span", { "aria-hidden": "true", text: full ? "⤡ " : "⤢ " }), full ? L().pcFullExit : L().pcFull),
+          el("button", { type: "button", class: "pc-bar-btn", id: "pc-leave", onclick: leaveDesk }, el("span", { "aria-hidden": "true", text: "⏻ " }), L().pcLeave),
+          el("span", { class: "pc-clock", "data-clock": "", title: L().pcClock(zone()), text: clock() })));
     }
     const stagesList = el("ul", { class: "stages" });
     const assetBox = el("div");
     const headBox = el("div", { class: "tbar" });
+    const shiftBox = el("div", { class: "shift-strip", id: "shift-strip", role: "status", hidden: true });
     const resolveBox = el("div");
     const resultBox = el("div");
     const pendBox = el("div");
@@ -887,6 +1399,19 @@
         actions.length && working() && !lv.closed ? el("div", { class: "acts" }, el("p", { class: "acts-h", text: L().actionsT }),
           actions.map((a) => el("button", { type: "button", class: "btn ghost sm", text: a.label, onclick: () => gui(a.id, a.label) }))) : null));
     }
+    // v0.9b: the full shift's strip when this ticket is part of the running shift
+    function renderShift() {
+      const a = shiftStore().active;
+      if (!a || !a.desks.includes(sc.id)) { shiftBox.replaceChildren(); shiftBox.hidden = true; return; }
+      const k = a.desks.indexOf(sc.id);
+      const isNext = k === a.results.length;
+      shiftBox.hidden = false;
+      put(shiftBox, el("span", { class: "side-ico", "aria-hidden": "true", text: "⏱" }),
+        el("b", { text: L().shStrip(labTitle(a.lab), k + 1, a.desks.length) }),
+        el("span", { class: "muted", text: " · " + L().shTimer + " " }), el("span", { class: "mono", "data-shift-timer": "", text: mmssMs(Lv.elapsed(a, Date.now())) }),
+        k < a.results.length ? pill("resolved", L().shState.done) : isNext ? null : el("span", { class: "sub", text: " · " + L().shOther }),
+        el("span", { class: "grow" }), el("a", { class: "link", href: "#/labs/" + a.lab, text: L().shTitle }));
+    }
     function renderHead() {
       const st = lv.closed ? "closed" : statusOf(sc);
       const sla = slaInfo(sc, true);
@@ -903,7 +1428,7 @@
       headBox.replaceChildren(...[
         el("span", { class: "mono strong", text: sc.ticket.id }), prioPill(sc.ticket.priority), pill(st, L().status[st]),
         lv.closed ? null : el("span", { class: "sla-wrap" }, el("span", { class: "muted", text: "SLA " }),
-          el("span", { class: "sla " + sla.tone, "data-sla": sc.id, "data-long": "", text: sla.text })),
+          el("span", { class: "sla " + sla.tone, "data-sla": sc.id, "data-long": "", text: sla.text }), " ", slaDueEl(sc.id, r, E.sla(sc))),
         el("span", { class: "grow" }), el("span", { class: "wf-btns" }, buttons)].filter(Boolean));
     }
     function lockConsole() {
@@ -962,7 +1487,7 @@
       put(contactBox,
         el("button", { type: "button", class: "btn ghost sm contact-btn", id: "contact-btn", disabled: can.ok ? null : true,
           "aria-expanded": lv.chatOpen && can.ok ? "true" : "false", "aria-controls": "chat-box", "aria-describedby": can.ok ? null : "contact-why",
-          onclick: () => { lv.chatOpen = !lv.chatOpen; renderContact(); if (lv.chatOpen) chatBox.scrollIntoView({ behavior: "smooth", block: "nearest" }); } },
+          onclick: () => { lv.chatOpen = !lv.chatOpen; renderContact(); if (lv.chatOpen) chatBox.scrollIntoView({ behavior: motion(), block: "nearest" }); } },
           el("span", { "aria-hidden": "true", text: "✆ " }), L().cContact),
         can.ok ? null : el("p", { class: "fine contact-why", id: "contact-why", text: L().cOff[can.reason] || "" }),
         (sc.contact || {}).who ? el("p", { class: "fine", text: L().cVia(person.name, person.team) }) : null);
@@ -1004,7 +1529,7 @@
       setWork(id, res.rec);
       renderContact(); renderTimeline(); tick();
       const log = chatBox.querySelector(".chat-log");
-      if (log && log.lastElementChild) log.lastElementChild.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      if (log && log.lastElementChild) log.lastElementChild.scrollIntoView({ behavior: motion(), block: "nearest" });
     }
     function assign() {
       setWork(id, W.assign(work()[id], Date.now()));
@@ -1045,7 +1570,7 @@
     function renderTimeline() {
       const r = rec(id);
       const items = lv.closed && lv.timeline ? lv.timeline : r ? r.timeline : [];
-      const time = (ts) => { const d = new Date(ts); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+      const time = (ts) => clock(ts);
       timelineBox.replaceChildren(el("section", { class: "panel timeline", id: "wf-timeline" }, el("h2", { text: L().tlTitle }),
         items.length ? el("ol", { class: "tl" }, items.slice().reverse().map((x) => x.ship
           // v0.7b: a step of one of the ticket's shipments, with what it cost the SLA
@@ -1064,13 +1589,17 @@
           : el("p", { class: "sub", text: L().tlEmpty })));
     }
     function after(r) {
+      after0(r);
+      persistLive(id);
+    }
+    function after0(r) {
       if (r.clear) { out.replaceChildren(); lv.log = []; }
       if (r.ticket) ticketLines();
       r.lines.forEach((l) => print(l.text, l.kind));
       psSpan.textContent = E.prompt(sess);
       renderStages(); renderAsset(); renderDesk(); renderShips();
       if (lv.chatOpen) renderChat();   // the confirmation question appears once a fix is in
-      if (r.resolvedNow) { print(L().readyMsg, "ok"); const ta = resolveBox.querySelector("textarea"); if (ta) ta.scrollIntoView({ behavior: "smooth", block: "center" }); }
+      if (r.resolvedNow) { print(L().readyMsg, "ok"); const ta = resolveBox.querySelector("textarea"); if (ta) ta.scrollIntoView({ behavior: motion(), block: "center" }); }
       term.scrollTop = term.scrollHeight;
     }
     function ticketLines() {
@@ -1121,7 +1650,7 @@
           el("ul", { class: "unote-rules" }, C.describe(chk, lang).map((rl) => el("li", { class: rl.ok ? "ok" : "no" },
             el("span", { "aria-hidden": "true", text: rl.ok ? "✓ " : "✗ " }), rl.label, rl.problems.length ? el("span", { class: "sub", text: " · " + rl.problems.join(" · ") }) : null))));
       };
-      const keep = () => { lv.draft = { note: ta.value, code: code.value, userNote: ua.value }; };
+      const keep = () => { lv.draft = { note: ta.value, code: code.value, userNote: ua.value }; clearTimeout(lv.saveT); lv.saveT = setTimeout(() => persistLive(id), 500); };
       ta.addEventListener("input", keep); code.addEventListener("change", keep);
       ua.addEventListener("input", () => { keep(); updLive(); });
       const insert = (tid) => {
@@ -1166,25 +1695,43 @@
         lv.timeline = fin.ok ? fin.rec.timeline : rec(id).timeline;
         const prev = progress[sc.id];
         if (!prev || v.points >= prev.points) {
-          progress[sc.id] = { points: v.points, stars: v.stars, date: new Date().toISOString().slice(0, 10), level: v.level };
+          progress[sc.id] = { points: v.points, stars: v.stars, date: today(), level: v.level };
           save("progress", progress);
         }
         api("/api/progress", "PUT", { results: { [sc.id]: { points: v.points, stars: v.stars } } });
         // v0.4: a complete note becomes (a new version of) the knowledge base article, and the close counts for the streak and the badges
         if (G.qualifies(v.level, note)) {
-          const k = G.saveArticle(load("kb", {}), { deskId: sc.id, ticketId: sc.ticket.id, note: text, code: codeId, points: v.points, lang, day: G.dayOf() });
+          const k = G.saveArticle(load("kb", {}), { deskId: sc.id, ticketId: sc.ticket.id, note: text, code: codeId, points: v.points, lang, day: today() });
           if (k.changed) save("kb", k.kb);
           lv.result.kb = { saved: k.changed, version: k.entry.version };
         }
+        // v0.9b: the full shift counts this close if it is the shift's next ticket (before the badges, so a finished shift earns its badge now)
+        const sh = Lv.record(shiftStore(), { id: sc.id, level: v.level, points: v.points, hints: sess.hints, at: now }, today());
+        if (sh.counted) {
+          setShifts(sh.store);
+          const n = sh.entry ? sh.entry.results.length : sh.store.active.desks.length;
+          lv.result.shift = { lab: sh.entry ? sh.entry.lab : sh.store.active.lab, k: sh.entry ? n : sh.store.active.results.length, n, finished: sh.finished, firstTime: sh.firstTime,
+            next: sh.finished ? null : Lv.current(sh.store) };
+        }
+        freshGoals = [];
         lv.result.fresh = logActivity({ type: "ticket", id: sc.id, level: v.level, points: v.points, hints: sess.hints, slaOk: v.slaOk, codeOk: v.codeOk,
-          code: codeId, noteComplete: note.missing.length === 0 && note.words >= 15,
+          code: codeId, noteComplete: note.missing.length === 0 && note.words >= 15, failed: sess.failedCloses,
           userNote: comms.userNote, useful: cSum.useful, bad: cSum.bad, asked: cSum.asked, bonus: comms.bonus });
+        lv.result.goals = freshGoals.slice();
+        freshGoals = [];
         setWork(id, null);
         lv.draft = null;
+        persistLive(id);   // v0.9: a closed ticket forgets its saved console
         refreshBadge();
+        celebrate(lv.result.fresh && lv.result.fresh.length ? "badge" : "resolved");
+      } else {
+        // v0.9b: a false closure (closed before it was fixed) is counted apart; it is not a day of practice for the streak
+        logActivity({ type: "attempt", id: sc.id, failed: sess.failedCloses });
+        persistLive(id);
       }
+      renderShift();
       renderHead(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderContact(); showResult();
-      resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultBox.scrollIntoView({ behavior: motion(), block: "start" });
     }
 
     function showResult() {
@@ -1198,7 +1745,7 @@
           list(L().whyT, v.reasons, "missing"),
           el("details", {}, el("summary", { text: L().solution }), el("div", { class: "solution", text: sc.solution.join("\n") })),
           el("div", { class: "row" }, el("button", { type: "button", class: "btn", text: L().keepWorking, onclick: () => {
-            lv.result = null; showResult(); input.focus(); term.scrollIntoView({ behavior: "smooth", block: "start" });
+            lv.result = null; showResult(); input.focus(); term.scrollIntoView({ behavior: motion(), block: "start" });
           } }), el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }))));
         return;
       }
@@ -1215,6 +1762,11 @@
           el("span", { text: (lv.result.kb.saved ? L().kbSaved(lv.result.kb.version) : L().kbSame) + " " }), el("a", { href: "#/kb/" + sc.id, text: L().kbOpenArticle }))
           : el("p", { class: "kb-saved muted", text: L().kbNotSaved }),
         (lv.result.fresh || []).map((b) => el("p", { class: "badge-new" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "★" }), el("span", { text: L().newBadge(badgeName(b)) }))),
+        (lv.result.goals || []).map((gid) => { const g = Lv.goal(gid); return g ? el("p", { class: "badge-new goal-new" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "◔" }), el("span", { text: L().wgFresh(t(g.label, lang), g.points) })) : null; }),
+        lv.result.shift ? el("p", { class: "badge-new shift-new", id: "shift-result" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "⏱" }),
+          el("span", { text: (lv.result.shift.finished ? L().shFinished + " " : L().shCounted(lv.result.shift.k, lv.result.shift.n) + " ") }),
+          lv.result.shift.finished ? el("a", { href: "#/labs/" + lv.result.shift.lab, id: "shift-summary-link", text: L().shSeeSummary })
+            : el("a", { href: "#/desk/" + lv.result.shift.next, id: "shift-next-link", onclick: () => freeShiftDesk(lv.result.shift.next), text: L().shGo })) : null,
         el("details", {}, el("summary", { text: L().sample }), el("blockquote", { text: t(sc.sampleNote, lang) })),
         el("details", {}, el("summary", { text: L().solution }), el("div", { class: "solution", text: sc.solution.join("\n") })),
         el("div", { class: "row" }, nextSc ? el("a", { class: "btn", href: "#/desk/" + nextSc.id, text: L().next }) : null,
@@ -1247,7 +1799,7 @@
     const r = c.requester;
     view.append(
       el("div", { class: "desk-bar" }, el("a", { href: "#/", text: L().back }), el("h1", { text: t(sc.title, lang) })),
-      headBox,
+      headBox, shiftBox,
       el("div", { class: "desk" },
         el("aside", {},
           el("section", { class: "panel" }, el("h2", { text: L().ticket }),
@@ -1266,7 +1818,7 @@
           timelineBox,
           el("section", { class: "panel tools" },
             el("button", { type: "button", class: "btn ghost", text: L().hint, onclick: () => { if (working() && !lv.closed) { exec("hint"); input.focus(); } } }),
-            el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => { delete live[id]; desk(id); } }),
+            el("button", { type: "button", class: "btn ghost", text: L().restart, onclick: () => { dropLive(id); desk(id); } }),
             el("a", { class: "btn ghost", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide }),
             // v0.8: the library article of the ticket's area (it teaches the area, never the ticket)
             Lib.forDesk(sc.id).slice(0, 1).map((a) => el("a", { class: "btn ghost", href: "#/library/" + a.id, id: "desk-library", text: L().libOneArticle })))),
@@ -1277,10 +1829,32 @@
       if (sc.net) print(L().netWelcome, "dim");
       print("", "out");
     } else lv.log.forEach((l) => print(l.text, l.kind, false));
-    renderHead(); renderStages(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderContact(); renderShips(); showResult();
+    if (lv.restored) { lv.restored = false; print(L().restored, "dim"); }
+    renderHead(); renderShift(); renderStages(); renderAsset(); lockConsole(); renderResolve(); renderPend(); renderTimeline(); renderContact(); renderShips(); showResult();
     if (hasDesk) setView(lv.view || "console");
     term.scrollTop = term.scrollHeight;
     if (working() && !lv.closed) input.focus();
+  }
+
+  /* ---------- v0.9b: the level panel and the close counters (Progress and Profile) */
+  function levelPanel(pfx) {
+    const l = levelNow();
+    return el("section", { class: "panel lvl-panel", id: pfx + "-level" },
+      el("div", { class: "lvl-top" }, el("span", { class: "lvl-badge", "aria-hidden": "true", text: String(l.index + 1) }),
+        el("div", { class: "grow" }, el("p", { class: "tile-l", text: L().lvTitle }), el("h2", { class: "lvl-h", id: pfx + "-level-name", text: l.name })),
+        el("p", { class: "lvl-total" }, el("b", { class: "mono", id: pfx + "-level-pts", text: String(l.total) }), el("span", { class: "sub", text: " " + L().lvPoints(l.total).replace(/^\d+\s*/, "") }))),
+      levelBar(l, pfx + "-level-bar"),
+      el("p", { class: "tile-x", id: pfx + "-level-next", text: l.next ? L().lvNext(l.toNext, l.next.name) : L().lvTop }),
+      el("p", { class: "fine", text: L().lvBreak(l.parts) }),
+      el("details", { class: "lvl-how" }, el("summary", { text: L().lvLadder }), el("p", { class: "fine", text: L().lvHow }),
+        el("ol", { class: "lvl-ladder" }, Lv.LEVELS.map((x, k) => el("li", { class: k === l.index ? "on" : k < l.index ? "past" : "" },
+          el("b", { text: t(x.name, lang) }), el("span", { class: "mono", text: " · " + L().lvFrom(x.min) }))))));
+  }
+  function countersBlock(pfx) {
+    const c = Lv.closeCounts(activity());
+    const tile = (n, label, x, id) => el("div", { class: "tile closes-" + id, id: pfx + "-cc-" + id }, el("p", { class: "tile-n", text: String(n) }), el("p", { class: "tile-l", text: label }), el("p", { class: "tile-x", text: x }));
+    return el("section", { class: "closes", "aria-label": L().ccTitle }, el("h2", { class: "closes-h", text: L().ccTitle }),
+      el("div", { class: "tiles closes-tiles" }, tile(c.clean, L().ccClean, L().ccCleanX, "clean"), tile(c.remarks, L().ccRemarks, L().ccRemarksX, "remarks"), tile(c.false, L().ccFalse, L().ccFalseX, "false")));
   }
 
   /* ---------- progress */
@@ -1293,11 +1867,11 @@
     const tile = (n, label, ...extra) => el("div", { class: "tile" }, el("p", { class: "tile-n", text: n }), el("p", { class: "tile-l", text: label }), extra);
     // v0.4: streak, weekly goal, mail score and knowledge base, from this browser
     awardNow();
-    const today = G.dayOf();
+    const day = today();
     const act = activity();
-    const st = G.streak(act, today);
+    const st = G.streak(act, day);
     const goal = G.goalValue(load("goal", G.GOAL.def));
-    const wk = G.week(act, today, goal);
+    const wk = G.week(act, day, goal);
     const answers = mailAnswers();
     const ms = G.mailScore(answers);
     const kbN = Object.keys(load("kb", {}) || {}).length;
@@ -1305,11 +1879,29 @@
     const goalSel = el("select", { class: "goal-sel", id: "goal-sel", onchange: (ev) => { save("goal", G.goalValue(ev.target.value)); progressPage(); } },
       Array.from({ length: G.GOAL.max - G.GOAL.min + 1 }, (_, i) => G.GOAL.min + i).map((n) => el("option", { value: String(n), selected: n === goal, text: String(n) })));
     const bar = el("progress", { class: "goal-bar", max: String(wk.target), value: String(Math.min(wk.done, wk.target)), "aria-label": `${L().gWeek}: ${wk.done} / ${wk.target}` });
-    const list = G.badges(load("badges", {}), lang);
+    const list = Lv.badges(load("badges", {}), lang);
     const earned = list.filter((b) => b.earned).length;
     const h2 = (text, extra) => el("div", { class: "p-h" }, el("h2", { text }), extra || null);
+    // v0.9b: this week's goals and the past weeks
+    const wkKey = Lv.weekAt(Date.now(), zone());
+    const weekly = load("weekly", null);
+    const goals = Lv.goalProgress(wkKey, act, { weekly, lang, levels: DESK_LEVELS() });
+    const past = Lv.history(weekly, wkKey);
     view.append(
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().pTitle }), el("p", { class: "sub", text: L().pSub }))),
+      levelPanel("p"),
+      countersBlock("p"),
+      h2(L().wgTitle, el("span", { class: "count-pill", id: "wg-count", text: `${goals.filter((g) => g.claimed).length}/${goals.length}` })),
+      el("p", { class: "sub", text: L().wgSub(wkKey) }),
+      el("ul", { class: "wgoals", id: "wgoals" }, goals.map((g) => el("li", { class: "panel wgoal" + (g.claimed ? " on" : ""), "data-goal": g.id },
+        el("p", { class: "wgoal-h" }, el("span", { class: "wgoal-box", "aria-hidden": "true", text: g.claimed ? "✓" : "" }), el("b", { text: g.label })),
+        el("progress", { class: "goal-bar", max: String(g.target), value: String(g.have), "aria-label": `${g.label}: ${g.have} / ${g.target}` }),
+        el("p", { class: "tile-x" }, el("span", { class: "mono", text: `${g.have}/${g.target}` }), " · ",
+          el("span", { class: "wgoal-pts", text: L().wgReward(g.points) }), " · ", g.claimed ? pill("resolved", L().wgDone(g.claimed)) : el("span", { class: "muted", text: L().wgOpen }))))),
+      el("details", { class: "wg-hist", id: "wg-history" }, el("summary", { text: L().wgHistory + ` (${past.length})` }),
+        past.length ? el("ul", { class: "wg-past" }, past.map((w) => el("li", { class: w.full ? "on" : "" }, el("b", { class: "mono", text: w.week }), " ",
+          el("span", { text: L().wgRow(w.done, w.total, w.points) }), w.full ? [" ", pill("resolved", L().wgFull)] : null,
+          el("span", { class: "sub", text: w.goals.map((id) => t(Lv.goal(id).label, lang)).join(" · ") })))) : el("p", { class: "fine", text: L().wgNoHistory })),
       el("div", { class: "tiles growth" },
         tile(String(st.current), L().gStreak, el("p", { class: "tile-x", text: L().gBest(st.best) + " · " + (st.today ? L().gTodayDone : L().gToday) })),
         tile(`${wk.done}/${wk.target}`, L().gWeek, bar,
@@ -1335,10 +1927,14 @@
             el("td", {}, el("a", { class: "link", href: sc.guide, target: "_blank", rel: "noopener noreferrer", text: L().guide })));
         })))),
       h2(L().bTitle, el("span", { class: "count-pill", text: L().bCount(earned, list.length) })),
-      el("ul", { class: "badges", id: "badges" }, list.map((b) => el("li", { class: "bdg" + (b.earned ? " on" : "") },
-        el("span", { class: "bdg-ico", "aria-hidden": "true", text: b.icon }),
-        el("span", { class: "bdg-txt" }, el("b", { text: b.name }), el("span", { class: "sub", text: b.rule }),
-          el("span", { class: "bdg-st", text: b.earned ? L().bEarned(b.day) : L().bLocked }))))),
+      el("div", { id: "badges" }, ["core", "area", "docs", "goals", "shift"].map((grp) => {
+        const items = list.filter((b) => b.group === grp);
+        return [el("h3", { class: "bdg-group", text: L().bGroups[grp] + ` · ${items.filter((b) => b.earned).length}/${items.length}` }),
+          el("ul", { class: "badges", "data-group": grp }, items.map((b) => el("li", { class: "bdg" + (b.earned ? " on" : ""), "data-badge": b.id },
+            el("span", { class: "bdg-ico", "aria-hidden": "true", text: b.icon }),
+            el("span", { class: "bdg-txt" }, el("b", { text: b.name }), el("span", { class: "sub", text: b.rule }),
+              el("span", { class: "bdg-st", text: b.earned ? L().bEarned(b.day) : L().bLocked })))))];
+      })),
       h2(L().mScoreTitle, el("span", { class: "count-pill", text: `${ms.correct}/${ms.total}` })),
       el("div", { class: "qwrap" }, el("table", { class: "qtable" },
         el("thead", {}, el("tr", {}, [L().colMessage, L().colResult, L().mDate].map((x) => el("th", { scope: "col", text: x })))),
@@ -1437,33 +2033,116 @@
       el("div", { class: "row kb-tools" },
         el("button", { type: "button", class: "btn", id: "kb-download", text: L().kbDownload, onclick: download }),
         el("button", { type: "button", class: "btn ghost", id: "kb-print", text: L().kbPrint, onclick: () => window.print() }),
-        el("a", { class: "btn ghost", href: "#/desk/" + a.deskId, text: L().kbReplay, onclick: () => { delete live[a.deskId]; } })),
+        el("a", { class: "btn ghost", href: "#/desk/" + a.deskId, text: L().kbReplay, onclick: () => { dropLive(a.deskId); } })),
       msg);
   }
 
   /* ---------- v0.4: internal mail (#/mail, #/mail/<id>): every message is an exercise */
   const mailRetry = {};
   let mailFresh = { id: null, list: [] };   // badges earned by the last answer, shown under it
+  /* v0.9: the mailbox (mail.js, sd.mailbox): folders, star, archive, spam, replies and new messages */
+  let mboxCache = null;
+  let mailFolder = "inbox";
+  let mailNote = null;       // {text, tone}: what the last action did, shown once
+  let mailReplyOpen = null;  // the message whose reply box is open
+  function mbox() { if (!mboxCache) mboxCache = MB.normalise(load("mailbox", null)); return mboxCache; }
+  function setMbox(st) { mboxCache = MB.normalise(st); save("mailbox", mboxCache); }
+  const dirPeople = () => world.users.map((u) => ({ sam: u.sam, name: u.name, dept: Wd.t(u.title, lang) + " · " + u.dept }));
+  // a mail exercise answered (a button, "Create ticket" or "Report"): recorded, counted for the streak and the badges
+  function answerMail(m, optId) {
+    const g = G.grade(m, optId);
+    if (!g) return null;
+    const all = mailAnswers();
+    const prev = all[m.id];
+    all[m.id] = { answer: optId, result: g.result, day: today(), tries: (prev ? prev.tries || 0 : 0) + 1 };
+    save("mail", all);
+    delete mailRetry[m.id];
+    mailFresh = { id: m.id, list: logActivity({ type: "mail", id: m.id, result: g.result }) };
+    if (mailFresh.list.length) celebrate("badge"); else if (g.result === "correct") celebrate("task");
+    return g;
+  }
   function mailPage(id) {
-    const msg = id ? G.mail(id) : null;
-    if (msg) markRead(msg.id);
+    const st = mbox();
+    const sentOne = id && /^s-\d+$/.test(id) ? MB.sentItem(st, id) : null;
+    const compose = id === "new";
+    const msg = id && !sentOne && !compose ? G.mail(id) : null;
+    if (msg) { markRead(msg.id); if (mailFolder !== "starred") mailFolder = MB.folderOf(st, msg.id); }
+    if (sentOne) mailFolder = "sent";
     const view = shell("mail");
-    document.title = (msg ? t(msg.subject, lang) : L().mTitle) + " · SysAdmin Desks";
+    document.title = (msg ? t(msg.subject, lang) : sentOne ? sentOne.subject : compose ? L().mNewTitle : L().mTitle) + " · SysAdmin Desks";
     const answers = mailAnswers();
     const name = (m) => t(m.from.name, lang);
     const readList = load("mailRead", []) || [];
-    const list = el("nav", { class: "panel mail-list", "aria-label": L().mInbox }, el("h2", { text: L().mInbox }),
-      el("ul", {}, G.MAIL.map((m) => {
+    const counts = MB.counts(st, readList);
+    const folders = el("ul", { class: "mail-folders", role: "list" }, MB.FOLDERS.map((f) => el("li", {},
+      el("button", { type: "button", class: "mail-folder" + (mailFolder === f && !compose ? " on" : ""), id: "mail-f-" + f, "aria-pressed": mailFolder === f && !compose ? "true" : "false",
+        onclick: () => { mailFolder = f; mailNote = null; if (location.hash === "#/mail") mailPage(null); else location.hash = "#/mail"; } },
+        el("span", { text: t(MB.NAMES[f], lang) }),
+        f === "inbox" && counts.unread ? el("span", { class: "count", "aria-label": L().unreadN(counts.unread), text: String(counts.unread) })
+          : f !== "inbox" && counts[f] ? el("span", { class: "count muted", text: String(counts[f]) }) : null))));
+    const rows = MB.list(st, mailFolder);
+    let listBody;
+    if (mailFolder === "sent") {
+      listBody = rows.length ? el("ul", {}, rows.map((x) => el("li", {}, el("a", { href: "#/mail/" + x.id, class: "mail-item" + (sentOne && sentOne.id === x.id ? " on" : ""), "aria-current": sentOne && sentOne.id === x.id ? "true" : null },
+        el("span", { class: "mail-row" }, el("b", { text: x.toName || x.to }), el("span", { class: "mono muted", text: clock(x.at) })),
+        el("span", { class: "mail-subj", text: x.subject }),
+        x.flags.length ? pill("unresolved", "⚠") : null)))) : el("p", { class: "empty", text: L().mSentEmpty });
+    } else {
+      listBody = rows.length ? el("ul", {}, rows.map((m) => {
         const a = answers[m.id];
         const isNew = !readList.includes(m.id);
         return el("li", {}, el("a", { href: "#/mail/" + m.id, class: "mail-item" + (msg && msg.id === m.id ? " on" : "") + (isNew ? " new" : ""), "aria-current": msg && msg.id === m.id ? "true" : null },
-          el("span", { class: "mail-row" }, el("b", { text: name(m) }), el("span", { class: "mono muted", text: m.time })),
+          el("span", { class: "mail-row" }, el("b", {}, MB.starred(st, m.id) ? el("span", { class: "mail-star", "aria-label": L().mStar, text: "★ " }) : null, name(m)), el("span", { class: "mono muted", text: m.time })),
           el("span", { class: "mail-subj", text: t(m.subject, lang) }),
           a ? pill(RES_PILL[a.result], L().res[a.result]) : isNew ? el("span", { class: "mail-dot", "aria-label": L().unreadN(1) }) : null));
-      })));
-    const pane = msg ? mailMessage(msg, answers[msg.id]) : el("section", { class: "panel mail-msg mail-none" }, el("p", { class: "empty", text: L().mPick }));
-    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().mTitle }), el("p", { class: "sub", text: L().mSub }))),
-      el("div", { class: "mail" + (msg ? " has-msg" : "") }, list, pane));
+      })) : el("p", { class: "empty", text: L().mEmptyFolder });
+    }
+    const list = el("nav", { class: "panel mail-list", "aria-label": L().mFolders },
+      el("a", { class: "btn sm mail-compose", href: "#/mail/new", id: "mail-compose", text: "✎ " + L().mCompose }),
+      folders, el("h2", { class: "mail-fh", text: t(MB.NAMES[mailFolder], lang) }), listBody);
+    const has = Boolean(msg || sentOne || compose);
+    const pane = msg ? mailMessage(msg, answers[msg.id]) : sentOne ? mailSent(sentOne) : compose ? mailCompose()
+      : el("section", { class: "panel mail-msg mail-none" }, el("p", { class: "empty", text: L().mPick }));
+    const noteTop = !has && mailNote ? el("p", { class: "mail-note " + (mailNote.tone || ""), id: "mail-note", role: "status", text: mailNote.text }) : null;
+    mailNote = null;
+    put(view, Array.from(view.childNodes), el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().mTitle }), el("p", { class: "sub", text: L().mSub }))),
+      noteTop, el("div", { class: "mail" + (has ? " has-msg" : "") }, list, pane));
+  }
+  // a message you sent: who, when, what, and any bad practice flagged
+  function mailSent(x) {
+    const re = x.re ? G.mail(x.re) : null;
+    return el("article", { class: "panel mail-msg", "aria-labelledby": "mail-subj", id: "mail-sent" },
+      el("p", { class: "mail-back" }, el("a", { href: "#/mail", text: L().mBack })),
+      el("p", { class: "lvl" }, pill("closed", L().mSentTitle)),
+      el("h2", { class: "mail-title", id: "mail-subj", text: x.subject }),
+      el("dl", { class: "fields mail-meta" }, el("dt", { text: L().mTo }), el("dd", { text: `${x.toName} <${x.to}>` }),
+        el("dt", { text: L().mDate }), el("dd", { text: today() === Pf.dayIn(x.at, zone()) ? clock(x.at) : Pf.dayIn(x.at, zone()).split("-").reverse().join("/") + " " + clock(x.at) })),
+      x.flags.map((f) => el("p", { class: "mail-flag", role: "note", text: "⚠ " + L().mFlags[f] })),
+      el("div", { class: "mail-body mail-sent-body", text: x.body }),
+      re ? el("p", { class: "fine" }, el("a", { href: "#/mail/" + re.id, text: "↩ " + t(re.subject, lang) })) : null);
+  }
+  // a new message to a fictional internal contact
+  function mailCompose() {
+    const contacts = MB.contacts(dirPeople(), lang);
+    const to = el("select", { id: "mail-to", "aria-label": L().mToLabel }, el("option", { value: "", text: L().mPickContact }),
+      contacts.map((c) => el("option", { value: c.id, text: `${c.name} <${c.address}>${c.sub ? " · " + c.sub : ""}` })));
+    const subj = el("input", { type: "text", id: "mail-subject", maxlength: String(MB.LIMITS.subject), autocomplete: "off" });
+    const body = el("textarea", { id: "mail-body", maxlength: String(MB.LIMITS.body), rows: "8" });
+    const warn = el("p", { class: "mail-flag", role: "status", hidden: true });
+    body.addEventListener("input", () => { const f = MB.lint(body.value); warn.hidden = !f.length; warn.textContent = f.length ? "⚠ " + L().mFlags[f[0]] : ""; });
+    const msg = el("p", { class: "form-msg", role: "alert" });
+    return el("section", { class: "panel mail-msg mail-new", "aria-labelledby": "mail-new-h" },
+      el("p", { class: "mail-back" }, el("a", { href: "#/mail", text: L().mBack })),
+      el("h2", { class: "mail-title", id: "mail-new-h", text: L().mNewTitle }),
+      el("label", { class: "field" }, el("span", { class: "field-label", text: L().mToLabel }), to),
+      el("p", { class: "fine", text: L().mContactsNote }),
+      el("label", { class: "field" }, el("span", { class: "field-label", text: L().mSubject }), subj),
+      el("label", { class: "field" }, el("span", { class: "field-label", text: L().mBody }), body), warn, msg,
+      el("div", { class: "row" }, el("button", { type: "button", class: "btn", id: "mail-send", text: L().mSend, onclick: () => {
+        const r = MB.compose(mbox(), { to: to.value, subject: subj.value, body: body.value, now: Date.now() }, contacts);
+        if (!r.ok) { msg.textContent = r.errors.map((e) => L().mErr[e]).join(" "); return; }
+        setMbox(r.state); mailFolder = "sent"; location.hash = "#/mail/" + r.item.id;
+      } }), el("a", { class: "btn ghost", href: "#/mail", text: L().mCancel })));
   }
   function mailMessage(m, answer) {
     const sc = m.ticket ? SCENARIOS.find((s) => s.id === m.ticket) : null;
@@ -1501,25 +2180,66 @@
     const handled = answer && answer.answer === "ticket" && answer.result === "correct";
     const showAnswer = answer && !mailRetry[m.id];
     function choose(optId) {
-      const g = G.grade(m, optId);
-      if (!g) return;
-      const all = mailAnswers();
-      const prev = all[m.id];
-      all[m.id] = { answer: optId, result: g.result, day: G.dayOf(), tries: (prev ? prev.tries || 0 : 0) + 1 };
-      save("mail", all);
-      delete mailRetry[m.id];
-      mailFresh = { id: m.id, list: logActivity({ type: "mail", id: m.id, result: g.result }) };
+      if (!answerMail(m, optId)) return;
       mailPage(m.id);
       const r = document.getElementById("mail-result");
-      if (r) { r.scrollIntoView({ behavior: "smooth", block: "nearest" }); r.focus({ preventScroll: true }); }
+      if (r) { r.scrollIntoView({ behavior: motion(), block: "nearest" }); r.focus({ preventScroll: true }); }
     }
+    // v0.9: the mailbox actions on this message
+    const st = mbox();
+    const where = MB.folderOf(st, m.id);
+    const isStar = MB.starred(st, m.id);
+    const act = (text, id, fn, cls) => el("button", { type: "button", class: "btn ghost sm " + (cls || ""), id, onclick: fn }, text);
+    const tools2 = el("div", { class: "row mail-actions", role: "group", "aria-label": L().mFolders },
+      el("button", { type: "button", class: "btn ghost sm mail-star-btn", id: "mail-star", "aria-pressed": isStar ? "true" : "false",
+        onclick: () => { setMbox(MB.toggleStar(mbox(), m.id)); mailPage(m.id); } }, (isStar ? "★ " : "☆ ") + (isStar ? L().mUnstar : L().mStar)),
+      where === "archive" ? act(L().mToInbox, "mail-inbox", () => { setMbox(MB.move(mbox(), m.id, "inbox")); mailNote = { text: L().mMoved }; mailFolder = "inbox"; mailPage(m.id); })
+        : where === "inbox" ? act("▣ " + L().mArchive, "mail-archive", () => { setMbox(MB.move(mbox(), m.id, "archive")); mailNote = { text: L().mArchived }; location.hash = "#/mail"; }) : null,
+      where === "spam" ? act(L().mNotSpam, "mail-notspam", () => { setMbox(MB.notSpam(mbox(), m.id)); mailNote = { text: L().mMoved }; mailFolder = "inbox"; mailPage(m.id); })
+        : act("⚑ " + L().mReport, "mail-report", () => {
+          const r = MB.report(mbox(), m);
+          setMbox(r.state);
+          if (r.answer) answerMail(m, r.answer);
+          mailNote = { text: L().mReported(L().res[r.result] || "–"), tone: r.result };
+          mailFolder = "spam"; location.hash = "#/mail";
+        }, "mail-report"),
+      act("↩ " + L().mReply, "mail-reply", () => { mailReplyOpen = mailReplyOpen === m.id ? null : m.id; mailPage(m.id); const ta = document.getElementById("mail-reply-text"); if (ta) ta.focus(); }));
+    const replies = MB.repliesTo(st, m.id);
+    let replyBox = null;
+    if (mailReplyOpen === m.id) {
+      const tpls = MB.templates(m, lang, { ticket: sc ? sc.ticket.id : null, prio: sc ? sc.ticket.priority : null, me: user ? user.name : "" });
+      const ta = el("textarea", { id: "mail-reply-text", rows: "7", maxlength: String(MB.LIMITS.body), placeholder: L().mReplyPh, "aria-label": L().mReply });
+      const warn = el("p", { class: "mail-flag", role: "status", hidden: true });
+      const lintNow = () => { const f = MB.lint(ta.value); warn.hidden = !f.length; warn.textContent = f.length ? "⚠ " + L().mFlags[f[0]] : ""; };
+      ta.addEventListener("input", lintNow);
+      let used = null;
+      const errMsg = el("p", { class: "form-msg", role: "alert" });
+      replyBox = el("section", { class: "mail-reply", id: "mail-reply-box", "aria-label": L().mReply },
+        el("p", { class: "fine mono", text: L().mReplyTo(m.headers.replyTo || fromAddr) }),
+        el("div", { class: "tpl-row", role: "group", "aria-label": L().mTemplates }, el("span", { class: "tpl-h", text: L().mTemplates }),
+          tpls.map((x) => el("button", { type: "button", class: "chip-btn", "data-tpl": x.id, text: x.label, onclick: () => {
+            used = x.id; ta.value = x.text; lintNow(); ta.focus();
+            const gap = ta.value.indexOf("["); if (gap !== -1) ta.setSelectionRange(gap, ta.value.indexOf("]", gap) + 1);
+          } }))),
+        ta, warn, errMsg,
+        el("div", { class: "row" }, el("button", { type: "button", class: "btn sm", id: "mail-reply-send", text: L().mSend, onclick: () => {
+          const r = MB.reply(mbox(), m, { text: ta.value, template: used, now: Date.now() }, lang);
+          if (!r.ok) { errMsg.textContent = L().mErr[r.error]; ta.focus(); return; }
+          setMbox(r.state); mailReplyOpen = null;
+          mailNote = r.item.flags.length ? { text: r.item.flags.map((f) => "⚠ " + L().mFlags[f]).join(" "), tone: "wrong" } : { text: L().mSentOk, tone: "correct" };
+          mailPage(m.id);
+          const n = document.getElementById("mail-note"); if (n) n.scrollIntoView({ behavior: motion(), block: "nearest" });
+        } }), el("button", { type: "button", class: "btn ghost sm", text: L().mCancel, onclick: () => { mailReplyOpen = null; mailPage(m.id); } })));
+    }
+    const noteEl = mailNote ? el("p", { class: "mail-note " + (mailNote.tone || ""), id: "mail-note", role: "status", text: mailNote.text }) : null;
     const opts = el("div", { class: "mail-opts", role: "group", "aria-labelledby": "mail-what" }, m.options.map((o) =>
       el("button", { type: "button", class: "mail-opt" + (showAnswer && answer.answer === o.id ? " picked " + o.result : ""), disabled: Boolean(showAnswer),
         "aria-pressed": showAnswer && answer.answer === o.id ? "true" : "false", onclick: () => choose(o.id) }, t(o.label, lang))));
     let result = null;
     if (showAnswer) {
       const o = m.options.find((x) => x.id === answer.answer);
-      const next = G.MAIL[(G.MAIL.indexOf(m) + 1) % G.MAIL.length];
+      const order = MB.list(MB.empty(), "inbox");
+      const next = order[(order.indexOf(m) + 1) % order.length];
       result = el("div", { class: "mail-result " + answer.result, id: "mail-result", tabindex: "-1" },
         el("p", { class: "lvl" }, pill(RES_PILL[answer.result], L().res[answer.result])),
         el("p", { text: t(o.why, lang) }),
@@ -1543,7 +2263,9 @@
       el("div", { class: "row mail-tools" }, toggle,
         sc && !handled ? el("button", { type: "button", class: "btn sm", id: "mail-create", text: L().mCreate, onclick: () => choose("ticket") }) : null,
         handled && sc ? el("span", { class: "mail-handled" }, pill("resolved", L().mHandled(sc.ticket.id)), " ", el("a", { href: "#/desk/" + sc.id, text: L().mOpenTicket(sc.ticket.id) })) : null),
-      headers, body, status,
+      tools2, noteEl, headers, body, status,
+      replies.length ? el("p", { class: "fine mail-replies" }, L().mRepliesSent(replies.length) + " ", replies.map((x) => el("a", { href: "#/mail/" + x.id, class: "mono", text: x.id + (x.flags.length ? " ⚠" : "") + " " }))) : null,
+      replyBox,
       el("section", { class: "mail-ex" }, el("h3", { id: "mail-what", text: L().mWhat }), opts, result));
   }
 
@@ -1599,6 +2321,7 @@
       lv.log.push({ text: E.prompt(b.sess) + cmd, kind: "cmd" });
       r.lines.forEach((l) => lv.log.push({ text: l.text, kind: l.kind }));
       if (r.resolvedNow) lv.log.push({ text: L().readyMsg, kind: "ok" });
+      persistLive(b.sc.id);
       r.lines.push({ text: L().dRouted(b.sc.ticket.id), kind: "dim" });
       return { lines: r.lines, changed: false };
     }
@@ -1833,6 +2556,28 @@
   let netTab = "general";
   let netDiag = { what: "ping", target: "", out: [] };
   let netCli = null;         // {dev, term, src, log: [{text, kind}], hist: [], pos}
+  // v0.9: the room outside tickets is kept in this browser (sd.room) and comes back after a reload
+  let roomLoaded = false;
+  function ensureRoom() {
+    if (roomLoaded || !user) return;
+    roomLoaded = true;
+    const d = envOf(load("room", null));
+    const r = d && PS.roomFromJSON(d);
+    if (r) { roomNet = r.net; if (r.sel) netSel = r.sel; netCli = r.cli; }
+  }
+  function saveRoom() { if (user && roomLoaded) save("room", packed(PS.roomToJSON({ net: roomNet, sel: netSel, cli: netCli }))); }
+  // after signing out or clearing the saved work: the room and the labs start fresh (and are read again for the next account)
+  function forgetSandboxes() {
+    roomLoaded = false; roomNet = NN.createNet([]); netSel = null; netCli = null;
+    Object.keys(labLive).forEach((k) => delete labLive[k]);
+  }
+  function persistAll() {
+    if (!user) return;
+    Object.keys(live).forEach(persistLive);
+    saveRoom();
+    Object.keys(labLive).forEach(saveLab);
+  }
+  window.addEventListener("pagehide", persistAll);
   function netSources() {
     return SCENARIOS.filter((sc) => sc.net && isOpen(sc)).map((sc) => {
       const has = Boolean(work()[sc.id]);
@@ -1845,6 +2590,7 @@
   }
   // the net a device lives in right now: {net, src} (src: the open ticket it belongs to, or null)
   function netFor(id) {
+    ensureRoom();
     // v0.7b: two open tickets can share a device (SW-ACC-2F): the one assigned to you wins, then the first one
     const all = netSources().filter((x) => x.sc.net.devices.includes(id));
     const src = all.find((x) => x.live) || all.find((x) => x.lv) || all[0] || null;
@@ -1865,6 +2611,7 @@
   function networkRoom(selId) {
     const view = shell("network");
     document.title = L().nTitle + " · SysAdmin Desks";
+    ensureRoom();
     if (selId && roomNet.devices[selId]) netSel = selId;
     const devs = NN.list(roomNet);
     const rows = devs.map((d) => Object.assign({ d }, netStatus(d.id)));
@@ -1879,10 +2626,11 @@
     const cliBox = el("div", { id: "net-cli-box" });
     view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().nTitle }), el("p", { class: "sub", text: L().nSub })),
       el("button", { type: "button", class: "link-btn", id: "net-reset", text: L().nReset, onclick: () => {
-        roomNet = NN.createNet([]); netCli = null; netDiag = { what: "ping", target: "", out: [L().nResetDone] }; networkRoom(netSel); } })),
+        roomNet = NN.createNet([]); netCli = null; netDiag = { what: "ping", target: "", out: [L().nResetDone] }; try { localStorage.removeItem("sd.room"); } catch (e) { /* ignore */ } networkRoom(netSel); } })),
       el("div", { class: "inv-grid net-grid" }, el("div", { class: "qwrap" }, table), detail), cliBox);
     renderNetDetail(detail, cliBox);
     renderNetCli(cliBox);
+    saveRoom();
   }
 
   function renderNetDetail(box, cliBox) {
@@ -1933,7 +2681,7 @@
       tabs, el("div", { class: "net-tab-body", role: "tabpanel" }, body),
       el("div", { class: "acts" },
         el("button", { type: "button", class: "btn sm", id: "net-open-cli", disabled: blocked ? true : null, "aria-describedby": blocked ? "net-cli-why" : null,
-          onclick: () => { openNetCli(dev.id); renderNetCli(cliBox); const i = cliBox.querySelector("input"); if (i) { i.focus(); cliBox.scrollIntoView({ behavior: "smooth", block: "nearest" }); } } },
+          onclick: () => { openNetCli(dev.id); renderNetCli(cliBox); const i = cliBox.querySelector("input"); if (i) { i.focus(); cliBox.scrollIntoView({ behavior: motion(), block: "nearest" }); } } },
           el("span", { "aria-hidden": "true", text: ">_ " }), L().nOpenCli)),
       blocked ? el("p", { class: "fine", id: "net-cli-why" }, (src.paused ? L().nPausedTicket : L().nAssignFirst)(src.sc.ticket.id) + " ", el("a", { href: "#/desk/" + src.sc.id, text: L().nOpenTicket })) : null);
   }
@@ -1949,6 +2697,7 @@
     const log = [{ text: NN.connect(term, id).join("\n"), kind: "out" }];
     if (src) log.push({ text: L().nRouted(src.sc.ticket.id), kind: "dim" });
     netCli = { dev: id, term, src, log, hist: [], pos: 0 };
+    saveRoom();
   }
   function renderNetCli(box) {
     if (!netCli) { box.replaceChildren(); return; }
@@ -1973,9 +2722,10 @@
         lv.log.push({ text: before + cmd, kind: "cmd" });
         r.lines.forEach((l) => lv.log.push({ text: l.text, kind: l.kind }));
         if (r.resolvedNow) lv.log.push({ text: L().readyMsg, kind: "ok" });
+        persistLive(src.sc.id);
       } else if (c.src) {
         r = { lines: [{ text: (c.src.paused ? L().nPausedTicket : L().nAssignFirst)(c.src.sc.ticket.id), kind: "say" }] };
-      } else r = NN.exec(c.term, cmd, { lang });
+      } else { r = NN.exec(c.term, cmd, { lang }); setTimeout(saveRoom, 0); }
       if (r.clear) { out.replaceChildren(); c.log = []; }
       r.lines.forEach((l) => print(l.text, l.kind));
       if (r.resolvedNow) print(L().nReadyRoom(c.src.sc.ticket.id), "ok");
@@ -1993,7 +2743,7 @@
       el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, ps, input));
     box.replaceChildren(el("section", { class: "panel net-cli", id: "net-cli", "aria-label": L().nCliTitle(c.dev) },
       el("div", { class: "row" }, el("h2", { text: L().nCliTitle(c.dev) }), el("span", { class: "grow" }),
-        el("button", { type: "button", class: "pc-x", "aria-label": L().nCloseCli, title: L().nCloseCli, text: "×", onclick: () => { netCli = null; renderNetCli(box); } })),
+        el("button", { type: "button", class: "pc-x", "aria-label": L().nCloseCli, title: L().nCloseCli, text: "×", onclick: () => { netCli = null; renderNetCli(box); saveRoom(); } })),
       term, el("p", { class: "term-help", text: L().nCliHelp })));
     term.scrollTop = term.scrollHeight;
   }
@@ -2295,14 +3045,26 @@
      this page; the tasks done are kept in this browser (sd.labs) */
   const labLive = {};        // labId -> {s: the lab session, log: [{text, kind}], hist: [], pos}
   function labOf(id) {
-    if (!labLive[id]) labLive[id] = { s: Lb.create(id, lang), log: [{ text: L().labWelcome, kind: "dim" }], hist: [], pos: 0 };
+    if (!labLive[id]) {
+      // v0.9: the sandbox comes back after a reload (sd.labbox)
+      const d = user ? envOf(mapOf("labbox")[id]) : null;
+      const back = d ? PS.labFromJSON(id, d, lang) : null;
+      labLive[id] = back || { s: Lb.create(id, lang), log: [{ text: L().labWelcome, kind: "dim" }], hist: [], pos: 0 };
+    }
     return labLive[id];
+  }
+  function saveLab(id) {
+    if (!user) return;
+    const m = mapOf("labbox");
+    if (labLive[id]) m[id] = packed(PS.labToJSON(labLive[id])); else delete m[id];
+    save("labbox", m);
   }
   function labsPage(id) {
     const view = shell("labs");
     if (id && Lb.lab(id)) return labPage(view, id);
     document.title = L().labsTitle + " · SysAdmin Desks";
     const store = labStore();
+    const shifts = shiftStore();
     view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().labsTitle }), el("p", { class: "sub", text: L().labsSub }))),
       el("ul", { class: "lib-grid labs-grid", id: "labs-list" }, Lb.LABS.map((l) => {
         const pr = Lb.progressOf(store, l.id);
@@ -2311,7 +3073,8 @@
           el("span", { class: "lib-ico", "aria-hidden": "true", text: ar.icon }),
           el("span", { class: "lib-txt" }, el("span", { class: "lib-area", text: t(ar.name, lang) }), el("b", { text: t(l.title, lang) }), el("span", { class: "sub", text: t(l.summary, lang) }),
             el("progress", { class: "goal-bar", max: String(pr.total), value: String(pr.done), "aria-label": L().labTasks(pr.done, pr.total) }),
-            el("span", { class: "lib-meta" }, pr.complete ? pill("resolved", L().labDone + (pr.completed ? " · " + pr.completed : "")) : el("span", { text: L().labTasks(pr.done, pr.total) + " · " + (pr.done ? L().labContinue : L().labOpen) })))));
+            el("span", { class: "lib-meta" }, pr.complete ? pill("resolved", L().labDone + (pr.completed ? " · " + pr.completed : "")) : el("span", { text: L().labTasks(pr.done, pr.total) + " · " + (pr.done ? L().labContinue : L().labOpen) }),
+              shifts.active && shifts.active.lab === l.id ? pill("progress", L().shCardRun) : shifts.done[l.id] ? pill("resolved", "⏱ " + L().shCard) : null))));
       })),
       el("p", { class: "fine", text: L().labStored }));
   }
@@ -2332,7 +3095,7 @@
       const stored = (labStore()[id] || { done: [] }).done;
       put(tasksBox, el("div", { class: "row" }, el("h2", { text: L().labTasksT }), el("span", { class: "count-pill", id: "lab-count", text: `${pr.done}/${pr.total}` }), el("span", { class: "grow" }),
         el("button", { type: "button", class: "link-btn", id: "lab-reset", text: L().labReset, onclick: () => {
-          delete labLive[id]; save("labs", Lb.reset(load("labs", {}), id)); labOf(id).log.push({ text: L().labResetDone, kind: "say" }); labsPage(id);
+          delete labLive[id]; saveLab(id); save("labs", Lb.reset(load("labs", {}), id)); labOf(id).log.push({ text: L().labResetDone, kind: "say" }); labsPage(id);
         } })),
         el("ol", { class: "stages lab-list" }, list.map((x) => {
           const done = x.done || stored.includes(x.id);
@@ -2352,12 +3115,23 @@
       if (r.clear) { out.replaceChildren(); lv.log = []; }
       r.lines.forEach((l) => print(l.text, l.kind));
       const now = Lb.tasks(lv.s, lang).filter((x) => x.done);
-      const rec = Lb.record(load("labs", {}), id, now.map((x) => x.id), G.dayOf());
+      const rec = Lb.record(load("labs", {}), id, now.map((x) => x.id), today());
       if (rec.fresh.length) {
         save("labs", rec.store);
         rec.fresh.forEach((tid) => print(L().labTaskDone(now.find((x) => x.id === tid).label), "ok"));
         if (rec.completedNow) print(L().labComplete, "ok");
+        celebrate(rec.completedNow ? "complete" : "task");
+        // v0.9b: each new task goes into the activity (weekly goals) and the points; a weekly goal met here is said in the console
+        const day = today();
+        const a = activity().concat(rec.fresh.map((tid) => ({ type: "lab", id: id + ":" + tid, lab: id, day })));
+        save("activity", a.slice(-1000));
+        freshGoals = [];
+        awardNow();
+        freshGoals.forEach((gid) => { const g = Lv.goal(gid); print(L().wgFresh(t(g.label, lang), g.points), "ok"); });
+        freshGoals = [];
+        if (rec.completedNow) renderShiftPanel();
       }
+      saveLab(id);
       ps.textContent = Lb.prompt(lv.s);
       renderTasks();
       term.scrollTop = term.scrollHeight;
@@ -2368,14 +3142,63 @@
     });
     const term = el("div", { class: "term lab-term", onclick: () => { if (!window.getSelection().toString()) input.focus(); } }, out,
       el("form", { onsubmit: (ev) => { ev.preventDefault(); exec(input.value); input.value = ""; } }, ps, input));
+    // v0.9b: the full shift at the end of the lab
+    const shiftPanel = el("section", { class: "panel lab-shift", id: "lab-shift", "aria-labelledby": "lab-shift-h" });
+    function renderShiftPanel() {
+      const st = shiftStore();
+      const a = st.active;
+      const unlocked = Lb.progressOf(labStore(), id).complete;
+      const body = [el("h2", { id: "lab-shift-h" }, el("span", { "aria-hidden": "true", text: "⏱ " }), L().shTitle), el("p", { class: "sub", text: L().shSub })];
+      const deskLi = (d, state) => el("li", { class: "shift-desk " + state, "data-desk": d },
+        el("span", { class: "career-n", "aria-hidden": "true", text: state === "done" ? "✓" : "" }),
+        el("a", { href: "#/desk/" + d, text: deskById(d).ticket.id + " · " + t(deskById(d).title, lang) }),
+        pill(state === "done" ? "resolved" : state === "now" ? "progress" : "new", L().shState[state]));
+      const last = st.log.filter((x) => x.lab === id).slice(-1)[0];
+      if (!unlocked) body.push(el("p", { class: "fine shift-locked", id: "shift-locked", text: L().shLocked }));
+      else if (a && a.lab !== id) body.push(el("p", { class: "fine", id: "shift-busy" }, L().shBusy(labTitle(a.lab)) + " ", el("a", { href: "#/labs/" + a.lab, text: labTitle(a.lab) })));
+      else if (a) {
+        const nx = Lv.current(st);
+        body.push(el("p", { class: "shift-timer" }, el("span", { class: "muted", text: L().shTimer + " " }), el("b", { class: "mono", "data-shift-timer": "", id: "shift-timer", text: mmssMs(Lv.elapsed(a, Date.now())) }),
+          el("span", { class: "count-pill", id: "shift-count", text: `${a.results.length}/${a.desks.length}` })),
+          el("ol", { class: "shift-desks", id: "shift-desks" }, a.desks.map((d, k) => deskLi(d, k < a.results.length ? "done" : k === a.results.length ? "now" : "later"))),
+          el("div", { class: "row" }, el("a", { class: "btn", id: "shift-go", href: "#/desk/" + nx, onclick: () => freeShiftDesk(nx), text: L().shGo }),
+            el("button", { type: "button", class: "btn ghost", id: "shift-abandon", text: L().shAbandon, onclick: () => {
+              setShifts(Lv.abandon(shiftStore())); renderShiftPanel(); shiftMsg.textContent = L().shAbandoned; } })));
+      } else {
+        const pick = Lv.pickShift(id, { desks: SCENARIOS.map((x) => x.id), levels: DESK_LEVELS(), unavailable: SCENARIOS.filter((x) => mine(x.id)).map((x) => x.id) });
+        if (last) {
+          const sm = Lv.summary(last);
+          body.push(el("div", { class: "shift-sum", id: "shift-summary" }, el("h3", { text: L().shSummaryT }), el("p", { class: "mono", text: L().shSummary(sm) }),
+            el("ol", { class: "shift-desks" }, last.results.map((r) => el("li", { class: "shift-desk done" }, el("span", { class: "career-n", "aria-hidden": "true", text: "✓" }),
+              el("span", { text: deskById(r.id).ticket.id + " · " + t(deskById(r.id).title, lang) }), pill(r.level, L().lvl[r.level]), el("span", { class: "mono", text: String(r.points) }))))));
+        }
+        if (st.done[id]) body.push(el("p", { class: "badge-new", id: "shift-reward" }, el("span", { class: "side-ico", "aria-hidden": "true", text: "★" }),
+          el("span", { text: L().shReward(Lv.SHIFT.points, badgeName("shift-" + id)) + " " + L().shBest(st.done[id].day) + (st.log.filter((x) => x.lab === id).length > 1 ? " " + L().shRewardOnce : "") })));
+        if (pick.length < Lv.SHIFT.size) body.push(el("p", { class: "fine", id: "shift-short", text: L().shNotEnough }));
+        else body.push(el("ol", { class: "shift-desks preview" }, pick.map((d) => deskLi(d, "later"))),
+          el("div", { class: "row" }, el("button", { type: "button", class: "btn", id: "shift-start", text: last ? L().shAgain : L().shStart, onclick: () => {
+            const r = Lv.start(shiftStore(), id, pick, Date.now(), labStore());
+            if (!r.ok) { shiftMsg.textContent = r.error === "busy" ? L().shBusy(labTitle(r.lab)) : L().shNotEnough; return; }
+            setShifts(r.store);
+            pick.forEach(freeShiftDesk);
+            renderShiftPanel();
+            const go = document.getElementById("shift-go"); if (go) go.focus();
+          } })));
+      }
+      body.push(shiftMsg);
+      put(shiftPanel, body);
+    }
+    const shiftMsg = el("p", { class: "kb-msg", role: "status", id: "shift-msg" });
     const art = Lib.forLab(id)[0];
     renderTasks();
+    renderShiftPanel();
     view.append(el("p", { class: "kb-back" }, el("a", { href: "#/labs", text: L().labBack })),
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: t(def.title, lang) }), el("p", { class: "sub", text: t(def.summary, lang) })),
         art ? el("a", { class: "btn ghost sm", href: "#/library/" + art.id, id: "lab-library", text: L().labRead }) : null),
       doneBox,
       el("div", { class: "lab-grid" }, tasksBox,
-        el("div", {}, el("h2", { class: "dir-ps", text: L().labConsole(t(def.title, lang)) }), term, el("p", { class: "term-help", text: L().labHelp }))));
+        el("div", {}, el("h2", { class: "dir-ps", text: L().labConsole(t(def.title, lang)) }), term, el("p", { class: "term-help", text: L().labHelp }))),
+      shiftPanel);
     term.scrollTop = term.scrollHeight;
     input.focus({ preventScroll: true });
   }
@@ -2413,6 +3236,8 @@
     const stLabel = { done: L().pfStepDone, current: L().pfStepNow, later: L().pfStepLater };
     view.append(
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().pfTitle }), el("p", { class: "sub", text: L().pfSub }))),
+      levelPanel("pf"),
+      countersBlock("pf"),
       el("div", { class: "tiles", id: "pf-tiles" }, tile(`${tt.solved}/${tt.desks}`, L().pfSolved, "pf-solved"), tile(tt.avgPoints == null ? "–" : String(tt.avgPoints), L().pfAvg, "pf-avg"),
         tile(tt.comms == null ? "–" : `${tt.comms}/5`, L().pfComms, "pf-comms"), tile(`${tt.labsComplete}/${tt.labs}`, L().pfLabs, "pf-labs")),
       el("section", { class: "panel pf-next", id: "pf-next" }, el("h2", { text: L().pfNext }), el("p", { class: "pf-next-t", text: nextText }),
@@ -2447,7 +3272,7 @@
       h2(L().pfExport),
       el("section", { class: "panel pf-export", id: "pf-export" }, el("p", { class: "pf-label" }, el("b", { text: L().pfLabel })), el("p", { class: "sub", text: L().pfExportText }),
         el("div", { class: "row" }, el("button", { type: "button", class: "btn", id: "pf-download", text: L().pfExportBtn, onclick: () => {
-          const day = G.dayOf();
+          const day = today();
           download(PF.fileName(day), PF.toMarkdown(profileInput(), { lang, name: user ? user.name : "", date: day, site: location.origin + "/",
             deskTitle: (d) => deskById(d).ticket.id + " · " + t(deskById(d).title, lang), deskTopic: (d) => t(deskById(d).topic, lang), labTitle }), msg, L().pfDownloaded);
         } })), msg));
@@ -2456,7 +3281,7 @@
   /* ---------- the tour (v0.8): a guided first ticket for a new technician. A card at the bottom and the element it talks about
      highlighted; it moves between the queue and one ticket, waits while you assign it, and can be skipped or taken again from the sidebar.
      A technician who already took the earlier tour sees one "what's new" card instead (sd.whatsNew). */
-  const WHATS_NEW = "0.8";
+  const WHATS_NEW = "0.9";
   const TOUR = [
     { route: "#/", targets: [] }, { route: "#/", targets: ["side-nav"] }, { route: "#/", targets: ["tour-queue"] }, { route: "#/", targets: ["tour-row"] },
     { route: "desk", targets: ["assign", "wf-pend", "wf-resume"] }, { route: "desk", targets: ["tour-term"] },
@@ -2496,7 +3321,7 @@
     const steps = L().tourGuided;
     const meta = TOUR[i];
     const target = meta.targets.map((x) => document.getElementById(x)).find(Boolean);
-    if (target) { target.classList.add("tour-focus"); target.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    if (target) { target.classList.add("tour-focus"); target.scrollIntoView({ behavior: motion(), block: "center" }); }
     const last = i === steps.length - 1;
     tourCard(L().tourStep(i + 1, steps.length), steps[i][0], steps[i][1] + (meta.wait && !target ? " " + L().tourWait : ""), [
       el("button", { type: "button", class: "link-btn", id: "tour-skip", text: L().tourSkip, onclick: () => closeTour(true) }),
@@ -2518,9 +3343,9 @@
     const done = () => { save("whatsNew", WHATS_NEW); closeTour(false); };
     const go = (href) => () => { done(); location.hash = href; };
     tourCard(null, L().newTitle, L().newText, [
-      el("button", { type: "button", class: "btn ghost sm", id: "new-library", text: L().navLibrary, onclick: go("#/library") }),
-      el("button", { type: "button", class: "btn ghost sm", id: "new-labs", text: L().navLabs, onclick: go("#/labs") }),
-      el("button", { type: "button", class: "btn ghost sm", id: "new-profile", text: L().navProfile, onclick: go("#/profile") }),
+      el("button", { type: "button", class: "btn ghost sm", id: "new-mail", text: L().navMail, onclick: go("#/mail") }),
+      el("button", { type: "button", class: "btn ghost sm", id: "new-prefs", text: L().prTitle, onclick: go("#/account") }),
+      el("button", { type: "button", class: "btn ghost sm", id: "new-free", text: L().ftNew, onclick: go("#/free/new") }),
       el("span", { class: "grow" }),
       el("button", { type: "button", class: "btn sm", id: "new-ok", text: L().newGot, onclick: done })]).classList.add("tour-new");
   }
@@ -2548,7 +3373,7 @@
     document.title = lang === "es" ? "SysAdmin Desks · simulador gratuito de soporte IT" : "SysAdmin Desks · free IT support simulator";
     const howBtn = el("button", { type: "button", class: "land-link", text: T.how, onclick: () => {
       const target = document.getElementById("land-s1");
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (target) target.scrollIntoView({ behavior: motion(), block: "start" });
     } });
     const heroArt = el("div", { class: "art" },
       laptop(termScreen([["dim", "Connected to PC-SALES-14 as CONTOSO\\jruiz"], ["cmd", "PS C:\\> ipconfig /all"], ["out", "DNS Servers . . . : 8.8.8.8"],
@@ -2694,7 +3519,7 @@
         }
         resetToken = null;
         user = null; save("work", {});
-        Object.keys(live).forEach((k) => delete live[k]);
+        Object.keys(live).forEach((k) => delete live[k]); save("live", {}); forgetSandboxes();
         chrome();
         tab = "login"; render(); info(L().resetDone);
       } },
@@ -2791,6 +3616,7 @@
           if (!r.ok) { msg.textContent = L().errors[r.data.error] || L().errors.server; return; }
           user = null; progress = {}; save("progress", progress); save("work", {});
           GROWTH_KEYS.forEach((k) => { try { localStorage.removeItem("sd." + k); } catch (e) { /* ignore */ } });
+          Object.keys(live).forEach((k) => delete live[k]); forgetSandboxes(); prefsCache = null; mboxCache = null; freeCache = null; applyMotion();
           document.body.classList.remove("shell-on");
           chrome();
           app.replaceChildren(el("section", { class: "panel account" }, el("p", { text: L().accDeleted }), el("a", { class: "btn", href: "#/start", text: L().signIn })));
@@ -2806,22 +3632,81 @@
       el("div", { class: "row" }, el("a", { class: "btn", href: "#/", text: L().home }),
         el("button", { type: "button", class: "btn ghost", text: L().signOut, onclick: async () => {
           await api("/api/auth/logout", "POST");
+          persistAll();   // v0.9: the room and the labs stay for this account (tagged with it); the tickets' work goes with the workflow
           user = null; progress = {}; save("progress", progress); save("work", {});
-          Object.keys(live).forEach((k) => delete live[k]);
+          Object.keys(live).forEach((k) => delete live[k]); save("live", {}); forgetSandboxes();
           location.hash = "#/start"; route();
         } })),
       el("p", { class: "fine acc-help" }, L().accHelp + " ",
         el("a", { href: REPORT, target: "_blank", rel: "noopener noreferrer", text: L().report }), " · ",
         el("a", { href: "/help", text: L().help }), " · ", el("a", { href: "/terms", text: L().terms }), " · ", el("a", { href: "/privacy", text: L().privacy }),
         el("span", { class: "cc-link" }, " · ", el("button", { type: "button", class: "linkbtn", "data-cookie-settings": "", text: L().cookies }))),
-      msg, zone));
+      msg, zone), prefsPanel());
   }
+
+  /* ---------- v0.9: My account → Preferences (prefs.js, sd.prefs): reminder, sounds, time zone, reduced motion, and the saved work */
+  function prefsPanel() {
+    const p = prefs();
+    const saved = el("p", { class: "fine pr-saved", role: "status", "aria-live": "polite" });
+    const done = (text) => { saved.textContent = text || L().prSaved; };
+    const sw = (idf, checked, label, onchange, disabled) => {
+      const box = el("input", { type: "checkbox", id: idf, checked: checked ? true : null, disabled: disabled ? true : null });
+      box.addEventListener("change", () => onchange(box));
+      return el("label", { class: "pr-check", for: idf }, box, el("span", { text: label }));
+    };
+    // reminder
+    const time = el("input", { type: "time", id: "pr-time", value: p.reminder.time, disabled: p.reminder.on ? null : true, "aria-label": L().prReminderAt });
+    time.addEventListener("change", () => { if (Pf.validTime(time.value)) { setPrefs(Pf.update(prefs(), { reminder: { time: time.value } })); done(); } });
+    const notifyNote = el("p", { class: "fine", id: "pr-notify-note" });
+    const reminder = el("fieldset", { class: "pr-group" }, el("legend", { text: L().prReminder }),
+      sw("pr-reminder", p.reminder.on, L().prReminderOn, (b) => { setPrefs(Pf.update(prefs(), { reminder: { on: b.checked } })); done(); account(); focusPref("pr-reminder"); }),
+      el("label", { class: "pr-inline", for: "pr-time" }, el("span", { text: L().prReminderAt + " " }), time),
+      sw("pr-notify", p.reminder.notify, L().prNotify, async (b) => {
+        if (!b.checked) { setPrefs(Pf.update(prefs(), { reminder: { notify: false } })); done(); return; }
+        // the permission is asked only now, when the user turns it on
+        if (!("Notification" in window)) { b.checked = false; notifyNote.textContent = L().prNotifyNo; return; }
+        let perm = Notification.permission;
+        try { if (perm === "default") perm = await Notification.requestPermission(); } catch (e) { perm = "denied"; }
+        if (perm !== "granted") { b.checked = false; setPrefs(Pf.update(prefs(), { reminder: { notify: false } })); notifyNote.textContent = L().prNotifyDenied; return; }
+        setPrefs(Pf.update(prefs(), { reminder: { notify: true } })); done();
+      }, !p.reminder.on), notifyNote);
+    // sounds
+    const sounds = el("fieldset", { class: "pr-group" }, el("legend", { text: L().prSounds }),
+      sw("pr-sounds", p.sounds, L().prSoundsOn, (b) => { setPrefs(Pf.update(prefs(), { sounds: b.checked })); done(); }),
+      el("button", { type: "button", class: "btn ghost sm", id: "pr-sound-test", text: "♪ " + L().prTest, onclick: () => celebrate("resolved") }));
+    // time zone
+    const bz = Pf.browserZone();
+    const tz = el("select", { id: "pr-zone", "aria-label": L().prZone }, el("option", { value: "", text: L().prZoneAuto(bz) }),
+      Pf.zones().map((z) => el("option", { value: z, selected: p.tz === z ? true : null, text: z.replace(/_/g, " ") })));
+    const now = el("p", { class: "fine", id: "pr-zone-now" });
+    const showNow = () => { now.textContent = L().prZoneNow(clock(), Pf.offsetLabel(Date.now(), zone()) + " · " + zone()); };
+    tz.addEventListener("change", () => { setPrefs(Pf.update(prefs(), { tz: tz.value })); showNow(); done(); });
+    showNow();
+    const zoneBox = el("fieldset", { class: "pr-group" }, el("legend", { text: L().prZone }), tz, now);
+    // motion
+    const motionBox = el("fieldset", { class: "pr-group" }, el("legend", { text: L().prMotion }),
+      sw("pr-motion", p.motion, L().prMotionOn, (b) => { setPrefs(Pf.update(prefs(), { motion: b.checked })); done(); }),
+      sysReduce() ? el("p", { class: "fine", text: L().prMotionSys }) : null);
+    // the work kept in this browser (the reset path)
+    const dataMsg = el("p", { class: "fine", role: "status" });
+    const dataBox = el("fieldset", { class: "pr-group" }, el("legend", { text: L().prData }), el("p", { class: "fine", text: L().prDataText }),
+      el("button", { type: "button", class: "btn ghost sm", id: "pr-clear", text: L().prDataBtn, onclick: () => {
+        clearSaved(); Object.keys(live).forEach((k) => delete live[k]); forgetSandboxes(); dataMsg.textContent = L().prDataDone;
+      } }), dataMsg);
+    return el("section", { class: "panel account prefs", id: "prefs", "aria-labelledby": "prefs-h" },
+      el("h2", { id: "prefs-h", text: L().prTitle }), el("p", { class: "sub", text: L().prSub }),
+      reminder, sounds, zoneBox, motionBox, dataBox, saved);
+  }
+  function focusPref(idf) { const n = document.getElementById(idf); if (n) { n.focus({ preventScroll: true }); } }
 
   /* ---------- routing */
   function route(notice) {
+    freshGoals = [];
     chrome();
     clearInterval(ticker);
     closeTour(false);
+    fsHandler = null;
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
     let h = location.hash;
     if (user && (h === "#/start" || h === "#/register")) { history.replaceState(null, "", location.pathname + location.search + "#/"); h = "#/"; }
     const m = h.match(/^#\/desk\/([a-z0-9-]+)$/);
@@ -2832,6 +3717,8 @@
     const lam = h.match(/^#\/labs(?:\/([a-z0-9-]+))?$/);
     const sm = h.match(/^#\/shipping(?:\/([A-Za-z0-9-]+))?(?:\/([a-z0-9-]+))?$/);
     const rm = h.match(/^#\/reset(?:\?token=([A-Za-z0-9_-]{20,128}))?$/);
+    const fm = h.match(/^#\/free\/(new|FREE-\d{4})$/);   // v0.9: free tickets
+    freeUi.pendOpen = false;
     if (rm && rm[1]) { resetToken = rm[1]; history.replaceState(null, "", location.pathname + location.search + "#/reset"); }
     document.body.classList.toggle("landing-on", !user && (h === "" || h === "#/"));
     document.body.classList.toggle("shell-on", Boolean(user) && !rm);
@@ -2851,6 +3738,7 @@
     else if (lam && user) labsPage(lam[1] || null);
     else if (h === "#/profile" && user) profilePage();
     else if (mm && user) mailPage(mm[1] || null);
+    else if (fm && user) { if (fm[1] === "new") freeNew(); else freePage(fm[1]); }
     else if (user) queue();
     else landing();
     if (user) ticker = setInterval(tick, 1000);

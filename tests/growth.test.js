@@ -181,7 +181,8 @@ test("badges: computed from the activity, earned once and kept with the day", ()
   assert.ok(earned({ activity: [], progress: Object.fromEntries(desks.map((d) => [d, { points: 80, stars: 2 }])) }).includes("full-shift"), "from the saved results too");
   const week = Array.from({ length: 7 }, (_, i) => ({ type: "mail", id: "maintenance", day: "2026-10-" + (20 + i) }));
   assert.ok(earned({ activity: week }).includes("streak-7"));
-  assert.ok(earned({ activity: [], mail: { "ceo-phish": { result: "correct" } } }).includes("sharp-eye"));
+  assert.ok(earned({ activity: [], mail: { "ceo-phish": { result: "correct" }, "courier-phish": { result: "correct" } } }).includes("sharp-eye"));
+  assert.ok(!earned({ activity: [], mail: { "ceo-phish": { result: "correct" } } }).includes("sharp-eye"), "every phishing email");
   assert.ok(!earned({ activity: [], mail: { "ceo-phish": { result: "partial" } } }).includes("sharp-eye"));
   const kb5 = Object.fromEntries(desks.slice(0, 5).map((d) => [d, {}]));
   assert.deepEqual(earned({ activity: [], kb: kb5 }).filter((x) => /article|librarian/.test(x)), ["first-article", "librarian"]);
@@ -197,10 +198,10 @@ test("badges: computed from the activity, earned once and kept with the day", ()
   assert.equal(shown.find((b) => b.id === "librarian").earned, false);
 });
 
-test("mail data: six messages, both languages, real tickets and directory entries, safe fictional addresses", () => {
-  assert.equal(G.MAIL.length, 6);
+test("mail data: eleven messages, both languages, real tickets and directory entries, safe fictional addresses", () => {
+  assert.equal(G.MAIL.length, 11);
   const kinds = G.MAIL.map((m) => m.kind);
-  for (const k of ["phishing", "impersonation", "notice", "legit"]) assert.ok(kinds.includes(k), k);
+  for (const k of ["phishing", "impersonation", "notice", "legit", "external"]) assert.ok(kinds.includes(k), k);
   assert.equal(G.MAIL.filter((m) => m.kind === "request").length, 2);
   const ids = new Set();
   for (const m of G.MAIL) {
@@ -229,7 +230,7 @@ test("mail data: six messages, both languages, real tickets and directory entrie
   // the two requests are tickets you can open, with a "create ticket" answer that is the right one
   for (const m of G.MAIL.filter((x) => x.kind === "request")) assert.equal(G.grade(m, "ticket").result, "correct", m.id);
   // phishing: look-alike domain, Reply-To mismatch, SPF and DMARC fail, a link whose target differs from its text
-  const ph = G.MAIL.find((m) => m.kind === "phishing");
+  const ph = G.mail("ceo-phish");
   assert.equal(G.domainOf(ph.from.address), "contoso-it-support.com");
   assert.notEqual(ph.headers.replyTo, ph.from.address);
   assert.equal(ph.headers.spf, "fail");
@@ -256,7 +257,7 @@ test("mail grading and score", () => {
   assert.equal(G.grade(m, "nope"), null);
   assert.equal(G.mail("nope"), null);
   assert.deepEqual(G.paragraph("Open [[0]] now"), [{ text: "Open " }, { link: 0 }, { text: " now" }]);
-  assert.deepEqual(G.mailScore({}), { total: 6, answered: 0, correct: 0, partial: 0, wrong: 0 });
+  assert.deepEqual(G.mailScore({}), { total: 11, answered: 0, correct: 0, partial: 0, wrong: 0 });
   assert.deepEqual(G.mailScore({ "ceo-phish": { result: "correct" }, "mfa-reset": { result: "wrong" }, maintenance: { result: "partial" }, gone: { result: "correct" } }),
-    { total: 6, answered: 3, correct: 1, partial: 1, wrong: 1 });
+    { total: 11, answered: 3, correct: 1, partial: 1, wrong: 1 });
 });
