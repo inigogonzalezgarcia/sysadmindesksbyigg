@@ -99,7 +99,7 @@
     }
     box.setAttribute("aria-label", t.title);
     var kids = [el("p", "cc-k", null, t.kicker), el("h2", "cc-t", null, t.title), el("p", "cc-x", null, t.text),
-      el("a", "cc-p", { href: "privacy.html#cookies" }, t.policy)];
+      el("a", "cc-p", { href: "/privacy#cookies" }, t.policy)];
     if (settings) {
       var cb = el("input", null, { type: "checkbox", id: "cc-an" });
       cb.checked = !!(c && c.analytics);

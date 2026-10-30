@@ -364,13 +364,17 @@
   // links from the guides on the website say which language to open in: ?lang=es or ?lang=en
   const asked = new URLSearchParams(location.search).get("lang");
   if (asked === "es" || asked === "en") { lang = asked; save("lang", lang); }
+  // the static intro in index.html (for search engines and slow connections) carries both languages: show only this one
+  // until the first view replaces it
+  function introLang() { document.body.classList.remove("intro-es", "intro-en"); document.body.classList.add("intro-" + lang); }
+  introLang();
   let progress = load("progress", {});
   let user = null;      // signed-in technician {name, email, avatar, google, password}
   let afterLogin = null;  // the page someone asked for before signing in (a desk linked from a guide)
   const AVATARS = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8"];
   const SITE = "https://inigogonzalezgarcia.github.io/";
   // the static pages next to the app, and the contact form with the subject filled in
-  const DOCS = [["about", "about.html"], ["help", "help.html"], ["faq", "faq.html"], ["terms", "terms.html"], ["privacy", "privacy.html"]];
+  const DOCS = [["about", "/about"], ["help", "/help"], ["faq", "/faq"], ["terms", "/terms"], ["privacy", "/privacy"]];
   const REPORT = SITE + "about.html?tema=sysadmindesks#contacto";
 
   /* ---------- accounts (Pages Functions under /api; the page still works if they are not there) */
@@ -426,6 +430,7 @@
   /* ---------- chrome */
   function chrome() {
     document.documentElement.lang = lang;
+    introLang();
     const b = document.getElementById("lang");
     b.textContent = L().langBtn;
     b.setAttribute("aria-label", L().langLabel);
@@ -546,7 +551,7 @@
       item("#/progress", "★", L().navProgress, "progress"),
       el("a", { class: "side-item", href: SITE + "guias.html", target: "_blank", rel: "noopener noreferrer" },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "↗" }), el("span", { text: L().navGuides })),
-      el("a", { class: "side-item", href: "help.html", id: "nav-side-help" },
+      el("a", { class: "side-item", href: "/help", id: "nav-side-help" },
         el("span", { class: "side-ico", "aria-hidden": "true", text: "i" }), el("span", { text: L().navHelp })),
       item("#/account", "●", L().navAccount, "account"),
       el("button", { type: "button", class: "side-item side-tour", id: "nav-tour", onclick: () => { if (location.hash !== "#/" && location.hash !== "") { location.hash = "#/"; setTimeout(() => tour(0), 50); } else tour(0); } },
@@ -1652,7 +1657,7 @@
     const app = document.getElementById("app");
     app.replaceChildren();
     const T = L().land;
-    document.title = "SysAdmin Desks by IGG · " + (lang === "es" ? "simulador de soporte IT" : "IT support simulator");
+    document.title = lang === "es" ? "SysAdmin Desks · simulador gratuito de soporte IT" : "SysAdmin Desks · free IT support simulator";
     const howBtn = el("button", { type: "button", class: "land-link", text: T.how, onclick: () => {
       const target = document.getElementById("land-s1");
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1854,8 +1859,8 @@
           field(L().fName, name), el("div", { class: "field" }, el("span", { class: "field-label", text: L().fAvatar }), pics),
           field(L().fEmail, email), pw.node,
           el("label", { class: "check" }, consent, el("span", {}, L().consentA,
-            el("a", { href: "privacy.html", target: "_blank", rel: "noopener noreferrer", text: L().consentLink }), L().consentB,
-            el("a", { href: "terms.html", target: "_blank", rel: "noopener noreferrer", text: L().consentTerms }), L().consentC)),
+            el("a", { href: "/privacy", target: "_blank", rel: "noopener noreferrer", text: L().consentLink }), L().consentB,
+            el("a", { href: "/terms", target: "_blank", rel: "noopener noreferrer", text: L().consentTerms }), L().consentC)),
           submit);
       }
       body.replaceChildren(tabs, msg, form,
@@ -1919,7 +1924,7 @@
         } })),
       el("p", { class: "fine acc-help" }, L().accHelp + " ",
         el("a", { href: REPORT, target: "_blank", rel: "noopener noreferrer", text: L().report }), " · ",
-        el("a", { href: "help.html", text: L().help }), " · ", el("a", { href: "terms.html", text: L().terms }), " · ", el("a", { href: "privacy.html", text: L().privacy }),
+        el("a", { href: "/help", text: L().help }), " · ", el("a", { href: "/terms", text: L().terms }), " · ", el("a", { href: "/privacy", text: L().privacy }),
         el("span", { class: "cc-link" }, " · ", el("button", { type: "button", class: "linkbtn", "data-cookie-settings": "", text: L().cookies }))),
       msg, zone));
   }
