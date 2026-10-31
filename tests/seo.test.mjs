@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { build, SCENARIOS, STATIC, SITE, ticketMeta, faqItems } from "../scripts/build-ticket-pages.mjs";
+import { build, SCENARIOS, STATIC, SITE, ticketMeta, faqItems, words } from "../scripts/build-ticket-pages.mjs";
 import { TICKET_SEO } from "../scripts/ticket-pages-data.mjs";
 
 const PUB = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
@@ -56,7 +56,34 @@ test("JSON-LD: WebApplication on the home page, FAQPage with exactly the visible
   assert.equal(ld["@type"], "FAQPage");
   assert.deepEqual(ld.mainEntity.map((q) => [q.name, q.acceptedAnswer.text]), visible.map((x) => [x.q, x.a]));
   assert.equal(ld.mainEntity[0].name, "¿Es gratis?");
-  for (const f of ["about.html", "help.html", "terms.html", "privacy.html", "tickets/index.html"]) assert.equal(jsonLd(read(f)).length, 0, f + " no JSON-LD");
+  for (const f of ["about.html", "help.html", "terms.html", "privacy.html"]) assert.equal(jsonLd(read(f)).length, 0, f + " no JSON-LD");
+});
+
+test("JSON-LD: the tickets list is a CollectionPage of every desk, and each ticket page has the trail home → tickets → ticket", () => {
+  const [col] = jsonLd(read("tickets/index.html"));
+  assert.equal(col["@type"], "CollectionPage");
+  assert.equal(col.mainEntity["@type"], "ItemList");
+  assert.equal(col.mainEntity.numberOfItems, SCENARIOS.length);
+  assert.deepEqual(col.mainEntity.itemListElement.map((x) => x.url), SCENARIOS.map((sc) => "https://sysadmindesksbyigg.pages.dev/tickets/" + sc.id));
+  for (const sc of SCENARIOS) {
+    const [bc] = jsonLd(read(`tickets/${sc.id}.html`));
+    assert.equal(bc["@type"], "BreadcrumbList", sc.id);
+    assert.deepEqual(bc.itemListElement.map((x) => x.position), [1, 2, 3]);
+    assert.equal(bc.itemListElement[2].item, "https://sysadmindesksbyigg.pages.dev/tickets/" + sc.id);
+    assert.equal(bc.itemListElement[2].name, sc.title.es);
+  }
+});
+
+test("the counts in words follow the number of desks", () => {
+  const n = SCENARIOS.length;
+  const es = words(n, "es"), en = words(n, "en");
+  const cap = (s) => s[0].toUpperCase() + s.slice(1);
+  assert.ok(read("index.html").includes(`${cap(es)} tickets de primera y segunda línea.`));
+  assert.ok(read("index.html").includes(`${cap(en)} first and second line tickets.`));
+  assert.ok(read("tickets/index.html").includes(`${cap(es)} tickets de una mesa de soporte`));
+  assert.ok(read("tickets/index.html").includes(`${cap(en)} first and second line help desk tickets`));
+  assert.equal(words(21, "es"), "veintiún"); assert.equal(words(24, "es"), "veinticuatro"); assert.equal(words(31, "es"), "treinta y un");
+  assert.equal(words(24, "en"), "twenty-four"); assert.equal(words(30, "en"), "thirty");
 });
 
 test("the home page has a static, bilingual intro with real desks and links, and no inline code", () => {

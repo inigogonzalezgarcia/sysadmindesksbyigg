@@ -21,6 +21,7 @@
 <meta property="og:locale" content="es_ES">
 <meta property="og:locale:alternate" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SysAdmin Desks","item":"https://sysadmindesksbyigg.pages.dev/"},{"@type":"ListItem","position":2,"name":"Tickets para practicar","item":"https://sysadmindesksbyigg.pages.dev/tickets/"},{"@type":"ListItem","position":3,"name":"La cuenta que se bloquea cada mañana","item":"https://sysadmindesksbyigg.pages.dev/tickets/ad-lockout"}]}</script>
 <!-- /seo -->
 <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.css">
@@ -60,8 +61,8 @@
 
 <h2>Qué practicas</h2>
 <ul>
-  <li>Revisar el estado de una cuenta de Active Directory con PowerShell (RSAT).</li>
-  <li>Leer los eventos de bloqueo en los controladores de dominio para localizar su origen.</li>
+  <li>Revisar el estado de una cuenta de Active Directory (LockedOut, intentos fallidos) con Get-ADUser y PowerShell (RSAT).</li>
+  <li>Leer los eventos de bloqueo (ID 4740) en los controladores de dominio con Get-WinEvent para localizar el equipo de origen.</li>
   <li>Distinguir entre desbloquear la cuenta y quitar lo que la bloquea.</li>
   <li>Comprobar que la cuenta sigue desbloqueada antes de cerrar.</li>
 </ul>
@@ -95,8 +96,8 @@
 
 <h2>What you practise</h2>
 <ul>
-  <li>Check the state of an Active Directory account with PowerShell (RSAT).</li>
-  <li>Read the lockout events on the domain controllers to find their source.</li>
+  <li>Check the state of an Active Directory account (LockedOut, bad password count) with Get-ADUser and PowerShell (RSAT).</li>
+  <li>Read the lockout events (ID 4740) on the domain controllers with Get-WinEvent to find the source computer.</li>
   <li>Tell unlocking the account apart from removing what locks it.</li>
   <li>Check that the account stays unlocked before closing.</li>
 </ul>
