@@ -23,6 +23,18 @@ const SLA = { P1: 20, P2: 30, P3: 45 };
 
 export const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const tx = (v, lang) => (v && typeof v === "object" ? v[lang] : v);
+
+// numbers in words for the counts (1-99), so the text follows the number of desks
+const ES_U = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","veintiún","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"];
+const ES_T = { 3: "treinta", 4: "cuarenta", 5: "cincuenta", 6: "sesenta", 7: "setenta", 8: "ochenta", 9: "noventa" };
+const EN_U = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+const EN_T = { 2: "twenty", 3: "thirty", 4: "forty", 5: "fifty", 6: "sixty", 7: "seventy", 8: "eighty", 9: "ninety" };
+export function words(n, lang) {
+  if (lang === "es") return n < 30 ? ES_U[n] : ES_T[Math.floor(n / 10)] + (n % 10 ? " y " + (n % 10 === 1 ? "un" : ES_U[n % 10]) : "");
+  return n < 20 ? EN_U[n] : EN_T[Math.floor(n / 10)] + (n % 10 ? "-" + EN_U[n % 10] : "");
+}
+const Cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const N = () => SCENARIOS.length;
 const jsonld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, "\\u003c")}</script>`;
 
 // the static pages: Spanish title and description (the default visible language), English title for doc.js
@@ -107,6 +119,9 @@ function replaceBlock(html, start, end, body, file) {
 function staticPage(file, html) {
   const m = STATIC[file];
   const extra = file === "index.html" ? [jsonld(webApp())] : file === "faq.html" ? [jsonld(faqPage(html))] : [];
+  if (file === "index.html") html = html
+    .replace(/<p>[^<]*? tickets de primera y segunda línea\./, `<p>${Cap(words(N(), "es"))} tickets de primera y segunda línea.`)
+    .replace(/<p>[^<]*? first and second line tickets\./, `<p>${Cap(words(N(), "en"))} first and second line tickets.`);
   let out = html.replace(/<html lang="[a-z]+"[^>]*>/, `<html lang="es" data-title-en="${esc(m.titleEn)}">`);
   out = replaceBlock(out, "<!-- seo -->", "<!-- /seo -->", seoHead(m, extra).replace(/\n<!-- \/seo -->$/, ""), file);
   for (const lang of ["es", "en"]) {
@@ -116,7 +131,7 @@ function staticPage(file, html) {
 }
 
 /* ---------- the generated pages (same header, footer and style as about.html) */
-function shell(m, mainHtml, current) {
+function shell(m, mainHtml, current, extra) {
   const nav = [["/tickets/", "Tickets", "Tickets", "tickets"], ["/about", "Qué es", "About"], ["/help", "Ayuda", "Help"], ["/faq", "Preguntas frecuentes", "FAQ"]];
   return `<!doctype html>
 <html lang="es" data-title-en="${esc(m.titleEn)}">
@@ -125,7 +140,7 @@ function shell(m, mainHtml, current) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="${CSP}">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-${seoHead(m)}
+${seoHead(m, extra)}
 <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.css">
 <script src="/assets/doc.js" defer></script>
@@ -157,14 +172,14 @@ const T = {
     guideH: "Guía relacionada", guide: (a) => `¿Quieres repasar el tema antes? Lee la ${a} en inigogonzalezgarcia.github.io, que explica lo que practicas en este ticket.`, guideA: "guía paso a paso",
     prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
-    idxH1: "Tickets para practicar soporte IT", idxLead: "Dieciocho tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.",
+    idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.`,
     idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
     guideH: "Related guide", guide: (a) => `Want to brush up first? Read the ${a} on inigogonzalezgarcia.github.io, which explains what you practise on this ticket.`, guideA: "step-by-step guide",
     prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
-    idxH1: "Tickets to practise IT support", idxLead: "Eighteen first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.",
+    idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.`,
     idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
 
@@ -215,19 +230,31 @@ function indexArticle(lang) {
   const levels = [...new Set(SCENARIOS.map((sc) => sc.level))].sort();
   return `${art}
 <h1>${t.idxH1}</h1>
-<p class="lead-p">${esc(t.idxLead)}</p>
+<p class="lead-p">${esc(t.idxLead())}</p>
 ${levels.map((l) => `<h2 id="${lang === "es" ? "nivel" : "level"}-${l}">${l === 1 ? t.idxL1 : t.idxL2}</h2>\n${group(l)}`).join("\n")}
 <p class="tk-cta"><a class="btn tk-btn" href="/?lang=${lang}#/register">${t.start}</a></p>
 <p>${t.idxMore(`<a href="/about">${t.about}</a>`, `<a href="/help">${t.help}</a>`, `<a href="/faq">${t.faq}</a>`)}</p>
 </article>`;
 }
 
+// structured data: the trail home → tickets → ticket, and the list of tickets
+function breadcrumbs(sc) {
+  return { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "SysAdmin Desks", item: SITE + "/" },
+    { "@type": "ListItem", position: 2, name: T.es.crumbs, item: SITE + "/tickets/" },
+    { "@type": "ListItem", position: 3, name: tx(sc.title, "es"), item: SITE + ticketPath(sc) }] };
+}
+function collection() {
+  return { "@context": "https://schema.org", "@type": "CollectionPage", name: T.es.idxH1, url: SITE + "/tickets/", inLanguage: ["es", "en"],
+    mainEntity: { "@type": "ItemList", numberOfItems: N(), itemListElement: SCENARIOS.map((sc, i) => ({ "@type": "ListItem", position: i + 1, url: SITE + ticketPath(sc), name: tx(sc.title, "es") })) } };
+}
+
 /* ---------- everything, as {relative path in public/: content} */
 export function build() {
   const out = {};
   for (const file of Object.keys(STATIC)) out[file] = staticPage(file, readFileSync(join(PUB, file), "utf8"));
-  out["tickets/index.html"] = shell(TICKETS_INDEX, indexArticle("es") + "\n\n" + indexArticle("en"), "tickets");
-  for (const sc of SCENARIOS) out[`tickets/${sc.id}.html`] = shell(ticketMeta(sc), ticketArticle(sc, "es") + "\n\n" + ticketArticle(sc, "en"));
+  out["tickets/index.html"] = shell(TICKETS_INDEX, indexArticle("es") + "\n\n" + indexArticle("en"), "tickets", [jsonld(collection())]);
+  for (const sc of SCENARIOS) out[`tickets/${sc.id}.html`] = shell(ticketMeta(sc), ticketArticle(sc, "es") + "\n\n" + ticketArticle(sc, "en"), undefined, [jsonld(breadcrumbs(sc))]);
   return out;
 }
 

@@ -4,18 +4,18 @@
 export const TICKET_SEO = {
   "ad-lockout": {
     es: { desc: "Practica cómo investigar una cuenta de Active Directory que se bloquea cada mañana, encontrar el origen de los bloqueos y documentarlo en el ticket.",
-      skills: ["Revisar el estado de una cuenta de Active Directory con PowerShell (RSAT).", "Leer los eventos de bloqueo en los controladores de dominio para localizar su origen.",
+      skills: ["Revisar el estado de una cuenta de Active Directory (LockedOut, intentos fallidos) con Get-ADUser y PowerShell (RSAT).", "Leer los eventos de bloqueo (ID 4740) en los controladores de dominio con Get-WinEvent para localizar el equipo de origen.",
         "Distinguir entre desbloquear la cuenta y quitar lo que la bloquea.", "Comprobar que la cuenta sigue desbloqueada antes de cerrar."] },
     en: { desc: "Practise how to investigate an Active Directory account that locks every morning, find where the lockouts come from and document it in the ticket.",
-      skills: ["Check the state of an Active Directory account with PowerShell (RSAT).", "Read the lockout events on the domain controllers to find their source.",
+      skills: ["Check the state of an Active Directory account (LockedOut, bad password count) with Get-ADUser and PowerShell (RSAT).", "Read the lockout events (ID 4740) on the domain controllers with Get-WinEvent to find the source computer.",
         "Tell unlocking the account apart from removing what locks it.", "Check that the account stays unlocked before closing."] },
   },
   "dns-intranet": {
     es: { desc: "Practica cómo diagnosticar un portátil que navega por Internet pero no abre la intranet ni las carpetas compartidas, y documentarlo en el ticket.",
-      skills: ["Revisar la configuración de red de un portátil con ipconfig.", "Probar la resolución de nombres internos con nslookup.",
+      skills: ["Revisar la configuración de red y los servidores DNS de un portátil con ipconfig.", "Probar la resolución de nombres internos con nslookup.",
         "Separar un problema de conectividad de uno de resolución de nombres.", "Comprobar que la intranet y la unidad de red vuelven a responder."] },
     en: { desc: "Practise how to diagnose a laptop that reaches the internet but not the intranet or the shared drives, and document it in the ticket.",
-      skills: ["Review a laptop's network configuration with ipconfig.", "Test internal name resolution with nslookup.",
+      skills: ["Review a laptop's network settings and DNS servers with ipconfig.", "Test internal name resolution with nslookup.",
         "Tell a connectivity problem apart from a name resolution one.", "Check that the intranet and the network drive answer again."] },
   },
   "disk-full": {
@@ -28,18 +28,18 @@ export const TICKET_SEO = {
   },
   "print-queue": {
     es: { desc: "Practica cómo desatascar la cola de una impresora compartida que no se vacía, comprobar que vuelve a imprimir y documentarlo en el ticket.",
-      skills: ["Revisar la cola y los trabajos de una impresora compartida con PowerShell.", "Encontrar qué impide que la cola avance en el servidor de impresión.",
+      skills: ["Revisar la cola y los trabajos de una impresora compartida con PowerShell.", "Encontrar qué impide que la cola avance en el servidor de impresión, incluido el estado del servicio Cola de impresión (Spooler).",
         "Hacer una prueba de impresión para confirmar el arreglo.", "Explicar a recepción qué ha pasado sin jerga."] },
     en: { desc: "Practise how to clear a shared printer queue that will not empty, check that it prints again and document it in the ticket.",
-      skills: ["Review a shared printer's queue and jobs with PowerShell.", "Find what stops the queue moving on the print server.",
+      skills: ["Review a shared printer's queue and jobs with PowerShell.", "Find what stops the queue moving on the print server, including the state of the Print Spooler service.",
         "Print a test page to confirm the fix.", "Explain to reception what happened without jargon."] },
   },
   "mailbox-full": {
     es: { desc: "Practica cómo investigar por qué rebotan los correos externos de un directivo en Exchange Online, resolverlo sin perder correo y documentarlo en el ticket.",
-      skills: ["Leer un informe de no entrega (NDR) y lo que dice del problema.", "Revisar un buzón de Exchange Online con PowerShell.",
+      skills: ["Leer un informe de no entrega (NDR, código 5.2.2) y lo que dice del problema.", "Revisar un buzón de Exchange Online con PowerShell.",
         "Elegir un arreglo que no haga perder correo al usuario.", "Tratar un P1 de un directivo con la prisa y el cuidado que pide."] },
     en: { desc: "Practise how to investigate why external email to an executive bounces in Exchange Online, fix it without losing mail and document it in the ticket.",
-      skills: ["Read a non-delivery report (NDR) and what it says about the problem.", "Review an Exchange Online mailbox with PowerShell.",
+      skills: ["Read a non-delivery report (NDR, code 5.2.2) and what it says about the problem.", "Review an Exchange Online mailbox with PowerShell.",
         "Choose a fix that does not make the user lose mail.", "Handle an executive's P1 with the speed and care it needs."] },
   },
   "intune-bitlocker": {
