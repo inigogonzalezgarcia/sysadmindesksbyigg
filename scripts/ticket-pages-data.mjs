@@ -1,5 +1,6 @@
 // SEO copy for the public ticket pages (public/tickets/<id>.html), one entry per desk in public/assets/scenarios.js.
 // desc: the meta description (Spanish, at most 155 characters) and its English twin for the page;
+// title (optional): the words people search for, used in <title> instead of the ticket title (the H1 keeps the story);
 // skills: what the desk practises. Never the root cause, the fix commands or the tempting fix: the page must not spoil the ticket.
 export const TICKET_SEO = {
   "ad-lockout": {
@@ -27,26 +28,26 @@ export const TICKET_SEO = {
         "Avoid the shortcuts that leave the PC worse than before.", "Check the free space before closing."] },
   },
   "print-queue": {
-    es: { desc: "Practica cómo desatascar la cola de una impresora compartida que no se vacía, comprobar que vuelve a imprimir y documentarlo en el ticket.",
+    es: { title: "Cola de impresión atascada (Spooler)", desc: "Practica cómo desatascar la cola de una impresora compartida que no se vacía, comprobar que vuelve a imprimir y documentarlo en el ticket.",
       skills: ["Revisar la cola y los trabajos de una impresora compartida con PowerShell.", "Encontrar qué impide que la cola avance en el servidor de impresión, incluido el estado del servicio Cola de impresión (Spooler).",
         "Hacer una prueba de impresión para confirmar el arreglo.", "Explicar a recepción qué ha pasado sin jerga."] },
-    en: { desc: "Practise how to clear a shared printer queue that will not empty, check that it prints again and document it in the ticket.",
+    en: { title: "Print queue stuck (Print Spooler)", desc: "Practise how to clear a shared printer queue that will not empty, check that it prints again and document it in the ticket.",
       skills: ["Review a shared printer's queue and jobs with PowerShell.", "Find what stops the queue moving on the print server, including the state of the Print Spooler service.",
         "Print a test page to confirm the fix.", "Explain to reception what happened without jargon."] },
   },
   "mailbox-full": {
-    es: { desc: "Practica cómo investigar por qué rebotan los correos externos de un directivo en Exchange Online, resolverlo sin perder correo y documentarlo en el ticket.",
+    es: { title: "Buzón lleno en Exchange Online: correos que rebotan", desc: "Practica cómo investigar por qué rebotan los correos externos de un directivo en Exchange Online, resolverlo sin perder correo y documentarlo en el ticket.",
       skills: ["Leer un informe de no entrega (NDR, código 5.2.2) y lo que dice del problema.", "Revisar un buzón de Exchange Online con PowerShell.",
         "Elegir un arreglo que no haga perder correo al usuario.", "Tratar un P1 de un directivo con la prisa y el cuidado que pide."] },
-    en: { desc: "Practise how to investigate why external email to an executive bounces in Exchange Online, fix it without losing mail and document it in the ticket.",
+    en: { title: "Mailbox full in Exchange Online: emails bounce", desc: "Practise how to investigate why external email to an executive bounces in Exchange Online, fix it without losing mail and document it in the ticket.",
       skills: ["Read a non-delivery report (NDR, code 5.2.2) and what it says about the problem.", "Review an Exchange Online mailbox with PowerShell.",
         "Choose a fix that does not make the user lose mail.", "Handle an executive's P1 with the speed and care it needs."] },
   },
   "intune-bitlocker": {
-    es: { desc: "Practica cómo resolver un portátil que Intune marca como no conforme y que bloquea Outlook y Teams, confirmar el cumplimiento y documentarlo en el ticket.",
+    es: { title: "Intune no conforme: Outlook y Teams bloqueados", desc: "Practica cómo resolver un portátil que Intune marca como no conforme y que bloquea Outlook y Teams, confirmar el cumplimiento y documentarlo en el ticket.",
       skills: ["Revisar el estado de cumplimiento de un dispositivo en Intune.", "Entender qué requisito impide abrir Outlook y Teams.",
         "Comprobar el cifrado del disco con las herramientas de Windows.", "Sincronizar el dispositivo y confirmar que vuelve a cumplir."] },
-    en: { desc: "Practise how to fix a laptop that Intune marks as not compliant, blocking Outlook and Teams, confirm compliance and document it in the ticket.",
+    en: { title: "Intune non-compliant: Outlook and Teams blocked", desc: "Practise how to fix a laptop that Intune marks as not compliant, blocking Outlook and Teams, confirm compliance and document it in the ticket.",
       skills: ["Review a device's compliance state in Intune.", "Understand which requirement stops Outlook and Teams from opening.",
         "Check disk encryption with the Windows tools.", "Sync the device and confirm it is compliant again."] },
   },
