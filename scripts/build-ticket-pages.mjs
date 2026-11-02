@@ -56,10 +56,18 @@ const TICKETS_INDEX = { path: "/tickets/", title: "Tickets para practicar soport
   desc: "Los 24 tickets de SysAdmin Desks para practicar soporte IT gratis: Active Directory, Microsoft 365, Exchange, Intune, Linux, SQL Server, redes y RMA." };
 
 export const ticketPath = (sc) => "/tickets/" + sc.id;
+// <title> of a ticket page: the SEO title of the desk if it has one (the words people search), else the ticket title;
+// the long suffix while the whole title fits in TITLE_MAX characters (what Google shows), the short one beyond.
+export const TITLE_MAX = 60;
+const SUFFIX = { es: [" · práctica de soporte IT", " · práctica IT"], en: [" · IT support practice", " · IT practice"] };
+export function seoTitle(sc, seo, lang) {
+  const base = seo[lang].title || tx(sc.title, lang);
+  return base + (base.length + SUFFIX[lang][0].length <= TITLE_MAX ? SUFFIX[lang][0] : SUFFIX[lang][1]);
+}
 export function ticketMeta(sc) {
   const seo = TICKET_SEO[sc.id];
   if (!seo) throw new Error("scripts/ticket-pages-data.mjs has no entry for " + sc.id);
-  return { path: ticketPath(sc), title: tx(sc.title, "es") + " · práctica de soporte IT", titleEn: tx(sc.title, "en") + " · IT support practice", desc: seo.es.desc, seo };
+  return { path: ticketPath(sc), title: seoTitle(sc, seo, "es"), titleEn: seoTitle(sc, seo, "en"), desc: seo.es.desc, seo };
 }
 
 // the <head> block shared by every public page

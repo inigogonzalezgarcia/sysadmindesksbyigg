@@ -104,7 +104,10 @@ test("a public page per desk: title, description, CTA, guide, and nothing that g
   for (const sc of SCENARIOS) {
     const h = read(`tickets/${sc.id}.html`);
     const m = ticketMeta(sc);
-    assert.equal(m.title, sc.title.es + " · práctica de soporte IT");
+    for (const [lang, t, long, short] of [["es", m.title, " · práctica de soporte IT", " · práctica IT"], ["en", m.titleEn, " · IT support practice", " · IT practice"]]) {
+      const base = TICKET_SEO[sc.id][lang].title || sc.title[lang];
+      assert.equal(t, base + (base.length + long.length <= 60 ? long : short), `${sc.id} ${lang} title suffix`);
+    }
     for (const lang of ["es", "en"]) {
       const d = TICKET_SEO[sc.id][lang].desc;
       assert.ok(d.length <= 155, `${sc.id} ${lang} description ${d.length} > 155`);
