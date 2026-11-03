@@ -598,7 +598,7 @@
     topic: { en: "Exchange Online", es: "Exchange Online" },
     minutes: 15,
     title: { en: "Customer emails bounce: the sales director's mailbox", es: "Los correos de clientes rebotan: el buzón del director comercial" },
-    guide: GUIDE + "outlook-exchange-online-buzon-compartido-permisos-autorespuesta.html",
+    guide: GUIDE + "outlook-exchange-online-buzon-lleno-cuotas-archivo-en-linea-y-ndr-5-2-2.html",
     machine: { host: "ADM-WS01", user: "it.admin", domain: "CONTOSO", shell: "powershell", prompt: "PS C:\\Users\\it.admin> " },
     ticket: {
       id: "INC-20460", from: "Carlos Martín (Sales Director)", priority: "P1",
