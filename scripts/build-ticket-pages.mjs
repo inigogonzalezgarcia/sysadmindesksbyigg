@@ -49,7 +49,7 @@ export const STATIC = {
     desc: "Política de privacidad de SysAdmin Desks by IGG: qué datos se guardan, para qué, durante cuánto tiempo y cuáles son tus derechos." },
   "about.html": { path: "/about", title: "Qué es SysAdmin Desks · simulador de soporte IT gratis", titleEn: "What SysAdmin Desks is · free IT support simulator",
     desc: "Simulador gratuito de mesa de soporte IT en el navegador: qué es, para quién, cómo se corrige cada ticket y lo que no es. Sin instalar nada." },
-  "faq.html": { path: "/faq", title: "Preguntas frecuentes · SysAdmin Desks, simulador de soporte IT", titleEn: "FAQ · SysAdmin Desks, the IT support simulator",
+  "faq.html": { path: "/faq", title: "Preguntas frecuentes · SysAdmin Desks, simulador soporte IT", titleEn: "FAQ · SysAdmin Desks, the IT support simulator",
     desc: "¿Es gratis? ¿Qué tickets hay? ¿Se guarda el progreso? Respuestas sobre SysAdmin Desks, el simulador de soporte IT para practicar help desk." },
 };
 const TICKETS_INDEX = { path: "/tickets/", title: "Tickets para practicar soporte IT · SysAdmin Desks", titleEn: "Tickets to practise IT support · SysAdmin Desks",

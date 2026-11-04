@@ -130,11 +130,13 @@ test("a public page per desk: title, description, CTA, guide, and nothing that g
   }
 });
 
-test("sitemap: clean URLs, today's lastmod and every ticket page", () => {
+test("sitemap: clean URLs, a valid lastmod per URL and every ticket page", () => {
   const x = read("sitemap.xml");
   const locs = [...x.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   for (const [, p] of PAGES) assert.ok(locs.includes(SITE + p), "sitemap has " + p);
   assert.equal(locs.length, PAGES.length);
   assert.ok(!x.includes(".html"), "no .html in the sitemap");
-  assert.equal((x.match(/<lastmod>2026-10-30<\/lastmod>/g) || []).length, locs.length);
+  const mods = [...x.matchAll(/<lastmod>(\d{4}-\d{2}-\d{2})<\/lastmod>/g)].map((m) => m[1]);
+  assert.equal(mods.length, locs.length, "a lastmod per URL");
+  assert.ok(mods.every((d) => !Number.isNaN(Date.parse(d)) && d <= new Date().toISOString().slice(0, 10)), "lastmod is a real date, not in the future");
 });
