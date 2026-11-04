@@ -8,32 +8,34 @@ Free, in English and Spanish. The home page explains how it works; you clock in 
 
 ## Desks
 
+Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.dev/tickets/).
+
 | # | Desk | Topic | Level |
 |---|---|---|---|
-| 1 | The account that locks every morning | Active Directory: lockout events, a scheduled task with an old password | 1 |
-| 2 | Internet works, the intranet does not | Network / DNS: public DNS set by hand, DHCP, DNS cache | 1 |
-| 3 | Disk full: Excel cannot save | Windows: temp folder, Windows Update cache, leaving the service running | 1 |
-| 4 | The reception printer queue that will not empty | Printers: corrupt job, spooler, spool folder | 1 |
-| 5 | Customer emails bounce: the sales director's mailbox | Exchange Online: quota, archive, Managed Folder Assistant | 2 |
-| 6 | "Your device does not meet requirements" | Intune / BitLocker: compliance, recovery key in Entra ID, MDM sync | 2 |
-| 7 | Working from home: the VPN will not connect | Cisco Secure Client (AnyConnect): system clock and certificate validation | 1 |
-| 8 | New starter without Outlook or Teams | Microsoft 365: group-based licensing, no seats left, a leaver's direct licence | 1 |
-| 9 | The invoices mailbox does not appear in Outlook | Exchange Online: FullAccess vs SendAs, automapping | 1 |
-| 10 | Created in AD this morning, missing in Microsoft 365 | Azure AD Connect: OU filtering, delta sync | 2 |
-| 11 | Three nights without a backup of the file server | Veeam: repository full of a deleted job's backups | 2 |
-| 12 | Installed, but Software Center says 'Failed' | MECM: detection method of an outdated product code | 2 |
-| 13 | 502 Bad Gateway: the timesheets app is down | Red Hat: /var full, logrotate, deleted files still held open | 2 |
-| 14 | The CRM in Citrix stays on 'Starting...' | Citrix: unregistered VDA and a stuck disconnected session | 2 |
-| 15 | Abroad and locked out of Microsoft 365 | Entra ID Conditional Access: blocked country, time-bound exception with PIM | 2 |
-| 16 | Nobody can sign in to Expenses with SSO | Entra ID SAML: expired signing certificate, the new one never activated | 2 |
-| 17 | The payroll SFTP server rejects AD accounts | Linux joined to AD (SSSD): clock skew and Kerberos | 2 |
-| 18 | The ERP cannot save: transaction log full | SQL Server: error 9002, failing log backup job | 2 |
-| 19 | The desk port that switched itself off | Network / Cisco switch: err-disabled by BPDU Guard, a small switch under the desk, a parked port, saving the config | 2 |
-| 20 | The Sales printer moved and nobody can print | Network / VLANs: MAC table and LLDP from a Cisco core to an HP Aruba access switch, untagged VLAN, DHCP reservation | 2 |
-| 21 | Valencia cannot reach the ERP since last night's change | Network / FortiGate: debug flow, policy order, a wrong address object, least privilege and the change reference | 2 |
-| 22 | The laptop that freezes and warns the drive will fail | Hardware RMA: SMART, the vendor's pre-boot diagnostics code, warranty with Keep Your Hard Drive, BitLocker key escrowed in Entra ID, a loan laptop | 2 |
-| 23 | A switch power supply failed, but nobody noticed | Network hardware RMA: `show environment power`, the feed ruled out, support contract with advance replacement, hot swap, returning the faulty unit | 2 |
-| 24 | A leaver's laptop and phone: return, wipe and register | Leavers: asset register, courier collection, check on arrival, Intune wipe (no Autopilot Reset on hybrid joined), back in stock | 1 |
+| 1 | [The account that locks every morning](https://sysadmindesksbyigg.pages.dev/tickets/ad-lockout) | Active Directory: lockout events, a scheduled task with an old password | 1 |
+| 2 | [Internet works, the intranet does not](https://sysadmindesksbyigg.pages.dev/tickets/dns-intranet) | Network / DNS: public DNS set by hand, DHCP, DNS cache | 1 |
+| 3 | [Disk full: Excel cannot save](https://sysadmindesksbyigg.pages.dev/tickets/disk-full) | Windows: temp folder, Windows Update cache, leaving the service running | 1 |
+| 4 | [The reception printer queue that will not empty](https://sysadmindesksbyigg.pages.dev/tickets/print-queue) | Printers: corrupt job, spooler, spool folder | 1 |
+| 5 | [Customer emails bounce: the sales director's mailbox](https://sysadmindesksbyigg.pages.dev/tickets/mailbox-full) | Exchange Online: quota, archive, Managed Folder Assistant | 2 |
+| 6 | ["Your device does not meet requirements"](https://sysadmindesksbyigg.pages.dev/tickets/intune-bitlocker) | Intune / BitLocker: compliance, recovery key in Entra ID, MDM sync | 2 |
+| 7 | [Working from home: the VPN will not connect](https://sysadmindesksbyigg.pages.dev/tickets/vpn-anyconnect) | Cisco Secure Client (AnyConnect): system clock and certificate validation | 1 |
+| 8 | [New starter without Outlook or Teams](https://sysadmindesksbyigg.pages.dev/tickets/m365-licence) | Microsoft 365: group-based licensing, no seats left, a leaver's direct licence | 1 |
+| 9 | [The invoices mailbox does not appear in Outlook](https://sysadmindesksbyigg.pages.dev/tickets/shared-mailbox) | Exchange Online: FullAccess vs SendAs, automapping | 1 |
+| 10 | [Created in AD this morning, missing in Microsoft 365](https://sysadmindesksbyigg.pages.dev/tickets/aadc-sync) | Azure AD Connect: OU filtering, delta sync | 2 |
+| 11 | [Three nights without a backup of the file server](https://sysadmindesksbyigg.pages.dev/tickets/veeam-job) | Veeam: repository full of a deleted job's backups | 2 |
+| 12 | [Installed, but Software Center says 'Failed'](https://sysadmindesksbyigg.pages.dev/tickets/mecm-app) | MECM: detection method of an outdated product code | 2 |
+| 13 | [502 Bad Gateway: the timesheets app is down](https://sysadmindesksbyigg.pages.dev/tickets/rhel-var-full) | Red Hat: /var full, logrotate, deleted files still held open | 2 |
+| 14 | [The CRM in Citrix stays on 'Starting...'](https://sysadmindesksbyigg.pages.dev/tickets/citrix-session) | Citrix: unregistered VDA and a stuck disconnected session | 2 |
+| 15 | [Abroad and locked out of Microsoft 365](https://sysadmindesksbyigg.pages.dev/tickets/ca-blocked) | Entra ID Conditional Access: blocked country, time-bound exception with PIM | 2 |
+| 16 | [Nobody can sign in to Expenses with SSO](https://sysadmindesksbyigg.pages.dev/tickets/sso-saml) | Entra ID SAML: expired signing certificate, the new one never activated | 2 |
+| 17 | [The payroll SFTP server rejects AD accounts](https://sysadmindesksbyigg.pages.dev/tickets/linux-sssd) | Linux joined to AD (SSSD): clock skew and Kerberos | 2 |
+| 18 | [The ERP cannot save: transaction log full](https://sysadmindesksbyigg.pages.dev/tickets/sql-log-full) | SQL Server: error 9002, failing log backup job | 2 |
+| 19 | [The desk port that switched itself off](https://sysadmindesksbyigg.pages.dev/tickets/net-err-disabled) | Network / Cisco switch: err-disabled by BPDU Guard, a small switch under the desk, a parked port, saving the config | 2 |
+| 20 | [The Sales printer moved and nobody can print](https://sysadmindesksbyigg.pages.dev/tickets/net-wrong-vlan) | Network / VLANs: MAC table and LLDP from a Cisco core to an HP Aruba access switch, untagged VLAN, DHCP reservation | 2 |
+| 21 | [Valencia cannot reach the ERP since last night's change](https://sysadmindesksbyigg.pages.dev/tickets/net-fortigate-branch) | Network / FortiGate: debug flow, policy order, a wrong address object, least privilege and the change reference | 2 |
+| 22 | [The laptop that freezes and warns the drive will fail](https://sysadmindesksbyigg.pages.dev/tickets/laptop-rma) | Hardware RMA: SMART, the vendor's pre-boot diagnostics code, warranty with Keep Your Hard Drive, BitLocker key escrowed in Entra ID, a loan laptop | 2 |
+| 23 | [A switch power supply failed, but nobody noticed](https://sysadmindesksbyigg.pages.dev/tickets/net-psu-rma) | Network hardware RMA: `show environment power`, the feed ruled out, support contract with advance replacement, hot swap, returning the faulty unit | 2 |
+| 24 | [A leaver's laptop and phone: return, wipe and register](https://sysadmindesksbyigg.pages.dev/tickets/leaver-return) | Leavers: asset register, courier collection, check on arrival, Intune wipe (no Autopilot Reset on hybrid joined), back in stock | 1 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 
