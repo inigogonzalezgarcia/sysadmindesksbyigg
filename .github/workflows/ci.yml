@@ -18,8 +18,10 @@ jobs:
           node-version: "22"
       - run: npm test
       - name: No inline scripts or styles (the CSP blocks them)
+        # JSON-LD is data, not code: the CSP does not block it.
         run: |
-          ! grep -nE '<script>|<script [^>]*>[^<]|style="|onclick=' public/index.html
+          ! grep -nE '<script>|<script [^>]*>[^<]|style="|onclick=' public/index.html | grep -v 'application/ld+json'
       - name: No innerHTML in the app
+        # Looks for assignments, so a comment that mentions innerHTML does not fail the check.
         run: |
-          ! grep -n 'innerHTML' public/assets/*.js
+          ! grep -nE '\.(innerHTML|outerHTML)\s*\+?=|insertAdjacentHTML' public/assets/*.js
