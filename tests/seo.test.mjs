@@ -56,12 +56,28 @@ test("JSON-LD: WebApplication on the home page, FAQPage with exactly the visible
   assert.equal(ld["@type"], "FAQPage");
   assert.deepEqual(ld.mainEntity.map((q) => [q.name, q.acceptedAnswer.text]), visible.map((x) => [x.q, x.a]));
   assert.equal(ld.mainEntity[0].name, "¿Es gratis?");
-  for (const f of ["about.html", "help.html", "terms.html", "privacy.html"]) assert.equal(jsonLd(read(f)).length, 0, f + " no JSON-LD");
+  for (const f of ["terms.html", "privacy.html"]) assert.equal(jsonLd(read(f)).length, 0, f + " no JSON-LD");
+});
+
+test("JSON-LD: /about is an AboutPage with the trail home → about, /help has the trail home → help", () => {
+  const [about] = jsonLd(read("about.html"));
+  const [page, bc] = about["@graph"];
+  assert.equal(page["@type"], "AboutPage");
+  assert.equal(page.url, "https://sysadmindesksbyigg.pages.dev/about");
+  assert.equal(page.isPartOf["@type"], "WebSite");
+  assert.equal(bc["@type"], "BreadcrumbList");
+  assert.deepEqual(bc.itemListElement.map((x) => [x.position, x.item]), [[1, "https://sysadmindesksbyigg.pages.dev/"], [2, "https://sysadmindesksbyigg.pages.dev/about"]]);
+  const [help] = jsonLd(read("help.html"));
+  assert.equal(help["@type"], "BreadcrumbList");
+  assert.equal(help.itemListElement[1].item, "https://sysadmindesksbyigg.pages.dev/help");
 });
 
 test("JSON-LD: the tickets list is a CollectionPage of every desk, and each ticket page has the trail home → tickets → ticket", () => {
-  const [col] = jsonLd(read("tickets/index.html"));
+  const [graph] = jsonLd(read("tickets/index.html"));
+  const [col, trail] = graph["@graph"];
   assert.equal(col["@type"], "CollectionPage");
+  assert.equal(trail["@type"], "BreadcrumbList");
+  assert.deepEqual(trail.itemListElement.map((x) => [x.position, x.item]), [[1, "https://sysadmindesksbyigg.pages.dev/"], [2, "https://sysadmindesksbyigg.pages.dev/tickets/"]]);
   assert.equal(col.mainEntity["@type"], "ItemList");
   assert.equal(col.mainEntity.numberOfItems, SCENARIOS.length);
   assert.deepEqual(col.mainEntity.itemListElement.map((x) => x.url), SCENARIOS.map((sc) => "https://sysadmindesksbyigg.pages.dev/tickets/" + sc.id));

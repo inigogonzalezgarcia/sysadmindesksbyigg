@@ -108,6 +108,19 @@ function webApp() {
     image: SITE + "/assets/og.png",
     description: STATIC["index.html"].desc };
 }
+// home → page trail for the static pages and the ticket index
+function crumbs2(name, path) {
+  return { "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "SysAdmin Desks", item: SITE + "/" },
+    { "@type": "ListItem", position: 2, name, item: SITE + path }] };
+}
+const SITE_REF = { "@type": "WebSite", name: "SysAdmin Desks by IGG", url: SITE + "/" };
+function aboutPage() {
+  return { "@context": "https://schema.org", "@graph": [
+    { "@type": "AboutPage", name: "Qué es SysAdmin Desks", url: SITE + "/about", inLanguage: ["es", "en"], description: STATIC["about.html"].desc, isPartOf: SITE_REF },
+    crumbs2("Qué es", "/about")] };
+}
+function helpCrumbs() { return { "@context": "https://schema.org", ...crumbs2("Ayuda", "/help") }; }
 function faqPage(html) {
   return { "@context": "https://schema.org", "@type": "FAQPage", inLanguage: "es",
     mainEntity: faqItems(html).map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
@@ -126,7 +139,8 @@ function replaceBlock(html, start, end, body, file) {
 }
 function staticPage(file, html) {
   const m = STATIC[file];
-  const extra = file === "index.html" ? [jsonld(webApp())] : file === "faq.html" ? [jsonld(faqPage(html))] : [];
+  const extra = file === "index.html" ? [jsonld(webApp())] : file === "faq.html" ? [jsonld(faqPage(html))]
+    : file === "about.html" ? [jsonld(aboutPage())] : file === "help.html" ? [jsonld(helpCrumbs())] : [];
   if (file === "index.html") html = html
     .replace(/<p>[^<]*? tickets de primera y segunda línea\./, `<p>${Cap(words(N(), "es"))} tickets de primera y segunda línea.`)
     .replace(/<p>[^<]*? first and second line tickets\./, `<p>${Cap(words(N(), "en"))} first and second line tickets.`);
@@ -253,8 +267,10 @@ function breadcrumbs(sc) {
     { "@type": "ListItem", position: 3, name: tx(sc.title, "es"), item: SITE + ticketPath(sc) }] };
 }
 function collection() {
-  return { "@context": "https://schema.org", "@type": "CollectionPage", name: T.es.idxH1, url: SITE + "/tickets/", inLanguage: ["es", "en"],
-    mainEntity: { "@type": "ItemList", numberOfItems: N(), itemListElement: SCENARIOS.map((sc, i) => ({ "@type": "ListItem", position: i + 1, url: SITE + ticketPath(sc), name: tx(sc.title, "es") })) } };
+  return { "@context": "https://schema.org", "@graph": [
+    { "@type": "CollectionPage", name: T.es.idxH1, url: SITE + "/tickets/", inLanguage: ["es", "en"], isPartOf: SITE_REF,
+      mainEntity: { "@type": "ItemList", numberOfItems: N(), itemListElement: SCENARIOS.map((sc, i) => ({ "@type": "ListItem", position: i + 1, url: SITE + ticketPath(sc), name: tx(sc.title, "es") })) } },
+    crumbs2(T.es.crumbs, "/tickets/")] };
 }
 
 /* ---------- everything, as {relative path in public/: content} */
