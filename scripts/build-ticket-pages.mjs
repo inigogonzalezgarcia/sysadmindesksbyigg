@@ -192,18 +192,53 @@ const T = {
   es: { crumbs: "Tickets para practicar", cta: "Practícalo gratis", ticket: "El ticket", from: "Lo abre", skills: "Qué practicas",
     how: "Lo resuelves en una consola simulada (PowerShell, cmd o bash) con el directorio, el inventario y la ficha del ticket. Se corrige por el estado del sistema, no por una plantilla: tapar el síntoma no basta. Al cerrar escribes la nota de trabajo (causa, cambio, comprobación y seguimiento) y recibes la puntuación.",
     guideH: "Guía relacionada", guide: (a) => `¿Quieres repasar el tema antes? Lee la ${a} en inigogonzalezgarcia.github.io, que explica lo que practicas en este ticket.`, guideA: "guía paso a paso",
-    prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
+    relH: "Tickets relacionados", prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
     idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.`,
     idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
     guideH: "Related guide", guide: (a) => `Want to brush up first? Read the ${a} on inigogonzalezgarcia.github.io, which explains what you practise on this ticket.`, guideA: "step-by-step guide",
-    prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
+    relH: "Related tickets", prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
     idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.`,
     idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
+
+// three tickets to practise next on each ticket page (same technology or the same kind of problem)
+export const RELATED = {
+  "ad-lockout": ["aadc-sync", "ca-blocked", "linux-sssd"],
+  "dns-intranet": ["net-err-disabled", "net-wrong-vlan", "vpn-anyconnect"],
+  "disk-full": ["print-queue", "laptop-rma", "rhel-var-full"],
+  "print-queue": ["net-wrong-vlan", "disk-full", "ad-lockout"],
+  "mailbox-full": ["shared-mailbox", "m365-licence", "intune-bitlocker"],
+  "intune-bitlocker": ["ca-blocked", "m365-licence", "laptop-rma"],
+  "vpn-anyconnect": ["dns-intranet", "net-fortigate-branch", "ca-blocked"],
+  "m365-licence": ["aadc-sync", "shared-mailbox", "mailbox-full"],
+  "shared-mailbox": ["mailbox-full", "m365-licence", "aadc-sync"],
+  "aadc-sync": ["ad-lockout", "m365-licence", "sso-saml"],
+  "veeam-job": ["sql-log-full", "rhel-var-full", "disk-full"],
+  "mecm-app": ["intune-bitlocker", "citrix-session", "disk-full"],
+  "rhel-var-full": ["linux-sssd", "disk-full", "sql-log-full"],
+  "citrix-session": ["mecm-app", "sso-saml", "vpn-anyconnect"],
+  "ca-blocked": ["sso-saml", "intune-bitlocker", "vpn-anyconnect"],
+  "sso-saml": ["ca-blocked", "aadc-sync", "citrix-session"],
+  "linux-sssd": ["ad-lockout", "rhel-var-full", "aadc-sync"],
+  "sql-log-full": ["veeam-job", "rhel-var-full", "disk-full"],
+  "net-err-disabled": ["net-wrong-vlan", "net-psu-rma", "dns-intranet"],
+  "net-wrong-vlan": ["net-err-disabled", "print-queue", "net-fortigate-branch"],
+  "net-fortigate-branch": ["vpn-anyconnect", "net-wrong-vlan", "dns-intranet"],
+  "laptop-rma": ["leaver-return", "net-psu-rma", "intune-bitlocker"],
+  "net-psu-rma": ["laptop-rma", "net-err-disabled", "net-fortigate-branch"],
+  "leaver-return": ["laptop-rma", "m365-licence", "ad-lockout"],
+};
+const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
+function relatedList(sc, lang) {
+  const ids = RELATED[sc.id];
+  if (!ids || !ids.length) throw new Error("RELATED has no entry for " + sc.id);
+  for (const id of ids) if (!BY_ID[id] || id === sc.id) throw new Error(`RELATED[${sc.id}]: bad ticket ${id}`);
+  return '<ul class="tk-list tk-related">\n' + ids.map((id) => `  <li><a href="${ticketPath(BY_ID[id])}">${esc(tx(BY_ID[id].title, lang))}</a></li>`).join("\n") + "\n</ul>";
+}
 
 function ticketArticle(sc, lang) {
   const t = T[lang], seo = TICKET_SEO[sc.id][lang];
@@ -239,6 +274,8 @@ ${sc.guide ? `
 <h2>${t.guideH}</h2>
 <p>${t.guide(`<a href="${esc(sc.guide)}" target="_blank" rel="noopener noreferrer">${t.guideA}</a>`)}</p>
 ` : ""}
+<h2>${t.relH}</h2>
+${relatedList(sc, lang)}
 <p class="tk-cta"><a class="btn tk-btn" href="${cta}">${t.cta}</a> <a href="/tickets/">${t.all}</a></p>
 <p class="fine">${esc(t.fiction)}</p>
 </article>`;
