@@ -156,3 +156,19 @@ test("sitemap: clean URLs, a valid lastmod per URL and every ticket page", () =>
   assert.equal(mods.length, locs.length, "a lastmod per URL");
   assert.ok(mods.every((d) => !Number.isNaN(Date.parse(d)) && d <= new Date().toISOString().slice(0, 10)), "lastmod is a real date, not in the future");
 });
+
+test("every ticket page links three related tickets that exist, in both languages", () => {
+  for (const sc of SCENARIOS) {
+    const html = read(`tickets/${sc.id}.html`);
+    for (const h of ["<h2>Tickets relacionados</h2>", "<h2>Related tickets</h2>"]) assert.ok(html.includes(h), sc.id + " " + h);
+    const links = [...html.matchAll(/<ul class="tk-list tk-related">([\s\S]*?)<\/ul>/g)].map((m) => [...m[1].matchAll(/href="\/tickets\/([a-z0-9-]+)"/g)].map((x) => x[1]));
+    assert.equal(links.length, 2, sc.id);
+    for (const ids of links) {
+      assert.equal(ids.length, 3, sc.id);
+      for (const id of ids) {
+        assert.notEqual(id, sc.id, sc.id + " links itself");
+        assert.ok(SCENARIOS.some((s) => s.id === id), sc.id + " → " + id);
+      }
+    }
+  }
+});
