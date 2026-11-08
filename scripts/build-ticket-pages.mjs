@@ -240,6 +240,9 @@ function relatedList(sc, lang) {
   return '<ul class="tk-list tk-related">\n' + ids.map((id) => `  <li><a href="${ticketPath(BY_ID[id])}">${esc(tx(BY_ID[id].title, lang))}</a></li>`).join("\n") + "\n</ul>";
 }
 
+// the personal site serves English at /guias/ and Spanish at /es/guias/
+const guideFor = (url, lang) => lang === "es" ? url.replace("github.io/guias/", "github.io/es/guias/") : url;
+
 function ticketArticle(sc, lang) {
   const t = T[lang], seo = TICKET_SEO[sc.id][lang];
   const r = sc.requester || {};
@@ -272,7 +275,7 @@ ${seo.skills.map((s) => `  <li>${esc(s)}</li>`).join("\n")}
 <p>${esc(t.how)}</p>
 ${sc.guide ? `
 <h2>${t.guideH}</h2>
-<p>${t.guide(`<a href="${esc(sc.guide)}" target="_blank" rel="noopener noreferrer">${t.guideA}</a>`)}</p>
+<p>${t.guide(`<a href="${esc(guideFor(sc.guide, lang))}" target="_blank" rel="noopener noreferrer">${t.guideA}</a>`)}</p>
 ` : ""}
 <h2>${t.relH}</h2>
 ${relatedList(sc, lang)}

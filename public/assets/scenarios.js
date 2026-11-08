@@ -15,7 +15,7 @@
     topic: { en: "Active Directory", es: "Active Directory" },
     minutes: 15,
     title: { en: "The account that locks every morning", es: "La cuenta que se bloquea cada mañana" },
-    guide: GUIDE + "active-directory-alta-usuario-grupos.html",
+    guide: GUIDE + "active-directory-directiva-de-contrasenas-pso-bloqueos-y-la-cuenta-que-se-bloquea-cada-manana.html",
     machine: { host: "ADM-WS01", user: "it.admin", domain: "CONTOSO", shell: "powershell", prompt: "PS C:\\Users\\it.admin> " },
     ticket: {
       id: "INC-20418", from: "Marta García (Finance)", priority: "P2",

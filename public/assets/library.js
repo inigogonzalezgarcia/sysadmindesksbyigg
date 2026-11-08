@@ -71,7 +71,7 @@
           "Nunca pidas a un usuario su contraseña, ni para probar.", "Desbloquear no es el arreglo si la cuenta se vuelve a bloquear: busca antes el origen."],
       },
       desks: ["ad-lockout", "aadc-sync", "leaver-return"], labs: ["ad"],
-      guides: ["active-directory-alta-usuario-grupos", "active-directory-delegar-permisos-papelera-y-quien-ha-cambiado-este-usuario", "powershell-altas-masivas-en-active-directory-desde-csv-y-bajas-con-revision", "azure-ad-connect-forzar-sincronizacion-y-objetos-que-no-pasan"],
+      guides: ["active-directory-alta-usuario-grupos", "active-directory-directiva-de-contrasenas-pso-bloqueos-y-la-cuenta-que-se-bloquea-cada-manana", "active-directory-delegar-permisos-papelera-y-quien-ha-cambiado-este-usuario", "powershell-altas-masivas-en-active-directory-desde-csv-y-bajas-con-revision", "azure-ad-connect-forzar-sincronizacion-y-objetos-que-no-pasan"],
     },
     {
       id: "windows",
