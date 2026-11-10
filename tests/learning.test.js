@@ -78,7 +78,11 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   "FS01 Weekly", "Remove-VBRBackup", "ProductCode", "9c2e7f10", "logrotate", "timesheet", "BrokerAgent", "CA-Exception-Travel", "PIM", "thumbprint", "chrony", "FS-OLD01", "sp_update_jobstep",
   "SW-DESK-214", "small switch", "switch pequeño", "BPDU", "untagged 22", "a45d.360c.197e", "H-ERPWEB02", "10.20.1.51", "8KQ2TX3", "DTN2338A1QJ", "Autopilot Reset", "SIMPLE model", "modelo SIMPLE", "recovery simple", "a SIMPLE",
   // v0.10
-  "7QV5HT4", "LAPTOP-0407", "PO-2026-0418", "crushed", "aplastad", "nprieto", "Nerea", "HR-NS-204", "Microphone Array", "lid closed", "tapa cerrada", "SALA2-DISPLAY", "HDMI 2", "HDMI2", "side port", "puerto lateral"];
+  "7QV5HT4", "LAPTOP-0407", "PO-2026-0418", "crushed", "aplastad", "nprieto", "Nerea", "HR-NS-204", "Microphone Array", "lid closed", "tapa cerrada", "SALA2-DISPLAY", "HDMI 2", "HDMI2", "side port", "puerto lateral",
+  // v0.11
+  "ProfileList", ".bak", "RefCount", "1844237615", "GG-Projects", "Drive P Projects", "smolina", "Proyectos", "TrazaCAD", "Trazalia", "EPM rules - Projects",
+  "hserrano", "Hugo Serrano", "rblanco", "Hugo Sanz", "Restore-ADObject", "PC-MKT", "10.20.16.", "BAD_ADDRESS", "Cierres2026", "ext.auditor01", "DL-FS01-Contabilidad",
+  "UPS-RACKB", "mail01", "10.20.99.21", "smtp-relay", "set-nmc"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();
@@ -239,13 +243,13 @@ test("profile: progress per area from the results, the activity and the labs", (
   const labs = Lb.record({}, "ad", ["find", "unlock", "reset", "group", "lastlogon"], "2026-10-26").store;
   const agg = P.aggregate({ desks, progress, activity, labs });
   const ad = agg.areas.find((a) => a.id === "ad");
-  assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [3, 2, 80, 4, 5, 5, 75]);   // 3/4 × 2/3 + 1/4 × 5/5
+  assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [4, 2, 80, 4, 5, 5, 63]);   // 3/4 × 2/4 + 1/4 × 5/5
   const net = agg.areas.find((a) => a.id === "network");
   assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [3, 1, 100, null, 25]);   // 1/3 × 75
   const vdi = agg.areas.find((a) => a.id === "vdi");
   assert.equal(vdi.labTotal, 0); assert.equal(vdi.skill, 0);
   assert.equal(agg.areas.find((a) => a.id === "itsm").skill, 80);   // notes to the user 4/5
-  assert.deepEqual([agg.totals.solved, agg.totals.desks, agg.totals.avgPoints, agg.totals.comms, agg.totals.labsComplete, agg.totals.tasks], [3, 28, 87, 4, 1, 5]);
+  assert.deepEqual([agg.totals.solved, agg.totals.desks, agg.totals.avgPoints, agg.totals.comms, agg.totals.labsComplete, agg.totals.tasks], [3, 35, 87, 4, 1, 5]);
 });
 
 test("career: the current step and the recommended next step", () => {
@@ -295,7 +299,7 @@ test("profile: the Markdown summary says it is practice in a simulator", () => {
   assert.ok(es.includes("**Práctica en un simulador, no experiencia laboral.**"));
   assert.ok(es.trim().endsWith("Práctica en un simulador, no experiencia laboral."));
   assert.ok(es.includes("- Técnico: Alex") && es.includes("- Fecha: 2026-10-30"));
-  assert.ok(es.includes("- Tickets resueltos: 1 / 28") && es.includes("| Active Directory | 1 / 3 | 90 | 5 / 5 | 0 / 5 | 25 / 100 |"));
+  assert.ok(es.includes("- Tickets resueltos: 1 / 35") && es.includes("| Active Directory | 1 / 4 | 90 | 5 / 5 | 0 / 5 | 19 / 100 |"));
   assert.ok(es.includes(`- ${title("ad-lockout")}: 90 / 100 · 2026-10-26`));
   assert.ok(es.includes("- Laboratorio de red: 1 / 5"));
   assert.ok(es.includes("**Siguiente paso recomendado:** " + title("dns-intranet") + " (ticket)"));

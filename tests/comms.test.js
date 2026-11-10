@@ -48,6 +48,15 @@ const TEMPTING = {
   "starter-desk-ready": ["Set-ADAccountPassword nprieto -Reset"],
   "teams-no-audio": ["Stop-Process -Name ms-teams -Force"],
   "room-no-display": ["Restart-Computer -ComputerName MTR-SALA2 -Force"],
+  // v0.11: career levels 1-3 (a restart over a temporary profile; P: mapped by hand; local admin; a new account over the deleted one, then removed;
+  // a fixed IP on one laptop; Full control for one user; a self-test that passes)
+  "win-temp-profile": ["Restart-Computer -Force"],
+  "gpo-drive-missing": ["net use P: \\\\FS01\\Proyectos /persistent:yes"],
+  "epm-elevation": ["Add-LocalGroupMember -Group Administrators -Member AzureAD\\pherrero@contoso.com"],
+  "ad-deleted-user": ["New-ADUser -Name 'Hugo Serrano' -SamAccountName hserrano -Path 'OU=Sales,OU=Users,DC=contoso,DC=local' -Enabled $true", "Remove-ADUser hserrano -Confirm:$false"],
+  "dhcp-scope-full": ["onsite static 10.20.16.199"],
+  "ntfs-access-denied": ["icacls D:\\Shares\\Contabilidad\\Cierres2026 /grant CONTOSO\\lperez:(OI)(CI)F"],
+  "ups-no-alert": ["ups selftest UPS-RACKB"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 28);
+  assert.equal(SCENARIOS.length, 35);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -389,4 +389,111 @@ test("Meeting room: restarting the console or power-cycling the display leaves t
   E.run(sess, "display input SALA2-DISPLAY hdmi1");
   E.run(sess, "display status SALA2-DISPLAY");
   assert.ok(sess.resolved);
+});
+
+/* ---------- v0.11: career batch 2 (levels 1-3) */
+test("Temporary profile: restarting changes nothing, the .bak key cannot be renamed over the TEMP one, and deleting the profile loses it", () => {
+  const sc = byId["win-temp-profile"];
+  const PL = "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList\\S-1-5-21-1844237615-3127845531-2384927163-1187";
+  const { sess, results } = play(sc, ["Restart-Computer -Force", "Get-CimInstance Win32_UserProfile", `Rename-Item '${PL}.bak' -NewName 'S-1-5-21-1844237615-3127845531-2384927163-1187'`]);
+  assert.match(results[1].lines.map((l) => l.text).join("\n"), /C:\\Users\\TEMP\s+True\s+1/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(sess.resolved, false);
+  const wiped = play(sc, ["Remove-Item C:\\Users\\dlopez -Recurse -Force"].concat(sc.solution)).sess;
+  assert.equal(wiped.state.broken, true);
+  assert.equal(wiped.resolved, false, "a deleted profile cannot be brought back by fixing the registry");
+  // State and RefCount can be set on the .bak key before renaming it, too
+  const early = play(sc, sc.solution.slice(0, 3).concat([`Set-ItemProperty '${PL}.bak' -Name State -Value 0`, `reg add "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList\\S-1-5-21-1844237615-3127845531-2384927163-1187.bak" /v RefCount /t REG_DWORD /d 0 /f`,
+    `Remove-Item '${PL}'`, `Rename-Item '${PL}.bak' -NewName 'S-1-5-21-1844237615-3127845531-2384927163-1187'`, "logoff 2", "Get-CimInstance Win32_UserProfile"])).sess;
+  assert.ok(early.resolved);
+});
+
+test("GPO drive: net use is refused, a sign-in before the group changes nothing, and gpupdate alone does not apply the new group", () => {
+  const sc = byId["gpo-drive-missing"];
+  const { sess, results } = play(sc, ["net use P: \\\\FS01\\Proyectos", "logoff", "Add-ADGroupMember GG-Projects -Members smolina", "klist purge", "gpupdate /force", "net use"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /Access is denied/);
+  assert.doesNotMatch(results[5].lines.map((l) => l.text).join("\n"), /P:/);
+  assert.equal(sess.state.driveOk, false);
+  E.run(sess, "net use P: \\\\FS01\\Proyectos");
+  assert.equal(sess.state.byHand, true, "with the group and fresh tickets, mapping by hand works, but it is not the GPO");
+  E.run(sess, "logoff");
+  E.run(sess, "gpresult /r");
+  assert.ok(sess.resolved);
+  assert.deepEqual(E.bound(sess)[0].set.groups, ["GG-Marketing", "GG-Projects", "GG-M365-E3", "GG-Printers-HQ"]);
+});
+
+test("EPM: local admin is undone by Intune and leaves a remark; a rule by file name only is refused; the rule needs a sync", () => {
+  const sc = byId["epm-elevation"];
+  const { sess, results } = play(sc, ["Add-LocalGroupMember -Group Administrators -Member AzureAD\\pherrero@contoso.com", "Get-LocalGroupMember Administrators",
+    "intune epm rule add --policy \"EPM rules - Projects\" --file TrazaCAD_Setup_2026.1.exe"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /Account protection/);
+  assert.doesNotMatch(results[1].lines.map((l) => l.text).join(" "), /pherrero/);
+  assert.equal(results[2].lines[0].kind, "err");
+  E.run(sess, sc.solution[2]);
+  assert.equal(E.run(sess, sc.solution[4]).lines[0].kind, "err", "not on the laptop until it syncs");
+  E.run(sess, "intune device sync LAPTOP-0281");
+  E.run(sess, sc.solution[4]);
+  assert.ok(sess.resolved);
+  const v = E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 });
+  assert.ok(v.reasons.some((x) => /local Administrators/.test(x)));
+});
+
+test("Deleted AD account: a new account blocks the restore until it is removed, and the restore keeps the groups", () => {
+  const sc = byId["ad-deleted-user"];
+  const restore = sc.solution[2];
+  const { sess, results } = play(sc, ["New-ADUser -Name 'Hugo Serrano' -SamAccountName hserrano", "Get-ADPrincipalGroupMembership hserrano", restore]);
+  assert.doesNotMatch(results[1].lines.map((l) => l.text).join(" "), /GG-Sales/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(sess.state.restored, false);
+  ["Remove-ADUser hserrano -Confirm:$false", restore, "Get-ADUser hserrano -Properties MemberOf", sc.solution[4]].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  const v = E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 });
+  assert.ok(v.reasons.some((x) => /new account/.test(x)));
+  assert.equal(play(sc, ["Get-ADObject -Filter 'isDeleted -eq $true' -IncludeDeletedObjects | Restore-ADObject"]).sess.state.restored, false, "restoring everything is not run");
+});
+
+test("DHCP: a fixed IP and the BAD_ADDRESS leases alone are not enough, and the range has no room to grow", () => {
+  const sc = byId["dhcp-scope-full"];
+  const { sess } = play(sc, ["onsite static 10.20.16.199", "Remove-DhcpServerv4Lease -ComputerName DC01 -ScopeId 10.20.16.0 -BadLeases",
+    "Set-DhcpServerv4Scope -ComputerName DC01 -ScopeId 10.20.16.0 -EndRange 10.20.16.230", "Set-DhcpServerv4Scope -ComputerName DC01 -ScopeId 10.20.16.0 -LeaseDuration 1.00:00:00",
+    "Get-DhcpServerv4ScopeStatistics -ComputerName DC01"]);
+  assert.equal(sess.state.room, false);
+  assert.equal(sess.resolved, false);
+  E.run(sess, "Get-DhcpServerv4Lease -ComputerName DC01 -ScopeId 10.20.16.0 | Where-Object HostName -like 'PC-MKT-*' | Remove-DhcpServerv4Lease");
+  E.run(sess, "onsite ipconfig");
+  assert.ok(sess.resolved);
+  const v = E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "capacity", minutes: 5 });
+  assert.ok(v.reasons.some((x) => /fixed IP/.test(x)));
+  assert.equal(play(sc, ["Set-DhcpServerv4Scope -ComputerName DC01 -ScopeId 10.20.16.0 -LeaseDuration 4.00:00:00"]).sess.state.leaseShort, false);
+});
+
+test("NTFS: Full control for Laura only fixes Laura, Everyone is a remark, and inheritance plus removing the auditors' entry also works", () => {
+  const sc = byId["ntfs-access-denied"];
+  const P = "D:\\Shares\\Contabilidad\\Cierres2026";
+  const { sess, results } = play(sc, [`icacls ${P} /grant CONTOSO\\lperez:(OI)(CI)F`, `accesschk.exe -d CONTOSO\\irey ${P}`, `icacls ${P}`]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /No matching objects/);
+  assert.match(results[2].lines.map((l) => l.text).join("\n"), /CONTOSO\\lperez:\(OI\)\(CI\)\(F\)/);
+  assert.equal(sess.resolved, false);
+  const other = play(sc, [`icacls ${P}`, "icacls D:\\Shares\\Contabilidad", `icacls ${P} /inheritance:e`, `accesschk.exe -d CONTOSO\\lperez ${P}`]).sess;
+  assert.equal(other.resolved, false, "the auditors' Modify entry is still there");
+  E.run(other, `icacls ${P} /remove ext.auditor01`);
+  E.run(other, `accesschk.exe -d CONTOSO\\lperez ${P}`);
+  assert.ok(other.resolved);
+  const all = play(sc, [`icacls ${P} /grant Everyone:(OI)(CI)F`].concat(sc.solution.slice(0, 2), [`icacls ${P} /inheritance:e`, `icacls ${P} /remove ext.auditor01`, sc.solution[3]])).sess;
+  assert.ok(all.resolved);
+  assert.ok(E.verdict(all, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /Everyone/.test(x)));
+});
+
+test("UPS: the self-test passes and new batteries change nothing; the tests fail until the settings point at what exists", () => {
+  const sc = byId["ups-no-alert"];
+  const { sess, results } = play(sc, ["ups selftest UPS-RACKB", "ups replace-battery UPS-RACKB", "ups test-email UPS-RACKB", "ups simulate-outage UPS-RACKB",
+    "ups smtp UPS-RACKB --server mail02.contoso.local", "pcns FS01 set-nmc 10.20.99.30"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /Passed/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(results[3].lines.map((l) => l.text).join(" "), /no PowerChute clients/);
+  assert.equal(results[4].lines[0].kind, "err");
+  assert.equal(results[5].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /Batteries were ordered/.test(x)));
 });

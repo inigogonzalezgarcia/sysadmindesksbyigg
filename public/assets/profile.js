@@ -11,15 +11,16 @@
   const t = Lib.t;
   // the area of every desk (each desk in exactly one area; the tests check every scenario is here)
   const DESK_AREA = {
-    "ad-lockout": "ad", "aadc-sync": "ad", "starter-desk-ready": "ad",
+    "ad-lockout": "ad", "aadc-sync": "ad", "starter-desk-ready": "ad", "ad-deleted-user": "ad",
     "dns-intranet": "windows", "disk-full": "windows", "print-queue": "windows", "vpn-anyconnect": "windows",
+    "win-temp-profile": "windows", "gpo-drive-missing": "windows", "dhcp-scope-full": "windows", "ntfs-access-denied": "windows",
     "m365-licence": "m365", "shared-mailbox": "m365", "teams-no-audio": "m365", "room-no-display": "m365", "mailbox-full": "m365", "ca-blocked": "m365", "sso-saml": "m365",
-    "intune-bitlocker": "endpoint", "mecm-app": "endpoint",
+    "intune-bitlocker": "endpoint", "mecm-app": "endpoint", "epm-elevation": "endpoint",
     "rhel-var-full": "linux", "linux-sssd": "linux",
     "citrix-session": "vdi",
     "veeam-job": "data", "sql-log-full": "data",
     "net-err-disabled": "network", "net-wrong-vlan": "network", "net-fortigate-branch": "network",
-    "laptop-rma": "hardware", "net-psu-rma": "hardware", "leaver-return": "hardware", "new-laptops-intake": "hardware",
+    "laptop-rma": "hardware", "net-psu-rma": "hardware", "leaver-return": "hardware", "new-laptops-intake": "hardware", "ups-no-alert": "hardware",
   };
   const LAB_AREA = Object.fromEntries(Lb.LABS.map((l) => [l.id, l.area]));
 
@@ -29,15 +30,15 @@
       what: { en: "First line: accounts and passwords, a user's PC, printing, licences and mailboxes, and talking to the user.", es: "Primera línea: cuentas y contraseñas, el equipo de un usuario, impresión, licencias y buzones, y hablar con el usuario." },
       areas: ["ad", "windows", "m365", "itsm"],
       desks: ["ad-lockout", "dns-intranet", "disk-full", "print-queue", "vpn-anyconnect", "m365-licence", "shared-mailbox", "leaver-return",
-        "new-laptops-intake", "starter-desk-ready", "teams-no-audio", "room-no-display"], labs: ["ad", "windows"] },
+        "new-laptops-intake", "starter-desk-ready", "teams-no-audio", "room-no-display", "win-temp-profile", "gpo-drive-missing"], labs: ["ad", "windows"] },
     { id: "l2", title: { en: "Service Desk L2 / Desktop", es: "Service desk N2 / puesto de trabajo" },
       what: { en: "Second line: device management, deployments, mailboxes at their limit, VDI, identity sync and hardware under warranty.", es: "Segunda línea: gestión de dispositivos, despliegues, buzones al límite, VDI, sincronización de identidades y hardware en garantía." },
       areas: ["endpoint", "vdi", "hardware", "m365"],
-      desks: ["mailbox-full", "intune-bitlocker", "mecm-app", "citrix-session", "laptop-rma", "aadc-sync"], labs: ["m365"] },
+      desks: ["mailbox-full", "intune-bitlocker", "mecm-app", "citrix-session", "laptop-rma", "aadc-sync", "epm-elevation", "ad-deleted-user"], labs: ["m365"] },
     { id: "sys", title: { en: "Sysadmin / Infrastructure", es: "Sysadmin / Infraestructura" },
-      what: { en: "Servers: Linux, backups and databases, where a change affects many users at once.", es: "Servidores: Linux, copias y bases de datos, donde un cambio afecta a muchos usuarios a la vez." },
-      areas: ["linux", "data"],
-      desks: ["rhel-var-full", "linux-sssd", "veeam-job", "sql-log-full"], labs: ["linux"] },
+      what: { en: "Servers: Windows Server roles (DHCP, file shares), Linux, backups, databases and the data room, where a change affects many users at once.", es: "Servidores: roles de Windows Server (DHCP, carpetas compartidas), Linux, copias, bases de datos y la sala técnica, donde un cambio afecta a muchos usuarios a la vez." },
+      areas: ["windows", "linux", "data", "hardware"],
+      desks: ["rhel-var-full", "linux-sssd", "veeam-job", "sql-log-full", "dhcp-scope-full", "ntfs-access-denied", "ups-no-alert"], labs: ["linux"] },
     { id: "netcloud", title: { en: "Network / Cloud", es: "Redes / Cloud" },
       what: { en: "Switches, the firewall and the branch, and cloud identity: Conditional Access and single sign-on.", es: "Switches, el cortafuegos y la sucursal, e identidad en la nube: acceso condicional e inicio de sesión único." },
       areas: ["network", "m365"],

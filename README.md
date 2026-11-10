@@ -40,6 +40,13 @@ Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.
 | 26 | [Monday: the new starter's account is not ready](https://sysadmindesksbyigg.pages.dev/tickets/starter-desk-ready) | Active Directory: a new account created disabled and without its team's group, compared with a colleague | 1 |
 | 27 | [Teams: in meetings nobody can hear me](https://sysadmindesksbyigg.pages.dev/tickets/teams-no-audio) | Teams / Windows sound: the default microphone, the input level, a laptop closed on a dock | 1 |
 | 28 | [The meeting room screen stays black](https://sysadmindesksbyigg.pages.dev/tickets/room-no-display) | Microsoft Teams Rooms: the room console checked remotely, the display's input, a cable left in the side port | 1 |
+| 29 | [I signed in and my desktop is empty](https://sysadmindesksbyigg.pages.dev/tickets/win-temp-profile) | Windows: a temporary profile, the ProfileList key, User Profile Service events, the user's data kept safe | 1 |
+| 30 | [The Projects drive P: is missing](https://sysadmindesksbyigg.pages.dev/tickets/gpo-drive-missing) | Group Policy: drive maps, security filtering, gpresult, a change of department and a fresh sign-in | 1 |
+| 31 | [I need to be an administrator to install the plans viewer](https://sysadmindesksbyigg.pages.dev/tickets/epm-elevation) | Intune Endpoint Privilege Management: an elevation rule by hash or certificate instead of local admin | 2 |
+| 32 | [A sales rep's account has disappeared](https://sysadmindesksbyigg.pages.dev/tickets/ad-deleted-user) | Active Directory: the Recycle Bin, Restore-ADObject, event 4726 and a delegation that went too far | 2 |
+| 33 | [Floor 3: the new laptops get no IP address](https://sysadmindesksbyigg.pages.dev/tickets/dhcp-scope-full) | Windows Server DHCP: a full scope, stale and BAD_ADDRESS leases, the lease duration, APIPA | 2 |
+| 34 | [Access denied to the Accounting folder](https://sysadmindesksbyigg.pages.dev/tickets/ntfs-access-denied) | File server: NTFS inheritance, icacls, AGDLP and effective access with accesschk | 2 |
+| 35 | [Power cut: the UPS warned nobody and a server went down hard](https://sysadmindesksbyigg.pages.dev/tickets/ups-no-alert) | APC UPS network card: e-mail and SNMP alerts, PowerChute Network Shutdown, testing without a real power cut | 2 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 
@@ -158,7 +165,7 @@ Every page, the app footer, the sidebar and *My account* link to them and to **R
 
 ## SEO (v0.6.2)
 
-- **Static intro on the home page:** `index.html` ships real text inside `<main id="app">` (H1, how it works, the 28 tickets, links to the help pages and the guides), in Spanish and English. Search engines and visitors without JavaScript read it; `app.js` shows only the visitor's language and replaces it with the landing or the app on its first render.
+- **Static intro on the home page:** `index.html` ships real text inside `<main id="app">` (H1, how it works, the 35 tickets, links to the help pages and the guides), in Spanish and English. Search engines and visitors without JavaScript read it; `app.js` shows only the visitor's language and replaces it with the landing or the app on its first render.
 - **A public page per ticket:** `public/tickets/<desk id>.html` (served as `/tickets/<desk id>`) with the problem, the ticket as the requester tells it, level, topic and SLA, what you practise (never the cause or the fix), the related guide and a *Practise it free* button to `/?lang=xx#/desk/<id>`; `/tickets/` lists them all. The about page and the home intro link to them.
 - **Clean URLs:** `/about`, `/help`, `/faq`, `/terms`, `/privacy` and `/tickets/...` everywhere (Cloudflare Pages serves `about.html` for `/about`; `npm run dev` does the same). `sitemap.xml` lists them.
 - **Head:** every public page has its Spanish title and description (the default visible language; `doc.js` and `app.js` switch the title for English), a canonical URL, Open Graph (`assets/og.png`, 1200×630, drawn by `scripts/make-og.py`) and a Twitter card. JSON-LD: `WebApplication` on the home page and `FAQPage` on `/faq`, built from the visible Spanish questions. JSON-LD is the only inline `<script>` allowed: it is data and never runs, so the CSP does not block it.

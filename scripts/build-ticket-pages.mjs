@@ -238,6 +238,13 @@ export const RELATED = {
   "starter-desk-ready": ["ad-lockout", "m365-licence", "aadc-sync"],
   "teams-no-audio": ["room-no-display", "m365-licence", "dns-intranet"],
   "room-no-display": ["teams-no-audio", "print-queue", "net-err-disabled"],
+  "win-temp-profile": ["disk-full", "gpo-drive-missing", "teams-no-audio"],
+  "gpo-drive-missing": ["starter-desk-ready", "ntfs-access-denied", "win-temp-profile"],
+  "epm-elevation": ["intune-bitlocker", "mecm-app", "win-temp-profile"],
+  "ad-deleted-user": ["ad-lockout", "starter-desk-ready", "aadc-sync"],
+  "dhcp-scope-full": ["dns-intranet", "net-wrong-vlan", "new-laptops-intake"],
+  "ntfs-access-denied": ["gpo-drive-missing", "shared-mailbox", "ad-deleted-user"],
+  "ups-no-alert": ["net-psu-rma", "veeam-job", "sql-log-full"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {
