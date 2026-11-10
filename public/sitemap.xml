@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://sysadmindesksbyigg.pages.dev/</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/about</loc><lastmod>2026-11-04</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/</loc><lastmod>2026-11-10</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/about</loc><lastmod>2026-11-10</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/help</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/faq</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/</loc><lastmod>2026-11-04</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/</loc><lastmod>2026-11-10</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ad-lockout</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/dns-intranet</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/disk-full</loc><lastmod>2026-11-04</lastmod></url>
@@ -29,6 +29,10 @@
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/laptop-rma</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/net-psu-rma</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/leaver-return</loc><lastmod>2026-11-04</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/new-laptops-intake</loc><lastmod>2026-11-10</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/starter-desk-ready</loc><lastmod>2026-11-10</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/teams-no-audio</loc><lastmod>2026-11-10</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/room-no-display</loc><lastmod>2026-11-10</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/terms</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/privacy</loc><lastmod>2026-11-04</lastmod></url>
 </urlset>

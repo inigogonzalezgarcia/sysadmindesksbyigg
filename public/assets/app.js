@@ -25,7 +25,7 @@
       langBtn: "ES", langLabel: "Español", notFound: "That desk does not exist.",
       startTag: "Help desk · morning shift", startTitle: "Clock in and start your support shift",
       startText: "SysAdmin Desks puts you at the help desk of a fictional company. Real tickets, a console that answers like a real machine, and a work note that is scored when you close the ticket.",
-      startPoints: ["21 tickets: from Active Directory, Windows and Microsoft 365 to VPN, backups, Citrix, Linux, SQL Server and Cisco, HP and FortiGate network devices", "Hints when you are stuck, and the tempting fix that does not solve it", "Each desk links to its step-by-step guide", "Your progress is saved in your account and follows you to any device"],
+      startPoints: [`${SCENARIOS.length} tickets: from Active Directory, Windows and Microsoft 365 to VPN, backups, Citrix, Linux, SQL Server and Cisco, HP and FortiGate network devices`, "Hints when you are stuck, and the tempting fix that does not solve it", "Each desk links to its step-by-step guide", "Your progress is saved in your account and follows you to any device"],
       deskHost: "CONTOSO-HD-07", deskDomain: "contoso.local", cardTitle: "Contoso help desk · technician sign-in",
       tabLogin: "Sign in", tabRegister: "Create account", fName: "Technician name", fAvatar: "Avatar", fEmail: "Email", fPassword: "Password",
       phName: "Alex Moreno", phEmail: "you@example.com", show: "Show password", hide: "Hide password",
@@ -222,7 +222,7 @@
       langBtn: "EN", langLabel: "English", notFound: "Ese puesto no existe.",
       startTag: "Mesa de soporte · turno de mañana", startTitle: "Ficha y empieza tu turno de soporte",
       startText: "SysAdmin Desks te sienta en la mesa de soporte de una empresa ficticia. Tickets reales, una consola que responde como un equipo de verdad y una nota de trabajo que se puntúa al cerrar el ticket.",
-      startPoints: ["21 tickets: de Active Directory, Windows y Microsoft 365 a VPN, copias, Citrix, Linux, SQL Server y equipos de red Cisco, HP y FortiGate", "Pistas cuando te atascas, y el arreglo tentador que no lo resuelve", "Cada puesto enlaza con su guía paso a paso", "Tu progreso se guarda en tu cuenta y te sigue a cualquier equipo"],
+      startPoints: [`${SCENARIOS.length} tickets: de Active Directory, Windows y Microsoft 365 a VPN, copias, Citrix, Linux, SQL Server y equipos de red Cisco, HP y FortiGate`, "Pistas cuando te atascas, y el arreglo tentador que no lo resuelve", "Cada puesto enlaza con su guía paso a paso", "Tu progreso se guarda en tu cuenta y te sigue a cualquier equipo"],
       deskHost: "CONTOSO-HD-07", deskDomain: "contoso.local", cardTitle: "Mesa de soporte de Contoso · acceso de técnicos",
       tabLogin: "Entrar", tabRegister: "Crear cuenta", fName: "Nombre de técnico", fAvatar: "Avatar", fEmail: "Email", fPassword: "Contraseña",
       phName: "Alex Moreno", phEmail: "tu@ejemplo.com", show: "Mostrar contraseña", hide: "Ocultar contraseña",
@@ -570,7 +570,7 @@
     lvTitle: "Your level", lvPoints: (n) => `${n} points`, lvNext: (n, name) => `${n} points to ${name}`, lvTop: "Top level: well done.",
     lvBreak: (p) => `Tickets ${p.tickets} · Labs ${p.labs} · Communication ${p.comms} · Weekly goals ${p.goals} · Full shifts ${p.shifts}`,
     lvHow: "Points: the best result of each ticket (a replay counts only if it beats it), 10 per lab task, the best communication bonus of each ticket, the weekly goals' rewards and each lab's first full shift. Free tickets never count.",
-    lvLadder: "The levels", lvFrom: (n) => `from ${n}`, lvUpTitle: "New level!", lvUpText: (n) => `You are now ${n}. Keep it up.`, lvUpOk: "Great",
+    qLocked: (n, name, min) => `🔒 ${n} more ${n === 1 ? "ticket joins" : "tickets join"} the queue as you level up. Next: ${name} (${min} points).`, lvLadder: "The levels", lvFrom: (n) => `from ${n}`, lvUpTitle: "New level!", lvUpText: (n) => `You are now ${n}. Keep it up.`, lvUpOk: "Great",
     ccTitle: "How you close tickets", ccClean: "Clean closes", ccCleanX: "Resolved the first time, with no remarks", ccRemarks: "With observations", ccRemarksX: "Resolved with observations to improve",
     ccFalse: "False closures", ccFalseX: "Closing attempts before it was fixed (Not resolved)",
     wgTitle: "This week's goals", wgSub: (w) => `Three goals for ${w}, the same for everyone. They change on Monday at 00:00 in your time zone; each reward counts once.`,
@@ -593,7 +593,7 @@
     lvTitle: "Tu nivel", lvPoints: (n) => `${n} puntos`, lvNext: (n, name) => `Faltan ${n} puntos para ${name}`, lvTop: "Nivel máximo: buen trabajo.",
     lvBreak: (p) => `Tickets ${p.tickets} · Laboratorios ${p.labs} · Comunicación ${p.comms} · Objetivos semanales ${p.goals} · Turnos completos ${p.shifts}`,
     lvHow: "Puntos: el mejor resultado de cada ticket (repetirlo solo cuenta si lo mejora), 10 por tarea de laboratorio, el mejor bonus de comunicación de cada ticket, las recompensas de los objetivos semanales y el primer turno completo de cada laboratorio. Los tickets libres nunca cuentan.",
-    lvLadder: "Los niveles", lvFrom: (n) => `desde ${n}`, lvUpTitle: "¡Nivel nuevo!", lvUpText: (n) => `Ahora eres ${n}. Sigue así.`, lvUpOk: "Genial",
+    qLocked: (n, name, min) => `🔒 ${n} ${n === 1 ? "ticket más entra" : "tickets más entran"} en la cola al subir de nivel. Siguiente: ${name} (${min} puntos).`, lvLadder: "Los niveles", lvFrom: (n) => `desde ${n}`, lvUpTitle: "¡Nivel nuevo!", lvUpText: (n) => `Ahora eres ${n}. Sigue así.`, lvUpOk: "Genial",
     ccTitle: "Cómo cierras los tickets", ccClean: "Cierres limpios", ccCleanX: "Resueltos a la primera y sin observaciones", ccRemarks: "Con observaciones", ccRemarksX: "Resueltos, con observaciones que mejorar",
     ccFalse: "Cierres en falso", ccFalseX: "Intentos de cierre antes de estar arreglado (No resuelto)",
     wgTitle: "Objetivos de la semana", wgSub: (w) => `Tres objetivos para la ${w}, los mismos para todo el mundo. Cambian el lunes a las 00:00 de tu zona horaria; cada recompensa cuenta una vez.`,
@@ -860,6 +860,10 @@
     document.querySelectorAll("[data-clock]").forEach((n) => { n.textContent = clock(); });
   }
   function isOpen(sc) { return !progress[sc.id] || Boolean(work()[sc.id]); }
+  // career levels (levels.js): a desk joins the queue when the user reaches its level; desks already touched always stay.
+  // A direct link (#/desk/<id>, the guides' "Practise it") still opens any desk.
+  function unlocked(sc) { return (sc.career || 0) <= levelNow().index || Boolean(progress[sc.id]) || Boolean(work()[sc.id]); }
+  function isQueued(sc) { return isOpen(sc) && unlocked(sc); }
   function statusOf(sc) { const r = rec(sc.id); return r ? r.status : progress[sc.id] ? "closed" : "new"; }
   // assigned to me: in progress or pending (not "new" after Unassign)
   function mine(id) { const r = rec(id); return Boolean(r && r.status !== "new" && r.status !== "closed"); }
@@ -867,7 +871,7 @@
   function prioPill(p) { return el("span", { class: "prio " + p, text: p }); }
 
   function refreshBadge() {
-    const n = SCENARIOS.filter(isOpen).length + freeStore().list.filter(FT.isOpen).length;
+    const n = SCENARIOS.filter(isQueued).length + freeStore().list.filter(FT.isOpen).length;
     const item = document.getElementById("nav-tickets");
     if (!item) return;
     let badge = item.querySelector(".badge");
@@ -998,7 +1002,7 @@
   function shell(active) {
     const app = document.getElementById("app");
     app.replaceChildren();
-    const open = SCENARIOS.filter(isOpen).length + freeStore().list.filter(FT.isOpen).length;
+    const open = SCENARIOS.filter(isQueued).length + freeStore().list.filter(FT.isOpen).length;
     const unreadN = unread();
     // v0.9: the sidebar folds to icons only (remembered in sd.side); the labels stay for screen readers and as tooltips
     const mini = load("side", "open") === "mini";
@@ -1044,11 +1048,18 @@
   }
 
   /* ---------- ticket queue */
+  // the open desks still above the user's level, and the nearest level that brings some in
+  function lockedNote() {
+    const locked = SCENARIOS.filter((sc) => isOpen(sc) && !unlocked(sc));
+    if (!locked.length) return null;
+    const nx = Lv.LEVELS[Math.min(...locked.map((sc) => sc.career || 0))];
+    return el("p", { class: "fine q-locked", id: "q-locked", text: L().qLocked(locked.length, t(nx.name, lang), nx.min) });
+  }
   function queue() {
     const view = shell("tickets");
     document.title = L().qTitle + " · SysAdmin Desks";
     const w = work();
-    const open = SCENARIOS.filter(isOpen).sort((a, b) => (w[b.id] ? 1 : 0) - (w[a.id] ? 1 : 0) || a.ticket.priority.localeCompare(b.ticket.priority));
+    const open = SCENARIOS.filter(isQueued).sort((a, b) => (w[b.id] ? 1 : 0) - (w[a.id] ? 1 : 0) || a.ticket.priority.localeCompare(b.ticket.priority));
     const closed = SCENARIOS.filter((s) => progress[s.id] && !w[s.id]);
     // v0.9: free tickets (freetix.js): the user's own practice tickets, marked and never graded
     const frees = freeStore().list;
@@ -1070,7 +1081,7 @@
           return el("tr", { id: sc.id === tourDesk() ? "tour-row" : null, class: (st === "progress" ? "active" : W.isPending(st) ? "active paused" : "") || null },
             el("td", { class: "mono", "data-label": L().colTicket, text: sc.ticket.id }),
             el("td", { class: "subj", "data-label": L().colSubject }, el("a", { href: "#/desk/" + sc.id, text: t(sc.title, lang) }),
-              el("span", { class: "sub" }, `${t(sc.topic, lang)} · ${L().level} ${sc.level}`)),
+              el("span", { class: "sub" }, `${t(sc.topic, lang)} · ${t(Lv.LEVELS[sc.career || 0].name, lang)}`)),
             el("td", { "data-label": L().colRequester, text: t(sc.requester.name, lang) }),
             el("td", { "data-label": L().colPriority }, prioPill(sc.ticket.priority)),
             el("td", { "data-label": "SLA" }, el("span", { class: "sla " + sla.tone, "data-sla": sc.id, text: sla.text })),
@@ -1116,7 +1127,7 @@
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().qTitle }), el("p", { class: "sub", text: user ? L().hello(user.name) : "" })),
         el("div", { class: "q-head-r" }, el("p", { class: "shift" }, el("span", { class: "dot", "aria-hidden": "true" }), L().shift),
           el("a", { class: "btn sm", href: "#/free/new", id: "free-new", text: "＋ " + L().ftNew }))),
-      tabs, el("div", { class: "qwrap" }, table));
+      tabs, el("div", { class: "qwrap" }, table), queueTab === "open" ? lockedNote() : null);
     // v0.8: the guided first ticket for a new technician; "what's new" once for one who already took the tour
     if (queueTab === "open" && tourAt == null) setTimeout(() => {
       if (!document.getElementById("tour-queue") || document.querySelector(".tour")) return;
@@ -2310,9 +2321,10 @@
   }
 
   // a directory command for a user that belongs to an open ticket goes to that ticket, so both always agree
-  const MUTATING = /^(unlock-adaccount|set-adaccountpassword|enable-adaccount|disable-adaccount|set-aduser)$/;
+  const MUTATING = /^(unlock-adaccount|set-adaccountpassword|enable-adaccount|disable-adaccount|set-aduser|add-adgroupmember|remove-adgroupmember)$/;
   function dirRoute(cmd, p) {
-    const sam = String(p.id || "").toLowerCase();
+    // a group change belongs to the user it adds or removes (-Members), not to the group
+    const sam = String((/^(add|remove)-adgroupmember$/.test(p.verb) ? p.named.members || p.pos[1] : p.id) || "").toLowerCase();
     const b = bindings().find((x) => x.kind === "user" && x.id === sam);
     if (!b) return null;
     if (b.live) {
@@ -3292,7 +3304,7 @@
   let tourDeskId = null;     // the ticket the tour works on
   function tourDesk() {
     if (tourDeskId) return tourDeskId;
-    const pick = ["ad-lockout", "print-queue", "disk-full", "dns-intranet"].map(deskById).find((sc) => sc && isOpen(sc)) || SCENARIOS.find(isOpen) || SCENARIOS[0];
+    const pick = ["ad-lockout", "print-queue", "disk-full", "dns-intranet"].map(deskById).find((sc) => sc && isQueued(sc)) || SCENARIOS.find(isQueued) || SCENARIOS[0];
     return pick.id;
   }
   const tourRoute = (i) => (TOUR[i].route === "desk" ? "#/desk/" + tourDesk() : "#/");

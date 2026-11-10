@@ -62,6 +62,8 @@
       groups: ["GG-Marketing", "GG-M365-E3"], device: "LAPTOP-0251", pwdLastSet: "29/08/2026 12:10", lastLogon: "09/10/2026 18:05", locked: true, badPwd: 5 },
     { sam: "aortiz", name: "Ana Ortiz", ou: "legal", title: { en: "Legal counsel", es: "Asesora jurídica" }, dept: "Legal",
       groups: ["GG-Legal", "GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0388", pwdLastSet: "07/10/2026 08:30", lastLogon: "25/10/2026 08:05" },
+    { sam: "nprieto", name: "Nerea Prieto", ou: "legal", title: { en: "Paralegal (new starter)", es: "Asistente jurídica (nueva incorporación)" }, dept: "Legal",
+      groups: ["GG-Legal", "GG-M365-E3", "GG-Printers-HQ"], device: "LAPTOP-0395", pwdLastSet: "23/10/2026 17:42", lastLogon: "", mustChange: true },
     { sam: "it.admin", name: "IT Admin", ou: "it", title: { en: "IT support technician", es: "Técnico de soporte IT" }, dept: "IT",
       groups: ["GG-IT-Admins", "GG-M365-E3", "GG-VPN-Users"], device: "ADM-WS01", pwdLastSet: "12/10/2026 08:00", lastLogon: "26/10/2026 08:58" },
     { sam: "recepcion", name: "Recepción", ou: "shared", title: { en: "Reception desk (shared)", es: "Recepción (compartida)" }, dept: "Reception",
@@ -81,6 +83,8 @@
     { name: "LAPTOP-0251", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "eromero" },
     { name: "LAPTOP-0264", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "psanchez" },
     { name: "LAPTOP-0388", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "aortiz", note: { en: "Entra ID joined (cloud only): managed in Intune", es: "Unido a Entra ID (solo nube): se gestiona en Intune" } },
+    { name: "LAPTOP-0395", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "nprieto" },
+    { name: "MTR-SALA2", ou: "desktops", os: "Windows 11 IoT Enterprise", user: null, note: { en: "Microsoft Teams Rooms console, meeting room 2 (2nd floor)", es: "Consola de Microsoft Teams Rooms, sala de reuniones 2 (2ª planta)" } },
     { name: "ADM-WS01", ou: "desktops", os: "Windows 11 Enterprise 24H2", user: "it.admin" },
   ];
 

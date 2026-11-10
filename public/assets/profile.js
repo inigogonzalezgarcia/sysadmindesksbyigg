@@ -11,15 +11,15 @@
   const t = Lib.t;
   // the area of every desk (each desk in exactly one area; the tests check every scenario is here)
   const DESK_AREA = {
-    "ad-lockout": "ad", "aadc-sync": "ad",
+    "ad-lockout": "ad", "aadc-sync": "ad", "starter-desk-ready": "ad",
     "dns-intranet": "windows", "disk-full": "windows", "print-queue": "windows", "vpn-anyconnect": "windows",
-    "m365-licence": "m365", "shared-mailbox": "m365", "mailbox-full": "m365", "ca-blocked": "m365", "sso-saml": "m365",
+    "m365-licence": "m365", "shared-mailbox": "m365", "teams-no-audio": "m365", "room-no-display": "m365", "mailbox-full": "m365", "ca-blocked": "m365", "sso-saml": "m365",
     "intune-bitlocker": "endpoint", "mecm-app": "endpoint",
     "rhel-var-full": "linux", "linux-sssd": "linux",
     "citrix-session": "vdi",
     "veeam-job": "data", "sql-log-full": "data",
     "net-err-disabled": "network", "net-wrong-vlan": "network", "net-fortigate-branch": "network",
-    "laptop-rma": "hardware", "net-psu-rma": "hardware", "leaver-return": "hardware",
+    "laptop-rma": "hardware", "net-psu-rma": "hardware", "leaver-return": "hardware", "new-laptops-intake": "hardware",
   };
   const LAB_AREA = Object.fromEntries(Lb.LABS.map((l) => [l.id, l.area]));
 
@@ -28,7 +28,8 @@
     { id: "l1", title: { en: "Service Desk L1", es: "Service desk N1" },
       what: { en: "First line: accounts and passwords, a user's PC, printing, licences and mailboxes, and talking to the user.", es: "Primera línea: cuentas y contraseñas, el equipo de un usuario, impresión, licencias y buzones, y hablar con el usuario." },
       areas: ["ad", "windows", "m365", "itsm"],
-      desks: ["ad-lockout", "dns-intranet", "disk-full", "print-queue", "vpn-anyconnect", "m365-licence", "shared-mailbox", "leaver-return"], labs: ["ad", "windows"] },
+      desks: ["ad-lockout", "dns-intranet", "disk-full", "print-queue", "vpn-anyconnect", "m365-licence", "shared-mailbox", "leaver-return",
+        "new-laptops-intake", "starter-desk-ready", "teams-no-audio", "room-no-display"], labs: ["ad", "windows"] },
     { id: "l2", title: { en: "Service Desk L2 / Desktop", es: "Service desk N2 / puesto de trabajo" },
       what: { en: "Second line: device management, deployments, mailboxes at their limit, VDI, identity sync and hardware under warranty.", es: "Segunda línea: gestión de dispositivos, despliegues, buzones al límite, VDI, sincronización de identidades y hardware en garantía." },
       areas: ["endpoint", "vdi", "hardware", "m365"],

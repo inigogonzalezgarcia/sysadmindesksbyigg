@@ -24,7 +24,7 @@ draft ──submit──▶ requested ──advance──▶ pickup ──advanc
 | incident | 4 h | Lost or damaged at the hub, claim opened |
 | incident → transit | 24 h | Claim solved |
 
-The internal carrier (hand delivery) takes a tenth of the time. `submit` validates; errors block (field ids): `serial` (not in the register), `carrier`, `from`, `to` (and from ≠ to); RMA: `vendor`, `fault`, `evidence`; a return: `items` (except spare parts); a laptop RMA or return: `data` (`kyhd`, `wiped`, `encrypted`, `none`). Warnings do not block: `escrow` (a laptop RMA without the BitLocker recovery key checked in Entra ID) and `contract` (a part RMA without a support contract). `ship set` changes a shipment until it is delivered, never its asset or type.
+The internal carrier (hand delivery) takes a tenth of the time. `submit` validates; errors block (field ids): `serial` (not in the register), `carrier`, `from`, `to` (and from ≠ to); RMA: `vendor`, `fault`, `evidence`; a return: `items` (except spare parts); a laptop RMA or return: `data` (`kyhd`, `wiped`, `encrypted`, `none`). Warnings do not block: `escrow` (a laptop RMA without the BitLocker recovery key checked in Entra ID, except with `--data none`: a new unit with no user data) and `contract` (a part RMA without a support contract). `ship set` changes a shipment until it is delivered, never its asset or type.
 
 **Keep Your Hard Drive** (Dell's add-on for ProSupport customers): the customer keeps a failed drive instead of returning it to the vendor, so the data never leaves its control. The data option `kyhd` records that.
 
@@ -34,7 +34,7 @@ The internal carrier (hand delivery) takes a tenth of the time. `submit` validat
 
 ## Inventory state
 
-`deviceState(stores, serial)`: the register's mark wins (`ship mark <serial> stock | replaced | in-use`); otherwise the shipments (not drafts): an open RMA → `rma`; a loan → `loan` (closed: `stock`); a return → `returning`, then `received` once delivered; a shipment to a user delivered → `in-use`. The inventory's *Endpoints* view shows it for every asset in `ASSETS` (laptops, the loan pool, a phone and a switch power supply).
+`deviceState(stores, serial)`: the register's mark wins (`ship mark <serial> stock | replaced | in-use`), unless a shipment of that device that is still open was requested after the mark (v0.10: a unit marked in stock and then sent to RMA is in RMA); otherwise the shipments (not drafts): an open RMA → `rma`; a loan → `loan` (closed: `stock`); a return → `returning`, then `received` once delivered; a shipment to a user delivered → `in-use`. The inventory's *Endpoints* view shows it for every asset in `ASSETS` (laptops, the loan pool, a phone, a switch power supply and, since v0.10, the twelve laptops of purchase order PO-2026-0418, `ordered` until they are checked in).
 
 ## The shipments tool (`ship`)
 
@@ -43,12 +43,13 @@ ship list | show <id> | assets <user>
 ship new <rma|to-user|return|loan> --serial <serial or name> [--vendor dell|cisco|generic] [--fault "..."] [--evidence "a, b"]
          [--contract <id>] [--carrier tix|vendor|internal] [--from <address>] [--to <address>] [--data kyhd|wiped|encrypted|none]
          [--escrow] [--items laptop,charger,badge,phone]
-ship set <id> [options] | submit <id> | advance <id> | incident <id> lost|damaged | close <id> | mark <serial> <status>
+ship set <id> [options] | submit <id> | advance <id> | incident <id> lost|damaged | close <id> | mark <serial>[,<serial>...] <status>
+ship delivery <purchase order>
 ```
 
-Addresses: `hq-it`, `comms-2f`, `home-jruiz`, `home-lnavarro`, `dell-depot`, `cisco-depot`. `exec(store, line, {lang})` returns `{lines, tags, ms, unknown, ship}`; `command(verb, a, b)` builds the line a form or a button runs. Output is in English (consoles are); warnings and narration follow the user's language.
+Addresses: `hq-it`, `comms-2f`, `home-jruiz`, `home-lnavarro`, `dell-depot`, `cisco-depot`. `exec(store, line, {lang})` returns `{lines, tags, ms, unknown, ship}`; `command(verb, a, b)` builds the line a form or a button runs. `ship mark` takes one serial or several separated by commas (nothing changes if one is wrong) and tags each one; `ship delivery <po>` (v0.10) shows a delivery note (`DELIVERIES`) with each line's asset tag, serial and register state. Output is in English (consoles are); warnings and narration follow the user's language.
 
-Tags (what a desk reacts to): `ship new <type> <serial>`, `ship submit <type> escrow|noescrow`, `ship state <type> <state>` (every change of state), `ship incident <type> <kind>`, `ship set <type> escrow|noescrow`, `ship mark <serial> <status>`, `ship assets <user>`, `ship show <type> <state>`, `ship list`, `ship error <code>`.
+Tags (what a desk reacts to): `ship new <type> <serial>`, `ship submit <type> escrow|noescrow`, `ship state <type> <state>` (every change of state), `ship incident <type> <kind>`, `ship set <type> escrow|noescrow`, `ship mark <serial> <status>` (one per serial), `ship assets <user>`, `ship delivery <po>`, `ship show <type> <state>`, `ship list`, `ship error <code>`.
 
 ## Desks with `ship`
 
@@ -61,10 +62,10 @@ ship: {
 },
 ```
 
-- A flag is true when any shipment of the ticket matches every field given (`type`, `serial`, `state` (one or a list), `escrow`, `data`, `vendor`, `contract` (present), `to`, `evidence` (substring), `items` (all)), or `{ kind: "asset", serial, status }` for the inventory state. Flags are read again after every command and must be in `state` with their value at the start.
+- A flag is true when any shipment of the ticket matches every field given (`type`, `serial`, `state` (one or a list), `escrow`, `data`, `vendor`, `contract` (present), `to`, `evidence` (substring), `items` (all)), or `{ kind: "asset", serial, status }` for the inventory state (`serial` can be a list: every one must be in that state). Flags are read again after every command and must be in `state` with their value at the start.
 - `ship ...` lines go to the tool; on a network desk only on the workstation (inside a device CLI, `ship` is that device's error). Ticket-page buttons always reach it (`opts.local`).
 - Rules with `on` (and no `dev`) react to the tool's tags, like the network desks react to a device.
 - `remarks: [{ when, text }]` (engine, v0.7b): something done badly on the way. If it matches when the ticket is resolved, it is listed and costs 10 points ("resolved with observations"), without blocking the ticket.
 - Simulated helpers used by these desks: `vendor` (the vendor's support portal: warranty, contract, a purchase request), `onsite` (what the user or Facilities do) and `alarm` (the monitoring console).
 
-The three desks: `laptop-rma` (a failing SSD under warranty: vendor pre-boot diagnostics code, warranty, the BitLocker key escrowed in Entra ID, a loan laptop, the RMA), `net-psu-rma` (a failed power supply in SW-ACC-2F: `show environment power`, the feed ruled out, the RMA with advance replacement, the hot swap and the return of the faulty unit) and `leaver-return` (a remote leaver's laptop, charger, badge and phone: courier collection, the check on arrival, the wipe and the register).
+The desks: `laptop-rma` (a failing SSD under warranty: vendor pre-boot diagnostics code, warranty, the BitLocker key escrowed in Entra ID, a loan laptop, the RMA), `net-psu-rma` (a failed power supply in SW-ACC-2F: `show environment power`, the feed ruled out, the RMA with advance replacement, the hot swap and the return of the faulty unit) `leaver-return` (a remote leaver's laptop, charger, badge and phone: courier collection, the check on arrival, the wipe and the register) and, since v0.10, `new-laptops-intake` (twelve laptops against their delivery note: the bench (`bench`, `bench open <serial>`), eleven checked in at once and one damaged in transit sent back with an RMA).

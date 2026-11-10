@@ -36,6 +36,10 @@ Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.
 | 22 | [The laptop that freezes and warns the drive will fail](https://sysadmindesksbyigg.pages.dev/tickets/laptop-rma) | Hardware RMA: SMART, the vendor's pre-boot diagnostics code, warranty with Keep Your Hard Drive, BitLocker key escrowed in Entra ID, a loan laptop | 2 |
 | 23 | [A switch power supply failed, but nobody noticed](https://sysadmindesksbyigg.pages.dev/tickets/net-psu-rma) | Network hardware RMA: `show environment power`, the feed ruled out, support contract with advance replacement, hot swap, returning the faulty unit | 2 |
 | 24 | [A leaver's laptop and phone: return, wipe and register](https://sysadmindesksbyigg.pages.dev/tickets/leaver-return) | Leavers: asset register, courier collection, check on arrival, Intune wipe (no Autopilot Reset on hybrid joined), back in stock | 1 |
+| 25 | [Twelve new laptops: tag them and check them into the register](https://sysadmindesksbyigg.pages.dev/tickets/new-laptops-intake) | Goods in: the delivery note against what arrived, asset tags, a unit damaged in transit back to the vendor | 1 |
+| 26 | [Monday: the new starter's account is not ready](https://sysadmindesksbyigg.pages.dev/tickets/starter-desk-ready) | Active Directory: a new account created disabled and without its team's group, compared with a colleague | 1 |
+| 27 | [Teams: in meetings nobody can hear me](https://sysadmindesksbyigg.pages.dev/tickets/teams-no-audio) | Teams / Windows sound: the default microphone, the input level, a laptop closed on a dock | 1 |
+| 28 | [The meeting room screen stays black](https://sysadmindesksbyigg.pages.dev/tickets/room-no-display) | Microsoft Teams Rooms: the room console checked remotely, the display's input, a cable left in the side port | 1 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 
@@ -154,7 +158,7 @@ Every page, the app footer, the sidebar and *My account* link to them and to **R
 
 ## SEO (v0.6.2)
 
-- **Static intro on the home page:** `index.html` ships real text inside `<main id="app">` (H1, how it works, the 24 tickets, links to the help pages and the guides), in Spanish and English. Search engines and visitors without JavaScript read it; `app.js` shows only the visitor's language and replaces it with the landing or the app on its first render.
+- **Static intro on the home page:** `index.html` ships real text inside `<main id="app">` (H1, how it works, the 28 tickets, links to the help pages and the guides), in Spanish and English. Search engines and visitors without JavaScript read it; `app.js` shows only the visitor's language and replaces it with the landing or the app on its first render.
 - **A public page per ticket:** `public/tickets/<desk id>.html` (served as `/tickets/<desk id>`) with the problem, the ticket as the requester tells it, level, topic and SLA, what you practise (never the cause or the fix), the related guide and a *Practise it free* button to `/?lang=xx#/desk/<id>`; `/tickets/` lists them all. The about page and the home intro link to them.
 - **Clean URLs:** `/about`, `/help`, `/faq`, `/terms`, `/privacy` and `/tickets/...` everywhere (Cloudflare Pages serves `about.html` for `/about`; `npm run dev` does the same). `sitemap.xml` lists them.
 - **Head:** every public page has its Spanish title and description (the default visible language; `doc.js` and `app.js` switch the title for English), a canonical URL, Open Graph (`assets/og.png`, 1200×630, drawn by `scripts/make-og.py`) and a Twitter card. JSON-LD: `WebApplication` on the home page and `FAQPage` on `/faq`, built from the visible Spanish questions. JSON-LD is the only inline `<script>` allowed: it is data and never runs, so the CSP does not block it.

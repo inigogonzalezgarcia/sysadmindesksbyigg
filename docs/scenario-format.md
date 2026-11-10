@@ -8,6 +8,7 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 |---|---|
 | `id` | Short slug, used in the URL (`#/desk/<id>`) and as the progress key |
 | `level`, `minutes`, `topic` | Level 1 (first-line support) or 2 (second line), estimated time, topic label `{en, es}` |
+| `career` | 0-10: the level of levels.js at which the ticket joins the queue (a direct link opens any ticket) |
 | `title` | `{en, es}` |
 | `guide` | Link to the related guide on the website (`https://inigogonzalezgarcia.github.io/guias/<slug>.html`) |
 | `machine` | `host`, `user`, `domain`, `shell` (`powershell` or `bash`, used for the "not recognised" message) and `prompt` |

@@ -268,14 +268,14 @@ test("leaver return: marking it returned before it arrives does not close it; wi
 
 test("every shipment desk: flags in the state, tag rules, addresses and assets that exist", () => {
   const desks = SCENARIOS.filter((s) => s.ship);
-  assert.deepEqual(desks.map((s) => s.id), ["laptop-rma", "net-psu-rma", "leaver-return"]);
+  assert.deepEqual(desks.map((s) => s.id), ["laptop-rma", "net-psu-rma", "leaver-return", "new-laptops-intake"]);
   for (const sc of desks) {
     const keys = new Set(Object.keys(sc.state));
     const s = E.createSession(sc, "en");
     for (const [k, spec] of Object.entries(sc.ship.flags)) {
       assert.ok(keys.has(k), `${sc.id}: flag ${k}`);
       assert.equal(s.state[k], sc.state[k], `${sc.id}: ${k} starts as declared`);
-      if (spec.serial) assert.ok(S.asset(spec.serial), `${sc.id}: asset ${spec.serial}`);
+      if (spec.serial) [].concat(spec.serial).forEach((sr) => assert.ok(S.asset(sr), `${sc.id}: asset ${sr}`));
       if (spec.to) assert.ok(S.ADDRESSES[spec.to], `${sc.id}: address ${spec.to}`);
     }
     for (const r of sc.commands.filter((x) => x.on && /ship/.test(String(x.on)))) assert.ok(!r.dev, `${sc.id}/${r.id}: ship tags have no device`);
@@ -283,4 +283,29 @@ test("every shipment desk: flags in the state, tag rules, addresses and assets t
     const done = play(sc, sc.solution);
     assert.ok(done.ships.list.length >= 1 && done.ships.list.every((x) => x.ticket === sc.ticket.id), sc.id + " shipments linked to the ticket");
   }
+});
+
+test("v0.10 goods in: the delivery note next to the register, several serials marked at once, and an RMA after the mark wins", () => {
+  const st = S.createStore({ ticket: "INC-20661" });
+  const run = (l) => S.exec(st, l, { lang: "en" });
+  const note = run("ship delivery po-2026-0418");
+  assert.deepEqual(note.tags, ["ship delivery po-2026-0418"]);
+  assert.match(text(note), /LAPTOP-0401\s+1QV5HT4\s+Ordered, not checked in/);
+  assert.equal(S.ASSETS.filter((a) => a.po === "PO-2026-0418").length, 12);
+  assert.match(text(run("ship delivery PO-1")), /no delivery note/);
+  // nothing changes if one serial is wrong
+  assert.equal(run("ship mark 1QV5HT4,NOPE stock").tags[0], "ship error serial");
+  assert.equal(S.deviceState([st], "1QV5HT4"), "ordered");
+  assert.equal(run("ship mark 1QV5HT4,2QV5HT4 ordered").tags[0], "ship error status");
+  const ok = run("ship mark 1QV5HT4,2QV5HT4,7QV5HT4 stock");
+  assert.deepEqual(ok.tags, ["ship mark 1QV5HT4 stock", "ship mark 2QV5HT4 stock", "ship mark 7QV5HT4 stock"]);
+  assert.equal(S.check(st, { kind: "asset", serial: ["1QV5HT4", "2QV5HT4"], status: "stock" }), true);
+  assert.equal(S.check(st, { kind: "asset", serial: ["1QV5HT4", "3QV5HT4"], status: "stock" }), false);
+  // a new laptop with no user data: no BitLocker warning on its RMA
+  const id = S.create(st, "rma", { serial: "7QV5HT4", vendor: "dell", fault: "Broken screen", evidence: "photos", carrier: "vendor", from: "hq-it", to: "dell-depot", data: "none" }).ship.id;
+  const sub = S.submit(st, id);
+  assert.deepEqual(sub.check.warnings, []);
+  assert.equal(S.deviceState([st], "7QV5HT4"), "rma", "requested after the mark: the RMA wins");
+  ["advance", "advance", "advance", "close"].forEach((f) => S[f](st, id));
+  assert.equal(S.deviceState([st], "7QV5HT4"), "stock", "once the RMA is closed, the register's mark counts again");
 });

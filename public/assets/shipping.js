@@ -41,6 +41,12 @@
   const REQUESTED_RMA = { en: "Requested from the vendor", es: "Solicitado al fabricante" };
 
   /* ---------- the asset register: endpoints, the loan pool and spare parts (the inventory's "Endpoints" view) */
+  // v0.10: a purchase order of 12 new laptops delivered this morning (asset tags LAPTOP-0401..0412 reserved), not checked in yet
+  const INTAKE_SERIALS = ["1QV5HT4", "2QV5HT4", "3QV5HT4", "4QV5HT4", "5QV5HT4", "6QV5HT4", "7QV5HT4", "8QV5HT4", "9QV5HT4", "BQV5HT4", "CQV5HT4", "DQV5HT4"];
+  // a delivery note (albarán): what the carrier delivered against a purchase order; `ship delivery <po>` shows it next to the register
+  const DELIVERIES = {
+    "PO-2026-0418": { vendor: "Dell", carrier: "tix", model: "Dell Latitude 5450", at: "26/10/2026 08:55", signed: "Reception (N. Vega)", serials: INTAKE_SERIALS },
+  };
   const ASSETS = [
     { id: "LAPTOP-0102", kind: "laptop", model: "Dell Latitude 7440", serial: "5HZ8QK3", user: "cmartin", join: "hybrid", status: "in-use",
       warranty: { en: "Dell ProSupport Plus, Collect & Return, Keep Your Hard Drive, until 14/03/2028", es: "Dell ProSupport Plus, Collect & Return, Keep Your Hard Drive, hasta el 14/03/2028" } },
@@ -62,7 +68,9 @@
       warranty: { en: "Corporate phone, managed in Intune", es: "Móvil corporativo, gestionado en Intune" } },
     { id: "SW-ACC-2F PS-1B", kind: "part", model: "Cisco PWR-C5-600WAC (power supply B of SW-ACC-2F)", serial: "DTN2338A1QJ", user: null, status: "in-use",
       warranty: { en: "Cisco Smart Net Total Care 8x5xNBD, contract 2049117 (covers SW-ACC-2F, serial JAE25141K2F)", es: "Cisco Smart Net Total Care 8x5xNBD, contrato 2049117 (cubre SW-ACC-2F, número de serie JAE25141K2F)" } },
-  ];
+  ].concat(INTAKE_SERIALS.map((serial, i) => ({ id: "LAPTOP-04" + String(i + 1).padStart(2, "0"), kind: "laptop", model: "Dell Latitude 5450", serial, user: null, join: "entra",
+    status: "ordered", po: "PO-2026-0418",
+    warranty: { en: "Dell ProSupport, Collect & Return, until 23/10/2030 (purchase order PO-2026-0418)", es: "Dell ProSupport, Collect & Return, hasta el 23/10/2030 (pedido PO-2026-0418)" } })));
   function asset(key) {
     const k = String(key || "").toLowerCase();
     return ASSETS.find((a) => a.serial.toLowerCase() === k || a.id.toLowerCase() === k) || null;
@@ -186,7 +194,7 @@
     if (sh.type === "return" && a && a.kind !== "part" && !(sh.items || []).length) errors.push("items");
     if (a && a.kind === "laptop" && (sh.type === "rma" || sh.type === "return") && !DATA[sh.data]) errors.push("data");
     // a laptop that goes to a third party: its BitLocker recovery key must be in Entra ID first (a warning: it does not block)
-    if (a && a.kind === "laptop" && sh.type === "rma" && !sh.escrow) warnings.push("escrow");
+    if (a && a.kind === "laptop" && sh.type === "rma" && !sh.escrow && sh.data !== "none") warnings.push("escrow");
     if (a && a.kind === "part" && sh.type === "rma" && !sh.contract) warnings.push("contract");
     return { ok: errors.length === 0, errors, warnings };
   }
@@ -298,14 +306,17 @@
     "in-use": { en: "In use", es: "En uso" }, stock: { en: "In stock (IT store room)", es: "En almacén (IT)" },
     rma: { en: "In RMA", es: "En RMA" }, loan: { en: "On loan", es: "En préstamo" }, replaced: { en: "Replaced", es: "Sustituido" },
     returning: { en: "Return in progress", es: "Devolución en curso" }, received: { en: "Received, waiting for the wipe", es: "Recibido, pendiente de borrado" },
+    ordered: { en: "Ordered, not checked in", es: "Pedido, sin dar de alta" },
   };
   const MARKS = ["stock", "replaced", "in-use"];
   function deviceState(stores, serial) {
     const a = asset(serial);
     if (!a) return null;
     const all = [].concat(stores || []).filter(Boolean);
-    const mark = all.map((s) => s.marks && s.marks[a.serial]).filter(Boolean).sort((x, y) => y.at - x.at)[0];
-    if (mark) return mark.status;
+    const mark = all.map((s) => s.marks && s.marks[a.serial] && { m: s.marks[a.serial], s }).filter(Boolean).sort((x, y) => y.m.at - x.m.at)[0];
+    // the register's mark wins, unless a shipment of that device was requested after it (a unit marked in stock, then sent to RMA)
+    const later = mark && mark.s.list.some((x) => x.serial === a.serial && !["draft", "closed"].includes(x.state) && x.events.some((e) => e.state === "requested" && e.at > mark.m.at));
+    if (mark && !later) return mark.m.status;
     let st = a.status;
     all.forEach((s) => s.list.filter((x) => x.serial === a.serial && x.state !== "draft").forEach((x) => {
       if (x.type === "rma") st = x.state === "closed" ? st : "rma";
@@ -325,7 +336,7 @@
 
   /* ---------- the checks a desk reads (scenario ship.flags, see docs/shipping.md) */
   function check(store, spec) {
-    if (spec.kind === "asset") return deviceState([store], spec.serial) === spec.status;
+    if (spec.kind === "asset") return [].concat(spec.serial).every((sr) => deviceState([store], sr) === spec.status);
     return store.list.some((x) => {
       if (spec.type && x.type !== spec.type) return false;
       if (spec.serial && x.serial !== spec.serial) return false;
@@ -390,7 +401,8 @@
     "  ship advance <id>                 the next step happens (time passes: pickup, transit, delivery)",
     "  ship incident <id> lost|damaged   report a lost or damaged parcel",
     "  ship close <id>                   close a delivered shipment",
-    "  ship mark <serial> stock|replaced|in-use   update the asset register",
+    "  ship mark <serial>[,<serial>...] stock|replaced|in-use   update the asset register",
+    "  ship delivery <purchase order>    the delivery note next to the register (goods in)",
     "Addresses: " + Object.keys(ADDRESSES).join(", ") + ".",
   ];
   const ERR = {
@@ -403,6 +415,7 @@
     full: () => "ship: too many shipments here (50).",
     serial: () => "ship: that serial or name is not in the asset register.",
     status: () => "ship: the status must be stock, replaced or in-use.",
+    po: () => "ship: no delivery note for that purchase order.",
   };
   const FIELD = {
     serial: { en: "asset (serial)", es: "equipo (número de serie)" }, carrier: { en: "carrier", es: "transportista" }, from: { en: "pickup address", es: "dirección de recogida" },
@@ -518,7 +531,7 @@
         if (!r.ok) return fail(r);
         const sh = r.ship;
         out(["", `${sh.id}: ${STATE[sh.state].en}.`, ...sh.events.filter((e) => e.at > store.clock - r.ms - 1 && e.state === sh.state).slice(-2).map((e) => `  ${stamp(e.at)}  ${eventText(sh, e, "en")}`), ""]);
-        if (sh.state === "pickup" && sh.type === "rma" && asset(sh.serial) && asset(sh.serial).kind === "laptop" && !sh.escrow) res.lines.push({ text: t(WARN.escrow, lang), kind: "err" });
+        if (sh.state === "pickup" && sh.type === "rma" && asset(sh.serial) && asset(sh.serial).kind === "laptop" && !sh.escrow && sh.data !== "none") res.lines.push({ text: t(WARN.escrow, lang), kind: "err" });
         return done(r, "state");
       }
       case "incident": {
@@ -535,10 +548,25 @@
         return done(r, "state");
       }
       case "mark": {
-        const r = mark(store, pos[0], (pos[1] || "").toLowerCase());
-        if (!r.ok) return fail(r);
-        out(["", `Asset register: ${r.asset.id} (${r.asset.serial}) is now ${t(DEVICE[pos[1].toLowerCase()], "en").toLowerCase()}.`, ""]);
-        res.tags.push(`ship mark ${r.asset.serial} ${pos[1].toLowerCase()}`);
+        // one serial or several separated by commas (a delivery checked in at once); nothing changes if any of them is wrong
+        const keys = String(pos[0] || "").split(",").map((x) => x.trim()).filter(Boolean);
+        const status = (pos[1] || "").toLowerCase();
+        if (!keys.length || keys.some((k) => !asset(k))) return fail({ error: "serial" });
+        if (!MARKS.includes(status)) return fail({ error: "status" });
+        const marked = keys.map((k) => mark(store, k, status).asset);
+        out([""].concat(marked.map((a) => `Asset register: ${a.id} (${a.serial}) is now ${t(DEVICE[status], "en").toLowerCase()}.`), [""]));
+        marked.forEach((a) => res.tags.push(`ship mark ${a.serial} ${status}`));
+        return res;
+      }
+      case "delivery": {
+        const po = String(pos[0] || "").toUpperCase();
+        const d = DELIVERIES[po];
+        if (!d) return fail({ error: "po" });
+        const rows = d.serials.map((sr) => { const a = asset(sr); return [a.id, sr, t(DEVICE[deviceState(o.stores || [store], sr)], "en")]; });
+        out(["", `Delivery note ${po} · ${d.vendor} · ${d.serials.length} x ${d.model}`, `Delivered ${d.at} by ${t(CARRIERS[d.carrier].name, "en")}, signed by ${d.signed}`, "",
+          `${pad("Asset tag", 12)} ${pad("Serial", 8)} Register`, `${pad("---------", 12)} ${pad("------", 8)} --------`,
+          ...rows.map((r) => `${pad(r[0], 12)} ${pad(r[1], 8)} ${r[2]}`), ""]);
+        res.tags.push("ship delivery " + po.toLowerCase());
         return res;
       }
       default:
@@ -565,7 +593,7 @@
     return `ship ${verb} ${a}`;
   }
 
-  return { T0, TYPES, STATES, FLOW, STATE, ASSETS, ADDRESSES, CARRIERS, VENDORS, DATA, ITEMS, DEVICE, KIND, EV, t, stamp,
+  return { T0, DELIVERIES, TYPES, STATES, FLOW, STATE, ASSETS, ADDRESSES, CARRIERS, VENDORS, DATA, ITEMS, DEVICE, KIND, EV, t, stamp,
     asset, createStore, normalise, find, validate, create, update, submit, advance, incident, close, next, stateLabel, eventText,
     deviceState, mark, check, charge, exec, command, tokenize };
 });

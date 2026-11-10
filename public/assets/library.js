@@ -70,7 +70,7 @@
         es: ["Comprueba quién llama antes de desbloquear o restablecer: devuelve la llamada al número del directorio.", "La contraseña temporal se da por teléfono, nunca por correo, con «cambiar en el siguiente inicio de sesión».",
           "Nunca pidas a un usuario su contraseña, ni para probar.", "Desbloquear no es el arreglo si la cuenta se vuelve a bloquear: busca antes el origen."],
       },
-      desks: ["ad-lockout", "aadc-sync", "leaver-return"], labs: ["ad"],
+      desks: ["ad-lockout", "aadc-sync", "leaver-return", "starter-desk-ready"], labs: ["ad"],
       guides: ["active-directory-alta-usuario-grupos", "active-directory-directiva-de-contrasenas-pso-bloqueos-y-la-cuenta-que-se-bloquea-cada-manana", "active-directory-delegar-permisos-papelera-y-quien-ha-cambiado-este-usuario", "powershell-altas-masivas-en-active-directory-desde-csv-y-bajas-con-revision", "azure-ad-connect-forzar-sincronizacion-y-objetos-que-no-pasan"],
     },
     {
@@ -147,7 +147,7 @@
         es: ["Lee el error donde se muestra: los errores de licencia de un grupo aparecen en el grupo, no en el usuario.", "Da los permisos a quien los pidió, tras la aprobación de su responsable; quítalos el día de la baja.",
           "Las directivas de acceso condicional son de Seguridad: una excepción es una petición, nunca una edición de la directiva.", "Los cambios de inicio de sesión y de permisos pueden tardar minutos: díselo al usuario."],
       },
-      desks: ["m365-licence", "shared-mailbox", "mailbox-full", "aadc-sync", "ca-blocked", "sso-saml"], labs: ["m365"],
+      desks: ["m365-licence", "shared-mailbox", "mailbox-full", "aadc-sync", "ca-blocked", "sso-saml", "teams-no-audio", "room-no-display"], labs: ["m365"],
       guides: ["microsoft-365-asignar-y-retirar-licencias", "outlook-exchange-online-buzon-compartido-permisos-autorespuesta", "microsoft-graph-primeras-consultas-con-powershell-y-un-informe-que-no-existe-en-el-portal",
         "entra-conditional-access-politicas-base-y-usuario-bloqueado", "entra-sso-saml-dar-de-alta-una-aplicacion-y-login-que-falla"],
     },
@@ -364,7 +364,7 @@
         es: ["Descarta primero lo sencillo (el cable, la alimentación) y guarda las pruebas.", "Comprueba la garantía o el contrato y el número de serie antes de abrir el caso.",
           "Nunca envíes un portátil cuya clave de recuperación no esté en Entra ID.", "Cierra el RMA solo cuando la pieza averiada se ha devuelto y el registro está al día."],
       },
-      desks: ["laptop-rma", "net-psu-rma", "leaver-return"], labs: [],
+      desks: ["laptop-rma", "net-psu-rma", "leaver-return", "new-laptops-intake"], labs: [],
       guides: ["bitlocker-estado-y-clave-de-recuperacion", "idrac-e-ilo-gestion-fuera-de-banda-red-usuarios-consola-firmware-y-alertas", "device42-inventario-de-racks-y-equipos-de-la-sala-de-comunicaciones", "monitorizacion-desplegar-alarmas-y-responder-en-plataformas-24x7"],
     },
     {

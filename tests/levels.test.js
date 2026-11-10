@@ -205,8 +205,8 @@ test("shift: four desks of the lab's area (or the nearest), deterministic, skipp
     s.forEach((d) => assert.ok(V.NEAR[l.id].includes(PF.DESK_AREA[d])));
   });
   const ad = V.pickShift("ad", o);
-  assert.deepEqual(ad.slice(0, 2).sort(), ["aadc-sync", "ad-lockout"]);
-  assert.equal(ad[0], "ad-lockout", "level 1 first");
+  assert.deepEqual(ad.slice(0, 3).sort(), ["aadc-sync", "ad-lockout", "starter-desk-ready"]);
+  assert.deepEqual(ad.slice(0, 2).map((d) => LEVELS[d]), [1, 1], "level 1 first");
   const skip = V.pickShift("ad", Object.assign({ unavailable: ["ad-lockout"] }, o));
   assert.ok(!skip.includes("ad-lockout") && skip.length === 4);
   assert.ok(V.pickShift("linux", { desks: ["rhel-var-full", "veeam-job"], levels: LEVELS }).length < 4, "fewer when the version has fewer");

@@ -148,7 +148,7 @@ test("every desktop app and action is understood whenever it is offered, and the
       assert.ok(start.log.length || start.logNote, sc.id + " event log or a note");
     }
   }
-  assert.deepEqual(SCENARIOS.filter((s) => s.desktop).map((s) => s.id).sort(), ["disk-full", "dns-intranet", "intune-bitlocker"]);
+  assert.deepEqual(SCENARIOS.filter((s) => s.desktop).map((s) => s.id).sort(), ["disk-full", "dns-intranet", "intune-bitlocker", "teams-no-audio"]);
 });
 
 test("the desktop falls into the same traps as the console", () => {

@@ -43,6 +43,11 @@ const TEMPTING = {
   "laptop-rma": ["vendor order Latitude 7450"],
   "net-psu-rma": ["alarm ack"],
   "leaver-return": ["ship mark 3FJ7WR3 stock"],
+  // v0.10: career level 0 (a damaged laptop checked into stock; a password reset on a disabled account; restarting Teams; restarting the room console)
+  "new-laptops-intake": ["ship mark 7QV5HT4 stock"],
+  "starter-desk-ready": ["Set-ADAccountPassword nprieto -Reset"],
+  "teams-no-audio": ["Stop-Process -Name ms-teams -Force"],
+  "room-no-display": ["Restart-Computer -ComputerName MTR-SALA2 -Force"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

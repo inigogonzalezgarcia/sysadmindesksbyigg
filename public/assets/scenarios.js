@@ -11,7 +11,7 @@
   /* ------------------------------------------------------------------ 1. Account that keeps locking */
   scenarios.push({
     id: "ad-lockout",
-    level: 1,
+    level: 1, career: 0,
     topic: { en: "Active Directory", es: "Active Directory" },
     minutes: 15,
     title: { en: "The account that locks every morning", es: "La cuenta que se bloquea cada mañana" },
@@ -179,7 +179,7 @@
   /* ------------------------------------------------------------------ 2. Intranet does not open */
   scenarios.push({
     id: "dns-intranet",
-    level: 1,
+    level: 1, career: 1,
     topic: { en: "Network / DNS", es: "Red / DNS" },
     minutes: 10,
     title: { en: "Internet works, the intranet does not", es: "Internet funciona, la intranet no" },
@@ -332,7 +332,7 @@
   /* ------------------------------------------------------------------ 3. Disk full */
   scenarios.push({
     id: "disk-full",
-    level: 1,
+    level: 1, career: 1,
     topic: { en: "Windows", es: "Windows" },
     minutes: 15,
     title: { en: "Disk full: Excel cannot save", es: "Disco lleno: Excel no puede guardar" },
@@ -479,7 +479,7 @@
   /* ------------------------------------------------------------------ 4. Stuck print queue */
   scenarios.push({
     id: "print-queue",
-    level: 1,
+    level: 1, career: 1,
     topic: { en: "Printers", es: "Impresoras" },
     minutes: 10,
     title: { en: "The reception printer queue that will not empty", es: "La cola de la impresora de recepción que no se vacía" },
@@ -594,7 +594,7 @@
   /* ------------------------------------------------------------------ 5. Mailbox full */
   scenarios.push({
     id: "mailbox-full",
-    level: 2,
+    level: 2, career: 2,
     topic: { en: "Exchange Online", es: "Exchange Online" },
     minutes: 15,
     title: { en: "Customer emails bounce: the sales director's mailbox", es: "Los correos de clientes rebotan: el buzón del director comercial" },
@@ -697,7 +697,7 @@
   /* ------------------------------------------------------------------ 6. Device not compliant */
   scenarios.push({
     id: "intune-bitlocker",
-    level: 2,
+    level: 2, career: 2,
     topic: { en: "Intune / BitLocker", es: "Intune / BitLocker" },
     minutes: 15,
     title: { en: "'Your device does not meet requirements': Outlook and Teams blocked", es: "'Tu dispositivo no cumple los requisitos': Outlook y Teams bloqueados" },
@@ -857,7 +857,7 @@
   const VPN_BANNER = ["Cisco Secure Client (version 5.1.6.103) .", "", "Copyright (c) 2004 - 2024 Cisco Systems, Inc.  All Rights Reserved.", ""];
   scenarios.push({
     id: "vpn-anyconnect",
-    level: 1,
+    level: 1, career: 1,
     topic: { en: "Cisco AnyConnect / VPN", es: "Cisco AnyConnect / VPN" },
     minutes: 15,
     title: { en: "Working from home: the VPN will not connect", es: "Teletrabajo: la VPN no conecta" },
@@ -999,7 +999,7 @@
   const E3 = "05e9a617-0261-4cee-bb44-138d3ef5d965";
   scenarios.push({
     id: "m365-licence",
-    level: 1,
+    level: 1, career: 2,
     topic: { en: "Microsoft 365", es: "Microsoft 365" },
     minutes: 15,
     title: { en: "New starter without Outlook or Teams", es: "Nueva incorporación sin Outlook ni Teams" },
@@ -1153,7 +1153,7 @@
   /* ------------------------------------------------------------------ 9. Shared mailbox that does not appear */
   scenarios.push({
     id: "shared-mailbox",
-    level: 1,
+    level: 1, career: 2,
     topic: { en: "Exchange Online", es: "Exchange Online" },
     minutes: 10,
     title: { en: "The invoices mailbox does not appear in Outlook", es: "El buzón de facturas no aparece en Outlook" },
@@ -1277,7 +1277,7 @@
   const MGIL_NEW = "CN=Marina Gil,OU=Legal,OU=Users,DC=contoso,DC=local";
   scenarios.push({
     id: "aadc-sync",
-    level: 2,
+    level: 2, career: 5,
     topic: { en: "Azure AD Connect", es: "Azure AD Connect" },
     minutes: 20,
     title: { en: "Created in AD this morning, missing in Microsoft 365", es: "Creada en AD esta mañana, no aparece en Microsoft 365" },
@@ -1418,7 +1418,7 @@
   /* ------------------------------------------------------------------ 11. Backup job that fails every night */
   scenarios.push({
     id: "veeam-job",
-    level: 2,
+    level: 2, career: 3,
     topic: { en: "Veeam Backup", es: "Veeam Backup" },
     minutes: 20,
     title: { en: "Three nights without a backup of the file server", es: "Tres noches sin copia del servidor de ficheros" },
@@ -1638,7 +1638,7 @@
   /* ------------------------------------------------------------------ 12. Deployment failed, app installed */
   scenarios.push({
     id: "mecm-app",
-    level: 2,
+    level: 2, career: 4,
     topic: { en: "MECM / SCCM", es: "MECM / SCCM" },
     minutes: 20,
     title: { en: "Installed, but Software Center says 'Failed'", es: "Instalada, pero el Centro de software dice 'Error'" },
@@ -1823,7 +1823,7 @@
   /* ------------------------------------------------------------------ 13. Web app down, /var full */
   scenarios.push({
     id: "rhel-var-full",
-    level: 2,
+    level: 2, career: 4,
     topic: { en: "Red Hat Enterprise Linux", es: "Red Hat Enterprise Linux" },
     minutes: 20,
     title: { en: "502 Bad Gateway: the timesheets app is down", es: "502 Bad Gateway: la aplicación de fichajes no funciona" },
@@ -2041,7 +2041,7 @@
   /* ------------------------------------------------------------------ 14. Published app that never opens */
   scenarios.push({
     id: "citrix-session",
-    level: 2,
+    level: 2, career: 4,
     topic: { en: "Citrix VDI", es: "Citrix VDI" },
     minutes: 20,
     title: { en: "The CRM in Citrix stays on 'Starting...'", es: "El CRM de Citrix se queda en 'Iniciando...'" },
@@ -2213,7 +2213,7 @@
   /* ------------------------------------------------------------------ 15. Conditional Access blocks a traveller */
   scenarios.push({
     id: "ca-blocked",
-    level: 2,
+    level: 2, career: 2,
     topic: { en: "Entra ID / Conditional Access", es: "Entra ID / Acceso condicional" },
     minutes: 20,
     title: { en: "Abroad and locked out of Microsoft 365", es: "De viaje y sin acceso a Microsoft 365" },
@@ -2406,7 +2406,7 @@
   /* ------------------------------------------------------------------ 16. SAML SSO broken after the certificate expired */
   scenarios.push({
     id: "sso-saml",
-    level: 2,
+    level: 2, career: 5,
     topic: { en: "Entra ID / SSO (SAML)", es: "Entra ID / SSO (SAML)" },
     minutes: 20,
     title: { en: "Nobody can sign in to Expenses with SSO", es: "Nadie puede entrar en Gastos con SSO" },
@@ -2550,7 +2550,7 @@
   /* ------------------------------------------------------------------ 17. Linux server joined to AD: AD logins fail */
   scenarios.push({
     id: "linux-sssd",
-    level: 2,
+    level: 2, career: 4,
     topic: { en: "Linux / Active Directory", es: "Linux / Active Directory" },
     minutes: 20,
     title: { en: "The payroll SFTP server rejects AD accounts", es: "El servidor SFTP de nóminas rechaza las cuentas del dominio" },
@@ -2728,7 +2728,7 @@
   /* ------------------------------------------------------------------ 18. SQL Server transaction log full */
   scenarios.push({
     id: "sql-log-full",
-    level: 2,
+    level: 2, career: 4,
     topic: { en: "Databases / SQL Server", es: "Bases de datos / SQL Server" },
     minutes: 20,
     title: { en: "The ERP cannot save: transaction log full", es: "El ERP no puede guardar: registro de transacciones lleno" },
@@ -3514,7 +3514,7 @@
   /* ------------------------------------------------------------------ 19. A desk port in err-disabled */
   scenarios.push({
     id: "net-err-disabled",
-    level: 2,
+    level: 2, career: 3,
     topic: { en: "Network / Cisco switch", es: "Red / switch Cisco" },
     minutes: 20,
     title: { en: "The desk port that switched itself off", es: "El puerto del puesto que se apagó solo" },
@@ -3708,7 +3708,7 @@
   const SW1 = "SW-ACC-1F";
   scenarios.push({
     id: "net-wrong-vlan",
-    level: 2,
+    level: 2, career: 3,
     topic: { en: "Network / VLANs (Cisco and HP)", es: "Red / VLAN (Cisco y HP)" },
     minutes: 20,
     title: { en: "The Sales printer moved and nobody can print", es: "La impresora de Ventas cambió de sitio y nadie puede imprimir" },
@@ -3911,7 +3911,7 @@
   const FGT = "FGT-HQ-01";
   scenarios.push({
     id: "net-fortigate-branch",
-    level: 2,
+    level: 2, career: 5,
     topic: { en: "Network / FortiGate firewall", es: "Red / cortafuegos FortiGate" },
     minutes: 25,
     title: { en: "Valencia cannot reach the ERP since last night's change", es: "Valencia no llega al ERP desde el cambio de anoche" },
@@ -4099,7 +4099,7 @@
   const RMA_LOCAL = /^(get-physicaldisk|get-storagereliabilitycounter|get-winevent|manage-bde|get-bitlockervolume|backuptoaad-bitlockerkeyprotector|dsregcmd)\b/;
   scenarios.push({
     id: "laptop-rma",
-    level: 2,
+    level: 2, career: 1,
     topic: { en: "Hardware / warranty RMA", es: "Hardware / RMA en garantía" },
     minutes: 25,
     title: { en: "The laptop that freezes and warns the drive will fail", es: "El portátil que se congela y avisa de que el disco va a fallar" },
@@ -4330,7 +4330,7 @@
   /* ------------------------------------------------------------------ 23. A failed power supply in a comms room switch */
   scenarios.push({
     id: "net-psu-rma",
-    level: 2,
+    level: 2, career: 3,
     topic: { en: "Network / hardware RMA", es: "Red / RMA de hardware" },
     minutes: 25,
     title: { en: "A switch power supply failed, but nobody noticed", es: "Ha fallado la fuente de un switch, pero nadie lo ha notado" },
@@ -4538,7 +4538,7 @@
   function pad15(s) { return s + " ".repeat(Math.max(0, 15 - s.length)); }
   scenarios.push({
     id: "leaver-return",
-    level: 1,
+    level: 1, career: 0,
     topic: { en: "Leavers / equipment return", es: "Bajas / devolución de equipos" },
     minutes: 20,
     title: { en: "A leaver's laptop and phone: return, wipe and register", es: "El portátil y el móvil de una baja: devolución, borrado y registro" },
@@ -4707,6 +4707,629 @@
           text: { en: "Can HR close Lucía's leaver file?", es: "¿Puede RR. HH. cerrar el expediente de baja de Lucía?" },
           answer: { en: "Yes, we have your confirmation: all four items received, wiped and back in stock. Closing it now.", es: "Sí, tenemos tu confirmación: los cuatro elementos recibidos, borrados y en almacén. Lo cerramos ahora." },
           failed: { en: "Lucía just called: the courier hasn't come yet, the box is still in her hall. We can't close it like this.", es: "Acaba de llamar Lucía: el mensajero aún no ha pasado, la caja sigue en su recibidor. Así no podemos cerrarlo." } },
+      ],
+    },
+  });
+
+  /* ------------------------------------------------------------------ 25. New laptops: goods in (v0.10, career level 0) */
+  const IN_GOOD = ["1QV5HT4", "2QV5HT4", "3QV5HT4", "4QV5HT4", "5QV5HT4", "6QV5HT4", "8QV5HT4", "9QV5HT4", "BQV5HT4", "CQV5HT4", "DQV5HT4"];
+  const IN_BAD = "7QV5HT4";
+  scenarios.push({
+    id: "new-laptops-intake",
+    level: 1, career: 0,
+    topic: { en: "Goods in / asset register", es: "Recepción de equipos / inventario" },
+    minutes: 15,
+    title: { en: "Twelve new laptops: tag them and check them into the register", es: "Llegan 12 portátiles: etiquetarlos y darlos de alta en el inventario" },
+    guide: GUIDE + "glpi-inventario-con-glpi-agent-tickets-sla-y-un-equipo-que-deja-de-reportar.html",
+    machine: WS_MACHINE,
+    ticket: {
+      id: "INC-20661", from: "Reception (Nuria Vega)", priority: "P3",
+      subject: { en: "12 boxes of laptops for IT at reception", es: "12 cajas de portátiles para IT en recepción" },
+      body: {
+        en: "The courier left twelve boxes of laptops for IT this morning (order PO-2026-0418). We signed the delivery note and the boxes are now on your bench, because they did not fit behind the desk. Can you check them into the inventory? Legal and Sales already asked when the new ones will be ready.",
+        es: "El mensajero ha dejado esta mañana doce cajas de portátiles para IT (pedido PO-2026-0418). Firmamos el albarán y las cajas ya están en vuestra mesa, porque detrás del mostrador no cabían. ¿Podéis darlos de alta en el inventario? Legal y Ventas ya han preguntado cuándo estarán los nuevos.",
+      },
+    },
+    intro: {
+      en: "You are on your admin workstation ADM-WS01 with the shipments tool (ship help), which also keeps the asset register. The register already has a row for each laptop of purchase order PO-2026-0418, with its asset tag reserved (LAPTOP-0401 to LAPTOP-0412) and the state 'ordered'; ship delivery <order> shows the delivery note next to it. The boxes are on the IT bench: bench lists them and bench open <serial> unboxes one and powers it on. Goods-in policy: nothing goes into stock before it has been checked against the delivery note; a unit that arrives damaged goes back to the vendor, never into stock.",
+      es: "Estás en tu equipo de administración ADM-WS01 con la herramienta de envíos (ship help), que también lleva el registro de activos. El registro ya tiene una fila por cada portátil del pedido PO-2026-0418, con su etiqueta de activo reservada (LAPTOP-0401 a LAPTOP-0412) y el estado «pedido»; ship delivery <pedido> muestra el albarán junto a él. Las cajas están en la mesa de IT: bench las lista y bench open <número de serie> desembala uno y lo enciende. Norma de recepción: nada entra en almacén sin cotejarlo antes con el albarán; un equipo que llega dañado vuelve al fabricante, nunca al almacén.",
+    },
+    requester: { name: "Recepción", team: { en: "Reception, head office", es: "Recepción, oficina central" }, user: "recepcion", location: { en: "Head office, ground floor", es: "Oficina central, planta baja" }, device: "PC-REC-001" },
+    ship: {
+      flags: {
+        goodStocked: { kind: "asset", serial: IN_GOOD, status: "stock" },
+        badStocked: { kind: "asset", serial: IN_BAD, status: "stock" },
+        badRma: { type: "rma", serial: IN_BAD, vendor: "dell", evidence: "IMG_0407", state: ["requested", "pickup", "transit", "delivered", "closed"] },
+      },
+    },
+    asset: {
+      title: { en: "Delivery PO-2026-0418 · 12 × Dell Latitude 5450", es: "Entrega PO-2026-0418 · 12 × Dell Latitude 5450" },
+      fields: [
+        { label: { en: "Goods in", es: "Recepción" }, states: [
+          { when: { goodStocked: true }, value: { en: "11 in stock with their asset tags", es: "11 en almacén con su etiqueta de activo" }, tone: "ok" },
+          { when: { noteRead: true }, value: { en: "Delivery note open, not checked in yet", es: "Albarán abierto, aún sin dar de alta" }, tone: "warn" },
+          { value: { en: "12 boxes on the bench, not checked in", es: "12 cajas en la mesa, sin dar de alta" }, tone: "bad" }] },
+        { label: "LAPTOP-0407", states: [
+          { when: { badStocked: true, badFound: true }, value: { en: "Recorded in stock with a broken screen", es: "Registrado en almacén con la pantalla rota" }, tone: "bad" },
+          { when: { badStocked: true }, value: { en: "Recorded in stock without being checked", es: "Registrado en almacén sin comprobarlo" }, tone: "bad" },
+          { when: { badRma: true }, value: { en: "Back to the vendor (RMA), replacement requested", es: "De vuelta al fabricante (RMA), sustitución pedida" }, tone: "ok" },
+          { when: { badFound: true }, value: { en: "Screen broken in transit", es: "Pantalla rota en el transporte" }, tone: "warn" },
+          { value: { en: "Not checked", es: "Sin comprobar" }, tone: "muted" }] },
+        { label: { en: "Vendor case", es: "Caso con el fabricante" }, states: [
+          { when: { badRma: true }, value: { en: "RMA requested", es: "RMA solicitada" }, tone: "ok" },
+          { value: { en: "None", es: "Ninguno" }, tone: "muted" }] },
+        { label: { en: "Register vs delivery note", es: "Registro frente al albarán" }, states: [
+          { when: { verified: true }, value: { en: "They agree", es: "Cuadran" }, tone: "ok" },
+          { value: { en: "Not reconciled", es: "Sin cuadrar" }, tone: "muted" }] },
+      ],
+    },
+    actions: [
+      { id: "note", label: { en: "Open the delivery note", es: "Abrir el albarán" }, cmd: "ship delivery PO-2026-0418" },
+      { id: "bench", label: { en: "Look at the boxes", es: "Mirar las cajas" }, cmd: "bench" },
+    ],
+    codes: ["hardware"],
+    state: { noteRead: false, boxesSeen: false, badFound: false, goodStocked: false, badStocked: false, badRma: false, markedBad: false, verified: false },
+    commands: [
+      { id: "bench", match: /^bench$/, set: { boxesSeen: true }, out: ["", "IT bench (simulated): 12 boxes from PO-2026-0418, brought up from reception.",
+        "  11 cartons sealed and undamaged.", "  1 carton crushed at one corner, label 7QV5HT4.",
+        "bench open <serial or asset tag>   unbox one, power it on and check it", ""],
+        say: { en: "That is what physically arrived. The delivery note says what should have arrived.", es: "Eso es lo que ha llegado de verdad. El albarán dice lo que debería haber llegado." } },
+      { id: "open-bad", match: /^bench\s+open\s+(7qv5ht4|laptop-0407)$/, set: { boxesSeen: true, badFound: true }, out: ["",
+        "LAPTOP-0407 · Dell Latitude 5450 · serial 7QV5HT4 (matches the carton and the delivery note)",
+        "  Carton crushed at one corner; the lid of the laptop is dented on the same side.",
+        "  Power on: vertical lines and a black patch across the panel. The screen is broken: the unit cannot be used.",
+        "  Photos taken: IMG_0407-1, IMG_0407-2.", ""],
+        say: { en: "The damage matches the crushed carton: it happened in transit, before it reached Contoso.", es: "El daño coincide con la caja aplastada: ocurrió en el transporte, antes de llegar a Contoso." } },
+      { id: "open-good", match: /^bench\s+open\s+([1-9b-d]qv5ht4|laptop-04(0[1-689]|1[0-2]))$/, set: { boxesSeen: true }, out: ["",
+        "Carton sealed and undamaged. Powers on to the Windows setup screen (out of the box).", "Serial on the base matches the carton and the delivery note. Asset tag label stuck on the base.", ""] },
+      { id: "open-other", match: /^bench\s+open\b/, error: true, out: ["bench: no box with that serial or asset tag on the bench (bench lists them)."] },
+      { id: "bench-other", match: /^bench\b/, out: ["bench: bench lists the boxes; bench open <serial or asset tag> unboxes one."] },
+      // what the shipments tool did
+      { id: "delivery-done", on: /^ship delivery po-2026-0418$/, when: { goodStocked: true, badRma: true, badStocked: false }, set: { noteRead: true, verified: true },
+        say: { en: "Eleven in stock with their asset tags and LAPTOP-0407 back to the vendor: the register and the delivery note agree.",
+               es: "Once en almacén con su etiqueta y LAPTOP-0407 de vuelta al fabricante: el registro y el albarán cuadran." } },
+      { id: "delivery", on: /^ship delivery po-2026-0418$/, set: { noteRead: true },
+        say: { en: "Twelve laptops on the delivery note, all of them still 'ordered' in the register. Signing the note only says how many boxes came.",
+               es: "Doce portátiles en el albarán, todos todavía como «pedido» en el registro. Firmar el albarán solo dice cuántas cajas llegaron." } },
+      { id: "mark-bad-known", on: /^ship mark 7qv5ht4 stock$/, when: { badFound: true }, set: { markedBad: true },
+        say: { en: "The register now offers LAPTOP-0407 to the next new starter, with its screen broken.", es: "El registro ofrece ahora LAPTOP-0407 a la próxima incorporación, con la pantalla rota." } },
+      { id: "mark-bad", on: /^ship mark 7qv5ht4 stock$/, set: { markedBad: true },
+        say: { en: "LAPTOP-0407 is now in stock, ready to be handed out. Nobody has opened its box yet.", es: "LAPTOP-0407 está ahora en almacén, lista para entregarse. Nadie ha abierto todavía su caja." } },
+      { id: "rma", on: /^ship submit rma/, when: { badRma: true },
+        say: { en: "The vendor approves the case: they collect LAPTOP-0407 from the IT store room and send a replacement under the same order.",
+               es: "El fabricante aprueba el caso: recoge LAPTOP-0407 en el almacén de IT y envía otra unidad con el mismo pedido." } },
+    ],
+    goal: { goodStocked: true, badStocked: false, badRma: true, verified: true },
+    stages: [
+      { id: "investigate", label: { en: "Check what arrived against the delivery note", es: "Cotejar lo que ha llegado con el albarán" }, when: { noteRead: true, badFound: true } },
+      { id: "fix", label: { en: "Check in the good units and send the damaged one back", es: "Dar de alta los equipos buenos y devolver el dañado" }, when: { goodStocked: true, badStocked: false, badRma: true } },
+      { id: "verify", label: { en: "Reconcile the register with the delivery note", es: "Cuadrar el registro con el albarán" }, when: { verified: true } },
+    ],
+    remarks: [{ when: { markedBad: true }, text: { en: "A damaged laptop was recorded in stock", es: "Se registró en almacén un portátil dañado" } }],
+    resolved: { en: "Resolved: eleven laptops in stock and the damaged one with the vendor. Now write the work note.", es: "Resuelto: once portátiles en almacén y el dañado con el fabricante. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "Start with the paperwork and the boxes: ship delivery PO-2026-0418, then bench.", es: "Empieza por el papel y las cajas: ship delivery PO-2026-0418 y después bench." },
+      { en: "One carton is crushed: bench open 7QV5HT4 before anything goes into stock.", es: "Una caja está aplastada: bench open 7QV5HT4 antes de que nada entre en almacén." },
+      { en: "Check in the other eleven at once: ship mark 1QV5HT4,2QV5HT4,...,DQV5HT4 stock (every serial except 7QV5HT4).",
+        es: "Da de alta los otros once de una vez: ship mark 1QV5HT4,2QV5HT4,...,DQV5HT4 stock (todos los números de serie menos 7QV5HT4)." },
+      { en: "The damaged one goes back: ship new rma --serial 7QV5HT4 --vendor dell --fault \"...\" --evidence \"PO-2026-0418, IMG_0407-1, IMG_0407-2\" --carrier vendor --from hq-it --to dell-depot --data none, ship submit, then ship delivery PO-2026-0418 again.",
+        es: "El dañado vuelve: ship new rma --serial 7QV5HT4 --vendor dell --fault \"...\" --evidence \"PO-2026-0418, IMG_0407-1, IMG_0407-2\" --carrier vendor --from hq-it --to dell-depot --data none, ship submit, y otra vez ship delivery PO-2026-0418." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "what did not match (the damaged unit)", es: "qué no cuadraba (el equipo dañado)" }, any: ["damaged", "broken", "crushed", "dañad", "rota", "roto", "aplastad", "7qv5ht4", "0407"] },
+      { kb: "fix", label: { en: "the good units in stock and the damaged one sent back", es: "los buenos en almacén y el dañado devuelto" }, any: ["rma", "vendor", "fabricante", "devuel", "sent back", "returned"] },
+      { kb: "verify", label: { en: "how you checked (delivery note against the register)", es: "cómo lo comprobaste (albarán frente al registro)" }, any: ["delivery note", "albaran", "ship delivery", "reconcil", "cuadra", "match", "coincid"] },
+      { kb: "followup", label: { en: "what happens next (the replacement, who was told)", es: "qué pasa ahora (la sustitución, a quién se avisó)" }, any: ["replacement", "sustitu", "reposicion", "told", "avis", "inform", "legal", "sales", "ventas"] },
+    ],
+    solution: ["ship delivery PO-2026-0418", "bench", "bench open 7QV5HT4", "ship mark " + IN_GOOD.join(",") + " stock",
+      "ship new rma --serial 7QV5HT4 --vendor dell --fault \"Delivered damaged: crushed carton, broken screen\" --evidence \"PO-2026-0418, IMG_0407-1, IMG_0407-2\" --carrier vendor --from hq-it --to dell-depot --data none",
+      "ship submit SHP-20661-1", "ship delivery PO-2026-0418"],
+    sampleNote: {
+      en: "Delivery PO-2026-0418: 12 Dell Latitude 5450 on the delivery note, signed at reception. On the bench one carton was crushed: LAPTOP-0407 (serial 7QV5HT4) has a broken screen, damaged in transit (photos IMG_0407-1 and IMG_0407-2). Checked in the other eleven with their asset tags (LAPTOP-0401 to 0412 except 0407) and opened an RMA with the vendor for the damaged one (SHP-20661-1, collection from the IT store room). The delivery note and the register now match. The replacement comes under the same order; told Reception, and Legal and Sales can have their laptops.",
+      es: "Entrega PO-2026-0418: 12 Dell Latitude 5450 en el albarán, firmado en recepción. En la mesa una caja venía aplastada: LAPTOP-0407 (serie 7QV5HT4) tiene la pantalla rota, dañada en el transporte (fotos IMG_0407-1 e IMG_0407-2). Di de alta los otros once con su etiqueta de activo (LAPTOP-0401 a 0412 salvo 0407) y abrí una RMA con el fabricante para el dañado (SHP-20661-1, recogida en el almacén de IT). El albarán y el registro ya cuadran. La sustitución llega con el mismo pedido; avisé a Recepción, y Legal y Ventas ya pueden tener sus portátiles.",
+    },
+    contact: {
+      who: { name: "Nuria Vega", team: { en: "Reception, head office", es: "Recepción, oficina central" } },
+      tempting: ["mark-bad", "mark-bad-known"], temptingWhen: { badRma: false },
+      questions: [
+        { id: "when", kind: "neutral",
+          text: { en: "What time did the courier come?", es: "¿A qué hora vino el mensajero?" },
+          answer: { en: "At five to nine, before the doors opened. TransIbérica, as usual.", es: "A las nueve menos cinco, antes de abrir. TransIbérica, como siempre." } },
+        { id: "signed", kind: "useful",
+          text: { en: "When you signed the delivery note, did you write anything about the state of the boxes?", es: "Al firmar el albarán, ¿anotasteis algo sobre el estado de las cajas?" },
+          answer: { en: "No, the driver was in a hurry and I just counted twelve and signed. One at the bottom of the pile looked a bit squashed, now that you say it.",
+                    es: "No, el repartidor tenía prisa y solo conté doce y firmé. Una de abajo del montón estaba algo chafada, ahora que lo dices." },
+          clue: { en: "The delivery note was signed without remarks: the damage has to be reported to the vendor today, with photos, so the claim is accepted.",
+                  es: "El albarán se firmó sin anotaciones: el daño hay que comunicarlo hoy al fabricante, con fotos, para que acepte la reclamación." } },
+        { id: "rush", kind: "bad",
+          text: { en: "Shall I just put all twelve in stock now, so Legal and Sales can have theirs this afternoon?", es: "¿Los doy todos de alta ya y así Legal y Ventas tienen los suyos esta tarde?" },
+          answer: { en: "They would be happy… you know better than me whether they are all fine.", es: "Estarían encantados… tú sabrás si están todos bien." },
+          why: { en: "Checking units in without looking at them puts a damaged one in stock: the next new starter gets it, and the vendor's claim window has passed by then.",
+                 es: "Dar de alta sin mirar mete en almacén un equipo dañado: le llega a la próxima incorporación, y para entonces ha pasado el plazo para reclamar al fabricante." } },
+        { id: "who", kind: "useful",
+          text: { en: "Did anyone say which of these laptops are needed first?", es: "¿Os han dicho cuáles de estos portátiles hacen falta primero?" },
+          answer: { en: "Ana from Legal has a new starter on Monday, and Sales wants two for their reps. The rest, I think, are spares.",
+                    es: "Ana, de Legal, tiene una incorporación el lunes, y Ventas quiere dos para sus comerciales. El resto creo que son de repuesto." },
+          clue: { en: "Three are needed soon (one for Legal, two for Sales): eleven good units are enough while the replacement comes.",
+                  es: "Hacen falta tres pronto (uno para Legal, dos para Ventas): con once buenos basta mientras llega la sustitución." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Can you give me the reception account password so I can print the asset tags from your PC?", es: "¿Me das la contraseña de la cuenta de recepción para imprimir las etiquetas desde vuestro equipo?" },
+          answer: { en: "We were told never to give it to anyone… Can't you print them from IT?", es: "Nos dijeron que no se la diéramos a nadie… ¿No podéis imprimirlas desde IT?" },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Can I tell Legal and Sales their laptops are ready to be set up?", es: "¿Puedo decir a Legal y a Ventas que sus portátiles están listos para prepararlos?" },
+          answer: { en: "Yes, I have just told them: eleven in the store room, and the twelfth is being replaced by the vendor.", es: "Sí, ya se lo he dicho: once en el almacén, y el duodécimo lo cambia el fabricante." },
+          failed: { en: "IT setup just took LAPTOP-0407 from the store room for Monday's starter and came back: the screen is broken. It was in stock as good.",
+                    es: "Los de preparación acaban de coger LAPTOP-0407 del almacén para la incorporación del lunes y han vuelto: la pantalla está rota. Estaba en almacén como buena." } },
+      ],
+    },
+  });
+
+  /* ------------------------------------------------------------------ 26. A new starter's first day (v0.10, career level 0) */
+  const NP_LEGAL = "CN=GG-Legal,OU=Groups,DC=contoso,DC=local";
+  const NP_BASE = ["CN=GG-M365-E3,OU=Groups,DC=contoso,DC=local", "CN=GG-Printers-HQ,OU=Groups,DC=contoso,DC=local"];
+  const NP_USER = (enabled, legal) => {
+    const groups = (legal ? [NP_LEGAL] : []).concat(NP_BASE);
+    return ["", "DistinguishedName     : CN=Nerea Prieto,OU=Legal,OU=Users,DC=contoso,DC=local", `Enabled               : ${enabled ? "True" : "False"}`,
+      "LockedOut             : False", "Name                  : Nerea Prieto", "SamAccountName        : nprieto", "UserPrincipalName     : nprieto@contoso.com",
+      "Title                 : Paralegal", "Department            : Legal", "Description           : New starter 26/10/2026 (HR-NS-204), manager aortiz",
+      "whenCreated           : 23/10/2026 17:42", "PasswordLastSet       : 23/10/2026 17:42", "ChangePasswordAtLogon : True", "LastLogonDate         :",
+      `MemberOf              : {${groups.join(", ")}}`, ""];
+  };
+  const NP_GROUPS = (legal) => ["", "name           GroupScope", "----           ----------", "Domain Users   Global"]
+    .concat(legal ? ["GG-Legal       Global"] : [], ["GG-M365-E3     Global", "GG-Printers-HQ Global", ""]);
+  scenarios.push({
+    id: "starter-desk-ready",
+    level: 1, career: 0,
+    topic: { en: "Active Directory / new starter", es: "Active Directory / nueva incorporación" },
+    minutes: 10,
+    title: { en: "Monday: the new starter's account is not ready", es: "Lunes: el puesto de la nueva incorporación no está listo" },
+    guide: GUIDE + "active-directory-alta-usuario-grupos.html",
+    machine: WS_MACHINE,
+    ticket: {
+      id: "INC-20662", from: "Ana Ortiz (Legal)", priority: "P2",
+      subject: { en: "Our new paralegal cannot sign in", es: "Nuestra nueva asistente jurídica no puede entrar" },
+      body: {
+        en: "Nerea Prieto starts in Legal today. HR gave her the username and a temporary password, and the laptop is on her desk, but Windows will not let her in. She will also need our contracts folder, like the rest of the team. Can you have a look this morning?",
+        es: "Nerea Prieto empieza hoy en Legal. RR. HH. le dio el usuario y una contraseña temporal, y el portátil está en su mesa, pero Windows no la deja entrar. También necesitará nuestra carpeta de contratos, como el resto del equipo. ¿Lo podéis mirar esta mañana?",
+      },
+    },
+    intro: {
+      en: "You are on your admin workstation ADM-WS01 with the Active Directory module (RSAT). Nerea's account (nprieto) was created by HR's onboarding form on Friday; LAPTOP-0395 is ready on her desk. At Contoso each team's folders are opened by its group (GG-Legal for Legal), and a new starter gets the same groups as a colleague in the same job.",
+      es: "Estás en tu equipo de administración ADM-WS01 con el módulo de Active Directory (RSAT). La cuenta de Nerea (nprieto) la creó el viernes el formulario de altas de RR. HH.; LAPTOP-0395 está preparado en su mesa. En Contoso las carpetas de cada equipo se abren por su grupo (GG-Legal para Legal), y una incorporación recibe los mismos grupos que un compañero del mismo puesto.",
+    },
+    requester: { name: "Ana Ortiz", team: { en: "Legal", es: "Legal" }, user: "aortiz", location: { en: "Head office, 4th floor", es: "Oficina central, 4ª planta" }, device: "LAPTOP-0388" },
+    bind: [
+      { kind: "user", id: "nprieto", states: [
+        { when: { enabled: true, inGroup: true }, set: { enabled: true, groups: ["GG-Legal", "GG-M365-E3", "GG-Printers-HQ"] } },
+        { when: { enabled: true }, set: { enabled: true, groups: ["GG-M365-E3", "GG-Printers-HQ"] } },
+        { when: { inGroup: true }, set: { enabled: false, groups: ["GG-Legal", "GG-M365-E3", "GG-Printers-HQ"] } },
+        { set: { enabled: false, groups: ["GG-M365-E3", "GG-Printers-HQ"] } }] },
+    ],
+    asset: {
+      title: { en: "User account · nprieto", es: "Cuenta de usuario · nprieto" },
+      fields: [
+        { label: { en: "Sign-in", es: "Inicio de sesión" }, states: [
+          { when: { enabled: true }, value: { en: "Allowed", es: "Permitido" }, tone: "ok" },
+          { value: { en: "Fails on LAPTOP-0395", es: "Falla en LAPTOP-0395" }, tone: "bad" }] },
+        { label: { en: "Groups", es: "Grupos" }, states: [
+          { when: { inGroup: true }, value: "GG-Legal, GG-M365-E3, GG-Printers-HQ", tone: "ok" },
+          { value: "GG-M365-E3, GG-Printers-HQ", tone: "muted" }] },
+        { label: { en: "Password", es: "Contraseña" }, states: [
+          { when: { pwdReset: true }, value: { en: "Reset today 09:40, change at next sign-in", es: "Restablecida hoy 09:40, cambio al iniciar sesión" } },
+          { value: { en: "Set by HR 23/10/2026 17:42, change at next sign-in", es: "Puesta por RR. HH. el 23/10/2026 17:42, cambio al iniciar sesión" } }] },
+        { label: { en: "Contracts folder", es: "Carpeta de contratos" }, states: [
+          { when: { verified: true }, value: { en: "Opens once she signs in", es: "Se abrirá al iniciar sesión" }, tone: "ok" },
+          { value: { en: "Not checked", es: "Sin comprobar" }, tone: "muted" }] },
+      ],
+    },
+    actions: [
+      { id: "look", label: { en: "Look up the account", es: "Consultar la cuenta" }, cmd: "Get-ADUser nprieto -Properties *" },
+      { id: "reset", label: { en: "Reset password", es: "Restablecer contraseña" }, cmd: "Set-ADAccountPassword nprieto -Reset" },
+    ],
+    codes: ["config-fixed"],
+    state: { disabledFound: false, groupMissing: false, enabled: false, inGroup: false, pwdReset: false, verified: false },
+    commands: [
+      { id: "user-ok", match: /^get-aduser\b.*\bnprieto\b/, when: { enabled: true, inGroup: true }, set: { verified: true }, out: NP_USER(true, true),
+        say: { en: "Enabled, and a member of her team's group.", es: "Habilitada y miembro del grupo de su equipo." } },
+      { id: "user-en", match: /^get-aduser\b.*\bnprieto\b/, when: { enabled: true }, out: NP_USER(true, false) },
+      { id: "user-grp", match: /^get-aduser\b.*\bnprieto\b/, when: { inGroup: true }, set: { disabledFound: true }, out: NP_USER(false, true) },
+      { id: "user", match: /^get-aduser\b.*\bnprieto\b/, set: { disabledFound: true }, out: NP_USER(false, false),
+        say: { en: "Enabled: False. Windows refuses a disabled account whatever password is typed.", es: "Enabled: False. Windows rechaza una cuenta deshabilitada, se escriba la contraseña que se escriba." } },
+      { id: "colleague", match: /^get-aduser\b.*\baortiz\b/, out: ["", "DistinguishedName : CN=Ana Ortiz,OU=Legal,OU=Users,DC=contoso,DC=local", "Enabled           : True",
+        "Name              : Ana Ortiz", "SamAccountName    : aortiz", "Title             : Legal counsel", "Department        : Legal", ""] },
+      { id: "groups-ok", match: /^get-adprincipalgroupmembership\b.*\bnprieto\b/, when: { enabled: true, inGroup: true }, set: { verified: true }, out: NP_GROUPS(true) },
+      { id: "groups", match: /^get-adprincipalgroupmembership\b.*\bnprieto\b/, when: { inGroup: true }, out: NP_GROUPS(true) },
+      { id: "groups-short", match: /^get-adprincipalgroupmembership\b.*\bnprieto\b/, out: NP_GROUPS(false),
+        say: { en: "Her groups as HR's form left them.", es: "Sus grupos tal como los dejó el formulario de RR. HH." } },
+      { id: "groups-ana", match: /^get-adprincipalgroupmembership\b.*\baortiz\b/, set: { groupMissing: true }, out: ["", "name           GroupScope", "----           ----------",
+        "Domain Users   Global", "GG-Legal       Global", "GG-M365-E3     Global", "GG-VPN-Users   Global", ""],
+        say: { en: "Ana's groups, for comparison: the same team, a different job (she also works from home).", es: "Los grupos de Ana, para comparar: el mismo equipo, otro puesto (ella además teletrabaja)." } },
+      { id: "legal-members", match: /^get-adgroupmember\b.*\bgg-legal\b/, when: { inGroup: true }, out: ["", "name          SamAccountName objectClass", "----          -------------- -----------",
+        "Ana Ortiz     aortiz         user", "Nerea Prieto  nprieto        user", ""] },
+      { id: "legal-members-short", match: /^get-adgroupmember\b.*\bgg-legal\b/, set: { groupMissing: true }, out: ["", "name      SamAccountName objectClass", "----      -------------- -----------",
+        "Ana Ortiz aortiz         user", ""] },
+      { id: "legal-group", match: /^get-adgroup\b.*\bgg-legal\b/, set: { groupMissing: true }, out: ["", "DistinguishedName : CN=GG-Legal,OU=Groups,DC=contoso,DC=local", "GroupCategory     : Security",
+        "GroupScope        : Global", "Name              : GG-Legal", "Description       : Legal team: contracts share", ""] },
+      { id: "disabled-list", match: /^search-adaccount\b.*-accountdisabled\b/, when: { enabled: false }, set: { disabledFound: true }, out: ["",
+        "Name         SamAccountName Enabled LockedOut LastLogonDate", "----         -------------- ------- --------- -------------", "Nerea Prieto nprieto        False   False", ""] },
+      { id: "disabled-none", match: /^search-adaccount\b.*-accountdisabled\b/, out: [""] },
+      { id: "locked-none", match: /^search-adaccount\b.*-lockedout\b/, out: [""],
+        say: { en: "Nobody is locked out.", es: "No hay nadie bloqueado." } },
+      { id: "enable", match: /^enable-adaccount\b.*\bnprieto\b/, set: { enabled: true }, out: [""],
+        say: { en: "(Account enabled.)", es: "(Cuenta habilitada.)" } },
+      { id: "add-legal", match: /^(add-adgroupmember\b.*\bgg-legal\b.*\bnprieto\b|add-adprincipalgroupmembership\b.*\bnprieto\b.*\bgg-legal\b)/, set: { inGroup: true }, out: [""],
+        say: { en: "Added. She gets the access at her first sign-in (the Kerberos ticket carries the groups).", es: "Añadida. Tendrá el acceso en su primer inicio de sesión (el ticket de Kerberos lleva los grupos)." } },
+      { id: "add-other", match: /^(add-adgroupmember|add-adprincipalgroupmembership)\b.*\bnprieto\b/, out: [""],
+        say: { en: "Added, but that group is not her team's: it gives her access she does not need.", es: "Añadida, pero ese grupo no es el de su equipo: le da un acceso que no necesita." } },
+      { id: "reset", match: /^set-adaccountpassword\b.*\bnprieto\b.*-reset\b/, set: { pwdReset: true }, out: [""],
+        say: { en: "New temporary password set. Give it to her by phone and make her change it at the next sign-in.", es: "Contraseña temporal puesta. Dásela por teléfono y que la cambie al iniciar sesión." } },
+      { id: "reset-noflag", match: /^set-adaccountpassword\b.*\bnprieto\b/, error: true, out: ["Set-ADAccountPassword : The specified network password is not correct."],
+        say: { en: "As an administrator you set a new password with -Reset.", es: "Como administrador se pone una contraseña nueva con -Reset." } },
+      { id: "mustchange", match: /^set-aduser\b.*\bnprieto\b.*-changepasswordatlogon/, out: [""],
+        say: { en: "(It was already True: she has to choose her own password at the first sign-in.)", es: "(Ya estaba en True: tiene que elegir su contraseña en el primer inicio de sesión.)" } },
+      { id: "unlock", match: /^unlock-adaccount\b.*\bnprieto\b/, out: [""],
+        say: { en: "She was not locked out (LockedOut: False): nothing changes.", es: "No estaba bloqueada (LockedOut: False): no cambia nada." } },
+    ],
+    goal: { enabled: true, inGroup: true, verified: true },
+    stages: [
+      { id: "investigate", label: { en: "Find why she cannot sign in and what access she lacks", es: "Averiguar por qué no puede entrar y qué acceso le falta" }, when: { disabledFound: true, groupMissing: true } },
+      { id: "fix", label: { en: "Enable the account and add her team's group", es: "Habilitar la cuenta y añadir el grupo de su equipo" }, when: { enabled: true, inGroup: true } },
+      { id: "verify", label: { en: "Check the account again", es: "Volver a comprobar la cuenta" }, when: { verified: true } },
+    ],
+    resolved: { en: "Resolved: Nerea's account is enabled and in GG-Legal. Now write the work note.", es: "Resuelto: la cuenta de Nerea está habilitada y en GG-Legal. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "Look at the account first: Get-ADUser nprieto -Properties *. Which field stops a sign-in before the password is even checked?",
+        es: "Mira primero la cuenta: Get-ADUser nprieto -Properties *. ¿Qué campo impide entrar antes incluso de comprobar la contraseña?" },
+      { en: "Compare her groups with a colleague's: Get-ADPrincipalGroupMembership nprieto and Get-ADPrincipalGroupMembership aortiz.",
+        es: "Compara sus grupos con los de una compañera: Get-ADPrincipalGroupMembership nprieto y Get-ADPrincipalGroupMembership aortiz." },
+      { en: "Enable-ADAccount nprieto, then Add-ADGroupMember GG-Legal -Members nprieto. Her password is fine: do not reset it.",
+        es: "Enable-ADAccount nprieto y después Add-ADGroupMember GG-Legal -Members nprieto. Su contraseña está bien: no la restablezcas." },
+      { en: "Check it with Get-ADUser nprieto -Properties MemberOf.", es: "Compruébalo con Get-ADUser nprieto -Properties MemberOf." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (account disabled, team group missing)", es: "la causa (cuenta deshabilitada, sin el grupo del equipo)" },
+        any: ["disabled", "deshabilitad", "enabled: false", "gg-legal", "group", "grupo"] },
+      { kb: "fix", label: { en: "the fix (enabled, added to GG-Legal)", es: "la solución (habilitada, añadida a GG-Legal)" }, any: ["enable-adaccount", "enabled", "habilit", "add-adgroupmember", "added", "anadi"] },
+      { kb: "verify", label: { en: "how you checked it", es: "cómo lo comprobaste" }, any: ["get-aduser", "get-adprincipalgroupmembership", "memberof", "checked", "comprob", "verifi"] },
+      { kb: "followup", label: { en: "what Nerea or HR have to do next", es: "qué tienen que hacer Nerea o RR. HH." }, any: ["hr ", "rr. hh", "rrhh", "form", "formulario", "first sign-in", "primer inicio", "told", "avis", "explic"] },
+    ],
+    solution: ["Get-ADUser nprieto -Properties *", "Get-ADPrincipalGroupMembership nprieto", "Get-ADPrincipalGroupMembership aortiz",
+      "Enable-ADAccount nprieto", "Add-ADGroupMember GG-Legal -Members nprieto", "Get-ADUser nprieto -Properties MemberOf"],
+    sampleNote: {
+      en: "New starter Nerea Prieto (nprieto) could not sign in: HR's form created the account disabled (Enabled: False) and without GG-Legal, the group that opens the Legal contracts folder (compared with Ana Ortiz's groups). The password was fine, so no reset. Enabled the account with Enable-ADAccount and added her to GG-Legal with Add-ADGroupMember. Checked with Get-ADUser -Properties MemberOf: enabled and in GG-Legal. Told Ana that Nerea can sign in with HR's temporary password and will choose her own; told HR their form leaves new accounts disabled and without the team group.",
+      es: "La nueva incorporación Nerea Prieto (nprieto) no podía entrar: el formulario de RR. HH. creó la cuenta deshabilitada (Enabled: False) y sin GG-Legal, el grupo que abre la carpeta de contratos de Legal (comparado con los grupos de Ana Ortiz). La contraseña estaba bien, así que nada de restablecerla. Habilité la cuenta con Enable-ADAccount y la añadí a GG-Legal con Add-ADGroupMember. Comprobado con Get-ADUser -Properties MemberOf: habilitada y en GG-Legal. Avisé a Ana de que Nerea puede entrar con la contraseña temporal de RR. HH. y elegirá la suya; avisé a RR. HH. de que su formulario deja las cuentas nuevas deshabilitadas y sin el grupo del equipo.",
+    },
+    contact: {
+      tempting: ["reset"], temptingWhen: { enabled: false },
+      questions: [
+        { id: "message", kind: "useful",
+          text: { en: "What exactly does the screen say when Nerea tries to sign in?", es: "¿Qué dice exactamente la pantalla cuando Nerea intenta entrar?" },
+          answer: { en: "I went to look: 'Your account has been disabled. Please see your system administrator.' It does not even ask her to change the password.",
+                    es: "He ido a mirarlo: «Tu cuenta se ha deshabilitado. Ponte en contacto con el administrador del sistema». Ni siquiera le pide cambiar la contraseña." },
+          clue: { en: "Windows says the account is disabled: the password is not the problem.", es: "Windows dice que la cuenta está deshabilitada: el problema no es la contraseña." } },
+        { id: "laptop", kind: "neutral",
+          text: { en: "Is the laptop switched on and connected to the network?", es: "¿El portátil está encendido y conectado a la red?" },
+          answer: { en: "Yes, it is on her desk at the sign-in screen, plugged into the dock.", es: "Sí, está en su mesa en la pantalla de inicio de sesión, conectado al dock." } },
+        { id: "access", kind: "useful",
+          text: { en: "What does Nerea need to open in her job?", es: "¿Qué necesita abrir Nerea en su trabajo?" },
+          answer: { en: "The same as me: the contracts folder and Legal's printer. She will not work from home for now.", es: "Lo mismo que yo: la carpeta de contratos y la impresora de Legal. De momento no va a teletrabajar." },
+          clue: { en: "Nerea needs the Legal contracts folder like Ana, but not the VPN: copy the team group, not every group Ana has.",
+                  es: "Nerea necesita la carpeta de contratos de Legal como Ana, pero no la VPN: copia el grupo del equipo, no todos los grupos de Ana." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Can you send me the temporary password HR gave her, so I can test it?", es: "¿Me mandas la contraseña temporal que le dio RR. HH. para probarla?" },
+          answer: { en: "Shouldn't you have it already? I would rather not send it around by chat.", es: "¿No la tenéis ya vosotros? Prefiero no ir mandándola por chat." },
+          why: PASSWORD_WHY },
+        { id: "blame", kind: "bad",
+          text: { en: "Are you sure she is typing the username correctly?", es: "¿Seguro que está escribiendo bien el usuario?" },
+          answer: { en: "She has tried four times with me watching. nprieto, exactly as HR wrote it.", es: "Lo ha probado cuatro veces conmigo delante. nprieto, tal cual lo escribió RR. HH." },
+          why: { en: "It assumes the user is wrong before looking at the account. Check the directory first; ask what the screen says.",
+                 es: "Da por hecho que la usuaria se equivoca antes de mirar la cuenta. Revisa primero el directorio; pregunta qué dice la pantalla." } },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Can Nerea try to sign in now and open the contracts folder?", es: "¿Puede Nerea intentar entrar ahora y abrir la carpeta de contratos?" },
+          answer: { en: "She's in! It asked her to choose a new password, and the contracts folder opens. Thanks.", es: "¡Ya ha entrado! Le ha pedido elegir una contraseña nueva y la carpeta de contratos abre. Gracias." },
+          failed: { en: "She typed the new password you set: 'Your account has been disabled. Please see your system administrator.' Same as before.",
+                    es: "Ha escrito la contraseña nueva que pusiste: «Tu cuenta se ha deshabilitado. Ponte en contacto con el administrador del sistema». Igual que antes." } },
+      ],
+    },
+  });
+
+  /* ------------------------------------------------------------------ 27. Teams: nobody hears me (v0.10, career level 0) */
+  const CM_LAPTOP = { host: "LAPTOP-0102", user: "cmartin", domain: "CONTOSO", shell: "powershell", prompt: "PS C:\\Windows\\system32> " };
+  const AUDIO_LIST = (headset) => ["", "Index Default DefaultCommunication Type      Name", "----- ------- -------------------- ----      ----",
+    "1     True    True                 Playback  Headset Earphone (Jabra Evolve2 40)", "2     False   False                Playback  Speakers (Realtek(R) Audio)",
+    `3     ${headset ? "False" : "True "}   ${headset ? "False" : "True "}                Recording Microphone Array (Realtek(R) Audio)`,
+    `4     ${headset ? "True " : "False"}   ${headset ? "True " : "False"}                Recording Headset Microphone (Jabra Evolve2 40)`, ""];
+  scenarios.push({
+    id: "teams-no-audio",
+    level: 1, career: 0,
+    topic: { en: "Teams / audio", es: "Teams / audio" },
+    minutes: 10,
+    title: { en: "Teams: in meetings nobody can hear me", es: "Teams: en las reuniones no me oyen" },
+    guide: GUIDE + "teams-los-problemas-mas-comunes.html",
+    machine: CM_LAPTOP,
+    ticket: {
+      id: "INC-20663", from: "Carlos Martín (Sales)", priority: "P2",
+      subject: { en: "Nobody hears me in Teams meetings", es: "En las reuniones de Teams no me oyen" },
+      body: {
+        en: "Since Monday nobody hears me in Teams. I hear everyone perfectly in my headset, the microphone icon is not crossed out, and I have already left and rejoined twice. I have customer calls all afternoon.",
+        es: "Desde el lunes no me oye nadie en Teams. Yo oigo a todos perfectamente por los cascos, el icono del micrófono no está tachado y ya he salido y vuelto a entrar dos veces. Tengo llamadas con clientes toda la tarde.",
+      },
+    },
+    intro: {
+      en: "You are connected to Carlos's laptop LAPTOP-0102 with remote assistance, in an elevated PowerShell, while he stays on the phone with you. Contoso's build includes the AudioDeviceCmdlets module (Get-AudioDevice, Set-AudioDevice, Write-AudioDevice) to see and change the sound devices. Teams is set to use the Windows default devices. Go to the desk shows his sound settings, Teams and the Event Viewer.",
+      es: "Estás conectado al portátil de Carlos, LAPTOP-0102, con asistencia remota, en un PowerShell elevado, mientras él sigue al teléfono contigo. La maqueta de Contoso incluye el módulo AudioDeviceCmdlets (Get-AudioDevice, Set-AudioDevice, Write-AudioDevice) para ver y cambiar los dispositivos de sonido. Teams está configurado para usar los dispositivos predeterminados de Windows. Ir al puesto muestra su configuración de sonido, Teams y el Visor de eventos.",
+    },
+    requester: { name: "Carlos Martín", team: { en: "Sales", es: "Ventas" }, user: "cmartin", location: { en: "Head office, Sales area", es: "Oficina central, zona de Ventas" }, device: "LAPTOP-0102" },
+    asset: {
+      title: { en: "Device · LAPTOP-0102 (sound)", es: "Equipo · LAPTOP-0102 (sonido)" },
+      fields: [
+        { label: { en: "In Teams meetings", es: "En las reuniones de Teams" }, states: [
+          { when: { verified: true }, value: { en: "They hear Carlos", es: "Oyen a Carlos" }, tone: "ok" },
+          { value: { en: "Nobody hears Carlos", es: "Nadie oye a Carlos" }, tone: "bad" }] },
+        { label: { en: "Default microphone", es: "Micrófono predeterminado" }, states: [
+          { when: { headsetDefault: true }, value: "Headset Microphone (Jabra Evolve2 40)", tone: "ok" },
+          { value: "Microphone Array (Realtek(R) Audio)", tone: "muted" }] },
+        { label: { en: "Headset", es: "Cascos" }, value: { en: "Jabra Evolve2 40 (USB)", es: "Jabra Evolve2 40 (USB)" } },
+        { label: { en: "Teams", es: "Teams" }, states: [
+          { when: { teamsRestarted: true }, value: { en: "Restarted today", es: "Reiniciado hoy" } },
+          { value: { en: "Up to date, devices: Default", es: "Actualizado, dispositivos: predeterminados" } }] },
+      ],
+    },
+    actions: [{ id: "list", label: { en: "List sound devices", es: "Ver dispositivos de sonido" }, cmd: "Get-AudioDevice -List" }],
+    codes: ["config-fixed"],
+    desktop: {
+      apps: [
+        { id: "sound", icon: "♪", title: { en: "Sound settings", es: "Configuración de sonido" }, look: "Get-AudioDevice -List",
+          fields: [
+            { label: { en: "Output", es: "Salida" }, value: "Headset Earphone (Jabra Evolve2 40)" },
+            { label: { en: "Input", es: "Entrada" }, states: [
+              { when: { headsetDefault: true }, value: "Headset Microphone (Jabra Evolve2 40)", tone: "ok" },
+              { value: "Microphone Array (Realtek(R) Audio)", tone: "bad" }] },
+            { label: { en: "Input level while Carlos talks", es: "Nivel de entrada mientras Carlos habla" }, states: [
+              { when: { headsetDefault: true }, value: { en: "Moves with his voice", es: "Se mueve con su voz" }, tone: "ok" },
+              { value: { en: "Flat, almost nothing", es: "Plano, casi nada" }, tone: "bad" }] },
+          ],
+          actions: [
+            { id: "headset", label: { en: "Use Headset Microphone as the default input", es: "Usar Headset Microphone como entrada predeterminada" }, cmd: "Set-AudioDevice -Index 4", when: { headsetDefault: false } },
+            { id: "test", label: { en: "Test your microphone", es: "Probar el micrófono" }, cmd: "Write-AudioDevice -RecordingMeter" }] },
+        { id: "teams", icon: "◫", title: { en: "Teams · Settings › Devices", es: "Teams · Configuración › Dispositivos" },
+          fields: [
+            { label: { en: "Speaker", es: "Altavoz" }, value: { en: "Default (Headset Earphone (Jabra Evolve2 40))", es: "Predeterminado (Headset Earphone (Jabra Evolve2 40))" } },
+            { label: { en: "Microphone", es: "Micrófono" }, states: [
+              { when: { headsetDefault: true }, value: { en: "Default (Headset Microphone (Jabra Evolve2 40))", es: "Predeterminado (Headset Microphone (Jabra Evolve2 40))" }, tone: "ok" },
+              { value: { en: "Default (Microphone Array (Realtek(R) Audio))", es: "Predeterminado (Microphone Array (Realtek(R) Audio))" } }] },
+            { label: { en: "Mute in Teams", es: "Silencio en Teams" }, value: { en: "Off", es: "Desactivado" } },
+          ],
+          actions: [{ id: "restart", label: { en: "Restart Teams", es: "Reiniciar Teams" }, cmd: "Stop-Process -Name ms-teams -Force" }] },
+      ],
+      log: [
+        { level: "information", time: "26/10/2026 08:31", source: "Microsoft-Windows-Kernel-PnP", id: 410,
+          text: { en: "Device USB\\VID_0B0E&PID_24DB\\0002A7F3 was started.", es: "Se inició el dispositivo USB\\VID_0B0E&PID_24DB\\0002A7F3." } },
+        { level: "information", time: "26/10/2026 08:31", source: "Microsoft-Windows-Kernel-PnP", id: 410,
+          text: { en: "Device USB\\VID_413C&PID_B06E\\3&1B8E2A1&0&5 was started.", es: "Se inició el dispositivo USB\\VID_413C&PID_B06E\\3&1B8E2A1&0&5." } },
+      ],
+      logNote: { en: "The log only shows USB devices starting when the laptop was docked this morning: no sound error. Windows thinks everything works.",
+                 es: "El registro solo muestra dispositivos USB arrancando al conectar el portátil al dock esta mañana: ningún error de sonido. Para Windows todo funciona." },
+    },
+    state: { listed: false, defaultFound: false, meterLow: false, headsetDefault: false, teamsRestarted: false, verified: false },
+    commands: [
+      { id: "list-ok", match: /^get-audiodevice\s+-list\b/, when: { headsetDefault: true }, set: { listed: true }, out: AUDIO_LIST(true) },
+      { id: "list", match: /^get-audiodevice\s+-list\b/, set: { listed: true, defaultFound: true }, out: AUDIO_LIST(false),
+        say: { en: "Windows keeps one default device for playback and one for recording. Teams, set to Default, follows them.",
+               es: "Windows guarda un dispositivo predeterminado para reproducir y otro para grabar. Teams, en Predeterminado, los sigue." } },
+      { id: "rec-ok", match: /^get-audiodevice\s+-recording$/, when: { headsetDefault: true }, out: ["", "Index   : 4", "Default : True", "Type    : Recording", "Name    : Headset Microphone (Jabra Evolve2 40)", ""] },
+      { id: "rec", match: /^get-audiodevice\s+-recording$/, set: { defaultFound: true }, out: ["", "Index   : 3", "Default : True", "Type    : Recording", "Name    : Microphone Array (Realtek(R) Audio)", ""] },
+      { id: "play", match: /^get-audiodevice\s+-playback$/, out: ["", "Index   : 1", "Default : True", "Type    : Playback", "Name    : Headset Earphone (Jabra Evolve2 40)", ""] },
+      { id: "mute", match: /^get-audiodevice\s+-recordingmute\b/, out: ["False"],
+        say: { en: "The default recording device is not muted.", es: "El dispositivo de grabación predeterminado no está silenciado." } },
+      { id: "vol", match: /^get-audiodevice\s+-recordingvolume\b/, out: ["78%"] },
+      { id: "pnp", match: /^get-pnpdevice\b.*audioendpoint/, out: ["", "Status     Class          FriendlyName", "------     -----          ------------",
+        "OK         AudioEndpoint  Headset Earphone (Jabra Evolve2 40)", "OK         AudioEndpoint  Speakers (Realtek(R) Audio)",
+        "OK         AudioEndpoint  Microphone Array (Realtek(R) Audio)", "OK         AudioEndpoint  Headset Microphone (Jabra Evolve2 40)", ""],
+        say: { en: "Every sound device is present and working for Windows.", es: "Todos los dispositivos de sonido están presentes y funcionan para Windows." } },
+      { id: "meter-ok", match: /^write-audiodevice\s+-recordingmeter\b/, when: { headsetDefault: true }, set: { verified: true }, out: ["",
+        "Headset Microphone (Jabra Evolve2 40)", "  12%  ███", "  41%  ██████████", "  37%  █████████", "  55%  ██████████████", "  8%   ██", ""],
+        say: { en: "Carlos is talking: the level follows his voice.", es: "Carlos está hablando: el nivel sigue su voz." } },
+      { id: "meter", match: /^write-audiodevice\s+-recordingmeter\b/, set: { meterLow: true }, out: ["",
+        "Microphone Array (Realtek(R) Audio)", "  0%", "  1%", "  0%", "  0%", "  1%", ""],
+        say: { en: "Carlos is talking into his headset the whole time, and this level hardly moves.", es: "Carlos está hablando por los cascos todo el rato, y este nivel apenas se mueve." } },
+      { id: "set-headset", match: /^set-audiodevice\s+(-index\s+)?4$/, set: { headsetDefault: true }, out: ["",
+        "Index   : 4", "Default : True", "DefaultCommunication : True", "Type    : Recording", "Name    : Headset Microphone (Jabra Evolve2 40)", ""] },
+      { id: "set-array", match: /^set-audiodevice\s+(-index\s+)?3$/, set: { headsetDefault: false }, out: ["",
+        "Index   : 3", "Default : True", "DefaultCommunication : True", "Type    : Recording", "Name    : Microphone Array (Realtek(R) Audio)", ""] },
+      { id: "set-play", match: /^set-audiodevice\s+(-index\s+)?[12]$/, out: [""],
+        say: { en: "That is a playback device: Carlos already hears the meetings fine.", es: "Ese es un dispositivo de reproducción: Carlos ya oye bien las reuniones." } },
+      { id: "set-other", match: /^set-audiodevice\b/, error: true, out: ["Set-AudioDevice : No AudioDevice with that index or ID. Get-AudioDevice -List shows them."] },
+      { id: "teams-restart", match: /^((stop-process|get-process)\b.*ms-?teams|taskkill\b.*ms-?teams)/, set: { teamsRestarted: true }, out: [""],
+        say: { en: "Teams closes; Carlos opens it again and rejoins his test meeting.", es: "Teams se cierra; Carlos lo vuelve a abrir y entra otra vez en su reunión de prueba." } },
+      { id: "teams-reset", match: /^(get-appxpackage\b.*msteams.*reset-appxpackage|reset-appxpackage\b|winget\s+(uninstall|install)\b.*teams)/, set: { teamsRestarted: true }, out: ["", "Deployment operation progress: 100%", ""],
+        say: { en: "Teams is reset to a clean state; Carlos signs in again and rejoins.", es: "Teams vuelve a un estado limpio; Carlos inicia sesión otra vez y vuelve a entrar." } },
+    ],
+    goal: { headsetDefault: true, verified: true },
+    stages: [
+      { id: "investigate", label: { en: "Find which microphone Teams is using", es: "Averiguar qué micrófono está usando Teams" }, when: { defaultFound: true } },
+      { id: "fix", label: { en: "Make the headset the default microphone", es: "Poner los cascos como micrófono predeterminado" }, when: { headsetDefault: true } },
+      { id: "verify", label: { en: "Check the microphone picks up Carlos's voice", es: "Comprobar que el micrófono recoge la voz de Carlos" }, when: { verified: true } },
+    ],
+    resolved: { en: "Resolved: Teams hears Carlos through his headset. Now write the work note.", es: "Resuelto: Teams oye a Carlos por sus cascos. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "Get-AudioDevice -List shows every sound device and which ones are the defaults.", es: "Get-AudioDevice -List muestra todos los dispositivos de sonido y cuáles son los predeterminados." },
+      { en: "Ask Carlos to talk and watch the level: Write-AudioDevice -RecordingMeter. Which microphone is it reading?", es: "Pide a Carlos que hable y mira el nivel: Write-AudioDevice -RecordingMeter. ¿Qué micrófono está leyendo?" },
+      { en: "Set-AudioDevice -Index 4 makes the headset microphone the default (and default communication) device. Restarting Teams does not change it.",
+        es: "Set-AudioDevice -Index 4 pone el micrófono de los cascos como predeterminado (también para comunicaciones). Reiniciar Teams no lo cambia." },
+      { en: "Check again with Write-AudioDevice -RecordingMeter while Carlos talks.", es: "Vuelve a comprobarlo con Write-AudioDevice -RecordingMeter mientras Carlos habla." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (the default microphone was the laptop's own, with the lid closed)", es: "la causa (el micrófono predeterminado era el del portátil, con la tapa cerrada)" },
+        any: ["microphone array", "realtek", "built-in", "integrado", "lid", "tapa", "default", "predeterminad"] },
+      { kb: "fix", label: { en: "the fix (headset microphone as default)", es: "la solución (micrófono de los cascos como predeterminado)" }, any: ["set-audiodevice", "headset", "jabra", "cascos", "auricular"] },
+      { kb: "verify", label: { en: "how you checked it", es: "cómo lo comprobaste" }, any: ["recordingmeter", "meter", "level", "nivel", "test call", "llamada de prueba", "hear", "oye", "oían", "oian"] },
+      { kb: "followup", label: { en: "advice to Carlos for next time", es: "el consejo a Carlos para la próxima vez" }, any: ["told", "explained", "advised", "next time", "expliqu", "avis", "aconsej", "proxima vez", "dock"] },
+    ],
+    solution: ["Get-AudioDevice -List", "Write-AudioDevice -RecordingMeter", "Set-AudioDevice -Index 4", "Write-AudioDevice -RecordingMeter"],
+    sampleNote: {
+      en: "Since Carlos started using the new dock with the lid closed, Windows kept the laptop's built-in Microphone Array (Realtek) as the default recording device, and Teams (set to Default) used it: the level stayed flat while he spoke into the headset. Set the Jabra headset microphone as the default and default communication device with Set-AudioDevice -Index 4. Checked with Write-AudioDevice -RecordingMeter: the level follows his voice, and a test meeting hears him. Explained to Carlos how to pick the microphone in Teams (Settings > Devices) next time he docks.",
+      es: "Desde que Carlos usa el dock nuevo con la tapa cerrada, Windows mantenía como dispositivo de grabación predeterminado el Microphone Array integrado del portátil (Realtek), y Teams (en Predeterminado) lo usaba: el nivel no se movía mientras hablaba por los cascos. Puse el micrófono de los cascos Jabra como predeterminado y de comunicaciones con Set-AudioDevice -Index 4. Comprobado con Write-AudioDevice -RecordingMeter: el nivel sigue su voz, y en una reunión de prueba le oyen. Le expliqué a Carlos cómo elegir el micrófono en Teams (Configuración > Dispositivos) la próxima vez que conecte el dock.",
+    },
+    contact: {
+      tempting: ["teams-restart", "teams-reset"], temptingWhen: { headsetDefault: false },
+      questions: [
+        { id: "changed", kind: "useful",
+          text: { en: "Has anything changed on your desk since Monday?", es: "¿Ha cambiado algo en tu mesa desde el lunes?" },
+          answer: { en: "On Monday they gave me a dock and a second screen. Now the laptop stays closed under the stand and I plug everything into the dock.",
+                    es: "El lunes me pusieron un dock y una segunda pantalla. Ahora el portátil está cerrado debajo del soporte y lo enchufo todo al dock." },
+          clue: { en: "Since Monday the laptop works closed on a new dock: its built-in microphone is covered by the lid.", es: "Desde el lunes el portátil trabaja cerrado en un dock nuevo: su micrófono integrado queda tapado por la tapa." } },
+        { id: "hear", kind: "useful",
+          text: { en: "Do you hear the others through the headset, and is the headset's own mute light off?", es: "¿Oyes a los demás por los cascos, y la luz de silencio de los propios cascos está apagada?" },
+          answer: { en: "I hear them perfectly in the headset, and the red light on the boom is off.", es: "Los oigo perfectamente por los cascos, y la luz roja del micro está apagada." },
+          clue: { en: "The headset's earphones work and its microphone is not muted: the fault is in which microphone is used, not in the headset.",
+                  es: "Los auriculares de los cascos funcionan y su micrófono no está silenciado: el fallo está en qué micrófono se usa, no en los cascos." } },
+        { id: "all", kind: "neutral",
+          text: { en: "Does it happen in every meeting, or only with customers?", es: "¿Pasa en todas las reuniones o solo con clientes?" },
+          answer: { en: "Every single one, internal ones too.", es: "En todas, también en las internas." } },
+        { id: "muted", kind: "bad",
+          text: { en: "Are you sure you are not muting yourself in Teams?", es: "¿Seguro que no te estás silenciando tú en Teams?" },
+          answer: { en: "I have been using Teams for years. The microphone icon is on, I checked.", es: "Llevo años usando Teams. El icono del micrófono está activado, lo he mirado." },
+          why: { en: "It puts the blame on the user before checking anything; he already said the icon is not crossed out. Ask what he sees and what changed.",
+                 es: "Echa la culpa al usuario antes de comprobar nada; ya dijo que el icono no está tachado. Pregunta qué ve y qué ha cambiado." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Can you tell me your password so I can sign in to Teams as you and test it?", es: "¿Me dices tu contraseña para entrar en Teams como tú y probarlo?" },
+          answer: { en: "My password? You are already connected to my laptop…", es: "¿Mi contraseña? Si ya estás conectado a mi portátil…" },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Can you join a test meeting and tell me if we hear you?", es: "¿Puedes entrar en una reunión de prueba y decirme si te oímos?" },
+          answer: { en: "Loud and clear, the bar in Teams moves when I speak. Just in time for my three o'clock.", es: "Alto y claro, la barra de Teams se mueve cuando hablo. Justo a tiempo para la de las tres." },
+          failed: { en: "Same as before: Teams opened again, but the bar does not move when I speak and they write 'we can't hear you' in the chat.",
+                    es: "Igual que antes: Teams se ha vuelto a abrir, pero la barra no se mueve cuando hablo y me escriben «no te oímos» en el chat." } },
+      ],
+    },
+  });
+
+  /* ------------------------------------------------------------------ 28. The meeting room screen stays black (v0.10, career level 0) */
+  const DISPLAY = (hdmi1) => ["", "SALA2-DISPLAY · 65\" meeting room display · meeting room 2 (2nd floor)", "  Power        : On",
+    `  Input        : ${hdmi1 ? "HDMI 1" : "HDMI 2"}`, `  HDMI 1       : signal 1920x1080 60Hz (MTR-SALA2)`, `  HDMI 2       : ${hdmi1 ? "no signal (side port)" : "no signal (side port, cable connected)"}`,
+    `  Last change  : ${hdmi1 ? "26/10/2026 09:41 input HDMI 1 (network control)" : "25/10/2026 16:12 input HDMI 2 (remote control)"}`, ""];
+  scenarios.push({
+    id: "room-no-display",
+    level: 1, career: 0,
+    topic: { en: "Meeting rooms / Teams Rooms", es: "Salas de reuniones / Teams Rooms" },
+    minutes: 10,
+    title: { en: "The meeting room screen stays black", es: "La sala de reuniones no proyecta" },
+    guide: GUIDE + "teams-rooms-poner-en-marcha-una-sala.html",
+    machine: WS_MACHINE,
+    ticket: {
+      id: "INC-20664", from: "Marta García (Finance)", priority: "P2",
+      subject: { en: "Room 2: the big screen shows nothing", es: "Sala 2: la pantalla grande no muestra nada" },
+      body: {
+        en: "We have a call with the auditors at 10:00 in room 2. The touch console on the table works and shows the meeting, but the big screen on the wall is black with a small 'No signal' box floating around. We have not touched anything.",
+        es: "Tenemos una llamada con los auditores a las 10:00 en la sala 2. La consola táctil de la mesa funciona y muestra la reunión, pero la pantalla grande de la pared está negra con un recuadro de «Sin señal» que va flotando. No hemos tocado nada.",
+      },
+    },
+    intro: {
+      en: "You are on your admin workstation ADM-WS01. Room 2 has a Microsoft Teams Rooms on Windows console (MTR-SALA2) with its touch panel, and a wall display (SALA2-DISPLAY) wired to it on HDMI 1; the display has a side HDMI port too. You can manage MTR-SALA2 remotely with PowerShell (Invoke-Command, Restart-Computer), and display shows what the display's network control offers (like its remote control).",
+      es: "Estás en tu equipo de administración ADM-WS01. La sala 2 tiene una consola Microsoft Teams Rooms on Windows (MTR-SALA2) con su panel táctil y una pantalla de pared (SALA2-DISPLAY) conectada a ella por HDMI 1; la pantalla tiene además un puerto HDMI lateral. Puedes gestionar MTR-SALA2 en remoto con PowerShell (Invoke-Command, Restart-Computer), y display muestra lo que ofrece el control por red de la pantalla (como su mando a distancia).",
+    },
+    requester: { name: "Marta García", team: { en: "Finance", es: "Finanzas" }, user: "mgarcia", location: { en: "Head office, meeting room 2 (2nd floor)", es: "Oficina central, sala de reuniones 2 (2ª planta)" }, device: "PC-FIN-021" },
+    asset: {
+      title: { en: "Meeting room 2 · Teams Rooms", es: "Sala de reuniones 2 · Teams Rooms" },
+      fields: [
+        { label: { en: "Console (MTR-SALA2)", es: "Consola (MTR-SALA2)" }, states: [
+          { when: { rebooted: true }, value: { en: "Restarted, signed in, meeting on the calendar", es: "Reiniciada, con sesión iniciada, reunión en el calendario" } },
+          { value: { en: "Online, signed in, meeting on the calendar", es: "En línea, con sesión iniciada, reunión en el calendario" } }] },
+        { label: { en: "Wall display", es: "Pantalla de pared" }, states: [
+          { when: { inputOk: true }, value: { en: "Showing Teams Rooms", es: "Muestra Teams Rooms" }, tone: "ok" },
+          { value: { en: "Black, 'No signal'", es: "Negra, «Sin señal»" }, tone: "bad" }] },
+        { label: { en: "Call at 10:00", es: "Llamada de las 10:00" }, states: [
+          { when: { verified: true }, value: { en: "Room ready", es: "Sala lista" }, tone: "ok" },
+          { value: { en: "Auditors, 6 people in the room", es: "Auditores, 6 personas en la sala" }, tone: "warn" }] },
+      ],
+    },
+    actions: [
+      { id: "display", label: { en: "Check the room display", es: "Consultar la pantalla de la sala" }, cmd: "display status SALA2-DISPLAY" },
+      { id: "restart", label: { en: "Restart the room console", es: "Reiniciar la consola de la sala" }, cmd: "Restart-Computer -ComputerName MTR-SALA2 -Force" },
+    ],
+    codes: ["config-fixed"],
+    state: { pcOnline: false, pcFine: false, inputFound: false, inputOk: false, rebooted: false, verified: false },
+    commands: [
+      { id: "ping", match: /^(ping|test-connection|test-netconnection)\b.*\bmtr-sala2\b/, set: { pcOnline: true }, out: ["", "Pinging mtr-sala2.contoso.local [10.20.14.88] with 32 bytes of data:",
+        "Reply from 10.20.14.88: bytes=32 time=1ms TTL=127", "Reply from 10.20.14.88: bytes=32 time=1ms TTL=127", ""] },
+      { id: "monitor", match: /^(invoke-command\b.*\bmtr-sala2\b.*get-pnpdevice\b.*monitor|get-ciminstance\b.*\bmtr-sala2\b.*wmimonitor)/, set: { pcOnline: true, pcFine: true }, out: ["",
+        "Status Class   FriendlyName           PSComputerName", "------ -----   ------------           --------------", "OK     Monitor Generic PnP Monitor    MTR-SALA2", ""],
+        say: { en: "The console sees one display connected and working, and sends its picture to it.", es: "La consola ve una pantalla conectada y funcionando, y le envía su imagen." } },
+      { id: "mtrlog", match: /^(invoke-command\b.*\bmtr-sala2\b.*get-winevent\b|get-winevent\b.*\bmtr-sala2\b)/, set: { pcOnline: true, pcFine: true }, out: ["",
+        "TimeCreated          Id LevelDisplayName Message", "-----------          -- ---------------- -------",
+        "26/10/2026 09:35   2000 Information      Teams Rooms app health: Healthy. Signed in, calendar synced, front of room display connected.",
+        "26/10/2026 09:05   2000 Information      Teams Rooms app health: Healthy. Signed in, calendar synced, front of room display connected.", ""],
+        say: { en: "For the Teams Rooms app everything is fine, the display included.", es: "Para la aplicación de Teams Rooms todo está bien, la pantalla incluida." } },
+      { id: "disp-help", match: /^display$/, out: ["Meeting room display network control (simulated):", "  display status <display>           power, input and signal on each port",
+        "  display input <display> hdmi1|hdmi2   select the input", "  display power <display> cycle      switch the display off and on"] },
+      { id: "status-ok", match: /^display\s+status\b/, when: { inputOk: true }, set: { verified: true }, out: DISPLAY(true),
+        say: { en: "HDMI 1 selected, with the console's picture: the room shows Teams Rooms.", es: "Entrada HDMI 1 seleccionada, con la imagen de la consola: la sala muestra Teams Rooms." } },
+      { id: "status", match: /^display\s+status\b/, set: { inputFound: true }, out: DISPLAY(false),
+        say: { en: "Read it port by port: where the picture is, and which input the display is showing.", es: "Léelo puerto a puerto: dónde está la imagen y qué entrada está mostrando la pantalla." } },
+      { id: "input-1", match: /^display\s+input\b.*\bhdmi\s?1$/, set: { inputOk: true }, out: ["", "SALA2-DISPLAY: input HDMI 1.", ""] },
+      { id: "input-2", match: /^display\s+input\b.*\bhdmi\s?2$/, set: { inputOk: false }, out: ["", "SALA2-DISPLAY: input HDMI 2.", ""] },
+      { id: "power", match: /^display\s+power\b/, out: ["", "SALA2-DISPLAY: off… on. Input HDMI 2 (last used).", ""],
+        say: { en: "The display comes back on the input it had.", es: "La pantalla vuelve en la entrada que tenía." } },
+      { id: "disp-other", match: /^display\b/, out: ["display: display status <display>, display input <display> hdmi1|hdmi2 or display power <display> cycle."] },
+      { id: "reboot", match: /^restart-computer\b.*\bmtr-sala2\b/, set: { rebooted: true }, out: [""],
+        say: { en: "MTR-SALA2 restarts: two minutes later Teams Rooms is back on the touch console, signed in.", es: "MTR-SALA2 se reinicia: dos minutos después Teams Rooms vuelve a la consola táctil, con la sesión iniciada." } },
+    ],
+    goal: { inputOk: true, verified: true },
+    stages: [
+      { id: "investigate", label: { en: "Find where the picture is lost", es: "Averiguar dónde se pierde la imagen" }, when: { pcFine: true, inputFound: true } },
+      { id: "fix", label: { en: "Put the display back on the console's input", es: "Devolver la pantalla a la entrada de la consola" }, when: { inputOk: true } },
+      { id: "verify", label: { en: "Check the display shows the room console", es: "Comprobar que la pantalla muestra la consola de la sala" }, when: { verified: true } },
+    ],
+    resolved: { en: "Resolved: room 2 shows Teams Rooms on the wall. Now write the work note.", es: "Resuelto: la sala 2 muestra Teams Rooms en la pared. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "Is the console sending a picture? Invoke-Command -ComputerName MTR-SALA2 { Get-PnpDevice -Class Monitor }.", es: "¿La consola está enviando imagen? Invoke-Command -ComputerName MTR-SALA2 { Get-PnpDevice -Class Monitor }." },
+      { en: "Then look at the other end of the cable: display status SALA2-DISPLAY.", es: "Después mira el otro extremo del cable: display status SALA2-DISPLAY." },
+      { en: "display input SALA2-DISPLAY hdmi1. Restarting the console does not change the display's input.", es: "display input SALA2-DISPLAY hdmi1. Reiniciar la consola no cambia la entrada de la pantalla." },
+      { en: "Check it with display status SALA2-DISPLAY.", es: "Compruébalo con display status SALA2-DISPLAY." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (the display was on another input)", es: "la causa (la pantalla estaba en otra entrada)" }, any: ["hdmi 2", "hdmi2", "input", "entrada", "side port", "puerto lateral"] },
+      { kb: "fix", label: { en: "the fix (back to HDMI 1)", es: "la solución (vuelta a HDMI 1)" }, any: ["hdmi 1", "hdmi1", "display input"] },
+      { kb: "verify", label: { en: "how you checked it", es: "cómo lo comprobaste" }, any: ["display status", "checked", "comprob", "shows", "muestra", "signal", "senal"] },
+      { kb: "followup", label: { en: "how to avoid it next time", es: "cómo evitarlo la próxima vez" }, any: ["cable", "table", "mesa", "guest", "invitad", "visit", "told", "avis", "label", "etiquet", "facilities", "servicios generales"] },
+    ],
+    solution: ["Invoke-Command -ComputerName MTR-SALA2 { Get-PnpDevice -Class Monitor }", "display status SALA2-DISPLAY", "display input SALA2-DISPLAY hdmi1", "display status SALA2-DISPLAY"],
+    sampleNote: {
+      en: "Room 2 wall display black with 'No signal'. MTR-SALA2 was fine (signed in, Get-PnpDevice showed the monitor connected and working), so the picture was being sent. display status showed the screen on input HDMI 2 (the side port, cable still connected) since yesterday 16:12, while the console's picture was on HDMI 1. Switched it back with display input hdmi1 and checked with display status: HDMI 1 with signal, Teams Rooms on the wall before the 10:00 call. Told Marta, and asked Facilities to take the loose side cable away and to label it: guests share through the table cable, not the screen.",
+      es: "Pantalla de la sala 2 en negro con «Sin señal». MTR-SALA2 estaba bien (sesión iniciada, Get-PnpDevice mostraba el monitor conectado y funcionando), así que la imagen salía. display status mostró la pantalla en la entrada HDMI 2 (el puerto lateral, con un cable aún conectado) desde ayer a las 16:12, mientras la imagen de la consola estaba en HDMI 1. La devolví con display input hdmi1 y lo comprobé con display status: HDMI 1 con señal, Teams Rooms en la pared antes de la llamada de las 10:00. Avisé a Marta y pedí a Servicios Generales que retiren el cable lateral suelto y pongan una etiqueta: las visitas comparten por el cable de la mesa, no por la pantalla.",
+    },
+    contact: {
+      tempting: ["reboot", "power"], temptingWhen: { inputOk: false },
+      questions: [
+        { id: "before", kind: "useful",
+          text: { en: "Do you know who used room 2 before you, and whether anyone plugged a laptop into the screen?", es: "¿Sabes quién usó la sala 2 antes que vosotros y si alguien enchufó un portátil a la pantalla?" },
+          answer: { en: "Sales had a customer demo there yesterday afternoon. Now that you say it, there is a cable hanging from the side of the screen.",
+                    es: "Ventas tuvo ayer por la tarde una demo con un cliente. Ahora que lo dices, hay un cable colgando del lateral de la pantalla." },
+          clue: { en: "Yesterday afternoon a visitor's laptop was plugged straight into the side of the screen, and the cable is still there.",
+                  es: "Ayer por la tarde se enchufó el portátil de una visita directamente al lateral de la pantalla, y el cable sigue ahí." } },
+        { id: "console", kind: "useful",
+          text: { en: "On the touch console, can you start the meeting and do the others hear you?", es: "En la consola táctil, ¿podéis iniciar la reunión y os oyen los demás?" },
+          answer: { en: "Yes, I joined a test call from the console: the camera light came on and they heard us. Only the wall stays black.",
+                    es: "Sí, he entrado en una llamada de prueba desde la consola: se ha encendido la luz de la cámara y nos han oído. Solo la pared sigue negra." },
+          clue: { en: "The console, camera and audio work: only the picture on the wall is missing.", es: "La consola, la cámara y el audio funcionan: solo falta la imagen en la pared." } },
+        { id: "people", kind: "neutral",
+          text: { en: "How many people will be in the room?", es: "¿Cuántas personas vais a estar en la sala?" },
+          answer: { en: "Six of us, plus the auditors online.", es: "Seis aquí, más los auditores en remoto." } },
+        { id: "blame", kind: "bad",
+          text: { en: "Did someone in your team unplug something?", es: "¿Ha desenchufado alguien de tu equipo algo?" },
+          answer: { en: "No! We just walked in and it was like this.", es: "¡No! Acabamos de entrar y estaba así." },
+          why: { en: "It looks for someone to blame. Ask what they see and what happened in the room before, not whose fault it is.",
+                 es: "Busca culpables. Pregunta qué ven y qué pasó antes en la sala, no de quién es la culpa." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "What is the room's account password? I want to sign in on the console.", es: "¿Cuál es la contraseña de la cuenta de la sala? Quiero entrar en la consola." },
+          answer: { en: "No idea, we never type anything there… shouldn't IT have it?", es: "Ni idea, nunca escribimos nada ahí… ¿no la tenéis en IT?" },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Can you look at the wall now?", es: "¿Puedes mirar la pantalla de la pared ahora?" },
+          answer: { en: "There it is: the Teams Rooms screen with our 10:00 meeting. Thank you, just in time.", es: "Ahí está: la pantalla de Teams Rooms con nuestra reunión de las 10:00. Gracias, justo a tiempo." },
+          failed: { en: "We saw something switch off and come back, but the wall is still black with 'No signal'.", es: "Hemos visto que algo se apagaba y volvía, pero la pared sigue negra con «Sin señal»." } },
       ],
     },
   });

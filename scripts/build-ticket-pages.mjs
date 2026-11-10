@@ -40,7 +40,7 @@ const jsonld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj
 // the static pages: Spanish title and description (the default visible language), English title for doc.js
 export const STATIC = {
   "index.html": { path: "/", title: "SysAdmin Desks · simulador gratuito de soporte IT", titleEn: "SysAdmin Desks · free IT support simulator",
-    desc: "Practica soporte IT gratis en el navegador: 24 tickets de Active Directory, Microsoft 365, redes, RMA, Linux y SQL Server, con consola y nota de trabajo." },
+    desc: `Practica soporte IT gratis en el navegador: ${N()} tickets de Active Directory, Microsoft 365, redes, RMA, Linux y SQL Server, con consola y nota de trabajo.` },
   "help.html": { path: "/help", title: "Ayuda · cómo practicar soporte IT en SysAdmin Desks", titleEn: "Help · how to practise IT support on SysAdmin Desks",
     desc: "Cómo funciona SysAdmin Desks: empezar, resolver un ticket de principio a fin, el SLA, la puntuación, la consola, el directorio y qué hacer si algo falla." },
   "terms.html": { path: "/terms", title: "Términos de uso · SysAdmin Desks by IGG", titleEn: "Terms of use · SysAdmin Desks by IGG",
@@ -53,7 +53,7 @@ export const STATIC = {
     desc: "¿Es gratis? ¿Qué tickets hay? ¿Se guarda el progreso? Respuestas sobre SysAdmin Desks, el simulador de soporte IT para practicar help desk." },
 };
 const TICKETS_INDEX = { path: "/tickets/", title: "Tickets para practicar soporte IT · SysAdmin Desks", titleEn: "Tickets to practise IT support · SysAdmin Desks",
-  desc: "Los 24 tickets de SysAdmin Desks para practicar soporte IT gratis: Active Directory, Microsoft 365, Exchange, Intune, Linux, SQL Server, redes y RMA." };
+  desc: `Los ${N()} tickets de SysAdmin Desks para practicar soporte IT gratis: Active Directory, Microsoft 365, Exchange, Intune, Linux, SQL Server, redes y RMA.` };
 
 export const ticketPath = (sc) => "/tickets/" + sc.id;
 // <title> of a ticket page: the SEO title of the desk if it has one (the words people search), else the ticket title;
@@ -144,6 +144,9 @@ function staticPage(file, html) {
   if (file === "index.html") html = html
     .replace(/<p>[^<]*? tickets de primera y segunda línea\./, `<p>${Cap(words(N(), "es"))} tickets de primera y segunda línea.`)
     .replace(/<p>[^<]*? first and second line tickets\./, `<p>${Cap(words(N(), "en"))} first and second line tickets.`);
+  if (file === "about.html") html = html
+    .replace(/Ahora mismo hay [^ ]+ tickets de primera y segunda línea/, `Ahora mismo hay ${words(N(), "es")} tickets de primera y segunda línea`)
+    .replace(/There are [^ ]+ tickets right now/, `There are ${words(N(), "en")} tickets right now`);
   let out = html.replace(/<html lang="[a-z]+"[^>]*>/, `<html lang="es" data-title-en="${esc(m.titleEn)}">`);
   out = replaceBlock(out, "<!-- seo -->", "<!-- /seo -->", seoHead(m, extra).replace(/\n<!-- \/seo -->$/, ""), file);
   for (const lang of ["es", "en"]) {
@@ -231,6 +234,10 @@ export const RELATED = {
   "laptop-rma": ["leaver-return", "net-psu-rma", "intune-bitlocker"],
   "net-psu-rma": ["laptop-rma", "net-err-disabled", "net-fortigate-branch"],
   "leaver-return": ["laptop-rma", "m365-licence", "ad-lockout"],
+  "new-laptops-intake": ["leaver-return", "laptop-rma", "starter-desk-ready"],
+  "starter-desk-ready": ["ad-lockout", "m365-licence", "aadc-sync"],
+  "teams-no-audio": ["room-no-display", "m365-licence", "dns-intranet"],
+  "room-no-display": ["teams-no-audio", "print-queue", "net-err-disabled"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {

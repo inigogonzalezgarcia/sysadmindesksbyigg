@@ -34,7 +34,16 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 24);
+  assert.equal(SCENARIOS.length, 28);
+});
+
+test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
+  for (const sc of SCENARIOS) {
+    assert.ok(Number.isInteger(sc.career) && sc.career >= 0 && sc.career <= 10, `${sc.id}: career ${sc.career}`);
+    assert.ok(sc.level === 1 || sc.level === 2, sc.id + " level");
+  }
+  const zero = SCENARIOS.filter((s) => s.career === 0);
+  assert.ok(zero.length >= 4 && zero.every((s) => s.level === 1), "level 0 has first-line tickets to start with");
 });
 
 test("the reference solution resolves every scenario, in both languages, and the sample note scores 100", () => {
@@ -310,5 +319,74 @@ test("SQL log full: SIMPLE and shrinking break or skip the fix; the chain needs 
   E.run(sess, q("BACKUP DATABASE ERP_PROD TO DISK = N'\\\\FS01\\SQLBackup\\ERP_PROD_DIFF.bak' WITH DIFFERENTIAL"));
   E.run(sess, q("EXEC msdb.dbo.sp_start_job @job_name = N'ERP_PROD - Log backup'"));
   E.run(sess, q("DBCC SQLPERF(LOGSPACE)"));
+  assert.ok(sess.resolved);
+});
+
+/* ---------- v0.10: the career level 0 desks */
+test("New laptops: the damaged unit must not go into stock; checking all twelve in does not close it", () => {
+  const sc = byId["new-laptops-intake"];
+  const all = "ship mark 1QV5HT4,2QV5HT4,3QV5HT4,4QV5HT4,5QV5HT4,6QV5HT4,7QV5HT4,8QV5HT4,9QV5HT4,BQV5HT4,CQV5HT4,DQV5HT4 stock";
+  const { sess, text } = play(sc, ["ship delivery PO-2026-0418", all, "ship delivery PO-2026-0418"]);
+  assert.match(text, /LAPTOP-0407\s+7QV5HT4\s+In stock/);
+  assert.equal(sess.state.goodStocked, true);
+  assert.equal(sess.state.badStocked, true);
+  assert.equal(sess.state.markedBad, true);
+  assert.equal(sess.resolved, false, "twelve in stock, one of them broken");
+  assert.equal(E.run(sess, "bench open LAPTOP-0407").lines[2].text.includes("lid"), true);
+  // the RMA requested after the mark takes the unit out of stock; the remark stays
+  ["ship new rma --serial 7QV5HT4 --vendor dell --fault \"Broken screen\" --evidence \"IMG_0407-1\" --carrier vendor --from hq-it --to dell-depot --data none",
+   "ship submit SHP-20661-1"].forEach((c) => E.run(sess, c));
+  assert.equal(sess.state.badStocked, false);
+  assert.equal(E.SHIP().deviceState([sess.ships], "7QV5HT4"), "rma");
+  E.run(sess, "ship delivery PO-2026-0418");
+  assert.ok(sess.resolved);
+  const v = E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "hardware", minutes: 5 });
+  assert.equal(v.level, "observations");
+  assert.ok(v.reasons.some((x) => /damaged laptop was recorded in stock/.test(x)));
+  // an RMA without the photos is not enough evidence for the vendor
+  const thin = play(sc, sc.solution.map((c) => c.replace(", IMG_0407-1, IMG_0407-2", ""))).sess;
+  assert.equal(thin.state.badRma, false);
+  assert.equal(thin.resolved, false);
+});
+
+test("New starter: a password reset changes nothing while the account is disabled; both the account and the group are needed", () => {
+  const sc = byId["starter-desk-ready"];
+  const { sess, text } = play(sc, ["Set-ADAccountPassword nprieto -Reset", "Unlock-ADAccount nprieto", "Get-ADUser nprieto"]);
+  assert.match(text, /Enabled\s+: False/);
+  assert.equal(sess.state.pwdReset, true);
+  assert.equal(sess.resolved, false);
+  E.run(sess, "Enable-ADAccount nprieto");
+  E.run(sess, "Get-ADUser nprieto -Properties MemberOf");
+  assert.equal(sess.resolved, false, "enabled, but still without her team's group");
+  E.run(sess, "Add-ADGroupMember -Identity GG-Legal -Members nprieto");
+  assert.match(E.run(sess, "Get-ADUser nprieto -Properties MemberOf").lines.map((l) => l.text).join("\n"), /CN=GG-Legal/);
+  assert.ok(sess.resolved);
+  assert.deepEqual(E.bound(sess)[0].set, { enabled: true, groups: ["GG-Legal", "GG-M365-E3", "GG-Printers-HQ"] });
+  assert.equal(E.bound(E.createSession(sc, "en"))[0].set.enabled, false, "the directory shows the account disabled while the ticket is open");
+});
+
+test("Teams audio: restarting or resetting Teams keeps the wrong default microphone", () => {
+  const sc = byId["teams-no-audio"];
+  const { sess, text } = play(sc, ["Stop-Process -Name ms-teams -Force", "Get-AppxPackage MSTeams | Reset-AppxPackage", "Write-AudioDevice -RecordingMeter"]);
+  assert.match(text, /Microphone Array \(Realtek\(R\) Audio\)/);
+  assert.equal(sess.state.teamsRestarted, true);
+  assert.equal(sess.resolved, false);
+  E.run(sess, "Set-AudioDevice -Index 2");
+  assert.equal(sess.state.headsetDefault, false, "a playback device is not the fix");
+  E.deskAct(sess, "sound", "headset");
+  E.deskAct(sess, "sound", "test");
+  assert.ok(sess.resolved);
+});
+
+test("Meeting room: restarting the console or power-cycling the display leaves the display on the other input", () => {
+  const sc = byId["room-no-display"];
+  const { sess, text } = play(sc, ["Restart-Computer MTR-SALA2", "display power SALA2-DISPLAY cycle", "display status SALA2-DISPLAY"]);
+  assert.match(text, /Input\s+: HDMI 2/);
+  assert.equal(sess.state.rebooted, true);
+  assert.equal(sess.resolved, false);
+  E.run(sess, "display input SALA2-DISPLAY hdmi2");
+  assert.equal(sess.state.inputOk, false);
+  E.run(sess, "display input SALA2-DISPLAY hdmi1");
+  E.run(sess, "display status SALA2-DISPLAY");
   assert.ok(sess.resolved);
 });
