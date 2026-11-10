@@ -11,23 +11,24 @@ const LEVELS = Object.fromEntries(SCENARIOS.map((s) => [s.id, s.level]));
 const has = (v) => v && typeof v.en === "string" && typeof v.es === "string" && v.en.trim() && v.es.trim();
 const fullLab = (id) => ({ [id]: { done: Lb.lab(id).tasks.map((x) => x.id), day: "2026-10-26", completed: "2026-10-26" } });
 
-test("levels: six levels in order, named in both languages, thresholds and progress to the next", () => {
-  assert.deepEqual(V.LEVELS.map((l) => l.id), ["intern", "l1", "l1s", "l2", "sys", "infra"]);
-  V.LEVELS.forEach((l, k) => { assert.ok(has(l.name) && has(l.short), l.id); if (k) assert.ok(l.min > V.LEVELS[k - 1].min, l.id + " grows"); });
+test("levels: eleven levels in order, from intern to CIO, named in both languages, thresholds and progress to the next", () => {
+  assert.deepEqual(V.LEVELS.map((l) => l.id), ["intern", "l1", "l1s", "l2", "sys", "infra", "devops", "arch", "mgr", "dir", "cio"]);
+  V.LEVELS.forEach((l, k) => { assert.ok(has(l.name) && has(l.short) && has(l.does), l.id); if (k) assert.ok(l.min > V.LEVELS[k - 1].min, l.id + " grows"); });
   assert.equal(V.LEVELS[0].min, 0);
   assert.equal(V.level(0, "es").name, "Becario/a de soporte");
   const a = V.level(199, "en");
   assert.equal(a.id, "intern"); assert.equal(a.toNext, 1); assert.equal(a.next.id, "l1"); assert.equal(a.pct, 99);
   const b = V.level(200, "es");
-  assert.equal(b.id, "l1"); assert.equal(b.name, "Técnico/a N1"); assert.equal(b.into, 0); assert.equal(b.pct, 0);
+  assert.equal(b.id, "l1"); assert.equal(b.name, "Técnico/a de soporte N1"); assert.equal(b.into, 0); assert.equal(b.pct, 0);
   assert.equal(V.level(900).id, "l1s");
-  assert.equal(V.level(V.LEVELS[5].min, "es").name, "Ingeniero/a de infraestructura");
+  assert.equal(V.level(V.LEVELS[5].min, "es").name, "Ingeniero/a de infraestructura / Cloud");
+  assert.equal(V.LEVELS[V.LEVELS.length - 1].id, "cio"); assert.equal(V.LEVELS[V.LEVELS.length - 1].min, 8200);
   const top = V.level(99999);
   assert.equal(top.next, null); assert.equal(top.pct, 100);
   assert.equal(V.level(-5).id, "intern"); assert.equal(V.level("x").total, 0);
-  // the most points there are reach the top level: every ticket at 100, every lab task, every bonus and every shift
+  // the most points there are today reach Infra / Cloud engineer without the weekly goals; the levels above need weekly goals and new tickets
   const max = DESKS.length * 100 + Lb.summary({}).totalTasks * V.LAB_TASK_POINTS + DESKS.length * 10 + Lb.LABS.length * V.SHIFT.points;
-  assert.ok(max >= V.LEVELS[5].min + 300, "the top level is reachable without the weekly goals");
+  assert.ok(max >= V.LEVELS[5].min + 300, "Infra / Cloud engineer is reachable without the weekly goals");
 });
 
 test("levels: points = best results + 10 per lab task + best comms bonus per ticket + goals + shifts; free tickets never count", () => {

@@ -1848,7 +1848,8 @@
       el("p", { class: "fine", text: L().lvBreak(l.parts) }),
       el("details", { class: "lvl-how" }, el("summary", { text: L().lvLadder }), el("p", { class: "fine", text: L().lvHow }),
         el("ol", { class: "lvl-ladder" }, Lv.LEVELS.map((x, k) => el("li", { class: k === l.index ? "on" : k < l.index ? "past" : "" },
-          el("b", { text: t(x.name, lang) }), el("span", { class: "mono", text: " · " + L().lvFrom(x.min) }))))));
+          el("b", { text: t(x.name, lang) }), el("span", { class: "mono", text: " · " + L().lvFrom(x.min) }),
+            x.does ? el("span", { class: "lvl-does", text: t(x.does, lang) }) : null)))));
   }
   function countersBlock(pfx) {
     const c = Lv.closeCounts(activity());

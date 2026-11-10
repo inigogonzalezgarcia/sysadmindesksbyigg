@@ -1130,6 +1130,7 @@ html.reduce-motion *, html.reduce-motion *::before, html.reduce-motion *::after 
 .lvl-ladder li.past { color: var(--muted); }
 .lvl-ladder li.on b { color: var(--accent); }
 .lvl-ladder li.on::marker { color: var(--accent); font-weight: 800; }
+.lvl-ladder .lvl-does { display: block; color: var(--muted); font-size: 13px; line-height: 1.4; margin: 1px 0 4px; }
 .lvl-up { position: fixed; z-index: 40; left: 50%; top: 76px; transform: translateX(-50%); width: min(420px, calc(100vw - 32px)); display: flex; align-items: center; gap: 14px;
   background: var(--term-bg); color: var(--term-ink); border: 1px solid var(--accent); border-radius: var(--radius); padding: 14px 16px; box-shadow: 0 18px 50px rgba(0, 0, 0, .3);
   animation: lvl-pop 420ms var(--ease-out) both; }

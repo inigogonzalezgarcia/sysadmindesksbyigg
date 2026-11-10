@@ -38,12 +38,28 @@
 
   /* ---------- levels: from the total points (min is the first point of the level) */
   const LEVELS = [
-    { id: "intern", min: 0, short: { en: "Intern", es: "Becario/a" }, name: { en: "Support intern", es: "Becario/a de soporte" } },
-    { id: "l1", min: 200, short: { en: "L1", es: "N1" }, name: { en: "L1 technician", es: "Técnico/a N1" } },
-    { id: "l1s", min: 600, short: { en: "L1 sr", es: "N1 sr" }, name: { en: "Senior L1 technician", es: "Técnico/a N1 sénior" } },
-    { id: "l2", min: 1200, short: { en: "L2", es: "N2" }, name: { en: "L2 technician", es: "Técnico/a N2" } },
-    { id: "sys", min: 1900, short: { en: "Sysadmin", es: "Sysadmin" }, name: { en: "Systems administrator", es: "Administrador/a de sistemas" } },
-    { id: "infra", min: 2700, short: { en: "Infra", es: "Infra" }, name: { en: "Infrastructure engineer", es: "Ingeniero/a de infraestructura" } },
+    { id: "intern", min: 0, short: { en: "Intern", es: "Becario/a" }, name: { en: "IT support intern", es: "Becario/a de soporte" },
+      does: { en: "First contact, inventory tagging, basic user assistance.", es: "Atención inicial, etiquetado de inventario, asistencia básica a usuarios." } },
+    { id: "l1", min: 200, short: { en: "Tier 1", es: "N1" }, name: { en: "Helpdesk Tier 1", es: "Técnico/a de soporte N1" },
+      does: { en: "Fixing common hardware and software incidents, setting up workstations.", es: "Resolución de incidencias comunes de hardware/software, configuración de puestos de trabajo." } },
+    { id: "l1s", min: 600, short: { en: "Tier 2", es: "N1 sr / N2" }, name: { en: "Helpdesk Lead / Tier 2", es: "Técnico/a N1 sénior / Soporte N2" },
+      does: { en: "Advanced diagnosis, licence management, basic user and access administration (Active Directory, Google Workspace).", es: "Diagnóstico avanzado, gestión de licencias, administración básica de usuarios y accesos (Active Directory, Google Workspace)." } },
+    { id: "l2", min: 1200, short: { en: "Sysadmin Jr", es: "N2 / Jr" }, name: { en: "Sysadmin Jr.", es: "Técnico/a N2 / Administrador/a junior" },
+      does: { en: "Local network upkeep, file servers, backups and help in the server rooms.", es: "Mantenimiento de redes locales, gestión de servidores de archivos, copias de seguridad y asistencia en salas de servidores." } },
+    { id: "sys", min: 1900, short: { en: "Sysadmin", es: "Sysadmin" }, name: { en: "SysAdmin", es: "Administrador/a de sistemas" },
+      does: { en: "Deploying and running servers (Linux/Windows), virtualisation (VMware, Hyper-V), monitoring the corporate network.", es: "Despliegue y administración de servidores (Linux/Windows), virtualización (VMware, Hyper-V), monitorización de la red corporativa." } },
+    { id: "infra", min: 2700, short: { en: "Infra", es: "Infra" }, name: { en: "Infra / Cloud engineer", es: "Ingeniero/a de infraestructura / Cloud" },
+      does: { en: "Migrating and running cloud services (AWS, Azure, GCP), automating tasks with scripting (Bash, Python, PowerShell).", es: "Migración y gestión de servicios en la nube (AWS, Azure, GCP), automatización de tareas con scripting (Bash, Python, PowerShell)." } },
+    { id: "devops", min: 3600, short: { en: "DevOps", es: "DevOps" }, name: { en: "DevOps / SRE engineer", es: "Ingeniero/a DevOps / SRE" },
+      does: { en: "CI/CD, infrastructure as code (Terraform, Ansible), container orchestration (Docker, Kubernetes).", es: "Implementación de CI/CD, infraestructura como código (Terraform, Ansible), orquestación de contenedores (Docker, Kubernetes)." } },
+    { id: "arch", min: 4600, short: { en: "Architect", es: "Arquitecto/a" }, name: { en: "Infrastructure / Cloud architect", es: "Arquitecto/a de infraestructura / Cloud" },
+      does: { en: "Overall network topology design, multicloud strategy, high availability, fault tolerance and cost optimisation.", es: "Diseño global de la topología de red, estrategia multicloud, alta disponibilidad, tolerancia a fallos y optimización de costes." } },
+    { id: "mgr", min: 5700, short: { en: "Manager", es: "Responsable" }, name: { en: "IT / Systems manager", es: "Responsable de IT / Systems Manager" },
+      does: { en: "Leading the technical team, vendor management, the department budget and service level agreements (SLA).", es: "Liderazgo del equipo técnico, gestión de proveedores, presupuesto del departamento y acuerdos de nivel de servicio (SLA)." } },
+    { id: "dir", min: 6900, short: { en: "Director", es: "Director/a" }, name: { en: "IT director / VP of Infrastructure", es: "Director/a de IT / VP of Infrastructure" },
+      does: { en: "Aligning the technical infrastructure with business goals, IT governance and technology risk management.", es: "Alineación de la infraestructura técnica con los objetivos de negocio, gobernanza de TI y gestión de riesgos tecnológicos." } },
+    { id: "cio", min: 8200, short: { en: "CIO", es: "CIO" }, name: { en: "CIO (Chief Information Officer)", es: "CIO (Chief Information Officer)" },
+      does: { en: "Executive technology strategy, company-wide budget decisions and corporate digital transformation.", es: "Visión estratégica tecnológica a nivel ejecutivo, decisiones presupuestarias globales y transformación digital corporativa." } },
   ];
   // {index, id, name, short, min, total, next: {id, name, min} | null, into (points into this level), span (points to the next), toNext, pct}
   function level(total, lang) {
