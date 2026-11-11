@@ -183,7 +183,7 @@
     topic: { en: "Network / DNS", es: "Red / DNS" },
     minutes: 10,
     title: { en: "Internet works, the intranet does not", es: "Internet funciona, la intranet no" },
-    guide: GUIDE + "windows-diagnostico-basico-equipo-lento-o-con-errores.html",
+    guide: GUIDE + "windows-11-diagnostico-de-red-ipconfig-test-netconnection-dns-puertos-proxy-wifi-e-internet-si-intranet-no.html",
     machine: { host: "LAPTOP-0217", user: "jruiz", domain: "CONTOSO", shell: "powershell", prompt: "PS C:\\Windows\\system32> " },
     ticket: {
       id: "INC-20433", from: "Javier Ruiz (Sales)", priority: "P3",
