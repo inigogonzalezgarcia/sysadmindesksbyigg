@@ -57,6 +57,15 @@ const TEMPTING = {
   "dhcp-scope-full": ["onsite static 10.20.16.199"],
   "ntfs-access-denied": ["icacls D:\\Shares\\Contabilidad\\Cierres2026 /grant CONTOSO\\lperez:(OI)(CI)F"],
   "ups-no-alert": ["ups selftest UPS-RACKB"],
+  // v0.12: career level 1 (Company Portal reinstalled; the iPhone retired and enrolled again; every store's group; the VPN client reinstalled;
+  // a new roll of labels; the room restarted; only the password changed)
+  "android-work-profile": ["onsite reinstall-portal"],
+  "iphone-no-policies": ["Invoke-MgRetireDeviceManagementManagedDevice -ManagedDeviceId c5a81e2f-7d34-4b96-a0e2-5f19b3d6e870", "onsite enroll"],
+  "retail-new-starter": ["Add-ADGroupMember GG-Stores-All -Members amedina"],
+  "anyconnect-hotel": ["msiexec /fa C:\\Temp\\cisco-secure-client-win-5.1.6.103-core-vpn-predeploy-k9.msi /qn"],
+  "store-label-printer": ["onsite new-roll", "onsite restart-printer"],
+  "poly-room-no-camera": ["poly reboot G7500-CANTABRICO"],
+  "mdm-lost-phone": ["Set-ADAccountPassword ribanez -Reset"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

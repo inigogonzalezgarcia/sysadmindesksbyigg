@@ -145,8 +145,8 @@ function staticPage(file, html) {
     .replace(/<p>[^<]*? tickets de primera y segunda línea\./, `<p>${Cap(words(N(), "es"))} tickets de primera y segunda línea.`)
     .replace(/<p>[^<]*? first and second line tickets\./, `<p>${Cap(words(N(), "en"))} first and second line tickets.`);
   if (file === "about.html") html = html
-    .replace(/Ahora mismo hay [^ ]+ tickets de primera y segunda línea/, `Ahora mismo hay ${words(N(), "es")} tickets de primera y segunda línea`)
-    .replace(/There are [^ ]+ tickets right now/, `There are ${words(N(), "en")} tickets right now`);
+    .replace(/Ahora mismo hay [^<]*? tickets de primera y segunda línea/, `Ahora mismo hay ${words(N(), "es")} tickets de primera y segunda línea`)
+    .replace(/There are [^<]*? tickets right now/, `There are ${words(N(), "en")} tickets right now`);
   let out = html.replace(/<html lang="[a-z]+"[^>]*>/, `<html lang="es" data-title-en="${esc(m.titleEn)}">`);
   out = replaceBlock(out, "<!-- seo -->", "<!-- /seo -->", seoHead(m, extra).replace(/\n<!-- \/seo -->$/, ""), file);
   for (const lang of ["es", "en"]) {
@@ -245,6 +245,13 @@ export const RELATED = {
   "dhcp-scope-full": ["dns-intranet", "net-wrong-vlan", "new-laptops-intake"],
   "ntfs-access-denied": ["gpo-drive-missing", "shared-mailbox", "ad-deleted-user"],
   "ups-no-alert": ["net-psu-rma", "veeam-job", "sql-log-full"],
+  "android-work-profile": ["iphone-no-policies", "mdm-lost-phone", "intune-bitlocker"],
+  "iphone-no-policies": ["android-work-profile", "mdm-lost-phone", "m365-licence"],
+  "retail-new-starter": ["starter-desk-ready", "gpo-drive-missing", "store-label-printer"],
+  "anyconnect-hotel": ["vpn-anyconnect", "dns-intranet", "teams-no-audio"],
+  "store-label-printer": ["print-queue", "retail-new-starter", "new-laptops-intake"],
+  "poly-room-no-camera": ["room-no-display", "teams-no-audio", "anyconnect-hotel"],
+  "mdm-lost-phone": ["iphone-no-policies", "android-work-profile", "ca-blocked"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {

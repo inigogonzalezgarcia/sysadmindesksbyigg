@@ -205,7 +205,7 @@ test("shift: four desks of the lab's area (or the nearest), deterministic, skipp
     s.forEach((d) => assert.ok(V.NEAR[l.id].includes(PF.DESK_AREA[d])));
   });
   const ad = V.pickShift("ad", o);
-  assert.deepEqual(ad.slice(0, 3).sort(), ["aadc-sync", "ad-lockout", "starter-desk-ready"]);
+  assert.deepEqual(ad.slice(0, 3).sort(), ["ad-lockout", "retail-new-starter", "starter-desk-ready"]);
   assert.deepEqual(ad.slice(0, 2).map((d) => LEVELS[d]), [1, 1], "level 1 first");
   const skip = V.pickShift("ad", Object.assign({ unavailable: ["ad-lockout"] }, o));
   assert.ok(!skip.includes("ad-lockout") && skip.length === 4);

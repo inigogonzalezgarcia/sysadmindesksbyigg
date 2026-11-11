@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 35);
+  assert.equal(SCENARIOS.length, 42);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -496,4 +496,93 @@ test("UPS: the self-test passes and new batteries change nothing; the tests fail
   sc.solution.forEach((c) => E.run(sess, c));
   assert.ok(sess.resolved);
   assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /Batteries were ordered/.test(x)));
+});
+
+/* ---------- v0.12: career batch 3 (closing level 1) */
+test("Android: reinstalling Company Portal changes nothing, wipe is refused for a personal work profile, and enrolling needs the old record retired", () => {
+  const sc = byId["android-work-profile"];
+  const { sess, results } = play(sc, ["onsite reinstall-portal", "onsite clear-cache", "intune app StockTienda", "Clear-MgDeviceManagementManagedDevice -ManagedDeviceId 3b7e1c94-5d2a-4f08-9c6e-81a4d07f2b53",
+    "onsite enroll \"Contoso COPE - Stores\""]);
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /Not targeted/);
+  assert.equal(results[3].lines[0].kind, "err");
+  assert.equal(results[4].lines[0].kind, "err");
+  assert.equal(sess.state.reenrolled, false);
+  E.run(sess, sc.solution[2]);
+  assert.equal(E.run(sess, "onsite enroll portal").lines[0].kind, "err", "Company Portal enrolls it as personal again");
+  ["onsite enroll \"Contoso COPE - Stores\"", sc.solution[4], sc.solution[5]].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("iPhone: retiring and enrolling again leaves it personal; 'corporate' is not a valid owner type", () => {
+  const sc = byId["iphone-no-policies"];
+  const { sess, results } = play(sc, ["Invoke-MgRetireDeviceManagementManagedDevice -ManagedDeviceId c5a81e2f-7d34-4b96-a0e2-5f19b3d6e870", "onsite enroll",
+    "Get-MgDeviceManagementManagedDevice -Filter \"userPrincipalName eq 'imontero@contoso.com'\"", "Sync-MgDeviceManagementManagedDevice -ManagedDeviceId c5a81e2f-7d34-4b96-a0e2-5f19b3d6e870",
+    "Update-MgDeviceManagementManagedDevice -ManagedDeviceId c5a81e2f-7d34-4b96-a0e2-5f19b3d6e870 -ManagedDeviceOwnerType corporate"]);
+  assert.match(results[2].lines.map((l) => l.text).join("\n"), /ManagedDeviceOwnerType : personal/);
+  assert.equal(results[4].lines[0].kind, "err");
+  assert.equal(sess.state.synced, false);
+  assert.equal(sess.resolved, false);
+  // a sync before the ownership change brings nothing; after it, it does
+  sc.solution.slice(2).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Store new starter: every store's group does not open the app, another store's group is not the fix, and the store group needs a new sign-in", () => {
+  const sc = byId["retail-new-starter"];
+  const { sess, results } = play(sc, ["Add-ADGroupMember GG-Stores-All -Members amedina", "onsite signin", "stocktienda log --user amedina", "Add-ADGroupMember GG-Store-T07 -Members amedina"]);
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /DENIED/);
+  assert.equal(sess.state.signedIn, false);
+  ["Add-ADGroupMember GG-Store-T03 -Members amedina", "stocktienda log --user amedina"].forEach((c) => E.run(sess, c));
+  assert.equal(sess.state.verified, false, "not until she signs in again");
+  ["onsite signin", "stocktienda log --user amedina"].forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "still in another store's group");
+  E.run(sess, "Remove-ADGroupMember GG-Store-T07 -Members amedina -Confirm:$false");
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /all store staff/.test(x)));
+  assert.deepEqual(E.bound(sess)[0].set.groups, ["GG-Store-T03", "GG-Stores-All", "GG-M365-F3"]);
+});
+
+test("Hotel VPN: reinstalling the client changes nothing, and the portal has to be opened before Carlos can accept it", () => {
+  const sc = byId["anyconnect-hotel"];
+  const { sess, results } = play(sc, ["msiexec /fa C:\\Temp\\cisco-secure-client-win-5.1.6.103-core-vpn-predeploy-k9.msi /qn", sc.solution[0], "onsite accept-portal", "Resolve-DnsName vpn.contoso.com"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /restricting access/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(results[3].lines.map((l) => l.text).join(" "), /10\.180\.0\.1/);
+  assert.equal(E.run(sess, "Test-NetConnection intranet.contoso.local -Port 443").lines[0].kind, "err");
+  ["Start-Process http://www.msftconnecttest.com/redirect", "onsite accept-portal", sc.solution[0], "Test-NetConnection intranet.contoso.local -Port 443"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Label printer: a new roll and a restart change nothing, the driver must be added before it is set, and the size matters for the test page", () => {
+  const sc = byId["store-label-printer"];
+  const { sess, results } = play(sc, ["onsite new-roll", "onsite restart-printer", "stocktienda print-label", "Set-Printer -Name Etiquetas -DriverName \"ZDesigner ZD421-203dpi ZPL\"", "zebra label Etiquetas 50x30"]);
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /\^XA/);
+  assert.equal(results[3].lines[0].kind, "err");
+  assert.equal(results[4].lines[0].kind, "err");
+  ["Add-PrinterDriver -Name \"ZDesigner ZD421-203dpi ZPL\"", "Set-Printer -Name Etiquetas -DriverName \"ZDesigner ZD421-203dpi ZPL\"", "rundll32 printui.dll,PrintUIEntry /k /n Etiquetas"].forEach((c) => E.run(sess, c));
+  assert.equal(sess.state.testPage, false, "spread over five labels at 4 x 6 in");
+  ["zebra label Etiquetas 50x30", "rundll32 printui.dll,PrintUIEntry /k /n Etiquetas", "stocktienda print-label"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Poly room: restarting leaves the codec with no camera, and the camera cannot be selected until it is back on the codec", () => {
+  const sc = byId["poly-room-no-camera"];
+  const { sess, results } = play(sc, ["poly reboot G7500-CANTABRICO", "poly camera G7500-CANTABRICO primary eagleeye", "poly test-call G7500-CANTABRICO"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /no camera/);
+  ["onsite move-camera", "poly camera G7500-CANTABRICO primary eagleeye", "poly test-call G7500-CANTABRICO"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Lost phone: a password reset alone leaves the phone signed in, locate needs Lost Mode, and wiping first or retiring are remarks", () => {
+  const sc = byId["mdm-lost-phone"];
+  const { sess, results } = play(sc, ["Set-ADAccountPassword ribanez -Reset", "Get-MgAuditLogSignIn -Filter \"userPrincipalName eq 'ribanez@contoso.com'\" -Top 5", "intune device locate ZAR-IPH-0147"]);
+  assert.doesNotMatch(results[1].lines.map((l) => l.text).join(" "), /50173/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(sess.resolved, false);
+  const hasty = play(sc, ["Invoke-MgRetireDeviceManagementManagedDevice -ManagedDeviceId 71d0b9e4-2c6a-4e85-9f13-a64c8e2b5d07", "Clear-MgDeviceManagementManagedDevice -ManagedDeviceId 71d0b9e4-2c6a-4e85-9f13-a64c8e2b5d07",
+    "intune device locate ZAR-IPH-0147"]);
+  assert.equal(hasty.results[2].lines[0].kind, "err", "a wiped phone cannot be located");
+  const done = play(sc, sc.solution.concat(["Invoke-MgRetireDeviceManagementManagedDevice -ManagedDeviceId 71d0b9e4-2c6a-4e85-9f13-a64c8e2b5d07"])).sess;
+  assert.ok(E.verdict(done, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "cause-removed", minutes: 5 }).reasons.some((x) => /retired/.test(x)));
 });

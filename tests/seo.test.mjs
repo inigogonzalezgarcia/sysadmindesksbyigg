@@ -98,6 +98,7 @@ test("the counts in words follow the number of desks", () => {
   assert.ok(read("index.html").includes(`${cap(en)} first and second line tickets.`));
   assert.ok(read("tickets/index.html").includes(`${cap(es)} tickets de una mesa de soporte`));
   assert.ok(read("tickets/index.html").includes(`${cap(en)} first and second line help desk tickets`));
+  assert.ok(read("about.html").includes(`Ahora mismo hay ${es} tickets`) && read("about.html").includes(`There are ${en} tickets right now`));
   assert.equal(words(21, "es"), "veintiún"); assert.equal(words(24, "es"), "veinticuatro"); assert.equal(words(31, "es"), "treinta y un");
   assert.equal(words(24, "en"), "twenty-four"); assert.equal(words(30, "en"), "thirty");
 });

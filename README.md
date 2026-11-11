@@ -47,6 +47,13 @@ Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.
 | 33 | [Floor 3: the new laptops get no IP address](https://sysadmindesksbyigg.pages.dev/tickets/dhcp-scope-full) | Windows Server DHCP: a full scope, stale and BAD_ADDRESS leases, the lease duration, APIPA | 2 |
 | 34 | [Access denied to the Accounting folder](https://sysadmindesksbyigg.pages.dev/tickets/ntfs-access-denied) | File server: NTFS inheritance, icacls, AGDLP and effective access with accesschk | 2 |
 | 35 | [Power cut: the UPS warned nobody and a server went down hard](https://sysadmindesksbyigg.pages.dev/tickets/ups-no-alert) | APC UPS network card: e-mail and SNMP alerts, PowerChute Network Shutdown, testing without a real power cut | 2 |
+| 36 | [I have a new Android and the work apps never arrived](https://sysadmindesksbyigg.pages.dev/tickets/android-work-profile) | Intune / Android Enterprise: enrollment types, a corporate phone enrolled as personal, dynamic device groups, retire and enroll again | 1 |
+| 37 | [The director's iPhone gets no work mail](https://sysadmindesksbyigg.pages.dev/tickets/iphone-no-policies) | Intune / iPhone: device ownership, a dynamic group rule, Outlook and its configuration, corporate device identifiers | 1 |
+| 38 | [The new sales assistant cannot open the store app](https://sysadmindesksbyigg.pages.dev/tickets/retail-new-starter) | Active Directory: a store new starter copied from the wrong user, a group per store, least privilege, the onboarding process | 1 |
+| 39 | [AnyConnect will not connect from the hotel](https://sysadmindesksbyigg.pages.dev/tickets/anyconnect-hotel) | Cisco Secure Client on the road: a hotel's captive portal, network status, guiding the user by phone | 1 |
+| 40 | [The store's label printer prints strange symbols](https://sysadmindesksbyigg.pages.dev/tickets/store-label-printer) | Store printers: a Zebra label printer, a driver replaced after an update, the label size, testing with a real label | 1 |
+| 41 | [Poly room: they can hear us but not see us](https://sysadmindesksbyigg.pages.dev/tickets/poly-room-no-camera) | Meeting rooms: a Poly G7500 codec, a USB camera on the wrong device, the primary camera, a test call | 1 |
+| 42 | [I've lost my company phone at the plant](https://sysadmindesksbyigg.pages.dev/tickets/mdm-lost-phone) | Intune / lost device: Lost Mode, locate, revoke sessions, password, wipe or retire by ownership | 1 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 
@@ -165,7 +172,7 @@ Every page, the app footer, the sidebar and *My account* link to them and to **R
 
 ## SEO (v0.6.2)
 
-- **Static intro on the home page:** `index.html` ships real text inside `<main id="app">` (H1, how it works, the 35 tickets, links to the help pages and the guides), in Spanish and English. Search engines and visitors without JavaScript read it; `app.js` shows only the visitor's language and replaces it with the landing or the app on its first render.
+- **Static intro on the home page:** `index.html` ships real text inside `<main id="app">` (H1, how it works, the 42 tickets, links to the help pages and the guides), in Spanish and English. Search engines and visitors without JavaScript read it; `app.js` shows only the visitor's language and replaces it with the landing or the app on its first render.
 - **A public page per ticket:** `public/tickets/<desk id>.html` (served as `/tickets/<desk id>`) with the problem, the ticket as the requester tells it, level, topic and SLA, what you practise (never the cause or the fix), the related guide and a *Practise it free* button to `/?lang=xx#/desk/<id>`; `/tickets/` lists them all. The about page and the home intro link to them.
 - **Clean URLs:** `/about`, `/help`, `/faq`, `/terms`, `/privacy` and `/tickets/...` everywhere (Cloudflare Pages serves `about.html` for `/about`; `npm run dev` does the same). `sitemap.xml` lists them.
 - **Head:** every public page has its Spanish title and description (the default visible language; `doc.js` and `app.js` switch the title for English), a canonical URL, Open Graph (`assets/og.png`, 1200×630, drawn by `scripts/make-og.py`) and a Twitter card. JSON-LD: `WebApplication` on the home page and `FAQPage` on `/faq`, built from the visible Spanish questions. JSON-LD is the only inline `<script>` allowed: it is data and never runs, so the CSP does not block it.

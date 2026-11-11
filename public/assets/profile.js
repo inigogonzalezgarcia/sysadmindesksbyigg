@@ -11,11 +11,12 @@
   const t = Lib.t;
   // the area of every desk (each desk in exactly one area; the tests check every scenario is here)
   const DESK_AREA = {
-    "ad-lockout": "ad", "aadc-sync": "ad", "starter-desk-ready": "ad", "ad-deleted-user": "ad",
+    "ad-lockout": "ad", "aadc-sync": "ad", "starter-desk-ready": "ad", "ad-deleted-user": "ad", "retail-new-starter": "ad",
     "dns-intranet": "windows", "disk-full": "windows", "print-queue": "windows", "vpn-anyconnect": "windows",
     "win-temp-profile": "windows", "gpo-drive-missing": "windows", "dhcp-scope-full": "windows", "ntfs-access-denied": "windows",
-    "m365-licence": "m365", "shared-mailbox": "m365", "teams-no-audio": "m365", "room-no-display": "m365", "mailbox-full": "m365", "ca-blocked": "m365", "sso-saml": "m365",
-    "intune-bitlocker": "endpoint", "mecm-app": "endpoint", "epm-elevation": "endpoint",
+    "anyconnect-hotel": "windows", "store-label-printer": "windows",
+    "m365-licence": "m365", "shared-mailbox": "m365", "teams-no-audio": "m365", "room-no-display": "m365", "mailbox-full": "m365", "ca-blocked": "m365", "sso-saml": "m365", "poly-room-no-camera": "m365",
+    "intune-bitlocker": "endpoint", "mecm-app": "endpoint", "epm-elevation": "endpoint", "android-work-profile": "endpoint", "iphone-no-policies": "endpoint", "mdm-lost-phone": "endpoint",
     "rhel-var-full": "linux", "linux-sssd": "linux",
     "citrix-session": "vdi",
     "veeam-job": "data", "sql-log-full": "data",
@@ -27,10 +28,11 @@
   // the career path: each desk and each lab in exactly one step
   const CAREER = [
     { id: "l1", title: { en: "Service Desk L1", es: "Service desk N1" },
-      what: { en: "First line: accounts and passwords, a user's PC, printing, licences and mailboxes, and talking to the user.", es: "Primera línea: cuentas y contraseñas, el equipo de un usuario, impresión, licencias y buzones, y hablar con el usuario." },
-      areas: ["ad", "windows", "m365", "itsm"],
+      what: { en: "First line: accounts and passwords, a user's PC and phone, printing, meeting rooms, licences and mailboxes, and talking to the user.", es: "Primera línea: cuentas y contraseñas, el equipo y el móvil de un usuario, impresión, salas de reuniones, licencias y buzones, y hablar con el usuario." },
+      areas: ["ad", "windows", "m365", "endpoint", "itsm"],
       desks: ["ad-lockout", "dns-intranet", "disk-full", "print-queue", "vpn-anyconnect", "m365-licence", "shared-mailbox", "leaver-return",
-        "new-laptops-intake", "starter-desk-ready", "teams-no-audio", "room-no-display", "win-temp-profile", "gpo-drive-missing"], labs: ["ad", "windows"] },
+        "new-laptops-intake", "starter-desk-ready", "teams-no-audio", "room-no-display", "win-temp-profile", "gpo-drive-missing",
+        "android-work-profile", "iphone-no-policies", "retail-new-starter", "anyconnect-hotel", "store-label-printer", "poly-room-no-camera", "mdm-lost-phone"], labs: ["ad", "windows"] },
     { id: "l2", title: { en: "Service Desk L2 / Desktop", es: "Service desk N2 / puesto de trabajo" },
       what: { en: "Second line: device management, deployments, mailboxes at their limit, VDI, identity sync and hardware under warranty.", es: "Segunda línea: gestión de dispositivos, despliegues, buzones al límite, VDI, sincronización de identidades y hardware en garantía." },
       areas: ["endpoint", "vdi", "hardware", "m365"],
