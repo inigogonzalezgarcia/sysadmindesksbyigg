@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 42);
+  assert.equal(SCENARIOS.length, 56);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -585,4 +585,159 @@ test("Lost phone: a password reset alone leaves the phone signed in, locate need
   assert.equal(hasty.results[2].lines[0].kind, "err", "a wiped phone cannot be located");
   const done = play(sc, sc.solution.concat(["Invoke-MgRetireDeviceManagementManagedDevice -ManagedDeviceId 71d0b9e4-2c6a-4e85-9f13-a64c8e2b5d07"])).sess;
   assert.ok(E.verdict(done, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "cause-removed", minutes: 5 }).reasons.some((x) => /retired/.test(x)));
+});
+
+/* ---------- v0.13: career level 2 (batch 4) */
+test("Confluence runbook: renaming the server alone breaks at step 2, and the page needs an owner and a review date", () => {
+  const sc = byId["confluence-runbook-stale"];
+  const { sess, results } = play(sc, ["confluence replace 4471 FS02 FS-NEW01", "onsite follow 4471", "confluence replace 4471 D: E:", "onsite follow 4471"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /Cannot find path 'D:\\Archivo'/);
+  assert.equal(sess.state.tested, true);
+  assert.equal(sess.resolved, false, "no owner or review date yet");
+  ["confluence owner 4471 sgil", "confluence review 4471 01/06/2027"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Jamf: running the policy again finds nothing, and both the inventory and the criterion are needed", () => {
+  const sc = byId["jamf-policy-not-running"];
+  const { sess, results } = play(sc, ["sudo jamf policy", "sudo jamf recon", "sudo jamf policy"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /No policies were found/);
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /No policies were found/, "the criterion is still misspelt");
+  assert.equal(E.run(sess, "jamfpro group \"Marketing Macs\" --criterion \"Department is Mkt\"").lines[0].kind, "err");
+  ["jamfpro group \"Marketing Macs\" --criterion \"Department is Marketing\"", "sudo jamf policy", "ls /Applications"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("PDQ: redeploying fails the same way, and Invoke-GPUpdate cannot reach the PCs until the rules are there", () => {
+  const sc = byId["pdq-deploy-fails"];
+  const { sess, results } = play(sc, ["pdq redeploy 1187 --failed", "Invoke-GPUpdate -Computer WH-PC-03 -Force", "Test-Path \\\\WH-PC-03\\ADMIN$"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /12 Failed/);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(results[2].lines[0].text, "False");
+  sc.solution.slice(4).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("SharePoint: deleting the file leaves the folder open, and a deleted file cannot be shared until it is restored", () => {
+  const sc = byId["sharepoint-shared-everyone"];
+  const link = sc.solution[sc.solution.length - 1];
+  const { sess, results } = play(sc, ["Remove-PnPFile -ServerRelativeUrl \"/sites/Ventas/Shared Documents/Tarifas 2027/Tarifa-Norte-Distribucion-2027.xlsx\" -Recycle -Force", link]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /StatusCode : 200/);
+  sc.solution.slice(2, 4).forEach((c) => E.run(sess, c));
+  assert.equal(E.run(sess, sc.solution[4]).lines[0].kind, "err", "the file is in the recycle bin");
+  ["Restore-PnPRecycleBinItem -Identity Tarifa-Norte-Distribucion-2027.xlsx -Force", sc.solution[4], link].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.equal(E.run(E.createSession(sc, "en"), "Remove-PnPFolderSharingLink -Folder \"Shared Documents/Tarifas 2027\" -Identity c0e9a4b2-17d8-4a3f-b6e5-9f2a1c8d7b40").lines[0].kind, "err", "not the organisation link");
+});
+
+test("Kitchen printer: reinstalling the POS changes nothing, and either the current address or the old one with a restart works", () => {
+  const sc = byId["pos-kitchen-printer"];
+  const { sess, results } = play(sc, ["onsite reinstall-pos", "hiopos test-print COCINA"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /timed out/);
+  assert.equal(sess.resolved, false);
+  const old = play(sc, ["router dhcp reserve 64-EB-8C-3A-7F-21 192.168.10.50", "hiopos test-print COCINA", "onsite restart-printer", "hiopos test-print COCINA"]);
+  assert.match(old.results[1].lines.map((l) => l.text).join(" "), /timed out/, "the reservation needs the printer to renew");
+  assert.ok(old.sess.resolved);
+  const loose = play(sc, ["hiopos printer COCINA --ip 192.168.10.112", "hiopos test-print COCINA"]).sess;
+  assert.equal(loose.state.printed, true);
+  assert.equal(loose.resolved, false, "it prints, but nothing keeps that address");
+});
+
+test("CashDro: an adjustment by hand explains nothing, and the manual cash must be counted after both tickets are corrected", () => {
+  const sc = byId["cashdro-close-mismatch"];
+  const { sess, results } = play(sc, ["hiopos cash-count --adjust 57,90", "hiopos close", "onsite count-drawer", "hiopos cash-count --manual 57,90"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err", "the tickets still say CashDro");
+  sc.solution.slice(4).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /adjusted by hand/.test(x)));
+});
+
+test("AS400: a new profile is a remark, enabling alone leaves the forgotten password, and unknown commands answer like IBM i", () => {
+  const sc = byId["as400-user-disabled"];
+  const { sess, results } = play(sc, ["WRKACTJOB", "CRTUSRPRF USRPRF(IREY2) PASSWORD(Temp1) PWDEXP(*YES)", "CHGUSRPRF USRPRF(IREY) STATUS(*ENABLED)", "onsite signon"]);
+  assert.match(results[0].lines[0].text, /^CPD0030: Command WRKACTJOB in library \*LIBL not found\.$/);
+  assert.match(results[3].lines.map((l) => l.text).join(" "), /CPF1120/);
+  assert.equal(E.run(sess, "CHGUSRPRF USRPRF(IREY) PASSWORD(Temp2611X)").lines[0].kind, "err", "without PWDEXP(*YES) IT would know it");
+  ["CHGUSRPRF USRPRF(IREY) PASSWORD(Temp2611X) PWDEXP(*YES)", "onsite signon", "DSPUSRPRF USRPRF(IREY)"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /IREY2/.test(x)));
+});
+
+test("SAP: reinstalling SAP GUI and reprinting change nothing, IT cannot edit SPAD, and Basis must point at the right host", () => {
+  const sc = byId["sap-printer-sap"];
+  const { sess, results } = play(sc, ["onsite reinstall-sapgui", "sap sp01 reprint all", "sap spad ZALB --host PRT-SRV01", "basis change ZALB host PRT-SRV02"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /PRT-SRV00/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err");
+  ["basis change ZALB host PRT-SRV01", "sap sp01 reprint all", "Get-PrintJob -ComputerName PRT-SRV01 -PrinterName ALM-MFP-01"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Crestron room: restarting the panel or the console keeps it signed out, and the password must not expire again", () => {
+  const sc = byId["crestron-room-teams"];
+  const { sess, results } = play(sc, ["crestron reboot TSW-CONSEJO", "mtr reboot MTR-CONSEJO", "mtr signin MTR-CONSEJO", "Set-ADAccountPassword sala.consejo -Reset", "mtr signin MTR-CONSEJO", "mtr test-join MTR-CONSEJO"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /AADSTS50055/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(sess.resolved, false, "it would expire again in 90 days");
+  E.run(sess, "Set-ADUser sala.consejo -PasswordNeverExpires $true");
+  assert.ok(sess.resolved);
+});
+
+test("Store 4G: waiting and restarting the fibre box change nothing; the tills work once the backup is on", () => {
+  const sc = byId["store-4g-failover"];
+  const { sess } = play(sc, ["onsite wait", "onsite restart-ont", "onsite till-test", "onsite card-test", "rms failover RUT-T03 on", "onsite till-test", "onsite card-test"]);
+  assert.equal(sess.state.tillOk && sess.state.cardOk, true);
+  assert.equal(sess.resolved, false, "the fault with the operator is not open");
+  E.run(sess, "isp report FTTH-0094412");
+  assert.ok(sess.resolved);
+});
+
+test("Windows Update: SFC before DISM cannot repair, renaming needs the service stopped, and an unrepaired install is undone", () => {
+  const sc = byId["win-update-rollback"];
+  const { sess, results } = play(sc, ["sfc /scannow", "Rename-Item C:\\Windows\\SoftwareDistribution SoftwareDistribution.old", "Start-Process ms-settings:windowsupdate-action", "Restart-Computer"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /unable to fix/);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(sess.state.applied, false);
+  const paused = play(sc, [sc.desktop.apps[0].actions.find((a) => a.id === "pause").cmd]).sess;
+  assert.equal(E.desktop(paused).apps[0].actions.find((a) => a.id === "resume").enabled, true);
+  sc.solution.forEach((c) => E.run(paused, c));
+  assert.ok(paused.resolved);
+  assert.equal(paused.state.paused, false, "checking for updates resumes them");
+});
+
+test("Restaurant DHCP: renewing keeps landing on the second server, a fixed IP is a remark, and the AP mode leaves one DHCP server", () => {
+  const sc = byId["tplink-dhcp-clash"];
+  const { sess, results } = play(sc, ["ipconfig /renew", "New-NetIPAddress -InterfaceAlias Wi-Fi -IPAddress 192.168.10.150 -PrefixLength 24 -DefaultGateway 192.168.10.1", "onsite card-test", "tplink 192.168.0.1 dhcp off", "ipconfig /renew"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /192\.168\.0\.105/);
+  assert.equal(sess.state.cardOk, false);
+  assert.equal(results[4].lines[0].kind, "err", "DHCP is off on the adapter");
+  ["Set-NetIPInterface -InterfaceAlias Wi-Fi -Dhcp Enabled", "router dhcp leases", "onsite card-test"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  const left = play(sc, ["New-NetIPAddress -InterfaceAlias Wi-Fi -IPAddress 192.168.10.150 -PrefixLength 24 -DefaultGateway 192.168.10.1"].concat(sc.solution.slice(0, 4), ["router dhcp leases", "onsite card-test"])).sess;
+  assert.equal(left.resolved, false, "the fixed IP stays until DHCP is turned back on");
+});
+
+test("Squid: the provider's list cannot be edited, an exception needs a reload, and opening the category is a remark", () => {
+  const sc = byId["squid-blocked-site"];
+  const curl = sc.solution[6];
+  const { sess, results } = play(sc, ["sed -i '/transnorte/d' /etc/squid/lists/gambling/domains", "echo \".transnorte.example\" >> /etc/squid/lists/exceptions.txt", curl, "systemctl restart squid"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /403 Forbidden/);
+  assert.equal(results[3].lines[0].kind, "err");
+  ["sed -i 's/^http_access deny cat_gambling/#&/' /etc/squid/squid.conf", "squid -k reconfigure", curl, "grep transnorte /var/log/squid/access.log"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /gambling/.test(x)));
+});
+
+test("USB camera: blocking the HR users' OU changes nothing, the instance ID is refused, and value 1 must be kept", () => {
+  const sc = byId["usb-blocked-camera"];
+  const key = "HKLM\\Software\\Policies\\Microsoft\\Windows\\DeviceInstall\\Restrictions\\AllowDeviceIDs";
+  const { sess, results } = play(sc, ["Set-GPInheritance -Target \"OU=HR,OU=Users,DC=contoso,DC=local\" -IsBlocked Yes", "Invoke-GPUpdate -Computer PC-RRHH-004 -Force", "onsite replug", "onsite import-photos",
+    `Set-GPRegistryValue -Name "Workstations - USB control" -Key "${key}" -ValueName 2 -Type String -Value 'USB\\VID_04A9&PID_32E8\\8A2F0C113D4E'`]);
+  assert.equal(sess.state.installed, false);
+  assert.equal(results[4].lines[0].kind, "err");
+  const over = play(sc, [`Set-GPRegistryValue -Name "Workstations - USB control" -Key "${key}" -ValueName 1 -Type String -Value 'USB\\VID_04A9&PID_32E8'`].concat(sc.solution.slice(4))).sess;
+  assert.ok(over.resolved);
+  assert.ok(E.verdict(over, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /encrypted USB/.test(x)));
 });

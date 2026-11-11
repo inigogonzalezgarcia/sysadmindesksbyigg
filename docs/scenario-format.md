@@ -11,7 +11,7 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 | `career` | 0-10: the level of levels.js at which the ticket joins the queue (a direct link opens any ticket) |
 | `title` | `{en, es}` |
 | `guide` | Link to the related guide on the website (`https://inigogonzalezgarcia.github.io/guias/<slug>.html`) |
-| `machine` | `host`, `user`, `domain`, `shell` (`powershell` or `bash`, used for the "not recognised" message) and `prompt` |
+| `machine` | `host`, `user`, `domain`, `shell` (`powershell`, `bash` or `ibmi` for an IBM i command line, used for the "not recognised" message) and `prompt` |
 | `ticket` | `id`, `from`, `priority` (P1-P3), `subject` and `body` `{en, es}` |
 | `intro` | What the engineer has (access, servers, constraints) `{en, es}` |
 | `state` | The initial flags, e.g. `{ locked: true, taskDisabled: false }` |

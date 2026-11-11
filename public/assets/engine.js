@@ -115,6 +115,8 @@
   function notRecognised(cmd, sc) {
     const word = cmd.split(" ")[0];
     if ((sc.machine || {}).shell === "bash") return [word + ": command not found"];
+    // v0.13: an IBM i (AS400) 5250 command line
+    if ((sc.machine || {}).shell === "ibmi") return ["CPD0030: Command " + word.toUpperCase() + " in library *LIBL not found."];
     return [
       word + " : The term '" + word + "' is not recognized as the name of a cmdlet, function, script file, or operable program.",
       "Check the spelling of the name, or if a path was included, verify that the path is correct and try again.",

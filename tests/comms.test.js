@@ -66,6 +66,24 @@ const TEMPTING = {
   "store-label-printer": ["onsite new-roll", "onsite restart-printer"],
   "poly-room-no-camera": ["poly reboot G7500-CANTABRICO"],
   "mdm-lost-phone": ["Set-ADAccountPassword ribanez -Reset"],
+  // v0.13: career level 2 (only the server name changed; the policy run again; a redeploy; the file deleted and restored; the POS reinstalled;
+  // the cash count adjusted by hand; a new AS400 profile; SAP GUI reinstalled; the panel restarted; waiting for the operator; updates paused;
+  // a fixed IP, then DHCP back on; the proxy off in the browser; inheritance blocked on the HR users' OU)
+  "confluence-runbook-stale": ["confluence replace 4471 FS02 FS-NEW01"],
+  "jamf-policy-not-running": ["sudo jamf policy"],
+  "pdq-deploy-fails": ["pdq redeploy 1187 --failed"],
+  "sharepoint-shared-everyone": ["Remove-PnPFile -ServerRelativeUrl \"/sites/Ventas/Shared Documents/Tarifas 2027/Tarifa-Norte-Distribucion-2027.xlsx\" -Recycle -Force",
+    "Restore-PnPRecycleBinItem -Identity Tarifa-Norte-Distribucion-2027.xlsx -Force"],
+  "pos-kitchen-printer": ["onsite reinstall-pos"],
+  "cashdro-close-mismatch": ["hiopos cash-count --adjust 57,90"],
+  "as400-user-disabled": ["CRTUSRPRF USRPRF(IREY2) PASSWORD(Temp1) PWDEXP(*YES)"],
+  "sap-printer-sap": ["onsite reinstall-sapgui"],
+  "crestron-room-teams": ["crestron reboot TSW-CONSEJO"],
+  "store-4g-failover": ["onsite wait"],
+  "win-update-rollback": ["Set-ItemProperty -Path HKLM:\\SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings -Name PauseUpdatesExpiryTime -Value 2026-11-18T00:00:00Z"],
+  "tplink-dhcp-clash": ["New-NetIPAddress -InterfaceAlias Wi-Fi -IPAddress 192.168.10.150 -PrefixLength 24 -DefaultGateway 192.168.10.1", "Set-NetIPInterface -InterfaceAlias Wi-Fi -Dhcp Enabled"],
+  "squid-blocked-site": ["onsite no-proxy"],
+  "usb-blocked-camera": ["Set-GPInheritance -Target \"OU=HR,OU=Users,DC=contoso,DC=local\" -IsBlocked Yes"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

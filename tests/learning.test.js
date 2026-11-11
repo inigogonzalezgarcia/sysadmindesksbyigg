@@ -85,7 +85,11 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   "UPS-RACKB", "mail01", "10.20.99.21", "smtp-relay", "set-nmc",
   // v0.12
   "personally-owned", "androidForWork", "GD-Android-COPE", "Contoso COPE", "GD-iOS-Corporate", "deviceOwnership", "ManagedDeviceOwnerType", "amedina", "GG-Store-T03", "copied from",
-  "captive", "cautivo", "Hotel-Atlantico", "accept-portal", "Generic / Text Only", "ZDesigner", "prnge001", "PC-SALA-CANT", "move-camera", "EagleEye", "ZAR-IPH-0147", "ribanez"];
+  "captive", "cautivo", "Hotel-Atlantico", "accept-portal", "Generic / Text Only", "ZDesigner", "prnge001", "PC-SALA-CANT", "move-camera", "EagleEye", "ZAR-IPH-0147", "ribanez",
+  // v0.13
+  "FS02", "FS-NEW01", "4471", "Markting", "jamf recon", "OU=Warehouse", "Remote admin firewall", "AnonymousView", "6b1d0c7e", "Tarifas 2027", "64-EB-8C-3A-7F-21", "192.168.10.112",
+  "T07-04412", "EFECTIVO MANUAL", "QMAXSIGN", "CPF1393", "PRT-SRV00", "ZALB", "AADSTS50055", "sala.consejo", "mob1s1a1", "FTTH-0094412", "0x80073712", "KB5070312",
+  "192.168.0.1", "Archer C6", "transnorte", "exceptions.txt", "VID_04A9", "AllowDeviceIDs"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();
@@ -248,7 +252,7 @@ test("profile: progress per area from the results, the activity and the labs", (
   const ad = agg.areas.find((a) => a.id === "ad");
   assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [5, 2, 80, 4, 5, 5, 55]);   // 3/4 × 2/5 + 1/4 × 5/5
   const net = agg.areas.find((a) => a.id === "network");
-  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [3, 1, 100, null, 25]);   // 1/3 × 75
+  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [5, 1, 100, null, 15]);   // 1/5 × 75
   const vdi = agg.areas.find((a) => a.id === "vdi");
   assert.equal(vdi.labTotal, 0); assert.equal(vdi.skill, 0);
   assert.equal(agg.areas.find((a) => a.id === "itsm").skill, 80);   // notes to the user 4/5

@@ -252,6 +252,20 @@ export const RELATED = {
   "store-label-printer": ["print-queue", "retail-new-starter", "new-laptops-intake"],
   "poly-room-no-camera": ["room-no-display", "teams-no-audio", "anyconnect-hotel"],
   "mdm-lost-phone": ["iphone-no-policies", "android-work-profile", "ca-blocked"],
+  "confluence-runbook-stale": ["gpo-drive-missing", "ntfs-access-denied", "veeam-job"],
+  "jamf-policy-not-running": ["intune-bitlocker", "mecm-app", "iphone-no-policies"],
+  "pdq-deploy-fails": ["mecm-app", "gpo-drive-missing", "net-wrong-vlan"],
+  "sharepoint-shared-everyone": ["shared-mailbox", "ntfs-access-denied", "ca-blocked"],
+  "pos-kitchen-printer": ["store-label-printer", "tplink-dhcp-clash", "cashdro-close-mismatch"],
+  "cashdro-close-mismatch": ["pos-kitchen-printer", "retail-new-starter", "store-4g-failover"],
+  "as400-user-disabled": ["ad-lockout", "starter-desk-ready", "sap-printer-sap"],
+  "sap-printer-sap": ["print-queue", "store-label-printer", "as400-user-disabled"],
+  "crestron-room-teams": ["room-no-display", "poly-room-no-camera", "teams-no-audio"],
+  "store-4g-failover": ["net-fortigate-branch", "tplink-dhcp-clash", "anyconnect-hotel"],
+  "win-update-rollback": ["disk-full", "win-temp-profile", "intune-bitlocker"],
+  "tplink-dhcp-clash": ["dhcp-scope-full", "pos-kitchen-printer", "store-4g-failover"],
+  "squid-blocked-site": ["rhel-var-full", "dns-intranet", "linux-sssd"],
+  "usb-blocked-camera": ["gpo-drive-missing", "epm-elevation", "intune-bitlocker"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {

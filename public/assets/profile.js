@@ -14,14 +14,14 @@
     "ad-lockout": "ad", "aadc-sync": "ad", "starter-desk-ready": "ad", "ad-deleted-user": "ad", "retail-new-starter": "ad",
     "dns-intranet": "windows", "disk-full": "windows", "print-queue": "windows", "vpn-anyconnect": "windows",
     "win-temp-profile": "windows", "gpo-drive-missing": "windows", "dhcp-scope-full": "windows", "ntfs-access-denied": "windows",
-    "anyconnect-hotel": "windows", "store-label-printer": "windows",
-    "m365-licence": "m365", "shared-mailbox": "m365", "teams-no-audio": "m365", "room-no-display": "m365", "mailbox-full": "m365", "ca-blocked": "m365", "sso-saml": "m365", "poly-room-no-camera": "m365",
-    "intune-bitlocker": "endpoint", "mecm-app": "endpoint", "epm-elevation": "endpoint", "android-work-profile": "endpoint", "iphone-no-policies": "endpoint", "mdm-lost-phone": "endpoint",
-    "rhel-var-full": "linux", "linux-sssd": "linux",
+    "anyconnect-hotel": "windows", "store-label-printer": "windows", "confluence-runbook-stale": "windows", "sap-printer-sap": "windows", "win-update-rollback": "windows", "usb-blocked-camera": "windows",
+    "m365-licence": "m365", "shared-mailbox": "m365", "teams-no-audio": "m365", "room-no-display": "m365", "mailbox-full": "m365", "ca-blocked": "m365", "sso-saml": "m365", "poly-room-no-camera": "m365", "sharepoint-shared-everyone": "m365", "crestron-room-teams": "m365",
+    "intune-bitlocker": "endpoint", "mecm-app": "endpoint", "epm-elevation": "endpoint", "android-work-profile": "endpoint", "iphone-no-policies": "endpoint", "mdm-lost-phone": "endpoint", "jamf-policy-not-running": "endpoint", "pdq-deploy-fails": "endpoint",
+    "rhel-var-full": "linux", "linux-sssd": "linux", "squid-blocked-site": "linux",
     "citrix-session": "vdi",
-    "veeam-job": "data", "sql-log-full": "data",
-    "net-err-disabled": "network", "net-wrong-vlan": "network", "net-fortigate-branch": "network",
-    "laptop-rma": "hardware", "net-psu-rma": "hardware", "leaver-return": "hardware", "new-laptops-intake": "hardware", "ups-no-alert": "hardware",
+    "veeam-job": "data", "sql-log-full": "data", "as400-user-disabled": "data",
+    "net-err-disabled": "network", "net-wrong-vlan": "network", "net-fortigate-branch": "network", "store-4g-failover": "network", "tplink-dhcp-clash": "network",
+    "laptop-rma": "hardware", "net-psu-rma": "hardware", "leaver-return": "hardware", "new-laptops-intake": "hardware", "ups-no-alert": "hardware", "pos-kitchen-printer": "hardware", "cashdro-close-mismatch": "hardware",
   };
   const LAB_AREA = Object.fromEntries(Lb.LABS.map((l) => [l.id, l.area]));
 
@@ -36,15 +36,17 @@
     { id: "l2", title: { en: "Service Desk L2 / Desktop", es: "Service desk N2 / puesto de trabajo" },
       what: { en: "Second line: device management, deployments, mailboxes at their limit, VDI, identity sync and hardware under warranty.", es: "Segunda línea: gestión de dispositivos, despliegues, buzones al límite, VDI, sincronización de identidades y hardware en garantía." },
       areas: ["endpoint", "vdi", "hardware", "m365"],
-      desks: ["mailbox-full", "intune-bitlocker", "mecm-app", "citrix-session", "laptop-rma", "aadc-sync", "epm-elevation", "ad-deleted-user"], labs: ["m365"] },
+      desks: ["mailbox-full", "intune-bitlocker", "mecm-app", "citrix-session", "laptop-rma", "aadc-sync", "epm-elevation", "ad-deleted-user",
+        "confluence-runbook-stale", "jamf-policy-not-running", "pdq-deploy-fails", "sharepoint-shared-everyone", "pos-kitchen-printer", "cashdro-close-mismatch",
+        "as400-user-disabled", "sap-printer-sap", "crestron-room-teams", "win-update-rollback", "usb-blocked-camera"], labs: ["m365"] },
     { id: "sys", title: { en: "Sysadmin / Infrastructure", es: "Sysadmin / Infraestructura" },
       what: { en: "Servers: Windows Server roles (DHCP, file shares), Linux, backups, databases and the data room, where a change affects many users at once.", es: "Servidores: roles de Windows Server (DHCP, carpetas compartidas), Linux, copias, bases de datos y la sala técnica, donde un cambio afecta a muchos usuarios a la vez." },
       areas: ["windows", "linux", "data", "hardware"],
-      desks: ["rhel-var-full", "linux-sssd", "veeam-job", "sql-log-full", "dhcp-scope-full", "ntfs-access-denied", "ups-no-alert"], labs: ["linux"] },
+      desks: ["rhel-var-full", "linux-sssd", "veeam-job", "sql-log-full", "dhcp-scope-full", "ntfs-access-denied", "ups-no-alert", "squid-blocked-site"], labs: ["linux"] },
     { id: "netcloud", title: { en: "Network / Cloud", es: "Redes / Cloud" },
       what: { en: "Switches, the firewall and the branch, and cloud identity: Conditional Access and single sign-on.", es: "Switches, el cortafuegos y la sucursal, e identidad en la nube: acceso condicional e inicio de sesión único." },
       areas: ["network", "m365"],
-      desks: ["net-err-disabled", "net-wrong-vlan", "net-fortigate-branch", "net-psu-rma", "ca-blocked", "sso-saml"], labs: ["network"] },
+      desks: ["net-err-disabled", "net-wrong-vlan", "net-fortigate-branch", "net-psu-rma", "ca-blocked", "sso-saml", "store-4g-failover", "tplink-dhcp-clash"], labs: ["network"] },
   ];
 
   const avg = (xs) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);
