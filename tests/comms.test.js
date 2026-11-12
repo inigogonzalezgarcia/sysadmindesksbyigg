@@ -84,6 +84,45 @@ const TEMPTING = {
   "tplink-dhcp-clash": ["New-NetIPAddress -InterfaceAlias Wi-Fi -IPAddress 192.168.10.150 -PrefixLength 24 -DefaultGateway 192.168.10.1", "Set-NetIPInterface -InterfaceAlias Wi-Fi -Dhcp Enabled"],
   "squid-blocked-site": ["onsite no-proxy"],
   "usb-blocked-camera": ["Set-GPInheritance -Target \"OU=HR,OU=Users,DC=contoso,DC=local\" -IsBlocked Yes"],
+  // v0.14: career level 3, part 1 (the app's files deleted; a September copy from a Recycle Bin; the empty rows removed; the VM rebuilt; the spooler
+  // restarted; the break-glass account; the node muted; the charges keyed in by hand; the TVs restarted; new tapes ordered; the test recorded as passed)
+  "bash-disk-check": ["rm -rf /srv/docs-export/*"],
+  "git-script-overwritten": ["onsite restore-recyclebin"],
+  "ps-inventory-csv": ["Import-Csv C:\\Reports\\inventory.csv | Where-Object { $_.Serial } | Export-Csv C:\\Reports\\inventory-clean.csv -NoTypeInformation"],
+  "ubuntu-ssh-locked": ["onsite rebuild"],
+  "winserver-role-eventlog": ["Restart-Service Spooler"],
+  "graph-report-mfa": ["Get-Secret -Name GA-BreakGlass -Vault IT"],
+  "solarwinds-alert-storm": ["orion node mute SW-ALM-01"],
+  "pms-room-charge": ["pms post-charge"],
+  "iptv-no-channels": ["onsite reboot-tvs"],
+  "tape-backup-unreadable": ["onsite order-tapes"],
+  "veeam-restore-test": ["testlog mark FS01 passed"],
+  // v0.14: career level 3, part 2 (the generic travel group; a permanent role; deleting the record; Windows Update by hand; resetting the iDRAC;
+  // unplugging from the UPS; someone watching the screen; a new Wi-Fi password; lastLogon from one DC; parts before the diagnosis; deleting index.html)
+  "ca-trading-block": ["Connect-MgGraph", "New-MgGroupMember -GroupId CA-Exception-Travel -DirectoryObjectId rlarrea@contoso.com"],
+  "pim-role-expired": ["New-MgRoleManagementDirectoryRoleAssignment -RoleDefinitionId 29232cdf-9323-42fd-ade2-1d097af3e4de -PrincipalId 5a1e93c7-0d4b-4f62-a8e1-7c3b2d9f6e05 -DirectoryScopeId '/'"],
+  "device42-rack-mismatch": ["d42 delete FS-SCAN01"],
+  "intune-ring-stuck": ["onsite windows-update"],
+  "idrac-no-alerts": ["racadm racreset"],
+  "ups-runtime-low": ["onsite unplug"],
+  "zabbix-pos-down": ["onsite watch-screen"],
+  "omada-guest-wifi": ["omada wlan set Ribera-Guests --password Ribera-2026-Nov"],
+  "ps-ad-weekly-report": ["(Get-Content .\\Weekly-ADReport.ps1) -replace 'lastLogonTimestamp', 'lastLogon' | Set-Content .\\Weekly-ADReport.ps1", ".\\Weekly-ADReport.ps1"],
+  "server-psu-rma": ["onsite order-parts", "onsite fit-psu"],
+  "apache-default-page": ["sudo rm /var/www/html/index.html"],
+  // v0.14: career level 3, part 3 (the host out of its group; a free trial; installed by hand; the voice VLAN untagged; the SSID opened; the poller cache
+  // rebuilt; notifications off; NLA off; the firewall off; Chrome reinstalled; mounted by hand)
+  "zabbix-agent-unreachable": ["zbx host groups DOCS-LNX01 --remove \"Linux servers\""],
+  "hotspot-vouchers": ["/ip hotspot profile set hsprof-guests login-by=http-chap,trial"],
+  "gpo-msi-not-installed": ["onsite install-by-hand"],
+  "aruba-voice-vlan": ["configure", "vlan 30 untagged 12"],
+  "wap-guest-portal": ["cbw wlan set Contoso-Visitas --security open"],
+  "cacti-graph-flat": ["sudo -u www-data php /usr/share/cacti/cli/rebuild_poller_cache.php"],
+  "nagios-flapping": ["printf \"[%lu] DISABLE_HOST_NOTIFICATIONS;TPV-T07-01\\n\" $(date +%s) > /usr/local/nagios/var/rw/nagios.cmd"],
+  "rdp-nla-denied": ["Invoke-Command -ComputerName PRT-SRV01 { Set-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp' -Name UserAuthentication -Value 0 }"],
+  "firewall-gpo-app": ["Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False"],
+  "chrome-extension-gpo": ["onsite reinstall-chrome"],
+  "ubuntu-nfs-mount": ["sudo mount -a"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

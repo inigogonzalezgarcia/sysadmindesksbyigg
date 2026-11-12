@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 56);
+  assert.equal(SCENARIOS.length, 89);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -740,4 +740,380 @@ test("USB camera: blocking the HR users' OU changes nothing, the instance ID is 
   const over = play(sc, [`Set-GPRegistryValue -Name "Workstations - USB control" -Key "${key}" -ValueName 1 -Type String -Value 'USB\\VID_04A9&PID_32E8'`].concat(sc.solution.slice(4))).sess;
   assert.ok(over.resolved);
   assert.ok(E.verdict(over, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /encrypted USB/.test(x)));
+});
+
+/* ---------- v0.14: career level 3, part 1 */
+test("Disk check: cleaning up hides the gap, the fixed script reads df's own Use%, and deleting app files is a remark", () => {
+  const sc = byId["bash-disk-check"];
+  const { sess, results } = play(sc, ["/opt/scripts/check-disk.sh", "rm -rf /srv/docs-export/*", "/opt/scripts/check-disk.sh", "df -h /srv"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /OK \/srv 86%/);
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /OK \/srv 63%/);
+  assert.match(results[3].lines.map((l) => l.text).join(" "), /68% \/srv/);
+  assert.equal(sess.resolved, false);
+  sc.solution.slice(4).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /owner/.test(x)));
+});
+
+test("Git: the Recycle Bin copy changes nothing, the stash cannot be dropped, and a commit needs the change staged", () => {
+  const sc = byId["git-script-overwritten"];
+  const { sess, results } = play(sc, ["onsite restore-recyclebin", "git stash drop", "git stash pop", "git commit -m \"Starter: department group\"", "git push"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err", "nothing staged");
+  assert.match(results[4].lines[0].text, /Everything up-to-date/);
+  ["git commit -am \"Starter: department group\"", "git push", "./New-StarterAccount.ps1 -Sam x -Department HR -WhatIf"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+const TEMPTING_INV = "Import-Csv C:\\Reports\\inventory.csv | Where-Object { $_.Serial } | Export-Csv C:\\Reports\\inventory-clean.csv -NoTypeInformation";
+test("Inventory: removing the empty rows is a remark, the errors only reach the catch with -ErrorAction Stop, and the script must run again", () => {
+  const sc = byId["ps-inventory-csv"];
+  const { sess } = play(sc, [TEMPTING_INV, sc.solution[4], sc.solution[6]]);
+  assert.equal(sess.state.verified, false, "the CSV is the old one until the inventory runs again");
+  ["Start-ScheduledTask -TaskName 'Monthly inventory'", sc.solution[6]].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /16 computers/.test(x)));
+});
+
+test("Ubuntu SSH: a rebuild repeats the lockout, the firewall cannot stay off, and SSH open to anyone is a remark", () => {
+  const sc = byId["ubuntu-ssh-locked"];
+  const { sess, results } = play(sc, ["onsite rebuild", "onsite ssh", "ufw allow 22/tcp", "sudo ufw disable", "onsite ssh", "sudo tail /var/log/auth.log"]);
+  assert.match(results[1].lines[0].text, /Connection timed out/);
+  assert.equal(results[2].lines[0].kind, "err", "not root");
+  assert.equal(sess.resolved, false, "the firewall is off");
+  ["sudo ufw allow ssh", "sudo ufw enable", "onsite ssh", "sudo tail /var/log/auth.log"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /any address/.test(x)));
+});
+
+test("Print role: a restart lasts until the batch is relaunched, and the queues cannot be changed with the spooler down", () => {
+  const sc = byId["winserver-role-eventlog"];
+  const set = sc.solution[6];
+  const { sess, results } = play(sc, [set, "Get-Printer", "Restart-Service Spooler", "onsite reprint", "Get-Service Spooler"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(results[4].lines.map((l) => l.text).join(" "), /Stopped/);
+  [ "Start-Service Spooler", set, "onsite reprint", "Get-Service Spooler"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Graph MFA: the break-glass account is refused and a remark, and asking for write access is a remark too", () => {
+  const sc = byId["graph-report-mfa"];
+  const { sess, results } = play(sc, ["Get-Secret -Name GA-BreakGlass -Vault IT", "Connect-MgGraph -Scopes UserAuthenticationMethod.ReadWrite.All", ".\\Get-MfaReport.ps1", sc.solution[5]]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.ok(sess.resolved);
+  const reasons = E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons;
+  assert.ok(reasons.some((x) => /break-glass/.test(x)) && reasons.some((x) => /Write access/.test(x)));
+});
+
+test("SolarWinds: muting the node is a remark, the wait must be sensible, and both changes are needed for the replay", () => {
+  const sc = byId["solarwinds-alert-storm"];
+  const { sess, results } = play(sc, ["orion node mute SW-ALM-01", "orion alert edit \"High interface utilisation\" --sustain 60m", "orion dependency add --parent SW-ALM-01 --child RTR-ALM-01"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.slice(4).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /muted/.test(x)));
+});
+
+test("PMS: the service will not start on the old address, and charges keyed by hand get posted twice", () => {
+  const sc = byId["pms-room-charge"];
+  const { sess, results } = play(sc, ["pms post-charge", "Start-Service PmsPosIfc", "hiopos pms resend"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /not reachable/);
+  sc.solution.slice(5).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /twice/.test(x)));
+});
+
+test("IPTV: restarting the TVs changes nothing, IGMP goes on the VLAN, an unsaved change is not done, and unknown commands answer like ArubaOS", () => {
+  const sc = byId["iptv-no-channels"];
+  const { sess, results } = play(sc, ["onsite reboot-tvs", "onsite tv 412", "show igmp-snooping", "configure", "ip igmp", "vlan 40 ip igmp", "onsite tv 412", "show interfaces port-utilization"]);
+  assert.equal(results[2].lines[0].text, "Invalid input: show");
+  assert.equal(results[4].lines[0].kind, "err", "IGMP is per VLAN");
+  assert.equal(sess.resolved, false, "not saved");
+  E.run(sess, "write memory");
+  assert.ok(sess.resolved);
+});
+
+test("Tape: new tapes do not read the old one, the drive must be cleaned with the tape out, and the restore goes next to the current file", () => {
+  const sc = byId["tape-backup-unreadable"];
+  const { sess, results } = play(sc, ["onsite order-tapes", "mtx -f /dev/sg3 load 24 0", "tar -tvf /dev/nst0", "tar -xvf /dev/nst0 -C /tmp/restore srv/finance/Nominas/Nominas-octubre-2026.xlsx"]);
+  assert.equal(results[1].lines[0].kind, "err", "the drive is full");
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.slice(5).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Veeam restore test: recording it as passed early is a remark, and the disk cannot change while FS01 runs", () => {
+  const sc = byId["veeam-restore-test"];
+  const { sess, results } = play(sc, ["testlog mark FS01 passed", sc.solution[4], "Get-VBRJob -Name 'FS01 Nightly' | Start-VBRJob", sc.solution[7]]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(results[3].lines.map((l) => l.text).join(" "), /Failed/);
+  ["Stop-VM FS01"].concat(sc.solution.slice(4)).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  const reasons = E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons;
+  assert.ok(reasons.some((x) => /before it passed/.test(x)) && reasons.some((x) => /without shutting/.test(x)));
+});
+
+/* ---------- v0.14: career level 3, part 2 */
+const txt = (r) => r.lines.map((l) => l.text).join(" ");
+test("Trading floor CA: the generic travel group changes nothing, excluding him from everything is a remark, and the fix needs a change number", () => {
+  const sc = byId["ca-trading-block"];
+  const { sess, results } = play(sc, ["Connect-MgGraph", "New-MgGroupMember -GroupId CA-Exception-Travel -DirectoryObjectId rlarrea@contoso.com", "onsite retry",
+    ".\\Set-CaExclusion.ps1 -Policy CA050 -Group CA-Trading-Travel", ".\\Set-CaExclusion.ps1 -Policy All -User rlarrea -Change CHG-4441", "onsite retry", sc.solution[1]]);
+  assert.match(txt(results[2]), /again/);
+  assert.equal(results[3].lines[0].kind, "err", "no change number");
+  assert.match(results[6].lines.map((l) => l.text).join(" "), /CA001 - Require MFA for all users\s+notApplied/);
+  assert.equal(sess.resolved, false, "outside every policy");
+  [".\\Set-CaExclusion.ps1 -Policy All -User rlarrea -Change CHG-4441 -Remove"].concat(sc.solution.slice(6)).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /every policy/.test(x)));
+});
+
+test("PIM: a permanent role is refused and a remark, too long an activation is refused, and the old Exchange session keeps failing", () => {
+  const sc = byId["pim-role-expired"];
+  const act = sc.solution[5];
+  const { sess, results } = play(sc, ["New-MgRoleManagementDirectoryRoleAssignment -RoleDefinitionId 29232cdf-9323-42fd-ade2-1d097af3e4de -PrincipalId x -DirectoryScopeId '/'",
+    act.replace("PT1H", "PT8H"), act, ".\\Convert-LeaverMailboxes.ps1"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(results[1].lines[0].text, /ExpirationRule/);
+  assert.equal(results[3].lines[0].kind, "err", "the session was opened before the role was active");
+  sc.solution.slice(6).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /permanent/.test(x)));
+});
+
+test("Device42: a delete asks first and is then refused, another position is refused, and the audit needs position and power", () => {
+  const sc = byId["device42-rack-mismatch"];
+  const { sess, results } = play(sc, ["d42 delete FS-SCAN01", "d42 delete FS-SCAN01 --confirm", "d42 move FS-SCAN01 --rack B --u 12", "d42 move FS-SCAN01 --rack B --u 20", "room audit"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /--confirm/);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(results[4].lines.map((l) => l.text).join(" "), /from PDU-A1\/7 in Device42/, "moved, the power still to correct");
+  sc.solution.slice(7).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /Deleting/.test(x)));
+});
+
+test("Intune ring: Windows Update by hand is not the ring, and a sync before the group changes nothing", () => {
+  const sc = byId["intune-ring-stuck"];
+  const reg = sc.solution[8];
+  const { sess, results } = play(sc, ["onsite windows-update", "Connect-MgGraph", "Sync-MgDeviceManagementManagedDevice -ManagedDeviceId x", reg]);
+  assert.equal(sess.state.updated, false);
+  assert.match(txt(results[3]), /No update policy/);
+  sc.solution.slice(1).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("iDRAC alerts: a reset keeps the settings, the test email needs SMTP and an address, and the test event needs every destination", () => {
+  const sc = byId["idrac-no-alerts"];
+  const { sess, results } = play(sc, ["racadm racreset", "racadm get iDRAC.IPMILan.AlertEnable", "racadm testemail -i 1", "racadm eventfilters test -i PSU0003", "racadm foo"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /AlertEnable=Disabled/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(sess.state.eventTested, false);
+  assert.equal(results[4].lines[0].text, "ERROR: Invalid subcommand specified.", "unknown commands answer like the racadm>> prompt");
+  sc.solution.slice(5, 11).forEach((c) => E.run(sess, c));
+  E.run(sess, "racadm eventfilters test -i PSU0003");
+  assert.ok(sess.resolved);
+});
+
+test("UPS runtime: unplugging leaves 9 minutes, an old battery cannot be calibrated, and the battery alone gives 11", () => {
+  const sc = byId["ups-runtime-low"];
+  const { sess, results } = play(sc, ["onsite unplug", "ups status UPS-HTL-01", "ups calibrate UPS-HTL-01", "onsite fit-battery", "ups replace-battery UPS-HTL-01", "onsite fit-battery", "onsite move-to-group1", "ups calibrate UPS-HTL-01"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /9 min/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(txt(results[3]), /no battery kit/);
+  assert.match(results[7].lines.map((l) => l.text).join(" "), /11 min/);
+  assert.equal(sess.resolved, false, "group 1 does not shed yet");
+  ["ups outlet-group UPS-HTL-01 --group 1 --shed-after 2m", "ups calibrate UPS-HTL-01"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Zabbix: watching the screen is a remark, a Warning trigger is never sent, and the test needs the template trigger", () => {
+  const sc = byId["zabbix-pos-down"];
+  const { sess, results } = play(sc, ["onsite watch-screen", "zbx trigger create --template \"Contoso Restaurant ICMP\" --name x --expression \"max(/Contoso Restaurant ICMP/icmpping,#3)=0\" --severity warning",
+    "onsite pull-cable", "zbx problems --host TPV-RIB-01"]);
+  assert.match(txt(results[1]), /High and above/);
+  assert.match(txt(results[2]), /silent/);
+  assert.match(results[3].lines.map((l) => l.text).join(" "), /No problems/);
+  sc.solution.slice(6).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /watch/.test(x)));
+});
+
+test("Omada: a new password is a remark, and the VLAN alone still lets guests reach the PMS", () => {
+  const sc = byId["omada-guest-wifi"];
+  const { sess, results } = play(sc, ["omada wlan set Ribera-Guests --password Nuevo-2026", "onsite guest-test", "omada wlan set Ribera-Guests --vlan 63", "onsite guest-test"]);
+  assert.match(results[1].lines.map((l) => l.text).join(" "), /10\.20\.61\.163/);
+  assert.match(results[3].lines.map((l) => l.text).join(" "), /PMS login page/);
+  assert.equal(sess.state.tested, false);
+  ["omada wlan set Ribera-Guests --guest-network on", "onsite guest-test", "omada clients --ssid Ribera-Guests"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /password/.test(x)));
+});
+
+test("AD report: lastLogon lists active people and is a remark, and LastLogonDate without the property lists everyone", () => {
+  const sc = byId["ps-ad-weekly-report"];
+  const { sess, results } = play(sc, [sc.solution[1], "(Get-Content .\\Weekly-ADReport.ps1) -replace 'lastLogonTimestamp', 'lastLogon' | Set-Content .\\Weekly-ADReport.ps1", sc.solution[1],
+    "(Get-Content .\\Weekly-ADReport.ps1) -replace '\\$_\\.lastLogonTimestamp', '$_.LastLogonDate' | Set-Content .\\Weekly-ADReport.ps1", sc.solution[1]]);
+  assert.match(results[0].lines[0].text, /Could not compare/);
+  assert.match(results[2].lines.map((l) => l.text).join(" "), /Inactive \(90 days\)\s+: 41/);
+  assert.match(results[4].lines.map((l) => l.text).join(" "), /Inactive \(90 days\)\s+: 312/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /lastLogon/.test(x)));
+});
+
+test("Server RMA: Dell asks for the collection, the reseller's PSU stays amber, and no disk can be swapped before the case", () => {
+  const sc = byId["server-psu-rma"];
+  const { sess, results } = play(sc, ["dell case open --tag 7XKQ2M3", "racadm supportassist uploadlastcollection", "onsite order-parts", "onsite fit-psu", "racadm getsensorinfo", "onsite swap-disk"]);
+  assert.match(results[0].lines.map((l) => l.text).join(" "), /asks for a SupportAssist collection/);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(results[4].lines.map((l) => l.text).join(" "), /Input lost/);
+  assert.match(txt(results[5]), /no replacement/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "hardware", minutes: 5 }).reasons.some((x) => /before the diagnosis/.test(x)));
+});
+
+test("Apache: deleting the default page shows 'Index of /' and is a remark, and enabling the site needs a reload", () => {
+  const sc = byId["apache-default-page"];
+  const { sess, results } = play(sc, ["rm /var/www/html/index.html", "sudo rm /var/www/html/index.html", "curl -s http://reservas.contoso.local | grep -i '<title>'", "sudo a2ensite reservas", "onsite open"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(results[2].lines[0].text, /Index of/);
+  assert.match(txt(results[4]), /Index of/);
+  ["sudo systemctl reload apache2", "curl -s http://reservas.contoso.local | grep -i '<title>'", "onsite open"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: "config-fixed", minutes: 5 }).reasons.some((x) => /index\.html/.test(x)));
+});
+
+/* ---------- v0.14: career level 3, part 3 */
+const verdictOf = (sc, sess) => E.verdict(sess, E.checkNote(sc, sc.sampleNote.en, "en"), { code: sc.codes[0], minutes: 5 });
+
+test("Zabbix agent: the agent runs but rejects the new server, a fix needs a restart, and taking the host out of its group is a remark", () => {
+  const sc = byId["zabbix-agent-unreachable"];
+  const { sess, results } = play(sc, ["zbx host groups DOCS-LNX01 --remove \"Linux servers\"", "systemctl status zabbix-agent2", "tail /var/log/zabbix/zabbix_agent2.log", sc.solution[3], sc.solution[5], "zbx host DOCS-LNX01"]);
+  assert.match(txt(results[1]), /active \(running\)/);
+  assert.equal(results[2].lines[0].kind, "err", "the log needs sudo");
+  assert.match(txt(results[3]), /rejected, allowed hosts: "10\.20\.9\.60"/);
+  assert.match(txt(results[5]), /unavailable/, "not until the agent is restarted");
+  sc.solution.slice(6).forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /Linux servers/.test(x)));
+});
+
+test("Hotspot: the second device is refused, a free trial is a remark, and unknown commands answer like RouterOS", () => {
+  const sc = byId["hotspot-vouchers"];
+  const { sess, results } = play(sc, ["/ip hotspot profile set hsprof-guests login-by=http-chap,trial", "onsite voucher 214", "/ip hotspot user profile set guest-2026 shared-users=1", "onsite voucher 214", "foo"]);
+  assert.match(txt(results[1]), /no more sessions/);
+  assert.match(txt(results[3]), /no more sessions/);
+  assert.equal(results[4].lines[0].text, "bad command name foo (line 1 column 1)");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /trial/.test(x)));
+});
+
+test("GPO MSI: a restart before the permissions changes nothing, and installing by hand is a remark", () => {
+  const sc = byId["gpo-msi-not-installed"];
+  const { sess, results } = play(sc, ["onsite restart", sc.solution[1], "onsite install-by-hand", "onsite open"]);
+  assert.match(txt(results[0]), /No Contoso Firma/);
+  assert.match(txt(results[1]), /Access is denied/);
+  assert.equal(sess.state.userOk, false, "a copy by hand is not the deployment");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /by hand/.test(x)));
+});
+
+test("Aruba voice VLAN: VLAN 30 untagged moves the PC too, the policy on a few ports is not enough, and the fix needs saving", () => {
+  const sc = byId["aruba-voice-vlan"];
+  const { sess, results } = play(sc, ["configure", "vlan 30 untagged 12", "onsite phone 3.12", "lldp config 12 medTlvEnable network-policy"]);
+  assert.match(txt(results[2]), /10\.20\.30\.90/);
+  assert.match(txt(results[3]), /only some/);
+  ["vlan 20 untagged 12", "lldp config 1-44 medTlvEnable network-policy", "onsite phone 3.12", "show mac-address vlan 30"].forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "not saved");
+  E.run(sess, "write memory");
+  assert.ok(sess.resolved);
+  assert.equal(verdictOf(sc, sess).reasons.some((x) => /untagged/.test(x)), false, "port 12 was put back");
+});
+
+test("CBW guest Wi-Fi: opening the SSID changes nothing, 'allowed vlan 50' without add breaks the AP, and unknown commands answer like IOS", () => {
+  const sc = byId["wap-guest-portal"];
+  const { sess, results } = play(sc, ["cbw wlan set Contoso-Visitas --security open", "onsite guest-phone", "configure terminal", "interface Gi1/0/24", "switchport trunk allowed vlan 50", "switchport trunk allowed vlan add 50", "onsite guest-phone", "foo"]);
+  assert.match(txt(results[1]), /169\.254/);
+  assert.match(txt(results[4]), /replaced/);
+  assert.match(txt(results[6]), /169\.254/, "the AP lost VLANs 20 and 99");
+  assert.equal(results[7].lines[0].text, "% Invalid input detected at '^' marker.");
+  ["switchport trunk allowed vlan 20,50,99", "end", "write memory", "onsite guest-phone", "show mac address-table vlan 50"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /open/.test(x)));
+});
+
+test("Cacti: v1 has no 64-bit counters, the template needs v2c first, and rebuilding the poller cache keeps the graph flat", () => {
+  const sc = byId["cacti-graph-flat"];
+  const { sess, results } = play(sc, ["sudo -u www-data php /usr/share/cacti/cli/rebuild_poller_cache.php", sc.solution[4], sc.solution[7], sc.solution[8], "cacti graph 112 --today"]);
+  assert.match(txt(results[1]), /noSuchName/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.doesNotMatch(txt(results[4]), /871/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Nagios: muting the till is a remark, and the edits only count once Nagios is reloaded", () => {
+  const sc = byId["nagios-flapping"];
+  const { sess, results } = play(sc, [TEMPTING_NAGIOS, sc.solution[4], sc.solution[5], sc.solution[8]]);
+  assert.match(txt(results[0]), /really goes down/);
+  assert.match(txt(results[3]), /HARD;1/, "not reloaded yet");
+  ["sudo systemctl reload nagios", sc.solution[8]].forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "the configuration was never checked");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /notifications/.test(x)));
+});
+const TEMPTING_NAGIOS = "printf \"[%lu] DISABLE_HOST_NOTIFICATIONS;TPV-T07-01\\n\" $(date +%s) > /usr/local/nagios/var/rw/nagios.cmd";
+
+test("RDP: turning NLA off gives no right and is a remark, and the new group needs fresh Kerberos tickets", () => {
+  const sc = byId["rdp-nla-denied"];
+  const { sess, results } = play(sc, ["Invoke-Command -ComputerName PRT-SRV01 { Set-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp' -Name UserAuthentication -Value 0 }",
+    "onsite rdp PRT-SRV01", "Add-ADGroupMember GG-Server-RDP -Members GG-IT-Admins", "onsite rdp PRT-SRV01"]);
+  assert.match(txt(results[1]), /right to sign in/);
+  assert.match(txt(results[3]), /Kerberos/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /Network Level Authentication/.test(x)));
+});
+
+test("Firewall GPO: turning the firewall off stays a local wish, and a local rule is ignored like the vendor's", () => {
+  const sc = byId["firewall-gpo-app"];
+  const { sess, results } = play(sc, ["Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False", "onsite scan", "New-NetFirewallRule -DisplayName x -Direction Inbound -LocalPort 8443 -Protocol TCP -Action Allow", "gpupdate /force", "onsite scan"]);
+  assert.match(txt(results[1]), /not reachable/);
+  assert.match(txt(results[2]), /local rule/);
+  assert.match(txt(results[4]), /not reachable/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /firewall off/.test(x)));
+});
+
+test("Chrome GPO: reinstalling Chrome is a remark, and overwriting value 1 of the allowlist is one too", () => {
+  const sc = byId["chrome-extension-gpo"];
+  const set1 = sc.solution[5].replace("-ValueName 3", "-ValueName 1");
+  const { sess, results } = play(sc, ["onsite reinstall-chrome", "onsite add-extension", set1]);
+  assert.match(txt(results[1]), /Blocked/);
+  assert.match(txt(results[2]), /replaced/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  const reasons = verdictOf(sc, sess).reasons;
+  assert.ok(reasons.some((x) => /reinstalled/.test(x)) && reasons.some((x) => /overwritten/.test(x)));
+});
+
+test("NFS: a mount by hand is lost at the next reboot, and _netdev alone does not finish the fix", () => {
+  const sc = byId["ubuntu-nfs-mount"];
+  const { sess, results } = play(sc, ["sudo mount -a", "onsite invoices", "sudo reboot", "findmnt /srv/scans", "sudo sed -i 's/defaults/defaults,_netdev/' /etc/fstab", "sudo mount -a"]);
+  assert.match(txt(results[1]), /37/);
+  assert.match(txt(results[3]), /Nothing is mounted/);
+  assert.match(txt(results[5]), /daemon-reload/);
+  assert.equal(sess.state.nofail, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
 });

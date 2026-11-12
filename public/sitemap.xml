@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://sysadmindesksbyigg.pages.dev/</loc><lastmod>2026-11-10</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/about</loc><lastmod>2026-11-10</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/about</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/help</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/faq</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/</loc><lastmod>2026-11-10</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ad-lockout</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/dns-intranet</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/disk-full</loc><lastmod>2026-11-04</lastmod></url>
@@ -61,6 +61,39 @@
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/tplink-dhcp-clash</loc><lastmod>2026-11-11</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/squid-blocked-site</loc><lastmod>2026-11-11</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/usb-blocked-camera</loc><lastmod>2026-11-11</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/bash-disk-check</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/git-script-overwritten</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ps-inventory-csv</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ubuntu-ssh-locked</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/winserver-role-eventlog</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/graph-report-mfa</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/solarwinds-alert-storm</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/pms-room-charge</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/iptv-no-channels</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/tape-backup-unreadable</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/veeam-restore-test</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ca-trading-block</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/pim-role-expired</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/device42-rack-mismatch</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/intune-ring-stuck</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/idrac-no-alerts</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ups-runtime-low</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zabbix-pos-down</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/omada-guest-wifi</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ps-ad-weekly-report</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/server-psu-rma</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/apache-default-page</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zabbix-agent-unreachable</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/hotspot-vouchers</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/gpo-msi-not-installed</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/aruba-voice-vlan</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/wap-guest-portal</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/cacti-graph-flat</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/nagios-flapping</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/rdp-nla-denied</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/firewall-gpo-app</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/chrome-extension-gpo</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ubuntu-nfs-mount</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/terms</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/privacy</loc><lastmod>2026-11-04</lastmod></url>
 </urlset>

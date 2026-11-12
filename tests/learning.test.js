@@ -89,7 +89,17 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   // v0.13
   "FS02", "FS-NEW01", "4471", "Markting", "jamf recon", "OU=Warehouse", "Remote admin firewall", "AnonymousView", "6b1d0c7e", "Tarifas 2027", "64-EB-8C-3A-7F-21", "192.168.10.112",
   "T07-04412", "EFECTIVO MANUAL", "QMAXSIGN", "CPF1393", "PRT-SRV00", "ZALB", "AADSTS50055", "sala.consejo", "mob1s1a1", "FTTH-0094412", "0x80073712", "KB5070312",
-  "192.168.0.1", "Archer C6", "transnorte", "exceptions.txt", "VID_04A9", "AllowDeviceIDs"];
+  "192.168.0.1", "Archer C6", "transnorte", "exceptions.txt", "VID_04A9", "AllowDeviceIDs",
+  // v0.14
+  "pcent", "reserved block", "bloques reservados", "git stash", "stash@", "reflog", "-ErrorAction Stop", "non-terminating", "no terminante", "ufw allow",
+  "kmpcl6rnd", "4750iSeriesPCL", "UserAuthenticationMethod", "GA-BreakGlass", "--sustain", "dependency add", "PmsPosIfc", "10.20.60.15", "ip igmp", "IGMP snooping",
+  "TapeAlert", "Clean Now", "VERIFY=yes", "IndependentPersistent", "independent disk",
+  "CA-Trading-Travel", "CHG-4402", "excludeGroups", "PT2H", "selfActivate", "CHG-4390", "CZJ2140KQ7", "extensionAttribute1", "AlertEnable", "SMTPServerIPAddress",
+  "outlet group", "grupo de tomas", "shed-after", "Contoso Restaurant ICMP", "icmpping", "--guest-network", "VLAN 63", "FromFileTime", "Could not compare",
+  "PDU-B1", "Input lost", "a2ensite", "sites-enabled",
+  "10.20.9.60", "allowed hosts", "guest-2026", "shared-users", "no more sessions", "ContosoFirma", "Domain Computers:(OI)", "medTlvEnable", "network_policy", "allowed vlan add",
+  "Contoso-Visitas", "ifHCInOctets", "64-bit Counters", "Counter32", "#parents", "max_check_attempts", "GG-Server-RDP", "0xC000015B", "AllowLocalFirewallRules", "WmsScanSvc",
+  "ExtensionInstallWhitelist", "chrome.admx", "_netdev", "nofail"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();
@@ -252,7 +262,7 @@ test("profile: progress per area from the results, the activity and the labs", (
   const ad = agg.areas.find((a) => a.id === "ad");
   assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [5, 2, 80, 4, 5, 5, 55]);   // 3/4 × 2/5 + 1/4 × 5/5
   const net = agg.areas.find((a) => a.id === "network");
-  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [5, 1, 100, null, 15]);   // 1/5 × 75
+  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [15, 1, 100, null, 5]);   // 1/15 × 75
   const vdi = agg.areas.find((a) => a.id === "vdi");
   assert.equal(vdi.labTotal, 0); assert.equal(vdi.skill, 0);
   assert.equal(agg.areas.find((a) => a.id === "itsm").skill, 80);   // notes to the user 4/5
