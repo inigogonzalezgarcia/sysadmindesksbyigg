@@ -101,6 +101,8 @@ test("the counts in words follow the number of desks", () => {
   assert.ok(read("about.html").includes(`Ahora mismo hay ${es} tickets`) && read("about.html").includes(`There are ${en} tickets right now`));
   assert.equal(words(21, "es"), "veintiún"); assert.equal(words(24, "es"), "veinticuatro"); assert.equal(words(31, "es"), "treinta y un");
   assert.equal(words(24, "en"), "twenty-four"); assert.equal(words(30, "en"), "thirty");
+  assert.equal(words(100, "es"), "cien"); assert.equal(words(101, "es"), "ciento un"); assert.equal(words(134, "es"), "ciento treinta y cuatro");
+  assert.equal(words(101, "en"), "one hundred and one"); assert.equal(words(120, "en"), "one hundred and twenty");
 });
 
 test("the home page has a static, bilingual intro with real desks and links, and no inline code", () => {

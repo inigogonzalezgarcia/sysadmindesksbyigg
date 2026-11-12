@@ -94,6 +94,52 @@
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/firewall-gpo-app</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/chrome-extension-gpo</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ubuntu-nfs-mount</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/horizon-pool-error</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/docker-container-restarting</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/elk-no-logs</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/hyperv-checkpoint-disk</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ndes-wifi-cert</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/landscape-patch-window</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/vcenter-snapshot-aged</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/nutanix-disk-failed</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/purview-label-cant-open</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/o365-wrong-licence</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/citrix-clinical-app</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/rhel-slow-io</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/winserver-patch-cluster</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/wan-site-slow</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/sql-restore-pit</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/vmware-host-maint</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/trading-switch-loop</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/tanium-stale-endpoint</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/python-report-fails</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/gpo-ntlm-pilot</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/defender-asr-block</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/nginx-502</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/iis-503</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/wordpress-plugin-down</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/gmsa-service-fails</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/iis-first-request-slow</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/db-restore-test</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/mysql-slow-queries</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ps-remoting-double-hop</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zabbix-switch-snmp</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zabbix-service-down</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zabbix-ups-ipmi</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/cisco-aaa-lockout</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/cisco-portchannel-member</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/mikrotik-wireguard</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/pfsense-nat-rule</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/opnsense-ips-block</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/radius-peap-fail</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/asterisk-trunk-down</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/audit-4740-missing</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ad-time-skew</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ps-unsigned-script</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/powercli-report</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/esxi-not-responding</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/dc-no-replication</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zabbix-alert-storm</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/terms</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/privacy</loc><lastmod>2026-11-04</lastmod></url>
 </urlset>

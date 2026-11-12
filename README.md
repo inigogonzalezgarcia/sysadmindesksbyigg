@@ -101,6 +101,52 @@ Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.
 | 87 | [The new application gets no connections](https://sysadmindesksbyigg.pages.dev/tickets/firewall-gpo-app) | Windows Firewall by GPO: the firewall log, local and GPO rules, a program rule | 2 |
 | 88 | [Chrome ignores the extension list](https://sysadmindesksbyigg.pages.dev/tickets/chrome-extension-gpo) | Chrome by GPO: chrome://policy, computer and user policies, old ADMX templates | 2 |
 | 89 | [The Ubuntu server boots without its NFS share](https://sysadmindesksbyigg.pages.dev/tickets/ubuntu-nfs-mount) | Ubuntu Server: findmnt, the boot journal, fstab options and a reboot to prove it | 2 |
+| 90 | [Horizon: 'no desktops available' for the afternoon shift](https://sysadmindesksbyigg.pages.dev/tickets/horizon-pool-error) | VMware Horizon: a floating pool, disconnected sessions and the log-off after disconnect | 2 |
+| 91 | [The HR portal container restarts over and over](https://sysadmindesksbyigg.pages.dev/tickets/docker-container-restarting) | Docker: a restart loop, the container's logs, env_file and recreating it with compose | 2 |
+| 92 | [Kibana shows no logs from the payroll server](https://sysadmindesksbyigg.pages.dev/tickets/elk-no-logs) | ELK: Filebeat, Elasticsearch indices, Kibana data views and a missed change | 2 |
+| 93 | [The Hyper-V VM pauses by itself](https://sysadmindesksbyigg.pages.dev/tickets/hyperv-checkpoint-disk) | Hyper-V: a paused VM, the host volume, checkpoints and a safe merge | 2 |
+| 94 | [The new laptops do not join the corporate Wi-Fi](https://sysadmindesksbyigg.pages.dev/tickets/ndes-wifi-cert) | Intune and NDES: SCEP, trusted root and Wi-Fi profiles, assignments and EAP-TLS | 2 |
+| 95 | [The warehouse Ubuntu PCs reboot during the shift](https://sysadmindesksbyigg.pages.dev/tickets/landscape-patch-window) | Ubuntu Landscape: upgrade profiles, activities and a maintenance window | 2 |
+| 96 | [The vCenter datastore at 97 %](https://sysadmindesksbyigg.pages.dev/tickets/vcenter-snapshot-aged) | vSphere with PowerCLI: datastore usage, old snapshots and which ones to keep | 2 |
+| 97 | [Prism reports a failed disk on node 2](https://sysadmindesksbyigg.pages.dev/tickets/nutanix-disk-failed) | Nutanix AHV: alerts, fault tolerance, removing and replacing a disk, ncc | 2 |
+| 98 | [A supplier cannot open the encrypted document](https://sysadmindesksbyigg.pages.dev/tickets/purview-label-cant-open) | Microsoft Purview: sensitivity labels, encryption rights and label policies | 2 |
+| 99 | [The store has E3 licences where F3 was enough](https://sysadmindesksbyigg.pages.dev/tickets/o365-wrong-licence) | Microsoft 365: group-based licences, inherited licences and the profile groups | 2 |
+| 100 | [The published clinical app does not open on the ward](https://sysadmindesksbyigg.pages.dev/tickets/citrix-clinical-app) | Citrix: a published app's visibility and the delivery group's access rules | 2 |
+| 101 | [The critical RHEL server is slow in the afternoons](https://sysadmindesksbyigg.pages.dev/tickets/rhel-slow-io) | Red Hat: free, vmstat, a leaking service, a vendor fix and MemoryMax | 2 |
+| 102 | [Patch the servers without cutting the service](https://sysadmindesksbyigg.pages.dev/tickets/winserver-patch-cluster) | Windows Server cluster: nodes and roles, last month's events, Windows Update policy and Cluster-Aware Updating | 2 |
+| 103 | [The Poland site is slow with the ERP](https://sysadmindesksbyigg.pages.dev/tickets/wan-site-slow) | Cisco ISR QoS: policy-map counters, marking on the LAN side and classes on the WAN | 2 |
+| 104 | [Someone deleted ERP rows this morning](https://sysadmindesksbyigg.pages.dev/tickets/sql-restore-pit) | SQL Server: the audit log, the backup chain and a point-in-time copy with dbatools | 2 |
+| 105 | [The host will not enter maintenance mode](https://sysadmindesksbyigg.pages.dev/tickets/vmware-host-maint) | vSphere with PowerCLI: DRS events, a mounted ISO and a VM-Host rule | 2 |
+| 106 | [The trading floor loses the network for a minute every hour](https://sysadmindesksbyigg.pages.dev/tickets/trading-switch-loop) | Cisco Catalyst: MAC flapping, desk ports, spanning tree and BPDU Guard | 2 |
+| 107 | [Tanium shows three-week-old data for one computer](https://sysadmindesksbyigg.pages.dev/tickets/tanium-stale-endpoint) | Tanium: stale endpoints, the client's log and settings, a fresh question | 2 |
+| 108 | [The scheduled Python report fails on Mondays](https://sysadmindesksbyigg.pages.dev/tickets/python-report-fails) | Python and systemd: the journal, timers, a token's expiry, git and a virtual environment | 2 |
+| 109 | [After the security GPO, the warehouse printer cannot authenticate](https://sysadmindesksbyigg.pages.dev/tickets/gpo-ntlm-pilot) | Security baseline: NTLM events, SPNs and moving a scanner to Kerberos | 2 |
+| 110 | [Defender blocks the Accounting macro](https://sysadmindesksbyigg.pages.dev/tickets/defender-asr-block) | Defender ASR: event 1121, an Intune policy, its report and per-rule exclusions | 2 |
+| 111 | [The internal portal returns 502 Bad Gateway](https://sysadmindesksbyigg.pages.dev/tickets/nginx-502) | Nginx: the error log, the app's port, proxy_pass, nginx -t and a reload | 2 |
+| 112 | [IIS: 503 Service Unavailable on the intranet](https://sysadmindesksbyigg.pages.dev/tickets/iis-503) | IIS: application pool state, WAS events and a group managed service account | 2 |
+| 113 | [A plugin takes the corporate website down](https://sysadmindesksbyigg.pages.dev/tickets/wordpress-plugin-down) | WordPress in Docker Compose: container logs, PHP versions and WP-CLI | 2 |
+| 114 | [The gMSA service will not start on the new server](https://sysadmindesksbyigg.pages.dev/tickets/gmsa-service-fails) | Windows Server: event 7038, Test-ADServiceAccount, the gMSA's group and the computer's Kerberos tickets | 2 |
+| 115 | [The first request of the morning takes 40 seconds](https://sysadmindesksbyigg.pages.dev/tickets/iis-first-request-slow) | IIS: W3C time-taken, WAS events, idle time-out, AlwaysRunning and Application Initialization | 2 |
+| 116 | [The database's logical backup cannot be restored](https://sysadmindesksbyigg.pages.dev/tickets/db-restore-test) | MariaDB: what mariadb-dump leaves out, routines, users and grants, and a restore proved with the app | 2 |
+| 117 | [The MySQL database is slow since it grew](https://sysadmindesksbyigg.pages.dev/tickets/mysql-slow-queries) | MySQL: the slow query log, EXPLAIN, an online index and the buffer pool resized online | 2 |
+| 118 | [Invoke-Command works, but it cannot reach the share](https://sysadmindesksbyigg.pages.dev/tickets/ps-remoting-double-hop) | PowerShell remoting: the Kerberos second hop and resource-based constrained delegation | 2 |
+| 119 | [Zabbix sees no interfaces on the new switch](https://sysadmindesksbyigg.pages.dev/tickets/zabbix-switch-snmp) | Zabbix and SNMP: snmpwalk, SNMPv2 against SNMPv3 and the host's interface | 2 |
+| 120 | [Zabbix did not warn that a Windows service stopped](https://sysadmindesksbyigg.pages.dev/tickets/zabbix-service-down) | Zabbix: service discovery macros, an action's conditions and a test alert | 2 |
+| 121 | [Zabbix reads neither the UPS nor the iDRAC](https://sysadmindesksbyigg.pages.dev/tickets/zabbix-ups-ipmi) | Zabbix: trigger dependencies and a UPS network card replaced under RMA | 2 |
+| 122 | [Nobody can log in to the switch after the AAA change](https://sysadmindesksbyigg.pages.dev/tickets/cisco-aaa-lockout) | Cisco AAA: method lists, a dead RADIUS server and a local fallback | 2 |
+| 123 | [A port-channel member is suspended](https://sysadmindesksbyigg.pages.dev/tickets/cisco-portchannel-member) | Cisco EtherChannel: LACP messages, members that do not match and the bandwidth | 2 |
+| 124 | [The store cannot reach head office over WireGuard](https://sysadmindesksbyigg.pages.dev/tickets/mikrotik-wireguard) | MikroTik RouterOS 7: WireGuard peers, allowed-address, routes and ping | 2 |
+| 125 | [The published server cannot be reached from outside](https://sysadmindesksbyigg.pages.dev/tickets/pfsense-nat-rule) | pfSense: port forwards, the associated filter rule, pfctl and the filter log | 2 |
+| 126 | [Suricata blocks the ERP update](https://sysadmindesksbyigg.pages.dev/tickets/opnsense-ips-block) | OPNsense and Suricata in IPS mode: alerts, policies and a user-defined pass rule | 2 |
+| 127 | [The corporate Wi-Fi rejects the domain users](https://sysadmindesksbyigg.pages.dev/tickets/radius-peap-fail) | FreeRADIUS: PEAP with Active Directory, the server certificate and eapol_test | 2 |
+| 128 | [No outside calls can be made](https://sysadmindesksbyigg.pages.dev/tickets/asterisk-trunk-down) | Asterisk PJSIP: trunk registration, a 403 and the external addresses after a line change | 2 |
+| 129 | [There are no lockout events on the DC](https://sysadmindesksbyigg.pages.dev/tickets/audit-4740-missing) | Advanced audit by GPO: auditpol, the Security log size and event 4740 | 2 |
+| 130 | [Kerberos fails: the domain's clock is 7 minutes behind](https://sysadmindesksbyigg.pages.dev/tickets/ad-time-skew) | AD time: w32tm, the PDC emulator with NTP and a Hyper-V DC in a time loop | 2 |
+| 131 | [The scheduled script no longer runs](https://sysadmindesksbyigg.pages.dev/tickets/ps-unsigned-script) | PowerShell in production: AllSigned by GPO, HashMismatch and signing again | 2 |
+| 132 | [The VM report for the audit, in an hour](https://sysadmindesksbyigg.pages.dev/tickets/powercli-report) | PowerCLI: Get-VM, calculated properties and Export-Csv for the auditors | 2 |
+| 133 | [ESXi host 'not responding' in vCenter](https://sysadmindesksbyigg.pages.dev/tickets/esxi-not-responding) | ESXi: vpxa, the tmp ramdisk with vdf and a host back without a reboot | 2 |
+| 134 | [A domain controller does not replicate](https://sysadmindesksbyigg.pages.dev/tickets/dc-no-replication) | Active Directory health: repadmin, error 8524 and a DC that only asks itself for DNS | 2 |
+| 135 | [An alert storm in Zabbix after a WAN outage](https://sysadmindesksbyigg.pages.dev/tickets/zabbix-alert-storm) | Zabbix: trigger dependencies on a site's router and simulating the outage | 2 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 

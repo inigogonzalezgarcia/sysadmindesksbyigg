@@ -123,6 +123,60 @@ const TEMPTING = {
   "firewall-gpo-app": ["Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False"],
   "chrome-extension-gpo": ["onsite reinstall-chrome"],
   "ubuntu-nfs-mount": ["sudo mount -a"],
+  // v0.15: career level 4, part 1 (restarting the broker; docker restart; restarting Elasticsearch; growing the virtual disk; a shared Wi-Fi key; unattended-upgrades
+  // off; a new datastore; rebooting the node; no encryption on the label; removing the licence user by user; installing locally; rebooting the server)
+  "horizon-pool-error": ["Restart-Service wsbroker"],
+  "docker-container-restarting": ["docker restart hr-portal"],
+  "elk-no-logs": ["ssh elk01 sudo systemctl restart elasticsearch"],
+  "hyperv-checkpoint-disk": ["Resize-VHD -Path D:\\Hyper-V\\ZAR-MES01\\ZAR-MES01.vhdx -SizeBytes 2TB"],
+  "ndes-wifi-cert": ["onsite legacy"],
+  "landscape-patch-window": ["ssh wh-ubu-03 sudo systemctl disable --now unattended-upgrades"],
+  "vcenter-snapshot-aged": ["New-Datastore -VMHost VMH-01 -Name DS-PROD-02 -Path naa.600508b1001c3a2f -Vmfs"],
+  "nutanix-disk-failed": ["onsite restart"],
+  "purview-label-cant-open": ["Connect-IPPSSession", "Set-Label -Identity Confidential-Internal -EncryptionEnabled $false"],
+  "o365-wrong-licence": ["Connect-MgGraph", "Set-MgUserLicense -UserId rcampos@contoso.com -AddLicenses @() -RemoveLicenses @('05e9a617-0261-4cee-bb44-138d3ef5d965')"],
+  "citrix-clinical-app": ["onsite install-local"],
+  "rhel-slow-io": ["sudo reboot"],
+  // v0.15: career level 4, part 2 (both nodes at once; a bigger bandwidth figure; restoring over production; powering the VMs off; reloading the switch;
+  // reinstalling the fleet; a fresh token and a run by hand; unlinking the baseline; ASR off on the PC; restarting Nginx; iisreset; recreating the containers)
+  "winserver-patch-cluster": ["Invoke-Command -ComputerName ZAR-FSN01,ZAR-FSN02 { Install-WindowsUpdate -AcceptAll -AutoReboot }"],
+  "wan-site-slow": ["configure terminal", "interface Gi0/0/0", "bandwidth 50000"],
+  "sql-restore-pit": ["Restore-DbaDatabase -SqlInstance SQL-ERP01 -Path \\\\FS01\\SQLBackup\\ERP_PROD -DatabaseName ERP_PROD -RestoreTime '2026-11-12 09:12:00' -WithReplace"],
+  "vmware-host-maint": ["Stop-VM -VM LIC-SRV01,SCADA-GW01 -Confirm:$false"],
+  "trading-switch-loop": ["reload"],
+  "tanium-stale-endpoint": ["tanium deploy reinstall-client --target \"All Windows\""],
+  "python-report-fails": ["sudo systemctl start refresh-token", "sudo systemctl start sales-report"],
+  "gpo-ntlm-pilot": ["Remove-GPLink -Name 'SEC - Baseline 2026' -Target 'OU=Servers,DC=contoso,DC=local'", "Invoke-GPUpdate -Computer FS01 -Force"],
+  "defender-asr-block": ["Invoke-Command -ComputerName PC-FIN-036 { Set-MpPreference -AttackSurfaceReductionRules_Ids 92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b -AttackSurfaceReductionRules_Actions Disabled }"],
+  "nginx-502": ["sudo systemctl restart nginx"],
+  "iis-503": ["iisreset"],
+  "wordpress-plugin-down": ["docker compose up -d --force-recreate"],
+  // v0.15: career level 4, part 3 (a user account on the service, then back; more memory; recording the test as passed; restarting MySQL; CredSSP to every
+  // computer; a ping template; removing the action's exclusion first; disabling the UPS host, then back; no aaa new-model; shutting the member down; opening the firewall)
+  "gmsa-service-fails": ["sc.exe config ContosoReportSvc obj= CONTOSO\\it.admin password= ********", "Start-Service ContosoReportSvc", "sc.exe config ContosoReportSvc obj= CONTOSO\\gmsa-reports$"],
+  "iis-first-request-slow": ["onsite ram"],
+  "db-restore-test": ["drtest pass stock"],
+  "mysql-slow-queries": ["sudo systemctl restart mysql"],
+  "ps-remoting-double-hop": ["Enable-WSManCredSSP -Role Client -DelegateComputer *", "C:\\Scripts\\Install-PrintDriver.ps1"],
+  "zabbix-switch-snmp": ["zbx host template SW-ACC-5F --add \"ICMP Ping\""],
+  "zabbix-service-down": ["zbx action condition \"Notify IT on-call\" --remove B"],
+  "zabbix-ups-ipmi": ["zbx host disable UPS-SALA-A", "zbx host enable UPS-SALA-A"],
+  "cisco-aaa-lockout": ["configure terminal", "no aaa new-model", "end"],
+  "cisco-portchannel-member": ["configure terminal", "interface Gi1/0/48", "shutdown", "end"],
+  "mikrotik-wireguard": ["/ip firewall filter add chain=forward action=accept place-before=0"],
+  // v0.15: career level 4, part 4 (a rule to the WAN address; a firewall rule for the mirror; WPA2-Personal, then back; restarting the PBX; looking on the laptop;
+  // the clock by hand; -ExecutionPolicy Bypass; Format-Table to a file; reconnecting the host; /syncall again; the action off, then on)
+  "pfsense-nat-rule": ["fwctl rule add wan pass any to \"WAN address\""],
+  "opnsense-ips-block": ["fwctl rule add lan pass tcp from LAN to 198.51.100.25 port 80"],
+  "radius-peap-fail": ["wlc ssid Contoso-Corp --security wpa2-psk --psk Welcome2026", "onsite connect", "wlc ssid Contoso-Corp --security wpa2-enterprise"],
+  "asterisk-trunk-down": ["sudo systemctl restart asterisk"],
+  "audit-4740-missing": ["Get-WinEvent -ComputerName LAPTOP-0217 -FilterHashtable @{LogName='Security';Id=4740}"],
+  "ad-time-skew": ["Set-Date (Get-Date).AddMinutes(7)"],
+  "ps-unsigned-script": ["schtasks /change /tn \"Contoso - Export timesheets\" /tr \"powershell.exe -ExecutionPolicy Bypass -File C:\\Scripts\\Export-Timesheets.ps1\"", "Start-ScheduledTask -TaskName 'Contoso - Export timesheets'"],
+  "powercli-report": ["Connect-VIServer vcenter01.contoso.local", "Get-VM | Format-Table Name,PowerState,NumCpu,MemoryGB | Out-File C:\\Audit\\VM-inventory.csv"],
+  "esxi-not-responding": ["Set-VMHost VMH-02 -State Connected"],
+  "dc-no-replication": ["repadmin /syncall /AdeP"],
+  "zabbix-alert-storm": ["zbx action disable \"Notify sites on-call\"", "onsite review", "zbx action enable \"Notify sites on-call\""],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

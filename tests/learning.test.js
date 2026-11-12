@@ -99,7 +99,18 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   "PDU-B1", "Input lost", "a2ensite", "sites-enabled",
   "10.20.9.60", "allowed hosts", "guest-2026", "shared-users", "no more sessions", "ContosoFirma", "Domain Computers:(OI)", "medTlvEnable", "network_policy", "allowed vlan add",
   "Contoso-Visitas", "ifHCInOctets", "64-bit Counters", "Counter32", "#parents", "max_check_attempts", "GG-Server-RDP", "0xC000015B", "AllowLocalFirewallRules", "WmsScanSvc",
-  "ExtensionInstallWhitelist", "chrome.admx", "_netdev", "nofail"];
+  "ExtensionInstallWhitelist", "chrome.admx", "_netdev", "nofail",
+  // v0.15
+  "logoff-after-disconnect", "Log off after disconnect", "DB_PASSWORD", "docker compose up", "pwsafe", "logs-payroll", "payroll-%", "Remove-VMSnapshot", ".avhdx", "Paused-Critical",
+  "GD-Win-Autopilot-2026", "trusted root certificate profile", "warehouse-auto", "--window", "Remove-Snapshot", "Before FS02 migration", "remove-start", "Confidential-Partners", "Partner labels",
+  "AddExchangeLocation", "LicenseAssignmentStates", "Set-MgGroupLicense", "AddIncludedUsers", "GG-Clinic-Ward3", "render cache", "MemoryMax", "CTSO-2026",
+  "Invoke-CauRun", "Cluster nodes", "ScheduledInstallTime", "MARK-LAN", "service-policy input", "ERP_PROD_PIT", "Supplier import PL", "Proveedores_PL", "LicServer-Tools", "SCADA dongle",
+  "bpdufilter", "DESK-T12", "ProxyServers", "10.20.1.39", "a41c9e2", "tenacity", "refresh-token.timer", "smb-auth kerberos", "10.20.1.20\\Scans", "RestrictReceivingNTLMTraffic",
+  "92e97fa1", "Conciliacion.xlsm", "127.0.0.1:8081", "svc-intranet", "gmsa-intranet", "formapro", "readonly",
+  "GG-gMSA-Reports", "RPT-WIN02$", "Web-AppInit", "preloadEnabled", "--system=users", "sp_reserve", "idx_bookings_guest_email", "guest_email", "PrincipalsAllowedToDelegateToAccount",
+  "zbx-ro", "STARTUPTYPE", "is not running", "contoso-mon", "factory defaults", "RADIUS-NPS local", "vlan mask", "allowed vlan add 50", "10.20.0.0/16,",
+  "Filter rule association", "nat associate", "2018959", "Drop ET policy", "radius-2027", "external_signaling_address", "allowed-ip", "Force audit policy subcategory",
+  "MR-1B-PC", "VMICTimeProvider", "VM IC Time", "HashMismatch", "-NoTypeInformation", "vm-support", "vdf -h", "8524", "zbx depend", "FW-ZAR01:"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();
@@ -260,9 +271,9 @@ test("profile: progress per area from the results, the activity and the labs", (
   const labs = Lb.record({}, "ad", ["find", "unlock", "reset", "group", "lastlogon"], "2026-10-26").store;
   const agg = P.aggregate({ desks, progress, activity, labs });
   const ad = agg.areas.find((a) => a.id === "ad");
-  assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [5, 2, 80, 4, 5, 5, 55]);   // 3/4 × 2/5 + 1/4 × 5/5
+  assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [8, 2, 80, 4, 5, 5, 44]);   // 3/4 × 2/8 + 1/4 × 5/5
   const net = agg.areas.find((a) => a.id === "network");
-  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [15, 1, 100, null, 5]);   // 1/15 × 75
+  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [27, 1, 100, null, 3]);   // 1/27 × 75
   const vdi = agg.areas.find((a) => a.id === "vdi");
   assert.equal(vdi.labTotal, 0); assert.equal(vdi.skill, 0);
   assert.equal(agg.areas.find((a) => a.id === "itsm").skill, 80);   // notes to the user 4/5
@@ -316,7 +327,7 @@ test("profile: the Markdown summary says it is practice in a simulator", () => {
   assert.ok(es.includes("**Práctica en un simulador, no experiencia laboral.**"));
   assert.ok(es.trim().endsWith("Práctica en un simulador, no experiencia laboral."));
   assert.ok(es.includes("- Técnico: Alex") && es.includes("- Fecha: 2026-10-30"));
-  assert.ok(es.includes(`- Tickets resueltos: 1 / ${desks.length}`) && es.includes("| Active Directory | 1 / 5 | 90 | 5 / 5 | 0 / 5 | 15 / 100 |"));
+  assert.ok(es.includes(`- Tickets resueltos: 1 / ${desks.length}`) && es.includes("| Active Directory | 1 / 8 | 90 | 5 / 5 | 0 / 5 | 9 / 100 |"));
   assert.ok(es.includes(`- ${title("ad-lockout")}: 90 / 100 · 2026-10-26`));
   assert.ok(es.includes("- Laboratorio de red: 1 / 5"));
   assert.ok(es.includes("**Siguiente paso recomendado:** " + title("dns-intranet") + " (ticket)"));

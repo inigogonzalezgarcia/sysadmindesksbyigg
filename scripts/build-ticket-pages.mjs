@@ -24,12 +24,18 @@ const SLA = { P1: 20, P2: 30, P3: 45 };
 export const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const tx = (v, lang) => (v && typeof v === "object" ? v[lang] : v);
 
-// numbers in words for the counts (1-99), so the text follows the number of desks
+// numbers in words for the counts (1-999), so the text follows the number of desks
 const ES_U = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","veintiún","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"];
 const ES_T = { 3: "treinta", 4: "cuarenta", 5: "cincuenta", 6: "sesenta", 7: "setenta", 8: "ochenta", 9: "noventa" };
 const EN_U = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
 const EN_T = { 2: "twenty", 3: "thirty", 4: "forty", 5: "fifty", 6: "sixty", 7: "seventy", 8: "eighty", 9: "ninety" };
+const ES_H = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
 export function words(n, lang) {
+  if (n >= 100) {
+    const h = Math.floor(n / 100), r = n % 100;
+    if (lang === "es") return n === 100 ? "cien" : ES_H[h] + (r ? " " + (r === 1 ? "un" : words(r, lang)) : "");
+    return EN_U[h] + " hundred" + (r ? " and " + words(r, lang) : "");
+  }
   if (lang === "es") return n < 30 ? ES_U[n] : ES_T[Math.floor(n / 10)] + (n % 10 ? " y " + (n % 10 === 1 ? "un" : ES_U[n % 10]) : "");
   return n < 20 ? EN_U[n] : EN_T[Math.floor(n / 10)] + (n % 10 ? "-" + EN_U[n % 10] : "");
 }
@@ -299,6 +305,52 @@ export const RELATED = {
   "firewall-gpo-app": ["pdq-deploy-fails", "usb-blocked-camera", "rdp-nla-denied"],
   "chrome-extension-gpo": ["usb-blocked-camera", "squid-blocked-site", "gpo-msi-not-installed"],
   "ubuntu-nfs-mount": ["ubuntu-ssh-locked", "bash-disk-check", "apache-default-page"],
+  "horizon-pool-error": ["citrix-session", "citrix-clinical-app", "intune-ring-stuck"],
+  "docker-container-restarting": ["apache-default-page", "ubuntu-nfs-mount", "elk-no-logs"],
+  "elk-no-logs": ["linux-sssd", "zabbix-agent-unreachable", "docker-container-restarting"],
+  "hyperv-checkpoint-disk": ["vcenter-snapshot-aged", "veeam-restore-test", "disk-full"],
+  "ndes-wifi-cert": ["intune-bitlocker", "android-work-profile", "epm-elevation"],
+  "landscape-patch-window": ["intune-ring-stuck", "ubuntu-nfs-mount", "win-update-rollback"],
+  "vcenter-snapshot-aged": ["hyperv-checkpoint-disk", "veeam-restore-test", "idrac-no-alerts"],
+  "nutanix-disk-failed": ["server-psu-rma", "idrac-no-alerts", "pms-room-charge"],
+  "purview-label-cant-open": ["sharepoint-shared-everyone", "ca-blocked", "shared-mailbox"],
+  "o365-wrong-licence": ["m365-licence", "retail-new-starter", "graph-report-mfa"],
+  "citrix-clinical-app": ["citrix-session", "horizon-pool-error", "gpo-msi-not-installed"],
+  "rhel-slow-io": ["rhel-var-full", "bash-disk-check", "sql-log-full"],
+  "winserver-patch-cluster": ["winserver-role-eventlog", "landscape-patch-window", "intune-ring-stuck"],
+  "wan-site-slow": ["net-fortigate-branch", "cacti-graph-flat", "trading-switch-loop"],
+  "sql-restore-pit": ["sql-log-full", "veeam-restore-test", "ad-deleted-user"],
+  "vmware-host-maint": ["vcenter-snapshot-aged", "nutanix-disk-failed", "hyperv-checkpoint-disk"],
+  "trading-switch-loop": ["net-err-disabled", "ca-trading-block", "wan-site-slow"],
+  "tanium-stale-endpoint": ["intune-ring-stuck", "pdq-deploy-fails", "squid-blocked-site"],
+  "python-report-fails": ["ps-ad-weekly-report", "bash-disk-check", "git-script-overwritten"],
+  "gpo-ntlm-pilot": ["rdp-nla-denied", "firewall-gpo-app", "store-label-printer"],
+  "defender-asr-block": ["epm-elevation", "usb-blocked-camera", "gpo-msi-not-installed"],
+  "nginx-502": ["apache-default-page", "docker-container-restarting", "iis-503"],
+  "iis-503": ["dns-intranet", "nginx-502", "rdp-nla-denied"],
+  "wordpress-plugin-down": ["docker-container-restarting", "apache-default-page", "nginx-502"],
+  "gmsa-service-fails": ["iis-503", "ad-lockout", "winserver-role-eventlog"],
+  "iis-first-request-slow": ["iis-503", "nginx-502", "rhel-slow-io"],
+  "db-restore-test": ["veeam-restore-test", "sql-restore-pit", "mysql-slow-queries"],
+  "mysql-slow-queries": ["rhel-slow-io", "sql-log-full", "db-restore-test"],
+  "ps-remoting-double-hop": ["rdp-nla-denied", "gpo-ntlm-pilot", "ps-inventory-csv"],
+  "zabbix-switch-snmp": ["cacti-graph-flat", "zabbix-agent-unreachable", "zabbix-service-down"],
+  "zabbix-service-down": ["zabbix-agent-unreachable", "nagios-flapping", "zabbix-switch-snmp"],
+  "zabbix-ups-ipmi": ["ups-no-alert", "idrac-no-alerts", "zabbix-switch-snmp"],
+  "cisco-aaa-lockout": ["net-err-disabled", "trading-switch-loop", "cisco-portchannel-member"],
+  "cisco-portchannel-member": ["net-wrong-vlan", "aruba-voice-vlan", "cisco-aaa-lockout"],
+  "mikrotik-wireguard": ["net-fortigate-branch", "store-4g-failover", "hotspot-vouchers"],
+  "pfsense-nat-rule": ["mikrotik-wireguard", "net-fortigate-branch", "firewall-gpo-app"],
+  "opnsense-ips-block": ["squid-blocked-site", "defender-asr-block", "pfsense-nat-rule"],
+  "radius-peap-fail": ["ndes-wifi-cert", "cisco-aaa-lockout", "wap-guest-portal"],
+  "asterisk-trunk-down": ["mikrotik-wireguard", "teams-no-audio", "store-4g-failover"],
+  "audit-4740-missing": ["ad-lockout", "gpo-ntlm-pilot", "winserver-role-eventlog"],
+  "ad-time-skew": ["dc-no-replication", "hyperv-checkpoint-disk", "ad-lockout"],
+  "ps-unsigned-script": ["git-script-overwritten", "gmsa-service-fails", "ps-ad-weekly-report"],
+  "powercli-report": ["ps-inventory-csv", "vcenter-snapshot-aged", "graph-report-mfa"],
+  "esxi-not-responding": ["vmware-host-maint", "vcenter-snapshot-aged", "veeam-job"],
+  "dc-no-replication": ["ad-time-skew", "dns-intranet", "ad-deleted-user"],
+  "zabbix-alert-storm": ["zabbix-service-down", "solarwinds-alert-storm", "nagios-flapping"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {

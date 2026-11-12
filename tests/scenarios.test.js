@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 89);
+  assert.equal(SCENARIOS.length, 135);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -1116,4 +1116,523 @@ test("NFS: a mount by hand is lost at the next reboot, and _netdev alone does no
   assert.equal(sess.state.nofail, false);
   sc.solution.forEach((c) => E.run(sess, c));
   assert.ok(sess.resolved);
+});
+
+/* v0.15: career level 4, part 1 */
+test("Horizon: restarting the broker frees nothing, and the policy alone leaves the stale sessions", () => {
+  const sc = byId["horizon-pool-error"];
+  const { sess, results } = play(sc, ["Restart-Service wsbroker", "hvctl pool set CALL-W11 --logoff-after-disconnect 30", "onsite login"]);
+  assert.match(txt(results[0]), /sessions live on the desktops/);
+  assert.match(txt(results[2]), /currently busy/);
+  E.run(sess, "hvctl sessions logoff CALL-W11 --state disconnected");
+  ["hvctl pool show CALL-W11", "hvctl sessions CALL-W11", "hvctl pool show CALL-W11", "onsite login"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Docker: docker restart and compose without the new password keep the old environment", () => {
+  const sc = byId["docker-container-restarting"];
+  const { sess, results } = play(sc, ["docker restart hr-portal", "cd /opt/hr-portal && docker compose up -d", "docker ps"]);
+  assert.match(txt(results[0]), /environment the container was created with/);
+  assert.match(txt(results[1]), /Running/);
+  assert.match(txt(results[2]), /Restarting/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("ELK: restarting Elasticsearch changes nothing and is a remark; the events go to the old index", () => {
+  const sc = byId["elk-no-logs"];
+  const { sess, results } = play(sc, ["ssh elk01 sudo systemctl restart elasticsearch", "sudo systemctl restart elasticsearch", "onsite kibana"]);
+  assert.match(txt(results[1]), /not found/);
+  assert.match(txt(results[2]), /No results/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /Elasticsearch was restarted/.test(x)));
+});
+
+test("Hyper-V: the disk cannot grow, and resuming before the merge pauses the VM again", () => {
+  const sc = byId["hyperv-checkpoint-disk"];
+  const { sess, results } = play(sc, ["Resize-VHD -Path D:\\Hyper-V\\ZAR-MES01\\ZAR-MES01.vhdx -SizeBytes 2TB", "Resume-VM ZAR-MES01", "Get-VM ZAR-MES01"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[2]), /Paused-Critical again/);
+  assert.equal(E.run(sess, "Remove-Item D:\\Hyper-V\\ZAR-MES01\\x.avhdx").lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("NDES: the Contoso-Legacy key is a remark, and syncing before the root CA is assigned brings nothing", () => {
+  const sc = byId["ndes-wifi-cert"];
+  const { sess, results } = play(sc, ["onsite legacy", "onsite sync", "onsite wifi"]);
+  assert.match(txt(results[1]), /nothing new/);
+  assert.match(txt(results[2]), /Can't connect/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /Contoso-Legacy/.test(x)));
+});
+
+test("Landscape: unattended-upgrades is not the cause, a daytime window is refused and patching cannot stay off", () => {
+  const sc = byId["landscape-patch-window"];
+  const { sess, results } = play(sc, ["ssh wh-ubu-03 sudo systemctl disable --now unattended-upgrades", "lsctl profile set warehouse-auto --window 10:00-12:00", "lsctl profile disable warehouse-auto"]);
+  assert.match(txt(results[0]), /not coming from it/);
+  assert.equal(results[1].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "not resolved with the profile disabled");
+  E.run(sess, "lsctl profile enable warehouse-auto");
+  ["lsctl profile preview warehouse-auto", "lsctl computers --tag warehouse"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /unattended-upgrades/.test(x)));
+});
+
+test("vCenter: a new datastore leaves DS-PROD-01 full, and deleting every snapshot takes Operations' one too", () => {
+  const sc = byId["vcenter-snapshot-aged"];
+  const { sess, results } = play(sc, ["New-Datastore -VMHost VMH-01 -Name DS-PROD-02 -Path naa.600508b1001c3a2f -Vmfs", "Get-Datastore DS-PROD-01", "Get-VM | Get-Snapshot | Remove-Snapshot -Confirm:$false"]);
+  assert.match(txt(results[1]), /97 %/);
+  assert.match(txt(results[2]), /WMS01/);
+  ["Get-VM | Get-Snapshot | Select VM,Name,Created,SizeGB,Description", "Get-Datastore DS-PROD-01"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  const reasons = verdictOf(sc, sess).reasons;
+  assert.ok(reasons.some((x) => /WMS01/.test(x)) && reasons.some((x) => /spare LUN/.test(x)));
+});
+
+test("Nutanix: rebooting the node leaves the disk dead, and the spare only goes in once the disk is removed", () => {
+  const sc = byId["nutanix-disk-failed"];
+  const { sess, results } = play(sc, ["onsite restart", "onsite replace-disk", "ncc health_checks hardware_checks disk_checks run_all"]);
+  assert.match(txt(results[0]), /still dead/);
+  assert.match(txt(results[1]), /marked it ready to remove yet/);
+  assert.match(txt(results[2]), /FAIL/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /resiliency at 0/.test(x)));
+});
+
+test("Purview: switching the label's encryption off does not open the copy already sent", () => {
+  const sc = byId["purview-label-cant-open"];
+  const { sess, results } = play(sc, ["Get-Label", "Connect-IPPSSession", "Set-Label -Identity Confidential-Internal -EncryptionEnabled $false", "onsite supplier", "onsite relabel"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[3]), /credentials/);
+  assert.match(txt(results[4]), /only have Public/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /Encryption was switched off/.test(x)));
+});
+
+test("Licences: an inherited E3 cannot be removed user by user, nor the user taken out of the synced store group", () => {
+  const sc = byId["o365-wrong-licence"];
+  const { sess, results } = play(sc, ["Connect-MgGraph", "Set-MgUserLicense -UserId rcampos@contoso.com -AddLicenses @() -RemoveLicenses @('05e9a617-0261-4cee-bb44-138d3ef5d965')",
+    "Remove-MgGroupMemberByRef -GroupId c41d8e27-5b9a-4f63-b210-8e7a3d6c95f4 -DirectoryObjectId x"]);
+  assert.match(txt(results[1]), /inherited from a group/);
+  assert.match(txt(results[2]), /on-premises mastered/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Citrix: the app is visible to the ward, but a local install cannot reach the database", () => {
+  const sc = byId["citrix-clinical-app"];
+  const { sess, results } = play(sc, ["onsite install-local", "onsite open", "onsite workspace"]);
+  assert.match(txt(results[1]), /connection refused/);
+  assert.match(txt(results[2]), /No apps available/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /installed locally/.test(x)));
+});
+
+test("RHEL: a reboot or a service restart only buys time; the update without a restart does nothing yet", () => {
+  const sc = byId["rhel-slow-io"];
+  const { sess, results } = play(sc, ["sudo reboot", "vmstat 1 5", "sudo dnf update contoso-reports", "vmstat 1 5", "sudo dnf update"]);
+  assert.match(txt(results[1]), /swapping again/);
+  assert.match(txt(results[3]), /4120/);
+  assert.equal(results[4].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /rebooted/.test(x)));
+});
+
+// v0.15: career level 4, part 2
+test("Cluster patching: both nodes at once cuts the share, and the GPO needs both nodes moved before gpupdate", () => {
+  const sc = byId["winserver-patch-cluster"];
+  const { sess, results } = play(sc, ["Get-CauReport -ClusterName CL-ZAR-FS -Last", sc.solution[4], sc.solution[6], "Invoke-Command -ComputerName ZAR-FSN01,ZAR-FSN02 { Install-WindowsUpdate -AcceptAll -AutoReboot }"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.equal(sess.state.gpApplied, false, "one node moved is not enough");
+  assert.match(txt(results[3]), /nine minutes/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /same time/.test(x)));
+});
+
+test("WAN QoS: a bigger bandwidth figure changes nothing, and MARK-LAN on the WAN side marks the wrong traffic", () => {
+  const sc = byId["wan-site-slow"];
+  const { sess, results } = play(sc, ["configure terminal", "interface Gi0/0/0", "bandwidth 50000", "service-policy input MARK-LAN", "end", "show policy-map interface Gi0/0/0", "onsite erp"]);
+  assert.match(txt(results[2]), /still 20/);
+  assert.equal(sess.state.lanFixed, false);
+  assert.match(txt(results[5]), /0 packets/);
+  assert.match(txt(results[6]), /Twelve seconds/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("SQL point in time: over production loses the morning, the copy needs new file names, and the import deletes again if left on", () => {
+  const sc = byId["sql-restore-pit"];
+  const pit = "Restore-DbaDatabase -SqlInstance SQL-ERP01 -Path \\\\FS01\\SQLBackup\\ERP_PROD -DatabaseName ERP_PROD_PIT -RestoreTime '2026-11-12 09:12:00'";
+  const { sess, results } = play(sc, [pit, pit + " -ReplaceDbNameInFile", sc.solution[5], sc.solution[0]]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[2]), /1248 rows/);
+  assert.match(txt(results[3]), /2964/, "the hourly import deleted them again");
+  const over = play(sc, ["Restore-DbaDatabase -SqlInstance SQL-ERP01 -Path \\\\FS01\\SQLBackup\\ERP_PROD -RestoreTime '2026-11-12 09:12:00' -WithReplace"]).sess;
+  assert.equal(over.state.overwritten, true);
+  sc.solution.forEach((c) => E.run(over, c));
+  assert.ok(over.resolved);
+  assert.ok(verdictOf(sc, over).reasons.some((x) => /over production/.test(x)));
+});
+
+test("vSphere maintenance: one blocker removed is not enough, and powering the VMs off is a remark", () => {
+  const sc = byId["vmware-host-maint"];
+  const { sess, results } = play(sc, [sc.solution[5], "Set-VMHost VMH-02 -State Maintenance", "Move-VM SCADA-GW01 -Destination VMH-01", "Stop-VM -VM LIC-SRV01,SCADA-GW01 -Confirm:$false"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(txt(results[2]), /affinity rule/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /powered off/.test(x)));
+});
+
+test("Trading loop: reloading brings it back, BPDU Guard alone err-disables the port, and one port is not the floor", () => {
+  const sc = byId["trading-switch-loop"];
+  const { sess, results } = play(sc, ["reload", "show logging", "configure terminal", "interface Gi1/0/23", "spanning-tree bpduguard enable", "end", sc.solution[5], sc.solution[6], sc.solution[7], sc.solution[8], "end", "write memory", "show logging"]);
+  assert.match(txt(results[1]), /13:02/);
+  assert.match(txt(results[4]), /one socket/);
+  assert.match(txt(results[12]), /err-disable/);
+  assert.equal(sess.state.logOk, false, "the cable is still there");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /reloaded/.test(x)));
+});
+
+test("Tanium: a fleet reinstall never reaches the silent client, and a restart without removing the proxy changes nothing", () => {
+  const sc = byId["tanium-stale-endpoint"];
+  const { sess, results } = play(sc, ["tanium deploy reinstall-client --target \"All Windows\"", "Invoke-Command -ComputerName LAPTOP-0217 { Restart-Service 'Tanium Client' }", "tanium endpoint LAPTOP-0217"]);
+  assert.match(txt(results[0]), /waiting \(not registered: LAPTOP-0217/);
+  assert.match(txt(results[2]), /22 days/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /whole fleet/.test(x)));
+});
+
+test("Python report: the system pip is refused, a fresh token only fixes today, and the new code needs its dependency", () => {
+  const sc = byId["python-report-fails"];
+  const { sess, results } = play(sc, ["sudo pip install -r /opt/reports/requirements.txt", "sudo systemctl start refresh-token", "sudo systemctl start sales-report", "sudo -u reports git -C /opt/reports pull", "sudo systemctl start sales-report"]);
+  assert.match(txt(results[0]), /externally-managed-environment/);
+  assert.match(txt(results[2]), /next Monday/);
+  assert.match(txt(results[4]), /tenacity/);
+  assert.equal(sess.state.runOk, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("NTLM baseline: unlinking it does not undo the setting, and Kerberos needs the server's name", () => {
+  const sc = byId["gpo-ntlm-pilot"];
+  const { sess, results } = play(sc, ["Remove-GPLink -Name 'SEC - Baseline 2026' -Target 'OU=Servers,DC=contoso,DC=local'", "Invoke-GPUpdate -Computer FS01 -Force", "onsite scan", "mfp ALM-MFP-01 set smb-auth kerberos --realm CONTOSO.LOCAL", "mfp ALM-MFP-01 test-smb"]);
+  assert.match(txt(results[1]), /stays set/);
+  assert.match(txt(results[2]), /1102/);
+  assert.match(txt(results[4]), /KDC_ERR_S_PRINCIPAL_UNKNOWN/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /unlinked/.test(x)));
+});
+
+test("Defender ASR: a local change is overridden, a folder or global exclusion is refused, and turning the rule off is a remark", () => {
+  const sc = byId["defender-asr-block"];
+  const { sess, results } = play(sc, [TEMPT_ASR, "onsite macro", "intune asr exclude --path \\\\fs01.contoso.local\\Contabilidad", "intune asr exclude --rule 92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b --path \\\\fs01\\Contabilidad\\*", "intune asr rule 92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b --mode off"]);
+  assert.match(txt(results[0]), /come from Intune/);
+  assert.match(txt(results[1]), /again/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /turned off/.test(x)));
+});
+const TEMPT_ASR = "Invoke-Command -ComputerName PC-FIN-036 { Set-MpPreference -AttackSurfaceReductionRules_Ids 92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b -AttackSurfaceReductionRules_Actions Disabled }";
+
+test("Nginx 502: restarting reads the same file, the app answers on 8081, and the fix needs a test before it counts", () => {
+  const sc = byId["nginx-502"];
+  const { sess, results } = play(sc, ["sudo systemctl restart nginx", "curl -I https://portal.contoso.local", "curl -s -I http://127.0.0.1:8081", sc.solution[4], "sudo systemctl reload nginx", "curl -I https://portal.contoso.local", "onsite portal"]);
+  assert.match(txt(results[1]), /502/);
+  assert.match(txt(results[2]), /200/);
+  assert.match(txt(results[5]), /200/);
+  assert.equal(sess.resolved, false, "nginx -t was never run");
+  E.run(sess, "sudo nginx -t");
+  assert.ok(sess.resolved);
+});
+
+test("IIS 503: iisreset and a new password for the old account leave the pool down", () => {
+  const sc = byId["iis-503"];
+  const { sess, results } = play(sc, ["iisreset", "Set-ADAccountPassword svc-intranet -Reset", "Start-WebAppPool IntranetPool", "Invoke-WebRequest https://intranet.contoso.local -UseBasicParsing", sc.solution[6], "Start-WebAppPool IntranetPool"]);
+  assert.match(txt(results[1]), /old one/);
+  assert.match(txt(results[2]), /5021/);
+  assert.equal(results[3].lines[0].kind, "err");
+  assert.equal(results[5].lines[0].kind, "err", "the gMSA is tested first");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("WordPress plugin: recreating the containers keeps the plugin, WP-CLI needs --skip-plugins, and down -v is refused", () => {
+  const sc = byId["wordpress-plugin-down"];
+  const { sess, results } = play(sc, ["docker compose up -d --force-recreate", "curl -I https://www.contoso.com", "docker compose run --rm wpcli wp plugin list", "docker compose down -v"]);
+  assert.match(txt(results[0]), /still there/);
+  assert.match(txt(results[1]), /500/);
+  assert.match(txt(results[2]), /readonly/);
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /recreated/.test(x)));
+});
+
+/* v0.15: career level 4, part 3 */
+test("gMSA: a user account is denied logon as a service, and the group needs the computer's tickets purged", () => {
+  const sc = byId["gmsa-service-fails"];
+  const { sess, results } = play(sc, ["sc.exe config ContosoReportSvc obj= CONTOSO\\it.admin password= x", "Start-Service ContosoReportSvc", "Add-ADGroupMember GG-gMSA-Reports -Members RPT-WIN02",
+    "Add-ADGroupMember GG-gMSA-Reports -Members RPT-WIN02$", "Test-ADServiceAccount gmsa-reports$"]);
+  assert.match(txt(results[1]), /logon type/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(txt(results[4]), /False/);
+  E.run(sess, "sc.exe config ContosoReportSvc obj= CONTOSO\\gmsa-reports$");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("IIS first request: more memory changes nothing, and the fix only shows after a restart", () => {
+  const sc = byId["iis-first-request-slow"];
+  const { sess, results } = play(sc, ["onsite ram", "Restart-WebAppPool PedidosPool", "Measure-Command { Invoke-WebRequest https://pedidos.contoso.local -UseBasicParsing }"]);
+  assert.match(txt(results[2]), /41\./);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /never short/.test(x)));
+});
+
+test("Restore test: recording it as passed early is a remark, and a dump without routines still fails the restore", () => {
+  const sc = byId["db-restore-test"];
+  const { sess, results } = play(sc, ["drtest pass stock", "sudo sed -i 's/--single-transaction/--single-transaction --routines/' /usr/local/sbin/db-dump.sh", "sudo systemctl start db-dump", "sudo /usr/local/sbin/restore-test.sh"]);
+  assert.match(txt(results[0]), /evidence: \(none\)/);
+  assert.match(txt(results[3]), /FAILED/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /recorded as passed/.test(x)));
+});
+
+test("MySQL: a restart cuts the calls and is a remark; the index alone does not satisfy the booking centre", () => {
+  const sc = byId["mysql-slow-queries"];
+  const { sess, results } = play(sc, ["sudo systemctl restart mysql", "sudo mysql reservas -e \"CREATE INDEX idx_bookings_guest_email ON bookings (guest_email)\"", "onsite search"]);
+  assert.match(txt(results[0]), /Lost connection/);
+  assert.match(txt(results[2]), /Fifteen/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /restarted/.test(x)));
+});
+
+test("Double hop: CredSSP to * changes nothing and is a remark, and the delegation needs the tickets purged", () => {
+  const sc = byId["ps-remoting-double-hop"];
+  const { sess, results } = play(sc, ["Enable-WSManCredSSP -Role Client -DelegateComputer *", "Set-ADComputer FS01 -PrincipalsAllowedToDelegateToAccount (Get-ADComputer PRT-SRV01)", "C:\\Scripts\\Install-PrintDriver.ps1",
+    "Set-ADComputer PRT-SRV01 -TrustedForDelegation $true"]);
+  assert.match(txt(results[2]), /15 minutes/);
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /CredSSP/.test(x)));
+});
+
+test("Zabbix switch: a ping template brings no interfaces, and SNMPv2 gets no answer", () => {
+  const sc = byId["zabbix-switch-snmp"];
+  const { sess, results } = play(sc, ["zbx host template SW-ACC-5F --add \"ICMP Ping\"", "zbx discovery SW-ACC-5F --now", "zbx host snmp SW-ACC-5F --version 2 --community contoso-ro", "zbx latest SW-ACC-5F"]);
+  assert.match(txt(results[1]), /not supported/);
+  assert.doesNotMatch(txt(results[3]), /Interface/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Zabbix services: removing the exclusion first floods the on-call phone and is a remark", () => {
+  const sc = byId["zabbix-service-down"];
+  const { sess, results } = play(sc, ["zbx action condition \"Notify IT on-call\" --remove B", "onsite review", "zbx template macro \"Contoso Windows\" --set '{$SERVICE.STARTUPTYPE.MATCHES}=.*'"]);
+  assert.match(txt(results[0]), /214/);
+  assert.match(txt(results[1]), /muted/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /214/.test(x)));
+});
+
+test("Zabbix UPS: disabling the host frees the iDRAC but leaves the UPS unwatched, and the card needs the community Zabbix uses", () => {
+  const sc = byId["zabbix-ups-ipmi"];
+  const { sess, results } = play(sc, ["zbx host disable UPS-SALA-A", "onsite psu-test", "nmc UPS-SALA-A snmp set --v1 enable --community public --access read --nms 10.20.1.60", "zbx host delete UPS-SALA-A"]);
+  assert.match(txt(results[1]), /isn't in Zabbix/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err");
+  E.run(sess, "zbx host enable UPS-SALA-A");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Cisco AAA: no aaa new-model leaves only the shared account, and RADIUS back without a fallback is not enough", () => {
+  const sc = byId["cisco-aaa-lockout"];
+  const { sess, results } = play(sc, ["configure terminal", "no aaa new-model", "end", "onsite ssh", "onsite start-nps", "configure terminal", "aaa new-model", "end", "onsite ssh", "reload"]);
+  assert.match(txt(results[3]), /Only netadmin/);
+  assert.match(txt(results[8]), /locked out again/);
+  assert.equal(results[9].lines[0].kind, "err");
+  assert.equal(sess.resolved, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Port-channel: shutting the member down hides it and keeps 1 Gb; the VLAN on another interface changes nothing", () => {
+  const sc = byId["cisco-portchannel-member"];
+  const { sess, results } = play(sc, ["configure terminal", "interface Gi1/0/48", "shutdown", "end", "show etherchannel summary", "onsite copy", "configure terminal", "interface Gi1/0/47", "switchport trunk allowed vlan add 50"]);
+  assert.match(txt(results[4]), /Gi1\/0\/48\(D\)/);
+  assert.match(txt(results[5]), /Nine/);
+  assert.match(txt(results[8]), /already has the right list/);
+  E.run(sess, "end");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("WireGuard: opening the firewall changes nothing and is a remark; allowed-address without head office is refused", () => {
+  const sc = byId["mikrotik-wireguard"];
+  const { sess, results } = play(sc, ["/ip firewall filter add chain=forward action=accept place-before=0", "/ping 10.20.1.88 count=3", "/interface wireguard peers set 0 allowed-address=10.255.0.1/32"]);
+  assert.match(txt(results[1]), /packet-loss=100%/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /firewall/.test(x)));
+});
+
+/* v0.15: career level 4, part 4 */
+test("pfSense: a rule to the WAN address never matches and is a remark; pass any to any is refused", () => {
+  const sc = byId["pfsense-nat-rule"];
+  const { sess, results } = play(sc, ["fwctl rule add wan pass any to \"WAN address\"", "grep 8443 /var/log/filter.log", "onsite channel", "fwctl rule add wan pass any any"]);
+  assert.match(txt(results[1]), /block,in/);
+  assert.equal(results[3].lines[0].kind, "err");
+  assert.equal(sess.state.userOk, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /WAN address/.test(x)));
+});
+
+test("OPNsense: a firewall rule changes nothing, IPS off downloads but does not resolve, and the exception needs apply", () => {
+  const sc = byId["opnsense-ips-block"];
+  const { sess, results } = play(sc, ["fwctl rule add lan pass tcp from LAN to 198.51.100.25 port 80", "onsite update", "ipsctl ips off", "onsite update", "ipsctl rule 2018959 --action alert"]);
+  assert.equal(sess.state.userOk, false);
+  assert.equal(results[4].lines[0].kind, "err");
+  E.run(sess, "ipsctl ips on");
+  E.run(sess, "ipsctl userrule add --action pass --src 198.51.100.25 --desc x");
+  E.run(sess, "onsite update");
+  assert.equal(sess.state.userOk, false, "not applied yet");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /IPS was switched off/.test(x)));
+});
+
+test("FreeRADIUS: a restart keeps the expired certificate, the certificate without its key will not start, and WPA2-Personal is a remark", () => {
+  const sc = byId["radius-peap-fail"];
+  const { sess, results } = play(sc, ["sudo systemctl restart freeradius", "sudo eapol_test -c /root/peap-test.conf -s testing123", "sudo cp /root/certs/radius-2027.pem /etc/freeradius/3.0/certs/server.pem",
+    "sudo systemctl restart freeradius", "wlc ssid Contoso-Corp --security wpa2-psk --psk Welcome2026"]);
+  assert.match(txt(results[1]), /FAILURE/);
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "the laptops cannot join a shared key network");
+  E.run(sess, "wlc ssid Contoso-Corp --security wpa2-enterprise");
+  E.run(sess, "onsite connect");
+  assert.ok(sess.resolved);
+});
+
+test("Asterisk: a restart is refused again, and the portal alone registers the trunk with no audio", () => {
+  const sc = byId["asterisk-trunk-down"];
+  const { sess, results } = play(sc, ["sudo systemctl restart asterisk", "sudo asterisk -rx \"pjsip show registrations\"", "voipportal trunk set --allowed-ip 203.0.113.77",
+    "sudo asterisk -rx \"pjsip send register trunk-voip\"", "onsite call"]);
+  assert.match(txt(results[1]), /Rejected/);
+  assert.equal(sess.state.registered, true);
+  assert.equal(sess.state.userOk, false, "no audio with the old external address");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /restarted/.test(x)));
+});
+
+test("Audit: the laptop never has 4740, the legacy setting is ignored, and unlocking before the source is removed does not hold", () => {
+  const sc = byId["audit-4740-missing"];
+  const { sess, results } = play(sc, ["Get-WinEvent -ComputerName LAPTOP-0217 -FilterHashtable @{LogName='Security';Id=4740}", "gpoctl legacy-audit \"Default Domain Controllers Policy\" --category \"Audit account management\" --success --failure",
+    "gpoctl eventlog \"Default Domain Controllers Policy\" --log Security --max-size 20MB", "gpupdate /force", "auditpol /get /subcategory:\"User Account Management\"", "Unlock-ADAccount jruiz"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[1]), /ignored/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(txt(results[4]), /No Auditing/);
+  assert.equal(sess.state.unlocked, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /laptop/.test(x)));
+});
+
+test("Domain time: Set-Date lasts seconds, a resync with the host provider changes nothing, and the PDC needs its own peers", () => {
+  const sc = byId["ad-time-skew"];
+  const { sess, results } = play(sc, ["Set-Date (Get-Date).AddMinutes(7)", "w32tm /stripchart /computer:DC01 /samples:3 /dataonly", "Restart-Service w32time", "w32tm /query /source",
+    "w32tm /config /manualpeerlist:\"0.es.pool.ntp.org,0x8\" /syncfromflags:manual /update"]);
+  assert.match(txt(results[1]), /\+421/);
+  assert.match(txt(results[3]), /VM IC/);
+  assert.equal(results[4].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Signed script: Bypass loses to the GPO, Set-ExecutionPolicy is overridden, and Bypass left in the task is a remark", () => {
+  const sc = byId["ps-unsigned-script"];
+  const { sess, results } = play(sc, ["Set-ExecutionPolicy Bypass", TEMPT_BYPASS, "Start-ScheduledTask -TaskName 'Contoso - Export timesheets'", "Get-ScheduledTaskInfo -TaskName 'Contoso - Export timesheets'", "Set-AuthenticodeSignature C:\\Scripts\\Export-Timesheets.ps1 $cert"]);
+  assert.match(txt(results[0]), /overridden by a policy/);
+  assert.match(txt(results[2]), /Bypass/);
+  assert.match(txt(results[3]), /LastTaskResult\s+: 1/);
+  assert.equal(results[4].lines[0].kind, "err", "no certificate in $cert yet");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /Bypass/.test(x)));
+});
+const TEMPT_BYPASS = "schtasks /change /tn \"Contoso - Export timesheets\" /tr \"powershell.exe -ExecutionPolicy Bypass -File C:\\Scripts\\Export-Timesheets.ps1\"";
+
+test("PowerCLI: nothing before connecting, Format-Table to a file is text, and a CSV without the columns is not accepted", () => {
+  const sc = byId["powercli-report"];
+  const { sess, results } = play(sc, ["Get-VM", "Connect-VIServer vcenter01.contoso.local", "Get-VM | Format-Table | Out-File C:\\Audit\\VM-inventory.csv", "onsite send",
+    "Get-VM | Select-Object Name,PowerState | Export-Csv C:\\Audit\\VM-inventory.csv", "Import-Csv C:\\Audit\\VM-inventory.csv", "onsite send"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[5]), /#TYPE/);
+  assert.equal(sess.state.userOk, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("ESXi: reconnecting fails while tmp is full, starting vpxa first does not last, and removing the host costs a relink", () => {
+  const sc = byId["esxi-not-responding"];
+  const { sess, results } = play(sc, ["Set-VMHost VMH-02 -State Connected", "ssh root@vmh-02 /etc/init.d/vpxa start", "ssh root@vmh-02 /etc/init.d/vpxa status", "Remove-VMHost VMH-02 -Confirm:$false", "Add-VMHost vmh-02.contoso.local -Location Contoso-DC -Force"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[2]), /not running/);
+  assert.equal(results[4].lines[0].kind, "err");
+  ["ssh root@vmh-02 rm /tmp/vm-support-vmh-02-2026-11-11@17-38-02.tgz", "ssh root@vmh-02 /etc/init.d/vpxa start", "Add-VMHost vmh-02.contoso.local -Location Contoso-DC -Force", "Get-VMHost VMH-02", "onsite veeam"].forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "the VMs came back with new IDs");
+  E.run(sess, "onsite relink");
+  E.run(sess, "onsite veeam");
+  assert.ok(sess.resolved);
+  const reasons = verdictOf(sc, sess).reasons;
+  assert.ok(reasons.some((x) => /removed from the inventory/.test(x)) && reasons.some((x) => /support bundle/.test(x)));
+});
+
+test("Replication: /syncall again gives 8524 again, and the DC's own address first is refused", () => {
+  const sc = byId["dc-no-replication"];
+  const { sess, results } = play(sc, ["repadmin /syncall /AdeP", "repadmin /syncall /AdeP", "Set-DnsClientServerAddress -InterfaceAlias Ethernet0 -ServerAddresses 127.0.0.1,10.20.1.10"]);
+  assert.match(txt(results[1]), /8524/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(sess.state.synced, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Zabbix storm: disabling the action silences the line too and is a remark; the dependency gives one message", () => {
+  const sc = byId["zabbix-alert-storm"];
+  const { sess, results } = play(sc, ["zbx action disable \"Notify sites on-call\"", "zbx simulate --host FW-ZAR01 --unreachable", "zbx depend --group \"Zaragoza plant\" --on FW-ZAR01", "onsite review"]);
+  assert.match(txt(results[1]), /nobody/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "the action is still off");
+  ["zbx action enable \"Notify sites on-call\"", "zbx simulate --host FW-ZAR01 --unreachable", "onsite review"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /disabled/.test(x)));
 });
