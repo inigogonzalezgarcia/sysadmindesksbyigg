@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 135);
+  assert.equal(SCENARIOS.length, 157);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -1635,4 +1635,265 @@ test("Zabbix storm: disabling the action silences the line too and is a remark; 
   ["zbx action enable \"Notify sites on-call\"", "zbx simulate --host FW-ZAR01 --unreachable", "onsite review"].forEach((c) => E.run(sess, c));
   assert.ok(sess.resolved);
   assert.ok(verdictOf(sc, sess).reasons.some((x) => /disabled/.test(x)));
+});
+
+test("Sentinel: disabling the user changes no rule and is a remark, and the watchlist must exist before the rule uses it", () => {
+  const sc = byId["sentinel-impossible-travel"];
+  const { sess, results } = play(sc, ["Update-MgUser -UserId cmartin@contoso.com -AccountEnabled:$false", "sentinel rule edit \"Contoso - Impossible travel\" --exclude-watchlist ContosoEgress", "sentinel rule test \"Contoso - Impossible travel\" --last 7d"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(txt(results[2]), /23/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.equal(sess.resolved, false, "cmartin is still disabled");
+  E.run(sess, "Update-MgUser -UserId cmartin@contoso.com -AccountEnabled:$true");
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /disabled/.test(x)));
+});
+
+test("Azure Monitor: a reinstalled agent still sends nothing; the association brings the heartbeat back", () => {
+  const sc = byId["azmon-agent-silent"];
+  const hb = sc.solution[0];
+  const { sess, results } = play(sc, ["az connectedmachine extension create -g rg-stores-prod --machine-name APP-IIS01 -n AzureMonitorWindowsAgent", hb, "az monitor data-collection rule association create --name x --resource APP-IIS01"]);
+  assert.match(txt(results[1]), /2026-11-06/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("CyberArk: a change fails until the OU delegation, a reset by hand breaks the vault and is a remark, and Domain Admins is refused", () => {
+  const sc = byId["cyberark-cpm-fails"];
+  const { sess, results } = play(sc, ["pvwa account change svc-erp-batch", "Set-ADAccountPassword svc-erp-batch -Reset", "pvwa account verify svc-erp-batch", "Add-ADGroupMember \"Domain Admins\" -Members svc-cpm-ad"]);
+  assert.match(txt(results[0]), /Access is denied/);
+  assert.match(txt(results[2]), /1326/);
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /by hand/.test(x)));
+});
+
+test("OpenShift: five replicas still have no endpoints, and the selector must match the pods' labels", () => {
+  const sc = byId["openshift-route-503"];
+  const { sess, results } = play(sc, ["oc scale deployment/cc-api --replicas=5 -n stores-cc", "oc get endpoints cc-api -n stores-cc", "oc set selector svc/cc-api app=cc-api-v2 -n stores-cc", "curl -sI https://cc-api-stores-cc.apps.ocp01.contoso.local/health"]);
+  assert.match(txt(results[1]), /<none>/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(txt(results[3]), /503/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /5 replicas/.test(x)));
+});
+
+test("Voice line: the backup only works after the failover, the mobiles are a remark, and failing back early is refused", () => {
+  const sc = byId["voice-line-bank"];
+  const { sess, results } = play(sc, ["turret line test PW-MERIDIANO-FX", "onsite mobiles", "turret line failover PW-MERIDIANO-FX --to backup", "turret line failover PW-MERIDIANO-FX --to primary"]);
+  assert.match(txt(results[0]), /No answer/);
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.equal(sess.state.mobiles, false, "the desk is back on the turrets");
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /mobiles/.test(x)));
+});
+
+test("RabbitMQ: a purge loses the orders until SaludNet resends them, and the 37 rejected ones need the shovel", () => {
+  const sc = byId["rabbitmq-queue-growing"];
+  const { sess } = play(sc, ["sudo rabbitmqctl -p clinic purge_queue lab.orders", "sudo systemctl start lab-bridge", sc.solution[5], "sudo rabbitmqctl -p clinic list_queues name messages consumers", "onsite lab"]);
+  assert.equal(sess.state.labOk, false, "this morning's orders are gone");
+  ["onsite resend", "onsite lab"].forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /purged/.test(x)));
+  const up = play(sc, ["sudo systemctl start lab-bridge", "onsite lab"]).results;
+  assert.match(txt(up[1]), /37/);
+});
+
+test("Elasticsearch: lifting the block by hand lasts one command, and deleting an index stays above the watermark", () => {
+  const sc = byId["es-read-only"];
+  const { sess, results } = play(sc, ["curl -X PUT 'localhost:9200/_all/_settings' -H 'Content-Type: application/json' -d '{\"index.blocks.read_only_allow_delete\": null}'", "curl -s 'localhost:9200/logs-*/_count?q=@timestamp:>now-5m'", "curl -X DELETE 'localhost:9200/.ds-logs-windows.security-default-2026.10.13-000001'", "curl -s localhost:9200/_cat/allocation?v"]);
+  assert.ok(results[1].lines.some((l) => l.kind === "event" && /read-only again/.test(l.text)));
+  assert.match(txt(results[1]), /"count":0/);
+  assert.match(txt(results[3]), /\b92 /);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  const reasons = verdictOf(sc, sess).reasons;
+  assert.ok(reasons.some((x) => /deleted by hand/.test(x)) && reasons.some((x) => /lifted by hand/.test(x)));
+});
+
+test("Puppet: a new key makes a new request with a new fingerprint, sign --all is refused, and signing unchecked is a remark", () => {
+  const sc = byId["puppet-cert-agent"];
+  const { results } = play(sc, ["sudo puppetserver ca list", "ssh pos-rpt01 sudo rm -rf /etc/puppetlabs/puppet/ssl", "sudo puppetserver ca list", "sudo puppetserver ca sign --all"]);
+  assert.match(txt(results[0]), /4F:1A/);
+  assert.match(txt(results[2]), /B7:22/);
+  assert.equal(results[3].lines[0].kind, "err");
+  const blind = play(sc, ["sudo puppetserver ca sign --certname pos-rpt01.contoso.local", "ssh pos-rpt01 sudo puppet agent -t", "ssh pos-rpt01 systemctl is-active zabbix-agent2"]).sess;
+  assert.ok(blind.resolved, "it works, but nobody checked whose request it was");
+  assert.ok(verdictOf(sc, blind).reasons.some((x) => /fingerprint/.test(x)));
+});
+
+test("PostgreSQL: a plain VACUUM removes nothing while the old transaction lives, VACUUM FULL is a remark, and a server-wide timeout is refused", () => {
+  const sc = byId["postgres-bloat"];
+  const q = (sql) => "sudo -u postgres psql -d erp -c \"" + sql + "\"";
+  const { sess, results } = play(sc, [q("VACUUM (VERBOSE, ANALYZE) stock_movements"), q("VACUUM FULL stock_movements"), q("ALTER SYSTEM SET idle_in_transaction_session_timeout = '15min'")]);
+  assert.match(txt(results[0]), /0 removed/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /VACUUM FULL/.test(x)));
+});
+
+test("z/OS: resubmitting unchanged abends again, the edit needs the downloaded file, and a small primary is refused", () => {
+  const sc = byId["zos-batch-abend"];
+  const { sess, results } = play(sc, ["zowe jobs submit data-set \"CONTOSO.PROD.JCL(CTBNITE)\"", "(Get-Content .\\CTBNITE.jcl) -replace 'CYL,\\(20,5\\)','CYL,(150,50),RLSE' | Set-Content .\\CTBNITE.jcl",
+    "zowe zos-files download data-set \"CONTOSO.PROD.JCL(CTBNITE)\" -f CTBNITE.jcl", "(Get-Content .\\CTBNITE.jcl) -replace 'CYL,\\(20,5\\)','CYL,(40,10)' | Set-Content .\\CTBNITE.jcl"]);
+  assert.match(txt(results[0]), /ABEND B37/);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /resubmitted/.test(x)));
+});
+
+test("Keycloak: the bind credential cannot be updated before the AD reset, and local accounts are a remark", () => {
+  const sc = byId["keycloak-ldap-login"];
+  const { sess, results } = play(sc, ["kcadm.sh create users -r contoso -s username=imontero.tmp -s enabled=true", "onsite login", sc.solution[4]]);
+  assert.match(txt(results[1]), /no access/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /local accounts/.test(x)));
+});
+
+/* v0.15: career level 5, part 2 */
+test("pfSense HA: switching the primary off takes the hotel offline, maintenance mode waits for the sync, and the test needs pfsync on both nodes", () => {
+  const sc = byId["pfsense-carp-failover"];
+  const { sess, results } = play(sc, ["fwctl carp maintenance enter", "ssh fw-htl02 ifconfig | grep carp", "shutdown -p now", "fwctl ha show", "onsite power"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.doesNotMatch(txt(results[1]), /carp: \w+ vhid 1/);
+  assert.match(txt(results[3]), /timed out/);
+  ["fwctl ha set sync-password", "fwctl ha sync", "fwctl carp maintenance enter"].forEach((c) => E.run(sess, c));
+  assert.match(txt(E.run(sess, "onsite test")), /failed/, "without pfsync the open payment drops");
+  E.run(sess, "fwctl carp maintenance leave");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /switched off/.test(x)));
+});
+
+test("Redfish: no update without an inventory, 7.00 skips the two oldest until they go through 6.10.80.00, and racadm by hand is a remark", () => {
+  const sc = byId["redfish-firmware"];
+  const { sess, results } = play(sc, ["rfbatch update -f idrac-hosts.txt --image firmware/iDRAC_7.00.00.172_A00.exe", "racadm -r 10.20.99.55 -u root -p ******** update -f iDRAC_7.00.00.172_A00.exe",
+    "rfbatch inventory -f idrac-hosts.txt", "rfbatch update -f idrac-hosts.txt --image firmware/iDRAC_7.00.00.172_A00.exe", "rfbatch update -f idrac-hosts.txt --image firmware/iDRAC_6.10.80.00_A00.exe"]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[1]), /6\.00\.30\.00/);
+  assert.match(txt(results[3]), /2 failed/);
+  assert.equal(results[4].lines[0].kind, "err", "6.10.80.00 for all would downgrade four");
+  assert.equal(sess.state.part7, true);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /by hand/.test(x)));
+});
+
+test("PowerChute: pairing fails until the card has the phrase, a late start is refused, and a second UPS is a remark", () => {
+  const sc = byId["powerchute-shutdown"];
+  const { sess, results } = play(sc, ["onsite buy", "pcns pair --nmc 10.20.99.30", "ups simulate-outage UPS-SALA-A", "pcns set onbattery --shutdown-after 900"]);
+  assert.match(txt(results[1]), /does not match/);
+  assert.match(txt(results[2]), /No PowerChute/);
+  assert.equal(results[3].lines[0].kind, "err");
+  ["ups pcns-phrase UPS-SALA-A", "pcns pair --nmc 10.20.99.30"].forEach((c) => E.run(sess, c));
+  assert.match(txt(E.run(sess, "ups simulate-outage UPS-SALA-A")), /low battery/, "paired but still too late");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /second UPS/.test(x)));
+});
+
+test("Nginx: one node hides the lost sessions but is slow, a reload needs nginx -t, and ip_hash waits for WEB-RES02 back", () => {
+  const sc = byId["nginx-balancer-sticky"];
+  const { sess, results } = play(sc, ["sudo sed -i '/10.20.1.151/s/^/#/' /etc/nginx/conf.d/reservas.conf", "sudo systemctl reload nginx", "sudo nginx -t", "sudo systemctl reload nginx", "onsite test",
+    sc.solution[3]]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(txt(results[4]), /502/);
+  assert.equal(results[5].lines[0].kind, "err");
+  E.run(sess, "sudo sed -i '/10.20.1.151/s/^#//' /etc/nginx/conf.d/reservas.conf");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /WEB-RES02/.test(x)));
+});
+
+test("Grafana: a copy of the dashboard leaves the overview without Wrocław, and the group must exist before massadd", () => {
+  const sc = byId["grafana-site-panel"];
+  const { sess, results } = play(sc, ["gfctl dash copy sites-overview --title \"Sites overview WRO\" --group \"Plants/Wroclaw\"", "onsite check", "zbx hostgroup massadd --group \"Sites/WRO\" --from \"Plants/Wroclaw\""]);
+  assert.match(txt(results[1]), /still missing/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /copy/.test(x)));
+  const clean = play(sc, ["gfctl dash copy sites-overview --title x", "gfctl dash delete 7Hk2pQz"].concat(sc.solution)).sess;
+  assert.deepEqual(verdictOf(sc, clean).reasons, [], "a deleted copy leaves nothing behind");
+});
+
+test("Fleet: the policy change alone reaches nobody, the old server alone keeps them on revision 7, and reinstalling is a remark", () => {
+  const sc = byId["fleet-agent-offline"];
+  const off = sc.solution[0];
+  const { sess, results } = play(sc, ["onsite reinstall", "sudo systemctl start elastic-agent", "sudo systemctl stop elastic-agent", off, sc.solution[3], off]);
+  assert.match(txt(results[1]), /revision 7/);
+  assert.match(txt(results[3]), /"total": 15/);
+  assert.match(txt(results[5]), /"total": 15/, "revision 8 waits for an agent that cannot check in");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /reinstalled/.test(x)));
+});
+
+test("Splunk: the events moved index, only the allowed list is not enough, and a bigger licence is a remark", () => {
+  const sc = byId["splunk-source-missing"];
+  const { sess, results } = play(sc, [sc.solution[0], "onsite licence", "curl -sk -u admin https://localhost:8089/services/authorization/roles/soc_analyst -d srchIndexesAllowed=netfw", "onsite search"]);
+  assert.match(txt(results[0]), /netfw/);
+  assert.match(txt(results[3]), /Still nothing/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /licence/.test(x)));
+});
+
+test("Azure costs: nothing is deleted before the owner answers, and reservations are a remark", () => {
+  const sc = byId["azure-bill-spike"];
+  const { sess, results } = play(sc, ["onsite reserve", "az group delete -n rg-loadtest-oct --yes", "az group exists -n rg-loadtest-oct"]);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.match(txt(results[2]), /true/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /reservations/.test(x)));
+  assert.equal(E.run(sess, "az resource list -g rg-loadtest-oct -o table").lines[0].kind, "err", "the group is gone");
+});
+
+test("AWS: opening the security group changes no route and is a remark until it is closed again", () => {
+  const sc = byId["aws-no-share"];
+  const tnc = sc.solution[0];
+  const { sess, results } = play(sc, ["aws ec2 authorize-security-group-ingress --group-id sg-0f1a2b3c4d5e6f708 --protocol -1 --cidr 0.0.0.0/0", tnc, "aws ec2 enable-vgw-route-propagation --route-table-id rtb-0000 --gateway-id vgw-0000"]);
+  assert.match(txt(results[1]), /False/);
+  assert.equal(results[2].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /open to the whole internet/.test(x)));
+  E.run(sess, "aws ec2 revoke-security-group-ingress --group-id sg-0f1a2b3c4d5e6f708 --protocol -1 --cidr 0.0.0.0/0");
+  assert.deepEqual(verdictOf(sc, sess).reasons, []);
+});
+
+test("Graph report: 16 workers fail sooner, and paging or Retry-After alone is not enough", () => {
+  const sc = byId["graph-429-report"];
+  const [, , , paging, retry] = sc.solution;
+  const { sess, results } = play(sc, ["python3 devices_report.py --workers 16", "wc -l devices.csv", paging, "python3 devices_report.py"]);
+  assert.match(txt(results[1]), /^215 /);
+  assert.match(txt(results[3]), /2340 managed devices[\s\S]*429/);
+  E.run(sess, retry);
+  assert.match(txt(E.run(sess, "python3 devices_report.py --workers 16")), /Wrote 2340/);
+  const r = play(sc, [retry, "python3 devices_report.py"]).results;
+  assert.match(txt(r[1]), /Wrote 1000/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Windows 365: reprovisioning before the DNS is back fails again, everything at once is a remark, and $failed must exist", () => {
+  const sc = byId["cloudpc-no-connect"];
+  const { sess, results } = play(sc, ["$failed | % { Invoke-MgGraphRequest -Method POST -Uri \"beta/deviceManagement/virtualEndpoint/cloudPCs/$($_.Id)/reprovision\" }", "Get-MgBetaDeviceManagementVirtualEndpointCloudPc | % { Invoke-MgGraphRequest -Method POST -Uri \"beta/deviceManagement/virtualEndpoint/cloudPCs/$($_.Id)/reprovision\" }",
+    sc.solution[7], "$failed = Get-MgBetaDeviceManagementVirtualEndpointCloudPc -Filter \"status eq 'failed'\"", sc.solution[9]]);
+  assert.equal(results[0].lines[0].kind, "err");
+  assert.match(txt(results[2]), /fail at the same point/);
+  assert.equal(sess.state.reprovOk, false);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /40 internal/.test(x)));
 });

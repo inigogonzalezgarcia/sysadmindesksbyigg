@@ -147,6 +147,28 @@ Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.
 | 133 | [ESXi host 'not responding' in vCenter](https://sysadmindesksbyigg.pages.dev/tickets/esxi-not-responding) | ESXi: vpxa, the tmp ramdisk with vdf and a host back without a reboot | 2 |
 | 134 | [A domain controller does not replicate](https://sysadmindesksbyigg.pages.dev/tickets/dc-no-replication) | Active Directory health: repadmin, error 8524 and a DC that only asks itself for DNS | 2 |
 | 135 | [An alert storm in Zabbix after a WAN outage](https://sysadmindesksbyigg.pages.dev/tickets/zabbix-alert-storm) | Zabbix: trigger dependencies on a site's router and simulating the outage | 2 |
+| 136 | [Sentinel: a sign-in from two countries in 10 minutes](https://sysadmindesksbyigg.pages.dev/tickets/sentinel-impossible-travel) | Microsoft Sentinel: an impossible travel incident, the VPN's egress IPs and a watchlist in the rule | 2 |
+| 137 | [A server stopped sending data to Log Analytics](https://sysadmindesksbyigg.pages.dev/tickets/azmon-agent-silent) | Azure Monitor: an Arc server without its data collection rule after a move, and the policy's scope | 2 |
+| 138 | [CyberArk does not rotate the service account's password](https://sysadmindesksbyigg.pages.dev/tickets/cyberark-cpm-fails) | CyberArk CPM: the reconcile account's delegation after an OU change, change and verify | 2 |
+| 139 | [The OpenShift app gives a 503 through its Route](https://sysadmindesksbyigg.pages.dev/tickets/openshift-route-503) | OpenShift: a Service selector that matches no pod after a release, endpoints and the Route | 2 |
+| 140 | [The voice line to a bank drops in the middle of the session](https://sysadmindesksbyigg.pages.dev/tickets/voice-line-bank) | Trading voice: a private wire down, the backup route and the mandatory recording | 2 |
+| 141 | [The clinical orders do not arrive: the queue keeps growing](https://sysadmindesksbyigg.pages.dev/tickets/rabbitmq-queue-growing) | RabbitMQ: a stopped consumer, start-limit-hit and replaying the dead-letter queue with a shovel | 2 |
+| 142 | [Elasticsearch in read-only mode](https://sysadmindesksbyigg.pages.dev/tickets/es-read-only) | Elasticsearch: the flood-stage watermark and a data stream without an ILM policy | 2 |
+| 143 | [Puppet: the new agent gets no configuration](https://sysadmindesksbyigg.pages.dev/tickets/puppet-cert-agent) | Puppet: an unsigned certificate request, the fingerprint check and the first catalog | 2 |
+| 144 | [PostgreSQL: a table that never stops growing](https://sysadmindesksbyigg.pages.dev/tickets/postgres-bloat) | PostgreSQL: autovacuum held back by an idle transaction, and VACUUM without locking | 2 |
+| 145 | [A z/OS night batch ends in ABEND](https://sysadmindesksbyigg.pages.dev/tickets/zos-batch-abend) | z/OS with Zowe: ABEND B37, the JCL's SPACE and running the job again | 2 |
+| 146 | [Nobody from the domain can sign in to the Keycloak app](https://sysadmindesksbyigg.pages.dev/tickets/keycloak-ldap-login) | Keycloak: LDAP federation with an expired bind account (error 49, data 532) | 2 |
+| 147 | [The secondary firewall does not take over](https://sysadmindesksbyigg.pages.dev/tickets/pfsense-carp-failover) | pfSense HA: a config sync failing on authentication, the missing WAN VIP, pfsync and a test in maintenance mode | 2 |
+| 148 | [Update the firmware of 20 servers](https://sysadmindesksbyigg.pages.dev/tickets/redfish-firmware) | Redfish in batch: an inventory before and after, and an intermediate iDRAC version for the oldest two | 2 |
+| 149 | [The power cut switched the hosts off hard](https://sysadmindesksbyigg.pages.dev/tickets/powerchute-shutdown) | PowerChute: a UPS card replaced under RMA, pairing again and a shutdown that fits the runtime | 2 |
+| 150 | [Users lose their session while they work](https://sysadmindesksbyigg.pages.dev/tickets/nginx-balancer-sticky) | Nginx: round robin over two nodes with local sessions, ip_hash and a reload checked first | 2 |
+| 151 | [Grafana's per-site panel does not show the new site](https://sysadmindesksbyigg.pages.dev/tickets/grafana-site-panel) | Grafana and Zabbix: a site variable read from host groups and a provisioned dashboard | 2 |
+| 152 | [Elastic Agent: 15 computers offline in Fleet](https://sysadmindesksbyigg.pages.dev/tickets/fleet-agent-offline) | Elastic Fleet: a policy with its own Fleet Server host after a migration, and moving the agents over | 2 |
+| 153 | [Splunk stopped receiving the firewall's logs](https://sysadmindesksbyigg.pages.dev/tickets/splunk-source-missing) | Splunk: a source moved to a new index, the role's default indexes and a licence warning that blocks nothing | 2 |
+| 154 | [The Azure bill has shot up this month](https://sysadmindesksbyigg.pages.dev/tickets/azure-bill-spike) | Azure Cost Management: a forgotten load test, unattached disks and IPs, and a budget with alerts | 2 |
+| 155 | [The AWS server cannot reach the office share](https://sysadmindesksbyigg.pages.dev/tickets/aws-no-share) | AWS VPC: a subnet's route table without VPN route propagation, and a stateful security group | 2 |
+| 156 | [The Graph device report stops halfway](https://sysadmindesksbyigg.pages.dev/tickets/graph-429-report) | Python and Microsoft Graph: @odata.nextLink paging and Retry-After on a 429 | 2 |
+| 157 | [The contractors' Cloud PCs do not connect](https://sysadmindesksbyigg.pages.dev/tickets/cloudpc-no-connect) | Windows 365: an Azure network connection whose only DNS server is switched off at night | 2 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 

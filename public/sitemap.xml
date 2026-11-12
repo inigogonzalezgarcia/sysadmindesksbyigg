@@ -140,6 +140,28 @@
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/esxi-not-responding</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/dc-no-replication</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zabbix-alert-storm</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/sentinel-impossible-travel</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/azmon-agent-silent</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/cyberark-cpm-fails</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/openshift-route-503</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/voice-line-bank</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/rabbitmq-queue-growing</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/es-read-only</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/puppet-cert-agent</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/postgres-bloat</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/zos-batch-abend</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/keycloak-ldap-login</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/pfsense-carp-failover</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/redfish-firmware</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/powerchute-shutdown</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/nginx-balancer-sticky</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/grafana-site-panel</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/fleet-agent-offline</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/splunk-source-missing</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/azure-bill-spike</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/aws-no-share</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/graph-429-report</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/cloudpc-no-connect</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/terms</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/privacy</loc><lastmod>2026-11-04</lastmod></url>
 </urlset>

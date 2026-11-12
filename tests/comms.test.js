@@ -177,6 +177,30 @@ const TEMPTING = {
   "esxi-not-responding": ["Set-VMHost VMH-02 -State Connected"],
   "dc-no-replication": ["repadmin /syncall /AdeP"],
   "zabbix-alert-storm": ["zbx action disable \"Notify sites on-call\"", "onsite review", "zbx action enable \"Notify sites on-call\""],
+  "sentinel-impossible-travel": ["Update-MgUser -UserId cmartin@contoso.com -AccountEnabled:$false", "Update-MgUser -UserId cmartin@contoso.com -AccountEnabled:$true"],
+  "azmon-agent-silent": ["az connectedmachine extension delete -g rg-stores-prod --machine-name APP-IIS01 -n AzureMonitorWindowsAgent", "az connectedmachine extension create -g rg-stores-prod --machine-name APP-IIS01 -n AzureMonitorWindowsAgent --publisher Microsoft.Azure.Monitor --type AzureMonitorWindowsAgent"],
+  "cyberark-cpm-fails": ["Set-ADAccountPassword svc-erp-batch -Reset"],
+  "openshift-route-503": ["oc scale deployment/cc-api --replicas=5 -n stores-cc"],
+  "voice-line-bank": ["onsite mobiles"],
+  "rabbitmq-queue-growing": ["sudo rabbitmqctl -p clinic purge_queue lab.orders", "onsite resend"],
+  "es-read-only": ["curl -X PUT 'localhost:9200/_all/_settings' -H 'Content-Type: application/json' -d '{\"index.blocks.read_only_allow_delete\": null}'"],
+  "puppet-cert-agent": ["ssh pos-rpt01 sudo rm -rf /etc/puppetlabs/puppet/ssl", "ssh pos-rpt01 sudo puppet agent -t"],
+  "postgres-bloat": ["sudo -u postgres psql -d erp -c \"VACUUM FULL stock_movements\""],
+  "zos-batch-abend": ["zowe jobs submit data-set \"CONTOSO.PROD.JCL(CTBNITE)\" --wait-for-output"],
+  "keycloak-ldap-login": ["kcadm.sh create users -r contoso -s username=imontero.tmp -s enabled=true"],
+  // career level 5, part 2 (the primary switched off and on again; one iDRAC by hand; a second UPS; WEB-RES02 out of the pool and back; a copy of the
+  // dashboard; reinstalled agents; a bigger licence; reservations; the security group open to all; 16 workers; every Cloud PC reprovisioned)
+  "pfsense-carp-failover": ["shutdown -p now", "onsite power"],
+  "redfish-firmware": ["racadm -r 10.20.99.43 -u root -p ******** update -f iDRAC_7.00.00.172_A00.exe"],
+  "powerchute-shutdown": ["onsite buy"],
+  "nginx-balancer-sticky": ["sudo sed -i '/10.20.1.151/s/^/#/' /etc/nginx/conf.d/reservas.conf", "sudo nginx -t", "sudo systemctl reload nginx", "sudo sed -i '/10.20.1.151/s/^#//' /etc/nginx/conf.d/reservas.conf"],
+  "grafana-site-panel": ["gfctl dash copy sites-overview --title \"Sites overview WRO\" --group \"Plants/Wroclaw\""],
+  "fleet-agent-offline": ["onsite reinstall"],
+  "splunk-source-missing": ["onsite licence"],
+  "azure-bill-spike": ["onsite reserve"],
+  "aws-no-share": ["aws ec2 authorize-security-group-ingress --group-id sg-0f1a2b3c4d5e6f708 --protocol -1 --cidr 0.0.0.0/0"],
+  "graph-429-report": ["python3 devices_report.py --workers 16"],
+  "cloudpc-no-connect": ["Get-MgBetaDeviceManagementVirtualEndpointCloudPc | % { Invoke-MgGraphRequest -Method POST -Uri \"beta/deviceManagement/virtualEndpoint/cloudPCs/$($_.Id)/reprovision\" }"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {
