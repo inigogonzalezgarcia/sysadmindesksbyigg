@@ -373,6 +373,13 @@ export const RELATED = {
   "aws-no-share": ["net-fortigate-branch", "mikrotik-wireguard", "ps-remoting-double-hop"],
   "graph-429-report": ["graph-report-mfa", "python-report-fails", "ps-ad-weekly-report"],
   "cloudpc-no-connect": ["horizon-pool-error", "citrix-session", "dns-intranet"],
+  "k8s-crashloop": ["openshift-route-503", "docker-container-restarting", "nginx-502"],
+  "terraform-drift": ["aws-no-share", "azure-bill-spike", "firewall-gpo-app"],
+  "ansible-patch-fails": ["landscape-patch-window", "puppet-cert-agent", "winserver-patch-cluster"],
+  "jenkins-pipeline-red": ["git-script-overwritten", "ps-unsigned-script", "python-report-fails"],
+  "grafana-slo-budget": ["grafana-site-panel", "zabbix-alert-storm", "nginx-502"],
+  "gpu-xid-errors": ["server-psu-rma", "nutanix-disk-failed", "redfish-firmware"],
+  "crypto-mining": ["defender-asr-block", "sentinel-impossible-travel", "tanium-stale-endpoint"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {

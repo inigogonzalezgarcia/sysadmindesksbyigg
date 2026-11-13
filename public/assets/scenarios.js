@@ -24243,5 +24243,1199 @@
     },
   });
 
+  /* ------------------------------------------------------------------ Career level 6 (DevOps / SRE): a pod in CrashLoopBackOff after a release */
+  const K6_JMP = { host: "ops-jmp01", user: "sysadmin", domain: "contoso.local", shell: "bash", prompt: "[sysadmin@ops-jmp01 ~]$ " };
+  const K6K8_NEW = ["expenses-api-7f6b9c8d4-k2x9q", "expenses-api-7f6b9c8d4-p7m4w"];
+  scenarios.push({
+    id: "k8s-crashloop",
+    level: 2, career: 6,
+    topic: { en: "Kubernetes / a release that crashes on a renamed setting", es: "Kubernetes / una versión que se cae por un ajuste renombrado" },
+    minutes: 14,
+    title: { en: "The pod is in CrashLoopBackOff after the release", es: "Pod en CrashLoopBackOff tras el despliegue" },
+    guide: GUIDE + "kubernetes-de-docker-compose-a-un-cluster-gestionado-despliegue-y-un-pod-en-crashloopbackoff.html",
+    machine: K6_JMP,
+    ticket: {
+      id: "INC-20794", from: "Marta García (Finance)", priority: "P2",
+      subject: { en: "Expenses: 'Service unavailable' when I submit the month's tickets", es: "Gastos: «Service unavailable» al enviar los tiques del mes" },
+      body: {
+        en: "Since about eight this morning the expenses app gives 'Service unavailable' whenever I open it or try to submit. Today is the last day to send November's expenses to payroll and half the sales team is calling me. Yesterday afternoon it worked fine. I've heard there was a new version this morning.",
+        es: "Desde las ocho de la mañana más o menos la app de gastos da «Service unavailable» en cuanto la abro o intento enviar. Hoy es el último día para mandar los gastos de noviembre a nóminas y medio equipo comercial me está llamando. Ayer por la tarde funcionaba bien. He oído que esta mañana había versión nueva.",
+      },
+    },
+    intro: {
+      en: "You are on the admin host ops-jmp01 with kubectl pointed at the managed cluster aks-contoso-weu; your context's namespace is expenses, where you can edit everything. The app is the Deployment expenses-api (image registry.contoso.local/finance/expenses-api), with its settings in the ConfigMap expenses-config. The pipeline released 3.2.0 at 07:55. `onsite ...` is Marta.",
+      es: "Estás en el equipo de administración ops-jmp01 con kubectl apuntando al clúster gestionado aks-contoso-weu; el namespace de tu contexto es expenses, donde puedes editarlo todo. La app es el Deployment expenses-api (imagen registry.contoso.local/finance/expenses-api), con sus ajustes en el ConfigMap expenses-config. El pipeline publicó la 3.2.0 a las 07:55. `onsite ...` es Marta.",
+    },
+    requester: { name: "Marta García", team: { en: "Finance", es: "Finanzas" }, user: "mgarcia", location: { en: "Head office, Finance", es: "Oficina central, Finanzas" }, device: "PC-FIN-021" },
+    asset: {
+      title: { en: "AKS · expenses / expenses-api", es: "AKS · expenses / expenses-api" },
+      fields: [
+        { label: "Pods", states: [
+          { when: { fixed: true }, value: { en: "2 Running", es: "2 Running" }, tone: "ok" },
+          { value: { en: "2 CrashLoopBackOff", es: "2 CrashLoopBackOff" }, tone: "bad" }] },
+        { label: { en: "Service endpoints", es: "Endpoints del Service" }, states: [
+          { when: { endpointsOk: true }, value: { en: "2 pods", es: "2 pods" }, tone: "ok" },
+          { when: { fixed: true }, value: { en: "Not checked", es: "Sin comprobar" }, tone: "muted" },
+          { value: { en: "None", es: "Ninguno" }, tone: "bad" }] },
+        { label: { en: "Version", es: "Versión" }, states: [
+          { when: { undone: true }, value: { en: "3.1.4 (rolled back from 3.2.0)", es: "3.1.4 (vuelta atrás desde la 3.2.0)" }, tone: "warn" },
+          { value: { en: "3.2.0 (released 07:55)", es: "3.2.0 (publicada a las 07:55)" }, tone: "muted" }] },
+        { label: { en: "Strategy", es: "Estrategia" }, value: { en: "Recreate (old pods stop before the new ones start)", es: "Recreate (los pods viejos paran antes de que arranquen los nuevos)" } },
+      ],
+    },
+    actions: [
+      { id: "pods", label: { en: "Pods", es: "Pods" }, cmd: "kubectl get pods -n expenses" },
+      { id: "history", label: { en: "Rollout history", es: "Historial de despliegues" }, cmd: "kubectl rollout history deployment/expenses-api -n expenses" },
+    ],
+    codes: ["config-fixed", "cause-removed"],
+    state: { podsSeen: false, describeSeen: false, logsSeen: false, cmSeen: false, historySeen: false, deleted: false, scaled: false, cmPatched: false, undone: false, fixed: false, rolloutOk: false, endpointsOk: false, userOk: false },
+    commands: [
+      { id: "pods-ok", match: /^kubectl\s+get\s+(pods?|po)\b/, when: { fixed: true }, set: { podsSeen: true }, out: ["NAME                            READY   STATUS    RESTARTS   AGE", "expenses-api-5d8c7b9f6-q4w8z    1/1     Running   0          2m", "expenses-api-5d8c7b9f6-z7r2c    1/1     Running   0          2m"] },
+      { id: "pods-del", match: /^kubectl\s+get\s+(pods?|po)\b/, when: { deleted: true }, set: { podsSeen: true }, out: ["NAME                            READY   STATUS             RESTARTS      AGE", "expenses-api-7f6b9c8d4-n5v8t    0/1     CrashLoopBackOff   2 (14s ago)   41s", K6K8_NEW[1] + "    0/1     CrashLoopBackOff   10 (2m ago)   27m"],
+        say: { en: "A new name, the same crash: the ReplicaSet replaced the pod you deleted with an identical one.", es: "Otro nombre, el mismo fallo: el ReplicaSet sustituyó el pod que borraste por uno idéntico." } },
+      { id: "pods", match: /^kubectl\s+get\s+(pods?|po)\b/, set: { podsSeen: true }, out: ["NAME                            READY   STATUS             RESTARTS        AGE", K6K8_NEW[0] + "    0/1     CrashLoopBackOff   9 (3m12s ago)   26m", K6K8_NEW[1] + "    0/1     CrashLoopBackOff   9 (2m58s ago)   26m"],
+        say: { en: "Both pods start, die and wait longer each time before the next try. Nothing of the old version is left running.", es: "Los dos pods arrancan, mueren y esperan cada vez más antes del siguiente intento. No queda nada de la versión vieja en marcha." } },
+      { id: "describe", match: /^kubectl\s+describe\s+(pods?|po)\b/, when: { fixed: false }, set: { describeSeen: true }, out: ["Name:         " + K6K8_NEW[0], "Namespace:    expenses", "Containers:", "  expenses-api:", "    Image:          registry.contoso.local/finance/expenses-api:3.2.0",
+        "    State:          Waiting", "      Reason:       CrashLoopBackOff", "    Last State:     Terminated", "      Reason:       Error", "      Exit Code:    1", "    Ready:          False", "    Restart Count:  9",
+        "    Environment Variables from:", "      expenses-config  ConfigMap  Optional: false", "      expenses-db      Secret     Optional: false", "Events:", "  Type     Reason   Age                  From     Message",
+        "  Warning  BackOff  2m (x112 over 26m)   kubelet  Back-off restarting failed container expenses-api in pod " + K6K8_NEW[0]],
+        say: { en: "Exit code 1 a second after starting: the app itself gives up. Its own log says why.", es: "Código de salida 1 un segundo después de arrancar: la propia app se rinde. Su log dice por qué." } },
+      { id: "describe-ok", match: /^kubectl\s+describe\s+(pods?|po)\b/, set: { describeSeen: true }, out: ["Name:         expenses-api-5d8c7b9f6-q4w8z", "Namespace:    expenses", "    State:          Running", "    Ready:          True", "    Restart Count:  0"] },
+      { id: "logs-prev", match: /^kubectl\s+logs\b.*(\s--previous\b|\s-p\b)/, when: { fixed: false }, set: { logsSeen: true }, out: ["2026-11-13T08:21:40Z INFO  expenses-api 3.2.0 starting (node 22)", "2026-11-13T08:21:40Z INFO  loading settings from the environment",
+        "2026-11-13T08:21:41Z FATAL config: required setting DB_HOST is not set (DATABASE_HOST is no longer read since 3.2.0)", "2026-11-13T08:21:41Z INFO  exiting with code 1"],
+        say: { en: "3.2.0 reads DB_HOST; whatever the pod gets is still called something else.", es: "La 3.2.0 lee DB_HOST; lo que recibe el pod se sigue llamando de otra forma." } },
+      { id: "logs-ok", match: /^kubectl\s+logs\b/, when: { fixed: true }, set: { logsSeen: true }, out: ["2026-11-13T08:41:02Z INFO  expenses-api starting", "2026-11-13T08:41:03Z INFO  connected to pgsql-fin01.contoso.local/expenses", "2026-11-13T08:41:03Z INFO  listening on :8080"] },
+      { id: "logs", match: /^kubectl\s+logs\b/, out: ["2026-11-13T08:24:55Z INFO  expenses-api 3.2.0 starting (node 22)", "2026-11-13T08:24:55Z INFO  loading settings from the environment"],
+        say: { en: "That is the attempt that has just started. The one that crashed is the previous container.", es: "Ese es el intento que acaba de arrancar. El que se cayó es el contenedor anterior." } },
+      { id: "cm", match: /^kubectl\s+(get\s+(configmaps?|cm)(\/|\s+)expenses-config\b|describe\s+(configmaps?|cm)(\/|\s+)expenses-config\b)/, set: { cmSeen: true }, out: [] },
+      { id: "history", match: /^kubectl\s+rollout\s+history\s+(deployments?|deploy)(\/|\s+)expenses-api\b/, set: { historySeen: true }, out: [] },
+      { id: "deploy", match: /^kubectl\s+(describe|get)\s+(deployments?|deploy)(\/|\s+)expenses-api\b/, out: ["Name:               expenses-api", "Namespace:          expenses", "Replicas:           2 desired | 2 updated | 2 total | 0 available | 2 unavailable", "StrategyType:       Recreate",
+        "Pod Template:", "  Containers:", "   expenses-api:", "    Image:      registry.contoso.local/finance/expenses-api:3.2.0", "    Environment Variables from:", "      expenses-config  ConfigMap  Optional: false", "      expenses-db      Secret     Optional: false"] },
+      { id: "delete-ok", match: /^kubectl\s+delete\s+(pods?|po)\b/, when: { fixed: true }, out: ["pod \"expenses-api-5d8c7b9f6-q4w8z\" deleted"], say: { en: "The ReplicaSet brings up another, healthy one.", es: "El ReplicaSet levanta otro, sano." } },
+      { id: "delete", match: /^kubectl\s+delete\s+(pods?|po)\b/, set: { deleted: true }, out: ["pod \"" + K6K8_NEW[0] + "\" deleted"],
+        say: { en: "Deleted. The ReplicaSet creates a replacement at once, from the same template.", es: "Borrado. El ReplicaSet crea uno de recambio al momento, con la misma plantilla." } },
+      { id: "scale", match: /^kubectl\s+scale\s+(deployments?|deploy)(\/|\s+)expenses-api\b.*--replicas[= ](\d+)/, set: { scaled: true }, out: ["deployment.apps/expenses-api scaled"],
+        say: { en: "More copies of a pod that cannot start: more crashes.", es: "Más copias de un pod que no puede arrancar: más caídas." } },
+      { id: "undo", match: /^kubectl\s+rollout\s+undo\s+(deployments?|deploy)(\/|\s+)expenses-api\b/, set: { undone: true, fixed: true }, out: ["deployment.apps/expenses-api rolled back"],
+        say: { en: "Back to revision 6 (3.1.4). With Recreate the crashing pods stop and the old version's start.", es: "De vuelta a la revisión 6 (3.1.4). Con Recreate los pods que fallan paran y arrancan los de la versión vieja." } },
+      { id: "patch", match: /^kubectl\s+patch\s+(configmaps?|cm)(\/|\s+)expenses-config\b.*db_host["']?\s*:\s*["']?pgsql-fin01\.contoso\.local/, set: { cmPatched: true }, out: ["configmap/expenses-config patched"],
+        say: { en: "The ConfigMap now has DB_HOST. A pod reads it as an environment variable when its container starts.", es: "El ConfigMap ya tiene DB_HOST. Un pod lo lee como variable de entorno cuando arranca su contenedor." } },
+      { id: "patch-bad", match: /^kubectl\s+(patch|edit)\s+(configmaps?|cm)\b/, error: true, out: ["error: DB_HOST must be the database server the ConfigMap already names (pgsql-fin01.contoso.local)"] },
+      { id: "setenv", match: /^kubectl\s+set\s+env\s+(deployments?|deploy)(\/|\s+)expenses-api\b.*db_host=pgsql-fin01\.contoso\.local/, set: { fixed: true }, out: ["deployment.apps/expenses-api env updated"],
+        say: { en: "A new revision with DB_HOST set on the Deployment itself: the new pods start.", es: "Una revisión nueva con DB_HOST puesto en el propio Deployment: los pods nuevos arrancan." } },
+      { id: "restart-ok", match: /^kubectl\s+rollout\s+restart\s+(deployments?|deploy)(\/|\s+)expenses-api\b/, when: { cmPatched: true }, set: { fixed: true }, out: ["deployment.apps/expenses-api restarted"],
+        say: { en: "New pods, now with DB_HOST in their environment.", es: "Pods nuevos, ahora con DB_HOST en su entorno." } },
+      { id: "restart", match: /^kubectl\s+rollout\s+restart\s+(deployments?|deploy)(\/|\s+)expenses-api\b/, out: ["deployment.apps/expenses-api restarted"],
+        say: { en: "New pods with the same settings: they crash in the same way.", es: "Pods nuevos con los mismos ajustes: se caen igual." } },
+      { id: "status-ok", match: /^kubectl\s+rollout\s+status\b/, when: { fixed: true }, set: { rolloutOk: true }, out: ["Waiting for deployment \"expenses-api\" rollout to finish: 1 of 2 updated replicas are available...", "deployment \"expenses-api\" successfully rolled out"] },
+      { id: "status-cm", match: /^kubectl\s+rollout\s+status\b/, when: { cmPatched: true }, out: ["Waiting for deployment \"expenses-api\" rollout to finish: 0 of 2 updated replicas are available..."],
+        say: { en: "The crashing pods only read the new value at their next restart, after a back-off of up to five minutes. A rollout restart does it now.", es: "Los pods que fallan solo leen el valor nuevo en su próximo reinicio, tras una espera de hasta cinco minutos. Un rollout restart lo hace ya." } },
+      { id: "status", match: /^kubectl\s+rollout\s+status\b/, out: ["Waiting for deployment \"expenses-api\" rollout to finish: 0 of 2 updated replicas are available...", "^C"],
+        say: { en: "It does not move.", es: "No avanza." } },
+      { id: "ep-ok", match: /^kubectl\s+get\s+(ep|endpoints|endpointslices?)\b/, when: { fixed: true }, set: { endpointsOk: true }, out: ["NAME           ENDPOINTS                           AGE", "expenses-api   10.244.3.18:8080,10.244.5.27:8080   211d"] },
+      { id: "ep", match: /^kubectl\s+get\s+(ep|endpoints|endpointslices?)\b/, out: ["NAME           ENDPOINTS   AGE", "expenses-api   <none>      211d"] },
+      { id: "get-other", match: /^kubectl\s+get\s+\S+/, out: ["No resources found in expenses namespace."] },
+      { id: "onsite-help", match: /^onsite$/, out: ["What Marta can do (simulated):", "  onsite expenses   open the expenses app and submit a ticket"] },
+      { id: "user-ok", match: /^onsite\s+expenses\b/, when: { fixed: true }, set: { userOk: true }, out: [""], say: { en: "Marta: 'It opens, and the taxi ticket has gone through. I'll tell the sales team.'", es: "Marta: «Abre, y el tique del taxi ha entrado. Se lo digo al equipo comercial.»" } },
+      { id: "user", match: /^onsite\s+expenses\b/, out: [""], say: { en: "Marta: 'Still Service unavailable.'", es: "Marta: «Sigue el Service unavailable.»" } },
+    ],
+    goal: { fixed: true, rolloutOk: true, endpointsOk: true, userOk: true },
+    stages: [
+      { id: "investigate", label: { en: "Find out why the new pods die", es: "Averiguar por qué mueren los pods nuevos" }, when: { podsSeen: true, logsSeen: true, cmSeen: true } },
+      { id: "fix", label: { en: "Roll back, or give 3.2.0 the setting it expects", es: "Volver atrás, o dar a la 3.2.0 el ajuste que espera" }, when: { fixed: true } },
+      { id: "verify", label: { en: "Rollout finished, endpoints and the app working for Marta", es: "Despliegue terminado, endpoints y la app funcionando para Marta" }, when: { rolloutOk: true, endpointsOk: true, userOk: true } },
+    ],
+    remarks: [
+      { when: { scaled: true }, text: { en: "The Deployment was scaled up while its pods could not start", es: "Se escaló el Deployment con sus pods sin poder arrancar" } },
+    ],
+    resolved: { en: "Resolved: the expenses app is back and Finance can submit. Now write the work note.", es: "Resuelto: la app de gastos ha vuelto y Finanzas puede enviar. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "kubectl get pods, then what the crashed container said before it died: kubectl logs <pod> --previous.", es: "kubectl get pods y después lo que dijo el contenedor antes de morir: kubectl logs <pod> --previous." },
+      { en: "Compare what the log asks for with what the ConfigMap gives: kubectl get configmap expenses-config -o yaml. Deleting pods only brings identical ones back.", es: "Compara lo que pide el log con lo que da el ConfigMap: kubectl get configmap expenses-config -o yaml. Borrar pods solo trae otros idénticos." },
+      { en: "Fastest for Finance: kubectl rollout undo deployment/expenses-api. Or add DB_HOST to the ConfigMap with kubectl patch and then kubectl rollout restart.", es: "Lo más rápido para Finanzas: kubectl rollout undo deployment/expenses-api. O añade DB_HOST al ConfigMap con kubectl patch y después kubectl rollout restart." },
+      { en: "kubectl rollout status deployment/expenses-api, kubectl get endpoints expenses-api, then onsite expenses.", es: "kubectl rollout status deployment/expenses-api, kubectl get endpoints expenses-api y después onsite expenses." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (3.2.0 reads DB_HOST; the ConfigMap still only had DATABASE_HOST, so the app exited with code 1)", es: "la causa (la 3.2.0 lee DB_HOST; el ConfigMap seguía teniendo solo DATABASE_HOST, así que la app salía con código 1)" }, any: ["db_host", "database_host", "renamed", "renombr"] },
+      { kb: "fix", label: { en: "the fix (rolled back to 3.1.4, or DB_HOST added and the Deployment restarted)", es: "la solución (vuelta a la 3.1.4, o DB_HOST añadido y el Deployment reiniciado)" }, any: ["rollout undo", "rolled back", "3.1.4", "rollout restart", "patch", "vuelta atras", "volvi"] },
+      { kb: "verify", label: { en: "how you checked it (rollout finished, endpoints, Marta submitting)", es: "cómo lo comprobaste (despliegue terminado, endpoints, Marta enviando)" }, any: ["rollout status", "endpoints", "running", "comprob", "checked"] },
+      { kb: "followup", label: { en: "what follows (the ConfigMap fixed in the repository before 3.2.0 goes out again, release notes read in the pipeline)", es: "lo que sigue (el ConfigMap corregido en el repositorio antes de volver a sacar la 3.2.0, leer las notas de la versión en el pipeline)" }, any: ["repo", "helm", "values", "release notes", "notas de la version", "pipeline"] },
+    ],
+    solution: ["kubectl get pods -n expenses", "kubectl logs " + K6K8_NEW[0] + " -n expenses --previous", "kubectl get configmap expenses-config -n expenses -o yaml",
+      "kubectl rollout history deployment/expenses-api -n expenses", "kubectl rollout undo deployment/expenses-api -n expenses", "kubectl rollout status deployment/expenses-api -n expenses",
+      "kubectl get endpoints expenses-api -n expenses", "onsite expenses"],
+    sampleNote: {
+      en: "expenses-api 3.2.0 (pipeline, 07:55) left both pods in CrashLoopBackOff and, with the Recreate strategy, nothing of the old version was running. kubectl logs --previous: 'required setting DB_HOST is not set (DATABASE_HOST is no longer read since 3.2.0)'. The ConfigMap expenses-config still only had DATABASE_HOST: the setting was renamed in the code but not in the cluster. Rolled back to revision 6 (3.1.4) with kubectl rollout undo: rollout status finished, two endpoints, and Marta submitted a ticket. Deleting the pods would only have brought identical ones back. Next: the web team must add DB_HOST to the ConfigMap in the repository (Helm values) before 3.2.0 goes out again, and the pipeline should stop on a pod that does not become ready.",
+      es: "expenses-api 3.2.0 (pipeline, 07:55) dejó los dos pods en CrashLoopBackOff y, con la estrategia Recreate, no quedaba nada de la versión vieja en marcha. kubectl logs --previous: «required setting DB_HOST is not set (DATABASE_HOST is no longer read since 3.2.0)». El ConfigMap expenses-config seguía teniendo solo DATABASE_HOST: el ajuste se renombró en el código pero no en el clúster. Vuelta a la revisión 6 (3.1.4) con kubectl rollout undo: rollout status terminado, dos endpoints y Marta envió un tique. Borrar los pods solo habría traído otros idénticos. Pendiente: el equipo web tiene que añadir DB_HOST al ConfigMap en el repositorio (values de Helm) antes de volver a sacar la 3.2.0, y el pipeline debería pararse si un pod no llega a estar listo.",
+    },
+    contact: {
+      tempting: ["delete"], temptingWhen: { fixed: false },
+      questions: [
+        { id: "since", kind: "useful",
+          text: { en: "When did it stop working, exactly?", es: "¿Cuándo dejó de funcionar, exactamente?" },
+          answer: { en: "I came in at ten to eight and it opened; by quarter past it said Service unavailable.", es: "Llegué a las ocho menos diez y abría; a las ocho y cuarto ya decía Service unavailable." },
+          clue: { en: "It broke right after the 07:55 release.", es: "Se rompió justo después de la versión de las 07:55." } },
+        { id: "notes", kind: "useful",
+          text: { en: "Did the web team send anything about the new version?", es: "¿Mandó el equipo web algo sobre la versión nueva?" },
+          answer: { en: "A mail last week: 'faster receipt upload, and settings tidied up, see the release notes'.", es: "Un correo la semana pasada: «subida de tiques más rápida y ajustes ordenados, ver las notas de la versión»." },
+          clue: { en: "3.2.0 changed how its settings are named.", es: "La 3.2.0 cambió cómo se llaman sus ajustes." } },
+        { id: "browser", kind: "neutral",
+          text: { en: "Which browser are you using?", es: "¿Qué navegador usas?" },
+          answer: { en: "Edge, as always. The sales team see the same on their phones.", es: "Edge, como siempre. Los comerciales ven lo mismo en el móvil." } },
+        { id: "db", kind: "bad",
+          text: { en: "Shall I give you access to the database so you can enter them directly?", es: "¿Te doy acceso a la base de datos para que los metas directamente?" },
+          answer: { en: "Me, typing into the database? I'd rather wait.", es: "¿Yo, escribiendo en la base de datos? Prefiero esperar." },
+          why: { en: "It bypasses the app's checks and approvals, and the fault is still there.", es: "Se salta las comprobaciones y aprobaciones de la app, y la avería sigue ahí." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Tell me your password and I'll try submitting from here.", es: "Dime tu contraseña y pruebo a enviar desde aquí." },
+          answer: { en: "No; tell me when to try and I'll do it.", es: "No; dime cuándo probar y lo hago yo." },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Can you submit your expenses now?", es: "¿Puedes enviar ya los gastos?" },
+          answer: { en: "Yes, it went through, and the sales team are sending theirs.", es: "Sí, ha entrado, y los comerciales están mandando los suyos." },
+          failed: { en: "No, still Service unavailable.", es: "No, sigue el Service unavailable." } },
+      ],
+    },
+  });
+  (function () {   // the ConfigMap and the rollout history follow the state
+    const sc = scenarios[scenarios.length - 1];
+    const rule = (id) => sc.commands.find((r) => r.id === id);
+    const CM = (db) => ["apiVersion: v1", "kind: ConfigMap", "metadata:", "  name: expenses-config", "  namespace: expenses", "data:", "  DATABASE_HOST: pgsql-fin01.contoso.local", "  DATABASE_NAME: expenses"]
+      .concat(db ? ["  DB_HOST: pgsql-fin01.contoso.local"] : []).concat(["  LOG_LEVEL: info", "  RECEIPTS_BUCKET: receipts-prod"]);
+    const cm = rule("cm");
+    sc.commands.splice(sc.commands.indexOf(cm), 0, Object.assign({}, cm, { id: "cm-db", when: { cmPatched: true }, out: CM(true) }));
+    Object.assign(cm, { out: CM(false), say: { en: "DATABASE_HOST is there; DB_HOST is not.", es: "DATABASE_HOST está; DB_HOST no." } });
+    const H = (undone) => ["deployment.apps/expenses-api", "REVISION  CHANGE-CAUSE", "5         pipeline #401: expenses-api 3.1.3", "6         pipeline #409: expenses-api 3.1.4"]
+      .concat(undone ? ["7         pipeline #418: expenses-api 3.2.0", "8         pipeline #409: expenses-api 3.1.4"] : ["7         pipeline #418: expenses-api 3.2.0"]);
+    const h = rule("history");
+    sc.commands.splice(sc.commands.indexOf(h), 0, Object.assign({}, h, { id: "history-undone", when: { undone: true }, out: H(true) }));
+    Object.assign(h, { out: H(false), say: { en: "Revision 6 was 3.1.4, which worked until this morning.", es: "La revisión 6 era la 3.1.4, que funcionó hasta esta mañana." } });
+  })();
+
+  /* ------------------------------------------------------------------ Career level 6: Terraform drift, a firewall rule changed by hand */
+  const K6TF_NEW = "203.0.113.128/27";
+  const K6TF_OLD = "198.51.100.192/27";
+  const K6TF_PLAN = /^terraform\s+plan\b/;
+  scenarios.push({
+    id: "terraform-drift",
+    level: 2, career: 6,
+    topic: { en: "Terraform / drift from a rule changed in the portal during an incident", es: "Terraform / deriva por una regla cambiada en el portal durante una urgencia" },
+    minutes: 15,
+    title: { en: "Someone changed the firewall by hand: the plan wants to undo it", es: "Alguien cambió el firewall a mano: el plan quiere deshacerlo" },
+    guide: GUIDE + "terraform-modulo-estado-remoto-plan-en-el-pipeline-deriva-e-importacion.html",
+    machine: K6_JMP,
+    ticket: {
+      id: "INC-20795", from: "Óscar Lafuente (IT infrastructure)", priority: "P2",
+      subject: { en: "PR 212 only adds a tag, but its plan changes the payments NSG", es: "El PR 212 solo añade una etiqueta, pero su plan cambia el NSG de pagos" },
+      body: {
+        en: "My pull request 212 in azure-app only adds the cost-center tag, but the plan in the pipeline also wants to change nsg-app-weu, the security group in front of the payments app. Nobody has touched that part of the code in months. The pipeline is waiting for my approval to apply. Can you find out what it is before I approve it, or do I just approve?",
+        es: "Mi pull request 212 en azure-app solo añade la etiqueta cost-center, pero el plan del pipeline también quiere cambiar nsg-app-weu, el grupo de seguridad delante de la app de pagos. Nadie ha tocado esa parte del código en meses. El pipeline espera mi aprobación para aplicar. ¿Podéis averiguar qué es antes de que lo apruebe, o lo apruebo sin más?",
+      },
+    },
+    intro: {
+      en: "You are on ops-jmp01 in ~/infra/azure-app, a clone of the azure-app repository on PR 212's branch (feat/cost-center-tag), with the Azure CLI signed in and read access to the remote state. Production is applied only by the pipeline after a pull request is merged; prod values live in envs/prod.tfvars. The payments provider PayNorte calls the app's webhooks through the rule allow-psp-webhooks. `gh` works against the company's GitHub. `onsite ...` is Asier Echevarría, the network engineer.",
+      es: "Estás en ops-jmp01 en ~/infra/azure-app, un clon del repositorio azure-app en la rama del PR 212 (feat/cost-center-tag), con la CLI de Azure con sesión y acceso de lectura al estado remoto. Producción solo la aplica el pipeline al fusionar un pull request; los valores de prod están en envs/prod.tfvars. El proveedor de pagos PayNorte llama a los webhooks de la app a través de la regla allow-psp-webhooks. `gh` funciona contra el GitHub de la empresa. `onsite ...` es Asier Echevarría, el ingeniero de red.",
+    },
+    requester: { name: "Óscar Lafuente", team: { en: "IT infrastructure", es: "Infraestructura IT" }, user: "olafuente", location: { en: "Head office, IT", es: "Oficina central, IT" }, device: "PC-IT-001" },
+    asset: {
+      title: { en: "Terraform · azure-app (prod) · nsg-app-weu", es: "Terraform · azure-app (prod) · nsg-app-weu" },
+      fields: [
+        { label: { en: "Plan of PR 212", es: "Plan del PR 212" }, states: [
+          { when: { merged: true }, value: { en: "Applied", es: "Aplicado" }, tone: "ok" },
+          { when: { codeFixed: true }, value: { en: "Tags only", es: "Solo etiquetas" }, tone: "ok" },
+          { value: { en: "Tags + a change to allow-psp-webhooks", es: "Etiquetas + un cambio en allow-psp-webhooks" }, tone: "bad" }] },
+        { label: { en: "PayNorte ranges in Azure", es: "Rangos de PayNorte en Azure" }, states: [
+          { when: { rangeOk: true }, value: K6TF_OLD + ", " + K6TF_NEW, tone: "ok" },
+          { value: { en: K6TF_OLD + " only (webhooks failing)", es: K6TF_OLD + " solo (webhooks fallando)" }, tone: "bad" }] },
+        { label: { en: "PayNorte ranges in the code", es: "Rangos de PayNorte en el código" }, states: [
+          { when: { codeFixed: true }, value: K6TF_OLD + ", " + K6TF_NEW, tone: "ok" },
+          { value: K6TF_OLD, tone: "warn" }] },
+      ],
+    },
+    actions: [
+      { id: "plan", label: { en: "Plan", es: "Plan" }, cmd: "terraform plan -var-file=envs/prod.tfvars" },
+      { id: "rule", label: { en: "The rule in Azure", es: "La regla en Azure" }, cmd: "az network nsg rule show -g rg-app-weu --nsg-name nsg-app-weu -n allow-psp-webhooks --query sourceAddressPrefixes" },
+    ],
+    codes: ["config-fixed"],
+    state: { planSeen: false, ruleSeen: false, whoSeen: false, codeFixed: false, planClean: false, committed: false, pushed: false, merged: false, rangeOk: true, appliedLocal: false, webhooksDown: false, ruleOk: false, noDrift: false, userOk: false },
+    events: [
+      { when: { appliedLocal: true, rangeOk: false, webhooksDown: false }, set: { webhooksDown: true },
+        say: { en: "Ten minutes later, in #payments: 'PayNorte webhooks failing since 10:12, payments confirmed late'.", es: "Diez minutos después, en #payments: «Los webhooks de PayNorte fallan desde las 10:12, pagos confirmados con retraso»." } },
+    ],
+    commands: [
+      { id: "cd", match: /^cd(\s+~?\/?[\w\/.-]*)?$/, out: [] },
+      { id: "git-misc", match: /^git\s+(status|pull|fetch|branch|switch\s+feat\/cost-center-tag|checkout\s+feat\/cost-center-tag)\b/, out: ["On branch feat/cost-center-tag", "Your branch is up to date with 'origin/feat/cost-center-tag'."] },
+      { id: "target", match: /^terraform\s+(plan|apply)\b.*-target[= ]/, error: true, out: ["(-target leaves the difference where it is: the next full plan wants to undo the rule again)"] },
+      { id: "plan", match: K6TF_PLAN, set: { planSeen: true }, out: [] },
+      { id: "state", match: /^terraform\s+state\s+(show|list)\b/, out: ["# azurerm_network_security_group.app:", "resource \"azurerm_network_security_group\" \"app\" {", "    name = \"nsg-app-weu\"", "    security_rule = [", "        {", "            name                    = \"allow-psp-webhooks\"",
+        "            destination_port_range  = \"443\"", "            source_address_prefixes = [", "                \"" + K6TF_OLD + "\",", "            ]", "        },", "    ]", "}"],
+        say: { en: "That is what the state recorded at the last apply.", es: "Eso es lo que guardó el estado en el último apply." } },
+      { id: "rule-ok", match: /^az\s+network\s+nsg\s+rule\s+(show|list)\b.*nsg-app-weu/, when: { rangeOk: true, merged: true }, set: { ruleSeen: true, ruleOk: true }, out: ["[", "  \"" + K6TF_OLD + "\",", "  \"" + K6TF_NEW + "\"", "]"] },
+      { id: "rule", match: /^az\s+network\s+nsg\s+rule\s+(show|list)\b.*nsg-app-weu/, when: { rangeOk: true }, set: { ruleSeen: true }, out: ["[", "  \"" + K6TF_OLD + "\",", "  \"" + K6TF_NEW + "\"", "]"],
+        say: { en: "Azure has a second range that the code does not.", es: "Azure tiene un segundo rango que el código no tiene." } },
+      { id: "rule-gone", match: /^az\s+network\s+nsg\s+rule\s+(show|list)\b.*nsg-app-weu/, set: { ruleSeen: true }, out: ["[", "  \"" + K6TF_OLD + "\"", "]"] },
+      { id: "who", match: /^az\s+monitor\s+activity-log\s+list\b/, set: { whoSeen: true }, out: ["Time                  Caller                      Operation                                                   Resource", "2026-11-10T23:41:07Z  aechevarria@contoso.com     Microsoft.Network/networkSecurityGroups/securityRules/write  nsg-app-weu/allow-psp-webhooks"],
+        say: { en: "Asier changed the rule on Tuesday night, by hand in the portal.", es: "Asier cambió la regla el martes por la noche, a mano en el portal." } },
+      { id: "fix-code", match: new RegExp("^sed\\s+-i\\b.*203\\.0\\.113\\.128\\/27.*envs\\/prod\\.tfvars"), set: { codeFixed: true }, out: [] },
+      { id: "fix-bad", match: /^sed\s+-i\b.*\.tf(vars)?\b/, error: true, out: ["(the file did not change: the range to add to psp_ranges in envs/prod.tfvars is the one Azure already has)"] },
+      { id: "diff", match: /^git\s+diff\b/, when: { codeFixed: true }, out: ["--- a/envs/prod.tfvars", "+++ b/envs/prod.tfvars", "-psp_ranges = [\"" + K6TF_OLD + "\"]", "+psp_ranges = [\"" + K6TF_OLD + "\", \"" + K6TF_NEW + "\"]"] },
+      { id: "diff-none", match: /^git\s+diff\b/, out: [] },
+      { id: "commit", match: /^git\s+commit\b/, when: { codeFixed: true }, set: { committed: true }, out: ["[feat/cost-center-tag 4e1a9b7] Add PayNorte's new webhook range to prod (portal change of 10/11)", " 1 file changed, 1 insertion(+), 1 deletion(-)"] },
+      { id: "commit-none", match: /^git\s+commit\b/, out: ["On branch feat/cost-center-tag", "nothing to commit, working tree clean"] },
+      { id: "push", match: /^git\s+push\b/, when: { committed: true }, set: { pushed: true }, out: ["To github.contoso.local:platform/azure-app.git", "   9c03d5e..4e1a9b7  feat/cost-center-tag -> feat/cost-center-tag"],
+        say: { en: "The pipeline plans PR 212 again with the new commit.", es: "El pipeline vuelve a planificar el PR 212 con el commit nuevo." } },
+      { id: "push-none", match: /^git\s+push\b/, out: ["Everything up-to-date"] },
+      { id: "pr-view", match: /^gh\s+pr\s+(view|checks)\b/, out: [] },
+      { id: "merge", match: /^gh\s+pr\s+merge\b/, when: { pushed: true }, set: { merged: true, rangeOk: true }, out: ["✓ Squashed and merged pull request #212 (Add cost-center tag)", "✓ Deleted branch feat/cost-center-tag"],
+        say: { en: "The pipeline applies the reviewed plan: the tags, and the rule as it really is in Azure.", es: "El pipeline aplica el plan revisado: las etiquetas, y la regla tal como está de verdad en Azure." } },
+      { id: "merge-early", match: /^gh\s+pr\s+merge\b/, error: true, out: ["X Pull request #212 is not mergeable: the plan check changes nsg-app-weu and needs a review from the platform team."] },
+      { id: "apply", match: /^terraform\s+apply\b/, when: { codeFixed: false, rangeOk: true }, set: { rangeOk: false, appliedLocal: true }, out: ["  ~ resource \"azurerm_network_security_group\" \"app\" { ... }", "  ~ resource \"azurerm_resource_group\" \"app\" { ... }", "", "Apply complete! Resources: 0 added, 2 changed, 0 destroyed."],
+        say: { en: "Applied from the jump host: the tag, and the rule back to what the code says.", es: "Aplicado desde el equipo de salto: la etiqueta, y la regla de vuelta a lo que dice el código." } },
+      { id: "apply-other", match: /^terraform\s+apply\b/, error: true, out: ["(prod is applied by the pipeline after the pull request is merged; a local apply skips the review)"] },
+      { id: "onsite-help", match: /^onsite$/, out: ["What Asier can do (simulated):", "  onsite webhook   ask PayNorte's test console to send a webhook to the payments app"] },
+      { id: "user-ok", match: /^onsite\s+webhook\b/, when: { rangeOk: true, merged: true }, set: { userOk: true }, out: [""], say: { en: "Asier: 'PayNorte's test webhook from 203.0.113.140 got a 200. And now the range is in the code, good.'", es: "Asier: «El webhook de prueba de PayNorte desde la 203.0.113.140 dio 200. Y ahora el rango está en el código, bien.»" } },
+      { id: "user-early", match: /^onsite\s+webhook\b/, when: { rangeOk: true }, out: [""], say: { en: "Asier: 'It answers 200 now, but that's my portal change: the next apply takes it away again.'", es: "Asier: «Ahora responde 200, pero eso es mi cambio del portal: el siguiente apply lo vuelve a quitar.»" } },
+      { id: "user", match: /^onsite\s+webhook\b/, out: [""], say: { en: "Asier: 'Timeout: the NSG drops it, like on Tuesday night.'", es: "Asier: «Timeout: el NSG lo descarta, como el martes por la noche.»" } },
+    ],
+    goal: { codeFixed: true, merged: true, rangeOk: true, ruleOk: true, noDrift: true, userOk: true },
+    stages: [
+      { id: "investigate", label: { en: "Find out what the plan would undo, and why", es: "Averiguar qué desharía el plan, y por qué" }, when: { planSeen: true, ruleSeen: true, whoSeen: true } },
+      { id: "fix", label: { en: "Bring the change into the code and apply it through the pull request", es: "Llevar el cambio al código y aplicarlo con el pull request" }, when: { codeFixed: true, planClean: true, merged: true } },
+      { id: "verify", label: { en: "The rule in Azure, a plan with no changes, and a webhook through", es: "La regla en Azure, un plan sin cambios y un webhook que pasa" }, when: { ruleOk: true, noDrift: true, userOk: true } },
+    ],
+    remarks: [
+      { when: { appliedLocal: true }, text: { en: "Production was applied from the jump host with the drift still in it: PayNorte's webhooks failed until the fix", es: "Se aplicó producción desde el equipo de salto con la deriva dentro: los webhooks de PayNorte fallaron hasta la corrección" } },
+    ],
+    resolved: { en: "Resolved: the rule is in the code, the plan is clean and the webhooks go through. Now write the work note.", es: "Resuelto: la regla está en el código, el plan está limpio y los webhooks pasan. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "Read the plan (the button): what exactly does it change in nsg-app-weu? Then compare with the rule in Azure (the other button).", es: "Lee el plan (el botón): ¿qué cambia exactamente en nsg-app-weu? Compáralo con la regla en Azure (el otro botón)." },
+      { en: "Who changed it and when: az monitor activity-log list -g rg-app-weu --offset 7d. Approving now removes a range someone needed.", es: "Quién lo cambió y cuándo: az monitor activity-log list -g rg-app-weu --offset 7d. Aprobar ahora quita un rango que alguien necesitaba." },
+      { en: "Put the range in the code: sed -i 's|psp_ranges = \\[\"198.51.100.192/27\"\\]|psp_ranges = [\"198.51.100.192/27\", \"203.0.113.128/27\"]|' envs/prod.tfvars, then plan again: only the tags should change.", es: "Lleva el rango al código: sed -i 's|psp_ranges = \\[\"198.51.100.192/27\"\\]|psp_ranges = [\"198.51.100.192/27\", \"203.0.113.128/27\"]|' envs/prod.tfvars y vuelve a planificar: solo deberían cambiar las etiquetas." },
+      { en: "git commit -am ..., git push, gh pr merge 212 --squash; then the rule, terraform plan (no changes) and onsite webhook.", es: "git commit -am ..., git push, gh pr merge 212 --squash; después la regla, terraform plan (sin cambios) y onsite webhook." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (PayNorte's new range 203.0.113.128/27 added in the portal on Tuesday night; the code did not have it, so the plan removed it)", es: "la causa (el rango nuevo de PayNorte, 203.0.113.128/27, añadido en el portal el martes por la noche; el código no lo tenía, así que el plan lo quitaba)" }, any: ["203.0.113.128", "portal", "drift", "deriva", "by hand", "a mano"] },
+      { kb: "fix", label: { en: "the fix (range added to psp_ranges in envs/prod.tfvars, in PR 212, applied by the pipeline)", es: "la solución (rango añadido a psp_ranges en envs/prod.tfvars, en el PR 212, aplicado por el pipeline)" }, any: ["prod.tfvars", "psp_ranges", "pull request", "pr 212", "merge"] },
+      { kb: "verify", label: { en: "how you checked it (both ranges in Azure, a plan with no changes, a test webhook)", es: "cómo lo comprobaste (los dos rangos en Azure, un plan sin cambios, un webhook de prueba)" }, any: ["no changes", "sin cambios", "webhook", "200"] },
+      { kb: "followup", label: { en: "what follows (urgent changes in the portal get a pull request the next day, and a scheduled drift plan)", es: "lo que sigue (los cambios urgentes en el portal llevan un pull request al día siguiente, y un plan de deriva programado)" }, any: ["next day", "dia siguiente", "scheduled", "programad", "nightly", "nocturn", "procedure", "procedimiento"] },
+    ],
+    solution: ["terraform plan -var-file=envs/prod.tfvars", "az network nsg rule show -g rg-app-weu --nsg-name nsg-app-weu -n allow-psp-webhooks --query sourceAddressPrefixes",
+      "az monitor activity-log list -g rg-app-weu --offset 7d --query \"[?contains(resourceId,'nsg-app-weu')]\" -o table",
+      "sed -i 's|psp_ranges = \\[\"198.51.100.192/27\"\\]|psp_ranges = [\"198.51.100.192/27\", \"203.0.113.128/27\"]|' envs/prod.tfvars",
+      "terraform plan -var-file=envs/prod.tfvars", "git commit -am \"Add PayNorte's new webhook range to prod (portal change of 10/11)\"", "git push", "gh pr merge 212 --squash",
+      "az network nsg rule show -g rg-app-weu --nsg-name nsg-app-weu -n allow-psp-webhooks --query sourceAddressPrefixes", "terraform plan -var-file=envs/prod.tfvars -detailed-exitcode", "onsite webhook"],
+    sampleNote: {
+      en: "PR 212's plan (cost-center tag) also changed the rule allow-psp-webhooks of nsg-app-weu: it removed 203.0.113.128/27. The activity log shows Asier added that range in the portal on Tuesday at 23:41, during the payments incident: it is PayNorte's new webhook range, and it was never brought into the code, so the plan wanted to undo it (drift). Added it to psp_ranges in envs/prod.tfvars in the same PR; the plan then changed only the tags, and the pipeline applied it after the merge. Verified: both ranges on the rule in Azure, terraform plan with no changes, and a test webhook from PayNorte answered 200. Approving the first plan would have cut the webhooks again. Next: urgent portal changes get their pull request the next working day, and a scheduled nightly plan to catch drift.",
+      es: "El plan del PR 212 (etiqueta cost-center) también cambiaba la regla allow-psp-webhooks de nsg-app-weu: quitaba 203.0.113.128/27. El registro de actividad muestra que Asier añadió ese rango en el portal el martes a las 23:41, durante la incidencia de pagos: es el rango nuevo de webhooks de PayNorte y nunca se llevó al código, así que el plan quería deshacerlo (deriva). Lo añadí a psp_ranges en envs/prod.tfvars en el mismo PR; el plan pasó a cambiar solo las etiquetas y el pipeline lo aplicó tras la fusión. Comprobado: los dos rangos en la regla de Azure, terraform plan sin cambios y un webhook de prueba de PayNorte respondió 200. Aprobar el primer plan habría vuelto a cortar los webhooks. Pendiente: los cambios urgentes en el portal llevan su pull request el siguiente día laborable, y un plan nocturno programado para detectar deriva.",
+    },
+    contact: {
+      tempting: ["apply"], temptingWhen: { merged: false },
+      questions: [
+        { id: "touched", kind: "useful",
+          text: { en: "Has anything happened to the payments app lately, even outside Terraform?", es: "¿Ha pasado algo con la app de pagos últimamente, aunque sea fuera de Terraform?" },
+          answer: { en: "Tuesday night PayNorte's confirmations stopped arriving. Asier sorted it out somehow around midnight.", es: "El martes por la noche dejaron de llegar las confirmaciones de PayNorte. Asier lo arregló de alguna forma hacia medianoche." },
+          clue: { en: "There was an urgent fix on the payments network on Tuesday night.", es: "Hubo un arreglo urgente en la red de pagos el martes por la noche." } },
+        { id: "provider", kind: "useful",
+          text: { en: "Did PayNorte announce any change on their side?", es: "¿Anunció PayNorte algún cambio por su parte?" },
+          answer: { en: "Their newsletter said they were moving webhooks to a new data centre in November. I filed it.", es: "Su boletín decía que en noviembre movían los webhooks a un centro de datos nuevo. Lo archivé." },
+          clue: { en: "PayNorte's webhooks now come from new addresses.", es: "Los webhooks de PayNorte vienen ahora de direcciones nuevas." } },
+        { id: "tag", kind: "neutral",
+          text: { en: "Why the cost-center tag?", es: "¿Por qué la etiqueta cost-center?" },
+          answer: { en: "Finance wants the Azure bill split by cost centre from December.", es: "Finanzas quiere la factura de Azure repartida por centro de coste desde diciembre." } },
+        { id: "approve", kind: "bad",
+          text: { en: "It's probably just noise in the plan: shall I approve it so you can move on?", es: "Seguramente es ruido del plan: ¿lo apruebo y así sigues?" },
+          answer: { en: "If it's noise, why does it name the payments rule? I'd rather know.", es: "Si es ruido, ¿por qué nombra la regla de pagos? Prefiero saberlo." },
+          why: { en: "Approving a plan you have not understood applies whatever it says to production.", es: "Aprobar un plan que no has entendido aplica en producción lo que diga." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Give me your GitHub password and I'll approve it from your account.", es: "Pásame tu contraseña de GitHub y lo apruebo desde tu cuenta." },
+          answer: { en: "No: reviews are personal, that's the point of them.", es: "No: las revisiones son personales, para eso están." },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Is PR 212 merged, and are the payments fine?", es: "¿Está fusionado el PR 212, y van bien los pagos?" },
+          answer: { en: "Merged, plan clean, and PayNorte's confirmations are arriving.", es: "Fusionado, plan limpio, y las confirmaciones de PayNorte están llegando." },
+          failed: { en: "#payments is on fire again: PayNorte's webhooks are failing like on Tuesday.", es: "#payments vuelve a arder: los webhooks de PayNorte fallan como el martes." } },
+      ],
+    },
+  });
+  (function () {   // the plan and the pull request follow the code and what Azure has
+    const sc = scenarios[scenarios.length - 1];
+    const rule = (id) => sc.commands.find((r) => r.id === id);
+    const REFRESH = ["azurerm_resource_group.app: Refreshing state... [id=/subscriptions/…/resourceGroups/rg-app-weu]", "azurerm_network_security_group.app: Refreshing state... [id=/subscriptions/…/networkSecurityGroups/nsg-app-weu]", ""];
+    const TAGS = ["  # azurerm_resource_group.app will be updated in-place", "  ~ resource \"azurerm_resource_group\" \"app\" {", "      ~ tags = {", "          + \"cost-center\" = \"CC-410\"", "            # (2 unchanged elements hidden)", "        }", "    }", ""];
+    const NSG = (from, to, tags) => ["  # azurerm_network_security_group.app will be updated in-place", "  ~ resource \"azurerm_network_security_group\" \"app\" {", "        name = \"nsg-app-weu\"", "      ~ security_rule = [",
+      "          - { name = \"allow-psp-webhooks\", source_address_prefixes = [" + from + "], ... },", "          + { name = \"allow-psp-webhooks\", source_address_prefixes = [" + to + "], ... },", "        ]"]
+      .concat(tags ? ["      ~ tags = {", "          + \"cost-center\" = \"CC-410\"", "        }"] : []).concat(["    }", ""]);
+    const both = "\"" + K6TF_OLD + "\", \"" + K6TF_NEW + "\"", old = "\"" + K6TF_OLD + "\"";
+    const NOCHANGE = REFRESH.concat(["No changes. Your infrastructure matches the configuration."]);
+    const plan = rule("plan");
+    sc.commands.splice(sc.commands.indexOf(plan), 0,
+      Object.assign({}, plan, { id: "plan-merged", when: { merged: true }, set: { planSeen: true, noDrift: true }, out: NOCHANGE, say: { en: "Code and Azure agree.", es: "El código y Azure coinciden." } }),
+      Object.assign({}, plan, { id: "plan-gone-fixed", when: { codeFixed: true, rangeOk: false }, set: { planSeen: true, planClean: true }, out: REFRESH.concat(["Terraform will perform the following actions:", ""], NSG(old, both, false), ["Plan: 0 to add, 1 to change, 0 to destroy."]),
+        say: { en: "Now the plan puts back the range the local apply took away.", es: "Ahora el plan vuelve a poner el rango que quitó el apply local." } }),
+      Object.assign({}, plan, { id: "plan-fixed", when: { codeFixed: true }, set: { planSeen: true, planClean: true }, out: REFRESH.concat(["Terraform will perform the following actions:", ""], TAGS, ["  # azurerm_network_security_group.app will be updated in-place", "  ~ resource \"azurerm_network_security_group\" \"app\" {", "      ~ tags = {", "          + \"cost-center\" = \"CC-410\"", "        }", "        # (1 unchanged attribute hidden)", "    }", "", "Plan: 0 to add, 2 to change, 0 to destroy."]),
+        say: { en: "Only the tags: the rule is no longer in the plan.", es: "Solo las etiquetas: la regla ya no está en el plan." } }),
+      Object.assign({}, plan, { id: "plan-gone", when: { rangeOk: false }, set: { planSeen: true }, out: NOCHANGE,
+        say: { en: "Clean, because the local apply already removed the range from Azure.", es: "Limpio, porque el apply local ya quitó el rango de Azure." } }));
+    Object.assign(plan, { out: REFRESH.concat(["Terraform will perform the following actions:", ""], TAGS, NSG(both, old, true), ["Plan: 0 to add, 2 to change, 0 to destroy."]),
+      say: { en: "Besides the tag, the plan would set allow-psp-webhooks back to a single range.", es: "Además de la etiqueta, el plan dejaría allow-psp-webhooks con un solo rango." } });
+    const pr = rule("pr-view");
+    sc.commands.splice(sc.commands.indexOf(pr), 0, Object.assign({}, pr, { id: "pr-pushed", when: { pushed: true }, out: ["Add cost-center tag #212", "Open • olafuente wants to merge 2 commits into main", "✓ terraform plan (prod)   0 to add, 2 to change, 0 to destroy (tags only)"] }));
+    Object.assign(pr, { out: ["Add cost-center tag #212", "Open • olafuente wants to merge 1 commit into main", "✓ terraform plan (prod)   0 to add, 2 to change, 0 to destroy", "• Approval needed: plan changes azurerm_network_security_group.app"] });
+  })();
+
+  /* ------------------------------------------------------------------ Career level 6: the patching playbook fails on three servers */
+  const K6AN_FAILED = ["elk01", "pup01", "splunk01"];
+  const K6AN_OLDK = "5.14.0-427.42.1.el9_4.x86_64", K6AN_NEWK = "5.14.0-503.15.1.el9_5.x86_64";
+  const K6AN_RUN = /^ansible-playbook\b.*patch-linux\.yml/;
+  scenarios.push({
+    id: "ansible-patch-fails",
+    level: 2, career: 6,
+    topic: { en: "Ansible / become that fails after the automation account changed", es: "Ansible / un become que falla tras cambiar la cuenta de automatización" },
+    minutes: 14,
+    title: { en: "The patching playbook fails on three servers", es: "El playbook de parches falla en 3 servidores" },
+    guide: GUIDE + "ansible-primer-playbook-parchear-servidores-linux.html",
+    machine: K6_JMP,
+    ticket: {
+      id: "INC-20796", from: "Bruno Salas (IT security)", priority: "P2",
+      subject: { en: "November patching: ELK01, PUP01 and SPLUNK01 still on the old kernel", es: "Parches de noviembre: ELK01, PUP01 y SPLUNK01 siguen con el kernel viejo" },
+      body: {
+        en: "The compliance report this morning says six of the nine servers in the patching group rhel_prod have November's kernel and three don't: ELK01, PUP01 and SPLUNK01. Last night's patch run says 'failed' for those three. The audit closes on Friday. I don't need it to look green, I need them patched.",
+        es: "El informe de cumplimiento de esta mañana dice que seis de los nueve servidores del grupo de parches rhel_prod tienen el kernel de noviembre y tres no: ELK01, PUP01 y SPLUNK01. La ejecución de parches de anoche dice «failed» en esos tres. La auditoría cierra el viernes. No necesito que salga en verde, necesito que estén parcheados.",
+      },
+    },
+    intro: {
+      en: "You are on ops-jmp01, the Ansible control node, in ~/ansible (the automation repository). The playbook patch-linux.yml patches the group rhel_prod of inventories/prod one server at a time (serial: 1) and reboots when needed. You also have your own admin account, sysadmin, on every server, with sudo and a password. `onsite ...` is Bruno.",
+      es: "Estás en ops-jmp01, el nodo de control de Ansible, en ~/ansible (el repositorio de automatización). El playbook patch-linux.yml parchea el grupo rhel_prod de inventories/prod de servidor en servidor (serial: 1) y reinicia si hace falta. Tienes además tu propia cuenta de administración, sysadmin, en todos los servidores, con sudo y contraseña. `onsite ...` es Bruno.",
+    },
+    requester: { name: "Bruno Salas", team: { en: "IT security", es: "Seguridad IT" }, user: "bsalas", location: { en: "Head office, IT", es: "Oficina central, IT" }, device: "PC-IT-007" },
+    bind: K6AN_FAILED.map((h) => ({ kind: "server", id: h.toUpperCase(), states: [{ when: { patched: false }, set: { status: "warn" }, note: { en: "Not patched in November: the playbook fails (INC-20796)", es: "Sin parchear en noviembre: el playbook falla (INC-20796)" } }, { set: {} }] })),
+    asset: {
+      title: { en: "Ansible · patch-linux.yml · rhel_prod", es: "Ansible · patch-linux.yml · rhel_prod" },
+      fields: [
+        { label: { en: "Last run", es: "Última ejecución" }, states: [
+          { when: { patched: true }, value: { en: "9 ok, 0 failed", es: "9 ok, 0 fallidos" }, tone: "ok" },
+          { when: { ignoredRun: true }, value: { en: "9 ok, 0 failed, 3 'ignored'", es: "9 ok, 0 fallidos, 3 «ignored»" }, tone: "bad" },
+          { value: { en: "6 ok, 3 failed (elk01, pup01, splunk01)", es: "6 ok, 3 fallidos (elk01, pup01, splunk01)" }, tone: "bad" }] },
+        { label: { en: "Kernel on the three", es: "Kernel en los tres" }, states: [
+          { when: { patched: true }, value: K6AN_NEWK, tone: "ok" },
+          { value: { en: K6AN_OLDK + " (October)", es: K6AN_OLDK + " (octubre)" }, tone: "bad" }] },
+        { label: { en: "Automation account", es: "Cuenta de automatización" }, value: { en: "svc-automation (since CHG-4530, 05/11)", es: "svc-automation (desde el CHG-4530, 05/11)" } },
+        { label: "patch-linux.yml", states: [
+          { when: { ignoreSet: true }, value: { en: "ignore_errors: yes added", es: "ignore_errors: yes añadido" }, tone: "warn" },
+          { value: { en: "As in the repository", es: "Como en el repositorio" }, tone: "muted" }] },
+      ],
+    },
+    actions: [
+      { id: "play", label: { en: "Show the playbook", es: "Ver el playbook" }, cmd: "cat patch-linux.yml" },
+      { id: "kernels", label: { en: "Kernels of rhel_prod", es: "Kernels de rhel_prod" }, cmd: "ansible rhel_prod -i inventories/prod -m command -a 'uname -r'" },
+    ],
+    codes: ["config-fixed", "cause-removed"],
+    state: { runSeen: false, verboseSeen: false, userSeen: false, sudoersSeen: false, ignoreSet: false, ignoredRun: false, sudoFixed: false, patched: false, kernelOk: false, userOk: false },
+    commands: [
+      { id: "cd", match: /^cd(\s+~?\/?[\w\/.-]*)?$/, out: [] },
+      { id: "cat", match: /^(cat|less|more|head)\s+patch-linux\.yml$/, when: { ignoreSet: true }, out: ["- hosts: rhel_prod", "  ignore_errors: yes", "  become: true", "  serial: 1", "  tasks:", "    - name: Apply the security updates", "      ansible.builtin.dnf: { name: '*', security: true, state: latest }", "    - name: Reboot if the kernel or glibc changed", "      ansible.builtin.reboot: { reboot_timeout: 900 }", "      when: reboot_needed.rc == 1"] },
+      { id: "cat-play", match: /^(cat|less|more|head)\s+patch-linux\.yml$/, out: ["- hosts: rhel_prod", "  become: true", "  serial: 1", "  tasks:", "    - name: Apply the security updates", "      ansible.builtin.dnf: { name: '*', security: true, state: latest }", "    - name: Check whether a reboot is needed", "      ansible.builtin.command: needs-restarting -r", "      register: reboot_needed", "      failed_when: false", "    - name: Reboot if the kernel or glibc changed", "      ansible.builtin.reboot: { reboot_timeout: 900 }", "      when: reboot_needed.rc == 1"] },
+      { id: "vars", match: /^(cat|less|grep\b.*)\s*inventories\/prod\/group_vars\/(all|rhel_prod)(\.ya?ml)?\b/, set: { userSeen: true }, out: ["ansible_user: svc-automation        # CHG-4530 (05/11): was svc-ansible", "ansible_ssh_private_key_file: ~/.ssh/svc-automation_ed25519", "ansible_become_method: sudo"],
+        say: { en: "The account Ansible logs in with changed a week ago.", es: "La cuenta con la que entra Ansible cambió hace una semana." } },
+      { id: "ignore", match: /^sed\s+-i\b.*ignore_errors:\s*(yes|true).*patch-linux\.yml/, set: { ignoreSet: true }, out: [] },
+      { id: "unignore", match: /^sed\s+-i\b.*ignore_errors.*\/d.*patch-linux\.yml/, set: { ignoreSet: false }, out: [] },
+      { id: "copy-nok", match: /^ansible\s+(?!.*\s(-k|--ask-become-pass)\b)(?=.*\s(-b|--become)\b).*sudoers/, error: true, out: ["elk01 | FAILED! => {\"msg\": \"Missing sudo password\"}", "pup01 | FAILED! => {\"msg\": \"Missing sudo password\"}", "splunk01 | FAILED! => {\"msg\": \"Missing sudo password\"}"] },
+      { id: "copy-svc", match: /^ansible\s+(?!.*\s(-u|--user)[= ]?\s*sysadmin\b).*sudoers/, error: true, out: ["BECOME password: ", "elk01 | FAILED! => {\"msg\": \"Incorrect sudo password\"}", "pup01 | FAILED! => {\"msg\": \"Incorrect sudo password\"}", "splunk01 | FAILED! => {\"msg\": \"Incorrect sudo password\"}"],
+        say: { en: "That password is yours, but Ansible is still logging in as svc-automation.", es: "Esa contraseña es la tuya, pero Ansible sigue entrando como svc-automation." } },
+      { id: "copy", match: /^ansible\s+(?=.*\s(-b|--become)\b).*(elk01|pup01|splunk01).*\s-m\s+(ansible\.builtin\.)?(copy|template)\b.*sudoers/, set: { sudoFixed: true }, out: ["BECOME password: ", "elk01 | CHANGED => {\"changed\": true, \"dest\": \"/etc/sudoers.d/ansible\", \"mode\": \"0440\"}", "pup01 | CHANGED => {\"changed\": true, \"dest\": \"/etc/sudoers.d/ansible\", \"mode\": \"0440\"}", "splunk01 | CHANGED => {\"changed\": true, \"dest\": \"/etc/sudoers.d/ansible\", \"mode\": \"0440\"}"],
+        say: { en: "The repository's sudoers file, checked with visudo before it is put in place, on the three servers.", es: "El fichero sudoers del repositorio, validado con visudo antes de colocarlo, en los tres servidores." } },
+      { id: "sudoers", match: /^ssh\s+(elk01|pup01|splunk01)\b.*sudoers\.d/, when: { sudoFixed: true }, set: { sudoersSeen: true }, out: ["[sudo] password for sysadmin: ", "svc-automation ALL=(ALL) NOPASSWD: ALL"] },
+      { id: "sudoers-old", match: /^ssh\s+(elk01|pup01|splunk01)\b.*sudoers\.d/, set: { sudoersSeen: true }, out: ["[sudo] password for sysadmin: ", "# managed by hand (built before the base role)", "svc-ansible ALL=(ALL) NOPASSWD: ALL"],
+        say: { en: "Sudo without a password is still granted to the old account.", es: "El sudo sin contraseña sigue concedido a la cuenta vieja." } },
+      { id: "files", match: /^(cat|less)\s+files\/sudoers-ansible$/, out: ["svc-automation ALL=(ALL) NOPASSWD: ALL"] },
+      { id: "verbose", match: new RegExp(K6AN_RUN.source + ".*\\s-v{2,4}\\b"), when: { sudoFixed: false }, set: { runSeen: true, verboseSeen: true, userSeen: true }, out: ["<elk01> ESTABLISH SSH CONNECTION FOR USER: svc-automation", "<elk01> SSH: EXEC ssh -o User=\"svc-automation\" ... elk01 '/bin/sh -c '\"'\"'sudo -H -S -n  -u root /bin/sh -c ...'\"'\"''",
+        "fatal: [elk01]: FAILED! => {\"msg\": \"Missing sudo password\"}"],
+        say: { en: "SSH works; it is sudo, as svc-automation, that asks for a password the playbook does not have.", es: "SSH funciona; es sudo, como svc-automation, el que pide una contraseña que el playbook no tiene." } },
+      { id: "run-ok", match: K6AN_RUN, when: { sudoFixed: true }, set: { runSeen: true, patched: true }, out: [] },
+      { id: "run-ignored", match: K6AN_RUN, when: { ignoreSet: true }, set: { runSeen: true, ignoredRun: true }, out: [] },
+      { id: "run", match: K6AN_RUN, set: { runSeen: true }, out: [] },
+      { id: "ping", match: /^ansible\s+\S+.*\s-m\s+(ansible\.builtin\.)?ping\b/, out: ["elk01 | SUCCESS => {\"ping\": \"pong\"}", "pup01 | SUCCESS => {\"ping\": \"pong\"}", "splunk01 | SUCCESS => {\"ping\": \"pong\"}"],
+        say: { en: "They answer: the connection and the key are fine.", es: "Responden: la conexión y la clave están bien." } },
+      { id: "uname", match: /^ansible\s+(rhel_prod|all|elk01|pup01|splunk01)\b.*uname\s+-r/, out: [] },
+      { id: "onsite-help", match: /^onsite$/, out: ["What Bruno can do (simulated):", "  onsite report   run the compliance report again"] },
+      { id: "user-ok", match: /^onsite\s+report\b/, when: { kernelOk: true }, set: { userOk: true }, out: [""], say: { en: "Bruno: '9 of 9 on November's kernel. That I can show the auditors.'", es: "Bruno: «9 de 9 con el kernel de noviembre. Eso sí se lo puedo enseñar a los auditores.»" } },
+      { id: "user", match: /^onsite\s+report\b/, out: [""], say: { en: "Bruno: 'Still 6 of 9. ELK01, PUP01 and SPLUNK01 are on the October kernel.'", es: "Bruno: «Siguen 6 de 9. ELK01, PUP01 y SPLUNK01 están con el kernel de octubre.»" } },
+    ],
+    goal: { sudoFixed: true, patched: true, kernelOk: true, userOk: true },
+    stages: [
+      { id: "investigate", label: { en: "Find out why the three fail", es: "Averiguar por qué fallan los tres" }, when: { runSeen: true, userSeen: true, sudoersSeen: true } },
+      { id: "fix", label: { en: "Fix sudo on the three, then patch only them", es: "Corregir sudo en los tres y parchear solo esos" }, when: { sudoFixed: true, patched: true } },
+      { id: "verify", label: { en: "Every kernel on November's, and the report", es: "Todos los kernels en el de noviembre, y el informe" }, when: { kernelOk: true, userOk: true } },
+    ],
+    remarks: [
+      { when: { ignoreSet: true }, text: { en: "ignore_errors: yes was left in patch-linux.yml: the next failures will look green", es: "Se dejó ignore_errors: yes en patch-linux.yml: los próximos fallos saldrán en verde" } },
+    ],
+    resolved: { en: "Resolved: the three servers are patched and the report is complete. Now write the work note.", es: "Resuelto: los tres servidores están parcheados y el informe está completo. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "Run it on one of them with detail: ansible-playbook -i inventories/prod patch-linux.yml --limit elk01 -vvv. Which user, and which step fails?", es: "Ejecútalo en uno de ellos con detalle: ansible-playbook -i inventories/prod patch-linux.yml --limit elk01 -vvv. ¿Qué usuario, y qué paso falla?" },
+      { en: "Who may use sudo there: ssh elk01 sudo cat /etc/sudoers.d/ansible, and who Ansible is now: inventories/prod/group_vars/all.yml. Ignoring the errors only hides them.", es: "Quién puede usar sudo allí: ssh elk01 sudo cat /etc/sudoers.d/ansible, y quién es ahora Ansible: inventories/prod/group_vars/all.yml. Ignorar los errores solo los esconde." },
+      { en: "With your own account: ansible elk01,pup01,splunk01 -i inventories/prod -u sysadmin -K -b -m copy -a \"src=files/sudoers-ansible dest=/etc/sudoers.d/ansible mode=0440 validate='visudo -cf %s'\".", es: "Con tu propia cuenta: ansible elk01,pup01,splunk01 -i inventories/prod -u sysadmin -K -b -m copy -a \"src=files/sudoers-ansible dest=/etc/sudoers.d/ansible mode=0440 validate='visudo -cf %s'\"." },
+      { en: "The playbook with --limit elk01,pup01,splunk01, then the kernels (the button) and onsite report.", es: "El playbook con --limit elk01,pup01,splunk01, después los kernels (el botón) y onsite report." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (CHG-4530 moved Ansible to svc-automation; the sudoers file on the three, made by hand, still named svc-ansible: 'Missing sudo password')", es: "la causa (el CHG-4530 pasó Ansible a svc-automation; el sudoers de los tres, hecho a mano, seguía nombrando a svc-ansible: «Missing sudo password»)" }, any: ["svc-ansible", "sudoers", "missing sudo password", "become"] },
+      { kb: "fix", label: { en: "the fix (the repository's sudoers file put on the three with your own account, then the playbook limited to them)", es: "la solución (el sudoers del repositorio colocado en los tres con tu propia cuenta y después el playbook limitado a ellos)" }, any: ["--limit", "limit", "visudo", "sudoers-ansible"] },
+      { kb: "verify", label: { en: "how you checked it (uname -r on the 9, and the compliance report)", es: "cómo lo comprobaste (uname -r en los 9, y el informe de cumplimiento)" }, any: ["uname", "503.15", "kernel", "9 of 9", "9 de 9"] },
+      { kb: "followup", label: { en: "what follows (the three servers under the base role, so sudoers is managed like the rest)", es: "lo que sigue (los tres servidores bajo el rol base, para que su sudoers se gestione como el resto)" }, any: ["base role", "rol base", "role base", "managed", "gestionad"] },
+    ],
+    solution: ["ansible-playbook -i inventories/prod patch-linux.yml --limit elk01 -vvv", "cat inventories/prod/group_vars/all.yml", "ssh elk01 sudo cat /etc/sudoers.d/ansible",
+      "ansible elk01,pup01,splunk01 -i inventories/prod -u sysadmin -K -b -m copy -a \"src=files/sudoers-ansible dest=/etc/sudoers.d/ansible mode=0440 validate='visudo -cf %s'\"",
+      "ssh elk01 sudo cat /etc/sudoers.d/ansible", "ansible-playbook -i inventories/prod patch-linux.yml --limit elk01,pup01,splunk01",
+      "ansible rhel_prod -i inventories/prod -m command -a 'uname -r'", "onsite report"],
+    sampleNote: {
+      en: "Last night's patch run failed on elk01, pup01 and splunk01 with 'Missing sudo password'. With -vvv: SSH worked as svc-automation, the account Ansible has used since CHG-4530 (05/11), but /etc/sudoers.d/ansible on those three, written by hand before the base role existed, still gave sudo only to svc-ansible. Put the repository's files/sudoers-ansible on the three with my own account (-u sysadmin -K, validated with visudo -cf), then ran patch-linux.yml with --limit elk01,pup01,splunk01: patched and rebooted one at a time. uname -r gives 5.14.0-503.15.1 on all 9 and Bruno's compliance report shows 9 of 9. I did not add ignore_errors: it would have shown green with nothing patched. Next: bring the three servers under the base role so their sudoers is managed like the rest.",
+      es: "La ejecución de parches de anoche falló en elk01, pup01 y splunk01 con «Missing sudo password». Con -vvv: SSH funcionaba como svc-automation, la cuenta que usa Ansible desde el CHG-4530 (05/11), pero /etc/sudoers.d/ansible en esos tres, escrito a mano antes de que existiera el rol base, seguía dando sudo solo a svc-ansible. Coloqué files/sudoers-ansible del repositorio en los tres con mi propia cuenta (-u sysadmin -K, validado con visudo -cf) y ejecuté patch-linux.yml con --limit elk01,pup01,splunk01: parcheados y reiniciados de uno en uno. uname -r da 5.14.0-503.15.1 en los 9 y el informe de cumplimiento de Bruno muestra 9 de 9. No añadí ignore_errors: habría salido en verde sin parchear nada. Pendiente: meter los tres servidores en el rol base para que su sudoers se gestione como el resto.",
+    },
+    contact: {
+      tempting: ["run-ignored"], temptingWhen: { sudoFixed: false },
+      questions: [
+        { id: "since", kind: "useful",
+          text: { en: "Did those three patch fine last month?", es: "¿Esos tres se parchearon bien el mes pasado?" },
+          answer: { en: "Yes, October was 9 of 9. Something changed between the two runs.", es: "Sí, octubre fue 9 de 9. Algo cambió entre las dos ejecuciones." },
+          clue: { en: "It broke after October's run.", es: "Se rompió después de la ejecución de octubre." } },
+        { id: "change", kind: "useful",
+          text: { en: "Was there any change to the automation since October?", es: "¿Hubo algún cambio en la automatización desde octubre?" },
+          answer: { en: "We renamed the Ansible service account in CHG-4530, for the audit. The base role spreads the new sudoers.", es: "Renombramos la cuenta de servicio de Ansible en el CHG-4530, por la auditoría. El rol base reparte el sudoers nuevo." },
+          clue: { en: "The automation account was renamed, and only servers under the base role got the new sudoers.", es: "Se renombró la cuenta de automatización, y solo los servidores bajo el rol base recibieron el sudoers nuevo." } },
+        { id: "window", kind: "neutral",
+          text: { en: "Can they be rebooted during the day?", es: "¿Se pueden reiniciar de día?" },
+          answer: { en: "One at a time, yes; the logs queue up for a few minutes.", es: "De uno en uno, sí; los registros se encolan unos minutos." } },
+        { id: "skip", kind: "bad",
+          text: { en: "Shall I mark them as exceptions in the report so the audit passes?", es: "¿Los marco como excepción en el informe para que pase la auditoría?" },
+          answer: { en: "No. They are unpatched, and an exception needs a reason.", es: "No. Están sin parchear, y una excepción necesita un motivo." },
+          why: { en: "It hides three unpatched servers from the audit.", es: "Esconde tres servidores sin parchear a la auditoría." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Send me svc-automation's key and I'll run it from my laptop.", es: "Mándame la clave de svc-automation y lo lanzo desde mi portátil." },
+          answer: { en: "That key never leaves the control node.", es: "Esa clave no sale del nodo de control." },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Does the report show the three on November's kernel?", es: "¿Sale en el informe que los tres tienen el kernel de noviembre?" },
+          answer: { en: "Yes, 9 of 9.", es: "Sí, 9 de 9." },
+          failed: { en: "The run is green, but the report still says the three are on October's kernel.", es: "La ejecución está en verde, pero el informe sigue diciendo que los tres tienen el kernel de octubre." } },
+      ],
+    },
+  });
+  (function () {   // the runs and the kernels follow the state
+    const sc = scenarios[scenarios.length - 1];
+    const rule = (id) => sc.commands.find((r) => r.id === id);
+    const OK = ["proxy01", "docs-lnx01", "elk01", "erp-rhel01", "trd-vox01", "pup01", "kc01", "fleet01", "splunk01"];
+    const RECAP = (fail, ign) => ["PLAY RECAP *********************************************************************"].concat(OK.map((h) => {
+      const f = K6AN_FAILED.includes(h);
+      return (h + "                        ").slice(0, 24) + ": ok=" + (f && fail ? 1 : 5) + "    changed=" + (f && (fail || ign) ? 0 : 1) + "    unreachable=0    failed=" + (f && fail ? 1 : 0) + "    skipped=0    rescued=0    ignored=" + (f && ign ? 3 : 0);
+    }));
+    Object.assign(rule("run"), { out: ["TASK [Apply the security updates] **********************************************", "fatal: [elk01]: FAILED! => {\"msg\": \"Missing sudo password\"}", "fatal: [pup01]: FAILED! => {\"msg\": \"Missing sudo password\"}", "fatal: [splunk01]: FAILED! => {\"msg\": \"Missing sudo password\"}", ""].concat(RECAP(true, false)),
+      say: { en: "The same three, the same message, on the first task that needs sudo.", es: "Los mismos tres, el mismo mensaje, en la primera tarea que necesita sudo." } });
+    Object.assign(rule("run-ignored"), { out: ["fatal: [elk01]: FAILED! => {\"msg\": \"Missing sudo password\"}", "...ignoring", "fatal: [pup01]: FAILED! => {\"msg\": \"Missing sudo password\"}", "...ignoring", "fatal: [splunk01]: FAILED! => {\"msg\": \"Missing sudo password\"}", "...ignoring", ""].concat(RECAP(false, true)),
+      say: { en: "failed=0... and ignored=3 on each of the three, with changed=0: nothing was installed there.", es: "failed=0... e ignored=3 en cada uno de los tres, con changed=0: allí no se instaló nada." } });
+    Object.assign(rule("run-ok"), { out: ["TASK [Apply the security updates] **********************************************", "changed: [elk01]", "TASK [Reboot if the kernel or glibc changed] ***********************************", "changed: [elk01]", "(… pup01, then splunk01, one at a time …)", "",
+      "PLAY RECAP *********************************************************************"].concat(K6AN_FAILED.map((h) => (h + "                        ").slice(0, 24) + ": ok=5    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0")),
+      say: { en: "Patched and rebooted, one after the other.", es: "Parcheados y reiniciados, uno detrás de otro." } });
+    const u = rule("uname");
+    const K = (newK) => OK.flatMap((h) => [h + " | CHANGED | rc=0 >>", K6AN_FAILED.includes(h) && !newK ? K6AN_OLDK : K6AN_NEWK]);
+    sc.commands.splice(sc.commands.indexOf(u), 0, Object.assign({}, u, { id: "uname-ok", when: { patched: true }, set: { kernelOk: true }, out: K(true) }));
+    Object.assign(u, { out: K(false), say: { en: "Six on November's kernel; the three on October's.", es: "Seis con el kernel de noviembre; los tres con el de octubre." } });
+  })();
+
+  /* ------------------------------------------------------------------ Career level 6: the scripts' pipeline is red */
+  const K6JK_JOB = "it-scripts/main";
+  scenarios.push({
+    id: "jenkins-pipeline-red",
+    level: 2, career: 6,
+    topic: { en: "Jenkins / a test stage that stops a script with a password in it", es: "Jenkins / una etapa de pruebas que para un script con una contraseña dentro" },
+    minutes: 13,
+    title: { en: "The scripts' pipeline has been red since yesterday", es: "El pipeline de los scripts está en rojo desde ayer" },
+    guide: GUIDE + "jenkins-pipeline-que-prueba-los-scripts-del-equipo-en-cada-cambio.html",
+    machine: K6_JMP,
+    ticket: {
+      id: "INC-20797", from: "Óscar Lafuente (IT infrastructure)", priority: "P3",
+      subject: { en: "it-scripts: red since yesterday afternoon, nothing reaches the share", es: "it-scripts: en rojo desde ayer por la tarde, no llega nada a la carpeta" },
+      body: {
+        en: "The it-scripts pipeline in Jenkins has been red since yesterday about four, and since then nothing gets deployed to \\\\FS01\\IT-Scripts: Daniel's fix to the new starters report is stuck behind it. Someone in the channel says to just let the tests fail without stopping the build so we can move. Before we do anything, can you see what's going on?",
+        es: "El pipeline it-scripts de Jenkins está en rojo desde ayer hacia las cuatro, y desde entonces no se despliega nada en \\\\FS01\\IT-Scripts: el arreglo de Daniel al informe de altas está atascado detrás. Alguien en el canal dice que dejemos que las pruebas fallen sin parar la build para poder avanzar. Antes de tocar nada, ¿podéis ver qué pasa?",
+      },
+    },
+    intro: {
+      en: "You are on ops-jmp01 in ~/it-scripts, a clone of the team's scripts repository (branch main), with pwsh and the PSScriptAnalyzer and Pester modules. `jenkins-cli` is the Jenkins CLI (java -jar jenkins-cli.jar with your token) against jenkins.contoso.local; the job is it-scripts/main, triggered by every push. The team keeps secrets in the SecretManagement vault ContosoVault. `onsite ...` is Óscar.",
+      es: "Estás en ops-jmp01 en ~/it-scripts, un clon del repositorio de scripts del equipo (rama main), con pwsh y los módulos PSScriptAnalyzer y Pester. `jenkins-cli` es la CLI de Jenkins (java -jar jenkins-cli.jar con tu token) contra jenkins.contoso.local; el trabajo es it-scripts/main, que se lanza con cada push. El equipo guarda los secretos en el almacén de SecretManagement ContosoVault. `onsite ...` es Óscar.",
+    },
+    requester: { name: "Óscar Lafuente", team: { en: "IT infrastructure", es: "Infraestructura IT" }, user: "olafuente", location: { en: "Head office, IT", es: "Oficina central, IT" }, device: "PC-IT-001" },
+    bind: [{ kind: "server", id: "JENKINS01", states: [{ when: { buildOk: false }, set: { status: "warn" }, note: { en: "it-scripts/main red since yesterday 16:05 (INC-20797)", es: "it-scripts/main en rojo desde ayer a las 16:05 (INC-20797)" } }, { set: {} }] }],
+    asset: {
+      title: { en: "Jenkins · " + K6JK_JOB, es: "Jenkins · " + K6JK_JOB },
+      fields: [
+        { label: { en: "Last build", es: "Última build" }, states: [
+          { when: { buildOk: true }, value: { en: "#216 SUCCESS, every stage passed", es: "#216 SUCCESS, todas las etapas superadas" }, tone: "ok" },
+          { when: { fakeGreen: true }, value: { en: "#216 SUCCESS, Lint & test failed (caught)", es: "#216 SUCCESS, Lint & test fallida (capturada)" }, tone: "bad" },
+          { value: { en: "#215 FAILURE (three in a row)", es: "#215 FAILURE (tres seguidas)" }, tone: "bad" }] },
+        { label: "Reset-KioskPassword.ps1", states: [
+          { when: { scriptFixed: true }, value: { en: "Reads the password from ContosoVault", es: "Lee la contraseña de ContosoVault" }, tone: "ok" },
+          { when: { showSeen: true }, value: { en: "Password in clear text in the script", es: "Contraseña en claro en el script" }, tone: "bad" },
+          { value: { en: "Not checked", es: "Sin revisar" }, tone: "muted" }] },
+        { label: "\\\\FS01\\IT-Scripts", states: [
+          { when: { buildOk: true }, value: { en: "Up to date", es: "Al día" }, tone: "ok" },
+          { when: { fakeGreen: true }, value: { en: "Deployed, with the clear-text password", es: "Desplegado, con la contraseña en claro" }, tone: "bad" },
+          { value: { en: "Last deployed by #212, the day before yesterday", es: "Último despliegue de la #212, anteayer" }, tone: "warn" }] },
+      ],
+    },
+    actions: [
+      { id: "console", label: { en: "Last build's console", es: "Consola de la última build" }, cmd: "jenkins-cli console " + K6JK_JOB },
+      { id: "log", label: { en: "Recent commits", es: "Commits recientes" }, cmd: "git log --oneline -5" },
+    ],
+    codes: ["cause-removed", "config-fixed"],
+    state: { consoleSeen: false, logSeen: false, showSeen: false, fileSeen: false, bypass: false, scriptFixed: false, lintOk: false, committed: false, pushed: false, fakeGreen: false, buildOk: false, userOk: false },
+    commands: [
+      { id: "cd", match: /^cd(\s+~?\/?[\w\/.-]*)?$/, out: [] },
+      { id: "console", match: new RegExp("^jenkins-cli\\s+(console|build)\\s+it-scripts\\/main\\b"), set: { consoleSeen: true }, out: [] },
+      { id: "jobs", match: /^jenkins-cli\s+(list-jobs|get-job)\b/, out: ["it-scripts", "it-scripts/main", "infra-docs"] },
+      { id: "log", match: /^git\s+log\b/, set: { logSeen: true }, out: [] },
+      { id: "show", match: /^(git\s+show\b|cat\s+(scripts\/)?reset-kioskpassword\.ps1|grep\b.*(convertto-securestring|reset-kioskpassword))/, set: { showSeen: true, fileSeen: true }, out: [] },
+      { id: "jfile", match: /^(cat|less)\s+jenkinsfile$/, out: [] },
+      { id: "bypass", match: /^sed\s+-i\b.*catcherror.*jenkinsfile/, set: { bypass: true }, out: [],
+        say: { en: "Now a failure in Lint & test marks the stage red but lets the build go on to Deploy.", es: "Ahora un fallo en Lint & test marca la etapa en rojo pero deja que la build siga hasta Deploy." } },
+      { id: "fix", match: /^sed\s+-i\b.*get-secret.*reset-kioskpassword\.ps1/, set: { scriptFixed: true }, out: [] },
+      { id: "fix-bad", match: /^sed\s+-i\b.*reset-kioskpassword\.ps1/, error: true, out: ["(the analyzer would still flag it: the password has to come from the vault, Get-Secret -Name KioskLocalAdmin -Vault ContosoVault)"] },
+      { id: "lint-ok", match: /^(pwsh\s+-c\s+["']?)?invoke-scriptanalyzer\b/, when: { scriptFixed: true }, set: { lintOk: true }, out: [""], say: { en: "No errors.", es: "Sin errores." } },
+      { id: "lint", match: /^(pwsh\s+-c\s+["']?)?invoke-scriptanalyzer\b/, out: ["RuleName                                          Severity  ScriptName               Line  Message", "--------                                          --------  ----------               ----  -------",
+        "PSAvoidUsingConvertToSecureStringWithPlainText    Error     Reset-KioskPassword.ps1  14    File 'Reset-KioskPassword.ps1' uses ConvertTo-SecureString with plaintext. This will expose secure information."] },
+      { id: "diff", match: /^git\s+diff\b/, out: [] },
+      { id: "commit", match: /^git\s+commit\b/, when: { scriptFixed: true }, set: { committed: true }, out: ["[main 7d41e0b] Reset-KioskPassword: read the password from ContosoVault", " 1 file changed, 1 insertion(+), 1 deletion(-)"] },
+      { id: "commit-bypass", match: /^git\s+commit\b/, when: { bypass: true }, set: { committed: true }, out: ["[main 5b2c9aa] Jenkinsfile: do not stop on lint", " 1 file changed, 2 insertions(+), 1 deletion(-)"] },
+      { id: "commit-none", match: /^git\s+commit\b/, out: ["On branch main", "nothing to commit, working tree clean"] },
+      { id: "push-ok", match: /^git\s+push\b/, when: { committed: true, scriptFixed: true }, set: { pushed: true, buildOk: true, fakeGreen: false }, out: ["To git.contoso.local:it/it-scripts.git", "   a3f9c21..7d41e0b  main -> main"],
+        say: { en: "The push starts build #216.", es: "El push lanza la build #216." } },
+      { id: "push-bypass", match: /^git\s+push\b/, when: { committed: true, bypass: true }, set: { pushed: true, fakeGreen: true }, out: ["To git.contoso.local:it/it-scripts.git", "   a3f9c21..5b2c9aa  main -> main"],
+        say: { en: "The push starts build #216.", es: "El push lanza la build #216." } },
+      { id: "push-none", match: /^git\s+push\b/, out: ["Everything up-to-date"] },
+      { id: "onsite-help", match: /^onsite$/, out: ["What Óscar can do (simulated):", "  onsite check   look at the stage view and the share"] },
+      { id: "user-ok", match: /^onsite\s+check\b/, when: { buildOk: true }, set: { userOk: true }, out: [""], say: { en: "Óscar: 'All stages green, and Daniel's report is on the share. Good catch with that password.'", es: "Óscar: «Todas las etapas en verde, y el informe de Daniel está en la carpeta. Bien visto lo de esa contraseña.»" } },
+      { id: "user-fake", match: /^onsite\s+check\b/, when: { fakeGreen: true }, out: [""], say: { en: "Óscar: 'The build says SUCCESS, but Lint & test is red in the stage view. And what did we just deploy?'", es: "Óscar: «La build dice SUCCESS, pero Lint & test está en rojo en la vista de etapas. ¿Y qué acabamos de desplegar?»" } },
+      { id: "user", match: /^onsite\s+check\b/, out: [""], say: { en: "Óscar: 'Still red.'", es: "Óscar: «Sigue en rojo.»" } },
+    ],
+    goal: { scriptFixed: true, lintOk: true, pushed: true, buildOk: true, userOk: true },
+    stages: [
+      { id: "investigate", label: { en: "Find out which stage fails and why", es: "Averiguar qué etapa falla y por qué" }, when: { consoleSeen: true, logSeen: true, showSeen: true } },
+      { id: "fix", label: { en: "Fix the script, not the test", es: "Arreglar el script, no la prueba" }, when: { scriptFixed: true, lintOk: true, pushed: true } },
+      { id: "verify", label: { en: "A real green build and the share up to date", es: "Una build verde de verdad y la carpeta al día" }, when: { buildOk: true, userOk: true } },
+    ],
+    remarks: [
+      { when: { bypass: true }, text: { en: "catchError was left on the Lint & test stage: a failing test no longer stops the deploy", es: "Se dejó catchError en la etapa Lint & test: una prueba que falla ya no para el despliegue" } },
+    ],
+    resolved: { en: "Resolved: the pipeline is green with its tests, and the share is up to date. Now write the work note.", es: "Resuelto: el pipeline está en verde con sus pruebas y la carpeta está al día. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "The last build's console (the button): which stage, which file, which line?", es: "La consola de la última build (el botón): ¿qué etapa, qué fichero, qué línea?" },
+      { en: "Who added that file and what is on line 14: git log --oneline -5 and git show. The test is doing its job.", es: "Quién añadió ese fichero y qué hay en la línea 14: git log --oneline -5 y git show. La prueba está haciendo su trabajo." },
+      { en: "sed -i \"s/ConvertTo-SecureString 'Kiosk2026!' -AsPlainText -Force/Get-Secret -Name KioskLocalAdmin -Vault ContosoVault/\" scripts/Reset-KioskPassword.ps1, then pwsh -c \"Invoke-ScriptAnalyzer -Path scripts -Recurse -Severity Error\".", es: "sed -i \"s/ConvertTo-SecureString 'Kiosk2026!' -AsPlainText -Force/Get-Secret -Name KioskLocalAdmin -Vault ContosoVault/\" scripts/Reset-KioskPassword.ps1 y después pwsh -c \"Invoke-ScriptAnalyzer -Path scripts -Recurse -Severity Error\"." },
+      { en: "git commit -am ..., git push, the console of the new build and onsite check.", es: "git commit -am ..., git push, la consola de la build nueva y onsite check." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (Reset-KioskPassword.ps1, added yesterday, had the kiosks' password in clear text; PSScriptAnalyzer stopped the build at Lint & test)", es: "la causa (Reset-KioskPassword.ps1, añadido ayer, tenía la contraseña de los quioscos en claro; PSScriptAnalyzer paró la build en Lint & test)" }, any: ["plaintext", "plain text", "clear text", "en claro", "converttosecurestring", "psavoidusing"] },
+      { kb: "fix", label: { en: "the fix (the script reads it from ContosoVault with Get-Secret; the tests left as they were)", es: "la solución (el script la lee de ContosoVault con Get-Secret; las pruebas como estaban)" }, any: ["get-secret", "contosovault", "vault", "almacen"] },
+      { kb: "verify", label: { en: "how you checked it (the analyzer locally, build #216 green in every stage, the share)", es: "cómo lo comprobaste (el analizador en local, la build #216 en verde en todas las etapas, la carpeta)" }, any: ["#216", "success", "green", "verde"] },
+      { kb: "followup", label: { en: "what follows (rotate the kiosk password, which is in the Git history, and require the check before merging to main)", es: "lo que sigue (cambiar la contraseña de los quioscos, que está en el historial de Git, y exigir la comprobación antes de fusionar en main)" }, any: ["rotate", "rotar", "cambiar la contrasena", "change the password", "history", "historial"] },
+    ],
+    solution: ["jenkins-cli console " + K6JK_JOB, "git log --oneline -5", "git show a3f9c21",
+      "sed -i \"s/ConvertTo-SecureString 'Kiosk2026!' -AsPlainText -Force/Get-Secret -Name KioskLocalAdmin -Vault ContosoVault/\" scripts/Reset-KioskPassword.ps1",
+      "pwsh -c \"Invoke-ScriptAnalyzer -Path scripts -Recurse -Severity Error\"", "git commit -am \"Reset-KioskPassword: read the password from ContosoVault\"", "git push", "jenkins-cli console " + K6JK_JOB, "onsite check"],
+    sampleNote: {
+      en: "it-scripts/main had failed since build #213 (yesterday 16:05) at the Lint & test stage: PSScriptAnalyzer PSAvoidUsingConvertToSecureStringWithPlainText, error, in Reset-KioskPassword.ps1 line 14, added yesterday in a3f9c21 with the kiosks' local password in clear text. Changed that line to read it with Get-Secret -Name KioskLocalAdmin -Vault ContosoVault, ran Invoke-ScriptAnalyzer locally with no errors, and pushed. Build #216 is SUCCESS in every stage and the share is up to date, Daniel's report included. Letting the tests fail without stopping the build would have deployed the password to the share. Next: rotate the kiosk password, because it stays in the Git history, and make the pipeline check required before merging to main.",
+      es: "it-scripts/main fallaba desde la build #213 (ayer a las 16:05) en la etapa Lint & test: PSScriptAnalyzer PSAvoidUsingConvertToSecureStringWithPlainText, error, en Reset-KioskPassword.ps1 línea 14, añadido ayer en a3f9c21 con la contraseña local de los quioscos en claro. Cambié esa línea para leerla con Get-Secret -Name KioskLocalAdmin -Vault ContosoVault, pasé Invoke-ScriptAnalyzer en local sin errores e hice push. La build #216 está en SUCCESS en todas las etapas y la carpeta está al día, con el informe de Daniel incluido. Dejar que las pruebas fallaran sin parar la build habría desplegado la contraseña en la carpeta. Pendiente: cambiar la contraseña de los quioscos, porque queda en el historial de Git, y hacer obligatoria la comprobación del pipeline antes de fusionar en main.",
+    },
+    contact: {
+      tempting: ["push-bypass"], temptingWhen: { scriptFixed: false },
+      questions: [
+        { id: "first", kind: "useful",
+          text: { en: "Which was the first red build, and what went in just before?", es: "¿Cuál fue la primera build en rojo, y qué entró justo antes?" },
+          answer: { en: "#213, yesterday at 16:05. Sara had just added a script for the store kiosks.", es: "La #213, ayer a las 16:05. Sara acababa de añadir un script para los quioscos de las tiendas." },
+          clue: { en: "The red started with Sara's new kiosk script.", es: "El rojo empezó con el script nuevo de Sara para los quioscos." } },
+        { id: "kiosk", kind: "useful",
+          text: { en: "What does that kiosk script do?", es: "¿Qué hace ese script de los quioscos?" },
+          answer: { en: "It resets the kiosks' local admin password every month. Sara said it was 'quick and dirty, for now'.", es: "Cambia cada mes la contraseña del administrador local de los quioscos. Sara dijo que era «rápido y sucio, de momento»." },
+          clue: { en: "The script handles a password, written in a hurry.", es: "El script maneja una contraseña, escrito con prisa." } },
+        { id: "agent", kind: "neutral",
+          text: { en: "Has Jenkins or its agents been updated lately?", es: "¿Se ha actualizado Jenkins o sus agentes últimamente?" },
+          answer: { en: "Not this month.", es: "Este mes no." } },
+        { id: "skip", kind: "bad",
+          text: { en: "Shall I let the tests fail without stopping the build, as they said in the channel?", es: "¿Dejo que las pruebas fallen sin parar la build, como decían en el canal?" },
+          answer: { en: "Then why have tests? Find out what they say first.", es: "¿Y entonces para qué tenemos pruebas? Mira primero qué dicen." },
+          why: { en: "It deploys whatever the tests caught, and every failure after it.", es: "Despliega lo que pillaron las pruebas, y todos los fallos que vengan detrás." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Give me your Jenkins password and I'll run it as you.", es: "Pásame tu contraseña de Jenkins y lo lanzo como tú." },
+          answer: { en: "You have your own token for that.", es: "Para eso tienes tu propio token." },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Is the pipeline really green now, tests included?", es: "¿Está ya el pipeline en verde de verdad, pruebas incluidas?" },
+          answer: { en: "Yes, every stage green and the share up to date.", es: "Sí, todas las etapas en verde y la carpeta al día." },
+          failed: { en: "The build says SUCCESS, but Lint & test is red in the stage view and the analyzer error is still in the log.", es: "La build dice SUCCESS, pero Lint & test está en rojo en la vista de etapas y el error del analizador sigue en el log." } },
+      ],
+    },
+  });
+  (function () {   // the build console, the log and the files follow the state
+    const sc = scenarios[scenarios.length - 1];
+    const rule = (id) => sc.commands.find((r) => r.id === id);
+    const HEAD = (n) => ["Started by GitLab push", "[Pipeline] stage (Checkout)", "Checking out Revision " + (n === 216 ? "7d41e0b" : "a3f9c21") + " (main)", "[Pipeline] stage (Lint & test)",
+      "+ pwsh -NoProfile -c \"Invoke-ScriptAnalyzer -Path scripts -Recurse -Severity Error -EnableExit\""];
+    const LINT = ["PSAvoidUsingConvertToSecureStringWithPlainText  Error  Reset-KioskPassword.ps1  14  File 'Reset-KioskPassword.ps1' uses ConvertTo-SecureString with plaintext. This will expose secure information."];
+    const c = rule("console");
+    sc.commands.splice(sc.commands.indexOf(c), 0,
+      Object.assign({}, c, { id: "console-ok", when: { buildOk: true }, out: ["#216"].concat(HEAD(216), ["+ pwsh -NoProfile -c \"Invoke-Pester -Path tests -CI\"", "Tests Passed: 42, Failed: 0, Skipped: 0", "[Pipeline] stage (Deploy)", "+ robocopy scripts \\\\FS01\\IT-Scripts /MIR", "Finished: SUCCESS"]),
+        say: { en: "Every stage passed, and Deploy ran.", es: "Todas las etapas superadas, y Deploy se ejecutó." } }),
+      Object.assign({}, c, { id: "console-fake", when: { fakeGreen: true }, out: ["#216"].concat(HEAD(216), LINT, ["ERROR: script returned exit code 1", "[Pipeline] catchError: stage result set to FAILURE", "[Pipeline] stage (Deploy)", "+ robocopy scripts \\\\FS01\\IT-Scripts /MIR", "Finished: SUCCESS"]),
+        say: { en: "SUCCESS, with the same analyzer error, and Deploy copied that script to the share.", es: "SUCCESS, con el mismo error del analizador, y Deploy copió ese script a la carpeta." } }));
+    Object.assign(c, { out: ["#215"].concat(HEAD(215), LINT, ["ERROR: script returned exit code 1", "[Pipeline] stage (Deploy)", "Stage \"Deploy\" skipped due to earlier failure(s)", "Finished: FAILURE"]),
+      say: { en: "It is not Jenkins: the script analyzer fails on one file, and Deploy is skipped.", es: "No es Jenkins: el analizador de scripts falla en un fichero, y Deploy se salta." } });
+    Object.assign(rule("log"), { out: ["e81b0f4 (HEAD -> main, origin/main) New-StarterReport: add the cost centre column (dvega)", "9a7d2c3 Get-StaleComputers: skip the servers OU (sgil)", "a3f9c21 Add Reset-KioskPassword.ps1 for the store kiosks (sgil)", "4c0e6d1 Pester: tests for New-StarterReport (dvega)", "1f25b8e Jenkinsfile: Pester results as JUnit (olafuente)"],
+      say: { en: "a3f9c21 is the first commit of the red builds.", es: "a3f9c21 es el primer commit de las builds en rojo." } });
+    const SCRIPT = (fixed) => ["param([string[]]$Kiosk = (Get-Content .\\kiosks.txt))", "...", "# line 14:", fixed ? "$pw = Get-Secret -Name KioskLocalAdmin -Vault ContosoVault" : "$pw = ConvertTo-SecureString 'Kiosk2026!' -AsPlainText -Force", "Invoke-Command -ComputerName $Kiosk { Set-LocalUser -Name kioskadmin -Password $using:pw }"];
+    const sh = rule("show");
+    sc.commands.splice(sc.commands.indexOf(sh), 0, Object.assign({}, sh, { id: "show-fixed", when: { scriptFixed: true }, out: SCRIPT(true) }));
+    Object.assign(sh, { out: ["commit a3f9c21 (sgil, yesterday 15:58)", "    Add Reset-KioskPassword.ps1 for the store kiosks", "+++ b/scripts/Reset-KioskPassword.ps1"].concat(SCRIPT(false)),
+      say: { en: "The kiosks' local admin password, in clear text, in the repository.", es: "La contraseña del administrador local de los quioscos, en claro, en el repositorio." } });
+    const J = (bypass) => ["pipeline {", "  agent { label 'pwsh' }", "  stages {", "    stage('Checkout') { steps { checkout scm } }", "    stage('Lint & test') {", "      steps {"]
+      .concat(bypass ? ["        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {"] : [])
+      .concat(["        pwsh 'Invoke-ScriptAnalyzer -Path scripts -Recurse -Severity Error -EnableExit'", "        pwsh 'Invoke-Pester -Path tests -CI'"]).concat(bypass ? ["        }"] : [])
+      .concat(["      }", "    }", "    stage('Deploy') { when { branch 'main' } steps { bat 'robocopy scripts \\\\\\\\FS01\\\\IT-Scripts /MIR' } }", "  }", "}"]);
+    const jf = rule("jfile");
+    sc.commands.splice(sc.commands.indexOf(jf), 0, Object.assign({}, jf, { id: "jfile-bypass", when: { bypass: true }, out: J(true) }));
+    jf.out = J(false);
+    const d = rule("diff");
+    sc.commands.splice(sc.commands.indexOf(d), 0, Object.assign({}, d, { id: "diff-fixed", when: { scriptFixed: true }, out: ["--- a/scripts/Reset-KioskPassword.ps1", "+++ b/scripts/Reset-KioskPassword.ps1", "-$pw = ConvertTo-SecureString 'Kiosk2026!' -AsPlainText -Force", "+$pw = Get-Secret -Name KioskLocalAdmin -Vault ContosoVault"] }));
+  })();
+
+  /* ------------------------------------------------------------------ Career level 6: the portal's error budget is spent */
+  const K6GF_REL = "/opt/contoso-portal/releases";
+  const K6GF_Q = /^promtool\s+query\s+(instant|range)\b/;
+  scenarios.push({
+    id: "grafana-slo-budget",
+    level: 2, career: 6,
+    topic: { en: "SLO and error budget / a release that breaks one endpoint, and a silenced alert", es: "SLO y presupuesto de errores / una versión que rompe un endpoint, y una alerta silenciada" },
+    minutes: 15,
+    title: { en: "The portal's error budget is spent", es: "Presupuesto de errores agotado en el portal" },
+    guide: GUIDE + "grafana-origen-de-datos-primer-panel-y-alerta-al-canal.html",
+    machine: { host: "MON-UBU01", user: "sysadmin", domain: "contoso.local", shell: "bash", prompt: "sysadmin@MON-UBU01:~$ " },
+    ticket: {
+      id: "INC-20798", from: "Isabel Montero (Operations)", priority: "P2",
+      subject: { en: "Stores' portal: error budget at -4% and the stores can't export orders", es: "Portal de tiendas: presupuesto de errores al -4 % y las tiendas no pueden exportar pedidos" },
+      body: {
+        en: "In this morning's operations review the portal's SLO panel showed the error budget at -4%, and three store managers say exporting the day's orders fails more often than it works since Tuesday. Nobody got an alert. Someone proposed lowering the target to 99% because 99.5% 'is too strict'. I'd like to know what is really happening before we change any target.",
+        es: "En la revisión de operaciones de esta mañana el panel de SLO del portal mostraba el presupuesto de errores al -4 %, y tres encargados de tienda dicen que exportar los pedidos del día falla más que funciona desde el martes. Nadie recibió ninguna alerta. Alguien propuso bajar el objetivo al 99 % porque el 99,5 % «es demasiado estricto». Me gustaría saber qué pasa de verdad antes de cambiar ningún objetivo.",
+      },
+    },
+    intro: {
+      en: "You are on MON-UBU01 as sysadmin. Prometheus (localhost:9090) scrapes contoso-portal on PORTAL01, and Grafana 11 shows the SLO 'Portal availability' (99.5% of requests without a 5xx over 28 days) with the alert 'Portal SLO fast burn'. `gfctl ...` is Grafana's API from the shell (simulated) and promtool queries Prometheus. You can ssh to portal01, where releases live in " + K6GF_REL + "/<version> and /opt/contoso-portal/current points at the one running. `onsite ...` is Isabel.",
+      es: "Estás en MON-UBU01 como sysadmin. Prometheus (localhost:9090) recoge las métricas de contoso-portal en PORTAL01, y Grafana 11 muestra el SLO «Portal availability» (el 99,5 % de las peticiones sin un 5xx en 28 días) con la alerta «Portal SLO fast burn». `gfctl ...` es la API de Grafana desde la shell (simulada) y promtool consulta Prometheus. Puedes entrar por ssh en portal01, donde las versiones están en " + K6GF_REL + "/<versión> y /opt/contoso-portal/current apunta a la que corre. `onsite ...` es Isabel.",
+    },
+    requester: { name: "Isabel Montero", team: { en: "Operations", es: "Operaciones" }, user: "imontero", location: { en: "Head office, Operations", es: "Oficina central, Operaciones" }, device: "LAPTOP-0412" },
+    bind: [{ kind: "server", id: "PORTAL01", states: [{ when: { rolledBack: false }, set: { status: "warn" }, note: { en: "Order export failing since Tuesday's release (INC-20798)", es: "La exportación de pedidos falla desde la versión del martes (INC-20798)" } }, { set: {} }] }],
+    asset: {
+      title: { en: "SLO · Portal availability (99.5% / 28 days)", es: "SLO · Portal availability (99,5 % / 28 días)" },
+      fields: [
+        { label: { en: "Error rate, last hour", es: "Tasa de errores, última hora" }, states: [
+          { when: { errOk: true }, value: "0.1 %", tone: "ok" },
+          { when: { rolledBack: true }, value: { en: "Falling (not checked)", es: "Bajando (sin comprobar)" }, tone: "muted" },
+          { value: "4.3 %", tone: "bad" }] },
+        { label: { en: "Error budget", es: "Presupuesto de errores" }, states: [
+          { when: { lowered: true }, value: { en: "+38% (objective lowered to 99%)", es: "+38 % (objetivo bajado al 99 %)" }, tone: "warn" },
+          { when: { freezeOk: true }, value: { en: "-4%, recovering; change freeze on", es: "-4 %, recuperándose; congelación de cambios activa" }, tone: "warn" },
+          { value: { en: "-4% (spent)", es: "-4 % (agotado)" }, tone: "bad" }] },
+        { label: { en: "Alert 'Portal SLO fast burn'", es: "Alerta «Portal SLO fast burn»" }, states: [
+          { when: { silenceOff: true }, value: { en: "Active, notifying", es: "Activa, notificando" }, tone: "ok" },
+          { value: { en: "Firing, silenced until 17/11", es: "Disparada, silenciada hasta el 17/11" }, tone: "bad" }] },
+        { label: { en: "Running release", es: "Versión en marcha" }, states: [
+          { when: { rolledBack: true }, value: { en: "4.5.2 (rolled back)", es: "4.5.2 (vuelta atrás)" }, tone: "warn" },
+          { value: { en: "4.6.0 (Tuesday 10:40)", es: "4.6.0 (martes 10:40)" }, tone: "muted" }] },
+      ],
+    },
+    actions: [
+      { id: "slo", label: { en: "The SLO", es: "El SLO" }, cmd: "gfctl slo show portal-availability" },
+      { id: "alerts", label: { en: "Alerts", es: "Alertas" }, cmd: "gfctl alert list" },
+    ],
+    codes: ["cause-removed"],
+    state: { sloSeen: false, alertSeen: false, routeSeen: false, deploySeen: false, linked: false, rolledBack: false, lowered: false, silenceOff: false, errOk: false, freezeOk: false, userOk: false },
+    commands: [
+      { id: "gf-help", match: /^gfctl$/, out: ["gfctl (simulated): Grafana's API from the shell", "  gfctl slo show <slo>                      objective, error budget and burn rate", "  gfctl slo set <slo> --objective <percent>  change the objective", "  gfctl alert list                          alert rules and their state",
+        "  gfctl silence list                        active silences", "  gfctl silence expire <id>                 end a silence", "  gfctl annotations list --dashboard <uid>  events on a dashboard (deploys)"] },
+      { id: "slo", match: /^gfctl\s+slo\s+show\b/, set: { sloSeen: true }, out: [] },
+      { id: "lower", match: /^gfctl\s+slo\s+set\b.*--objective[= ]?\s*99(\.0)?%?$/, set: { lowered: true }, out: ["SLO portal-availability: objective 99.5% -> 99%"],
+        say: { en: "The budget turns positive on the panel. The stores' exports fail exactly as before.", es: "El presupuesto pasa a positivo en el panel. Las exportaciones de las tiendas fallan exactamente igual." } },
+      { id: "restore", match: /^gfctl\s+slo\s+set\b.*--objective[= ]?\s*99\.5%?$/, set: { lowered: false }, out: ["SLO portal-availability: objective 99% -> 99.5%"] },
+      { id: "alerts", match: /^gfctl\s+(alert\s+list|silence\s+list)\b/, set: { alertSeen: true }, out: [] },
+      { id: "extend", match: /^gfctl\s+silence\s+(create|extend)\b/, error: true, out: ["(a longer silence hides the burn for longer; nothing about the errors changes)"] },
+      { id: "expire", match: /^gfctl\s+silence\s+expire\s+7c2e9f1a\b/, set: { silenceOff: true }, out: ["Silence 7c2e9f1a expired"],
+        say: { en: "The alert notifies the on-call channel again.", es: "La alerta vuelve a avisar al canal de guardia." } },
+      { id: "expire-bad", match: /^gfctl\s+silence\s+expire\b/, error: true, out: ["Error: silence not found (gfctl silence list)"] },
+      { id: "annot", match: /^gfctl\s+annotations?\s+list\b/, set: { deploySeen: true }, out: ["Time              Tags                    Text", "10/11 10:40       deploy contoso-portal   contoso-portal 4.6.0 (Jenkins portal-release #88)", "28/10 09:15       deploy contoso-portal   contoso-portal 4.5.2 (Jenkins portal-release #85)"] },
+      { id: "q-route", match: new RegExp(K6GF_Q.source + ".*\\b(route|handler|path)\\b"), set: { routeSeen: true }, out: [] },
+      { id: "q", match: K6GF_Q, out: [] },
+      { id: "ls", match: /^ssh\s+portal01\s+(ls|readlink)\b/, set: { deploySeen: true }, out: [] },
+      { id: "journal", match: /^ssh\s+portal01\b.*journalctl\b/, out: [] },
+      { id: "both", match: /^ssh\s+portal01\b.*ln\s+-sfn\s+\/opt\/contoso-portal\/releases\/4\.5\.2\b.*systemctl\s+restart\s+contoso-portal/, set: { linked: true, rolledBack: true }, out: [""],
+        say: { en: "current points at 4.5.2 and the service has restarted on it.", es: "current apunta a la 4.5.2 y el servicio ha arrancado con ella." } },
+      { id: "link", match: /^ssh\s+portal01\b.*ln\s+-sfn\s+\/opt\/contoso-portal\/releases\/4\.5\.2\b/, set: { linked: true }, out: [""],
+        say: { en: "current points at 4.5.2. The running process is still 4.6.0 until it restarts.", es: "current apunta a la 4.5.2. El proceso en marcha sigue siendo la 4.6.0 hasta que reinicie." } },
+      { id: "link-bad", match: /^ssh\s+portal01\b.*ln\s+-sfn\b/, error: true, out: ["(4.5.2 is the release that ran fine until Tuesday)"] },
+      { id: "restart-ok", match: /^ssh\s+portal01\b.*systemctl\s+restart\s+contoso-portal\b/, when: { linked: true }, set: { rolledBack: true }, out: [""],
+        say: { en: "contoso-portal restarted on 4.5.2.", es: "contoso-portal ha arrancado con la 4.5.2." } },
+      { id: "restart", match: /^ssh\s+portal01\b.*systemctl\s+restart\s+contoso-portal\b/, out: [""],
+        say: { en: "Restarted, on 4.6.0 again: the exports keep failing.", es: "Reiniciado, otra vez con la 4.6.0: las exportaciones siguen fallando." } },
+      { id: "onsite-help", match: /^onsite$/, out: ["What Isabel can do (simulated):", "  onsite export   ask a store manager to export today's orders", "  onsite freeze   agree a change freeze on the portal with Operations and the web team"] },
+      { id: "freeze", match: /^onsite\s+freeze\b/, when: { rolledBack: true }, set: { freezeOk: true }, out: [""],
+        say: { en: "Isabel: 'Agreed: no portal releases until the budget is positive again, fixes aside. I'll tell the web team, and 4.6.0 waits until the export is fixed.'", es: "Isabel: «De acuerdo: nada de versiones del portal hasta que el presupuesto vuelva a positivo, salvo arreglos. Se lo digo al equipo web, y la 4.6.0 espera a que arreglen la exportación.»" } },
+      { id: "freeze-early", match: /^onsite\s+freeze\b/, out: [""], say: { en: "Isabel: 'Freeze what, with the export still broken? First let the stores work.'", es: "Isabel: «¿Congelar qué, con la exportación todavía rota? Primero que las tiendas puedan trabajar.»" } },
+      { id: "user-ok", match: /^onsite\s+export\b/, when: { rolledBack: true }, set: { userOk: true }, out: [""], say: { en: "Isabel: 'Jon in Bilbao has exported today's orders twice in a row, fast.'", es: "Isabel: «Jon en Bilbao ha exportado los pedidos de hoy dos veces seguidas, y rápido.»" } },
+      { id: "user", match: /^onsite\s+export\b/, out: [""], say: { en: "Isabel: 'Jon says: error 504 after thirty seconds, again.'", es: "Isabel: «Jon dice: error 504 a los treinta segundos, otra vez.»" } },
+    ],
+    goal: { rolledBack: true, silenceOff: true, errOk: true, freezeOk: true, userOk: true },
+    stages: [
+      { id: "investigate", label: { en: "Find out what burns the budget, since when, and why nobody was told", es: "Averiguar qué consume el presupuesto, desde cuándo y por qué no avisó nadie" }, when: { sloSeen: true, alertSeen: true, routeSeen: true, deploySeen: true } },
+      { id: "fix", label: { en: "Roll the release back and let the alert speak again", es: "Volver atrás la versión y dejar que la alerta vuelva a hablar" }, when: { rolledBack: true, silenceOff: true } },
+      { id: "verify", label: { en: "The error rate down, the stores exporting and a change freeze", es: "La tasa de errores abajo, las tiendas exportando y congelación de cambios" }, when: { errOk: true, userOk: true, freezeOk: true } },
+    ],
+    remarks: [
+      { when: { lowered: true }, text: { en: "The SLO objective was left at 99%: the target was moved to hide the burn", es: "El objetivo del SLO se quedó en el 99 %: se movió el objetivo para esconder el consumo" } },
+    ],
+    resolved: { en: "Resolved: the export works, the alert is live and the budget can recover. Now write the work note.", es: "Resuelto: la exportación funciona, la alerta está activa y el presupuesto puede recuperarse. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "The SLO and the alerts (the buttons). Why did nobody get the 'fast burn' alert?", es: "El SLO y las alertas (los botones). ¿Por qué nadie recibió la alerta de «fast burn»?" },
+      { en: "Which endpoint gives the 5xx: promtool query instant http://localhost:9090 'sum by (route) (rate(http_requests_total{job=\"contoso-portal\",code=~\"5..\"}[1h])) / sum by (route) (rate(http_requests_total{job=\"contoso-portal\"}[1h]))'. And what changed on Tuesday: gfctl annotations list --dashboard portal-slo.", es: "Qué endpoint da los 5xx: promtool query instant http://localhost:9090 'sum by (route) (rate(http_requests_total{job=\"contoso-portal\",code=~\"5..\"}[1h])) / sum by (route) (rate(http_requests_total{job=\"contoso-portal\"}[1h]))'. Y qué cambió el martes: gfctl annotations list --dashboard portal-slo." },
+      { en: "ssh portal01 'sudo ln -sfn /opt/contoso-portal/releases/4.5.2 /opt/contoso-portal/current && sudo systemctl restart contoso-portal', then gfctl silence expire 7c2e9f1a. Lowering the objective changes the panel, not the errors.", es: "ssh portal01 'sudo ln -sfn /opt/contoso-portal/releases/4.5.2 /opt/contoso-portal/current && sudo systemctl restart contoso-portal' y después gfctl silence expire 7c2e9f1a. Bajar el objetivo cambia el panel, no los errores." },
+      { en: "The overall error rate again (promtool), onsite export and onsite freeze.", es: "La tasa de errores global otra vez (promtool), onsite export y onsite freeze." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (release 4.6.0 on Tuesday: /api/orders/export gives 504 on 61% of requests; the fast burn alert silenced for seven days during the deploy)", es: "la causa (la versión 4.6.0 del martes: /api/orders/export da 504 en el 61 % de las peticiones; la alerta de fast burn silenciada siete días durante el despliegue)" }, any: ["4.6.0", "/api/orders/export", "silence", "silenciad"] },
+      { kb: "fix", label: { en: "the fix (rolled back to 4.5.2 and the silence expired)", es: "la solución (vuelta a la 4.5.2 y el silencio terminado)" }, any: ["4.5.2", "rolled back", "rollback", "vuelta atras", "volvi"] },
+      { kb: "verify", label: { en: "how you checked it (error rate back to 0.1%, a store exporting)", es: "cómo lo comprobaste (tasa de errores de nuevo en el 0,1 %, una tienda exportando)" }, any: ["0.1", "0,1", "export"] },
+      { kb: "followup", label: { en: "what follows (the budget spent recorded, a change freeze until it recovers, 4.6.0 fixed before it goes out again, no week-long silences)", es: "lo que sigue (el presupuesto consumido registrado, congelación de cambios hasta que se recupere, la 4.6.0 arreglada antes de volver a salir, nada de silencios de una semana)" }, any: ["freeze", "congel"] },
+    ],
+    solution: ["gfctl slo show portal-availability", "gfctl alert list",
+      "promtool query instant http://localhost:9090 'sum by (route) (rate(http_requests_total{job=\"contoso-portal\",code=~\"5..\"}[1h])) / sum by (route) (rate(http_requests_total{job=\"contoso-portal\"}[1h]))'",
+      "gfctl annotations list --dashboard portal-slo", "ssh portal01 ls -l /opt/contoso-portal/releases",
+      "ssh portal01 'sudo ln -sfn /opt/contoso-portal/releases/4.5.2 /opt/contoso-portal/current && sudo systemctl restart contoso-portal'", "gfctl silence expire 7c2e9f1a",
+      "promtool query instant http://localhost:9090 'sum(rate(http_requests_total{job=\"contoso-portal\",code=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=\"contoso-portal\"}[5m]))'",
+      "onsite export", "onsite freeze"],
+    sampleNote: {
+      en: "The SLO Portal availability (99.5% over 28 days) had spent its error budget (-4%) and the fast burn alert was firing, but silenced for seven days on Tuesday at 10:52 as 'noise during the 4.6.0 deploy', so nobody was told. By route, /api/orders/export gave a 5xx on 61% of requests since 4.6.0 (Tuesday 10:40); the other routes were normal. Rolled portal01 back to 4.5.2 (current symlink and a restart of contoso-portal) and expired the silence. Verified: the error rate is back to 0.1% and Jon in Bilbao exported today's orders. I did not lower the objective to 99%: it would only have hidden the burn. Next: the budget spent is recorded in the review, Isabel agreed a change freeze on the portal until it recovers, 4.6.0 waits for a fix of the export query, and silences longer than the deploy itself need a reason.",
+      es: "El SLO Portal availability (99,5 % en 28 días) había agotado su presupuesto de errores (-4 %) y la alerta de fast burn estaba disparada, pero silenciada siete días el martes a las 10:52 como «ruido durante el despliegue de la 4.6.0», así que nadie se enteró. Por ruta, /api/orders/export daba un 5xx en el 61 % de las peticiones desde la 4.6.0 (martes 10:40); las demás rutas estaban normales. Volví portal01 a la 4.5.2 (enlace current y reinicio de contoso-portal) y terminé el silencio. Comprobado: la tasa de errores vuelve al 0,1 % y Jon en Bilbao exportó los pedidos de hoy. No bajé el objetivo al 99 %: solo habría escondido el consumo. Pendiente: el presupuesto consumido queda registrado en la revisión, Isabel acordó una congelación de cambios en el portal hasta que se recupere, la 4.6.0 espera a que arreglen la consulta de exportación, y los silencios más largos que el propio despliegue necesitan un motivo.",
+    },
+    contact: {
+      tempting: ["lower"], temptingWhen: { rolledBack: false },
+      questions: [
+        { id: "since", kind: "useful",
+          text: { en: "Since when exactly do the exports fail?", es: "¿Desde cuándo exactamente fallan las exportaciones?" },
+          answer: { en: "The first complaint was Tuesday before lunch. Before that, never.", es: "La primera queja fue el martes antes de comer. Antes, nunca." },
+          clue: { en: "It started on Tuesday morning.", es: "Empezó el martes por la mañana." } },
+        { id: "what", kind: "useful",
+          text: { en: "Does everything in the portal fail, or something in particular?", es: "¿Falla todo el portal o algo en concreto?" },
+          answer: { en: "Only 'Export today's orders'. Stock and logins work.", es: "Solo «Exportar pedidos de hoy». El stock y el acceso funcionan." },
+          clue: { en: "One function fails; the rest of the portal is fine.", es: "Falla una función; el resto del portal va bien." } },
+        { id: "review", kind: "neutral",
+          text: { en: "Who looks at the SLO panel?", es: "¿Quién mira el panel del SLO?" },
+          answer: { en: "We do, in the Friday operations review, with the web team.", es: "Nosotros, en la revisión de operaciones del viernes, con el equipo web." } },
+        { id: "target", kind: "bad",
+          text: { en: "Shall I lower the objective to 99% as they suggested?", es: "¿Bajo el objetivo al 99 % como sugirieron?" },
+          answer: { en: "And the stores? They'd still be unable to export.", es: "¿Y las tiendas? Seguirían sin poder exportar." },
+          why: { en: "Moving the target changes the number, not what the users get.", es: "Mover el objetivo cambia el número, no lo que reciben los usuarios." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Give me your Grafana password and I'll look at it as you.", es: "Pásame tu contraseña de Grafana y lo miro como tú." },
+          answer: { en: "You have your own access.", es: "Tú tienes tu propio acceso." },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Can the stores export their orders now?", es: "¿Pueden exportar ya las tiendas sus pedidos?" },
+          answer: { en: "Yes, Jon has done it twice, fast.", es: "Sí, Jon lo ha hecho dos veces, y rápido." },
+          failed: { en: "The panel looks green now, but Jon still gets the 504.", es: "El panel se ve en verde ahora, pero Jon sigue recibiendo el 504." } },
+      ],
+    },
+  });
+  (function () {   // the SLO, the alerts, the queries and the releases follow the state
+    const sc = scenarios[scenarios.length - 1];
+    const rule = (id) => sc.commands.find((r) => r.id === id);
+    const add = (base, list) => sc.commands.splice(sc.commands.indexOf(base), 0, ...list.map((v) => Object.assign({}, base, v)));
+    const SLO = (s) => ["SLO portal-availability (Portal availability)", "  objective     " + (s.lowered ? "99%" : "99.5%") + " of requests without a 5xx, 28-day window",
+      "  current       99.48%", "  error budget  " + (s.lowered ? "+38% remaining" : "-4% remaining (spent)"), "  burn rate     " + (s.rolled ? "1h: 0.2x   6h: 3.1x" : "1h: 8.6x   6h: 8.4x")];
+    const slo = rule("slo");
+    add(slo, [{ id: "slo-low", when: { lowered: true }, out: SLO({ lowered: true }) }, { id: "slo-rb", when: { rolledBack: true }, out: SLO({ rolled: true }), say: { en: "Burning slowly now; what is spent stays spent until it leaves the 28-day window.", es: "Ahora consume despacio; lo gastado sigue gastado hasta que salga de la ventana de 28 días." } }]);
+    Object.assign(slo, { out: SLO({}), say: { en: "Spent, and still burning at 8.6 times the sustainable rate.", es: "Agotado, y aún consumiendo a 8,6 veces el ritmo sostenible." } });
+    const al = rule("alerts");
+    add(al, [{ id: "alerts-on", when: { silenceOff: true }, out: ["Rule                   State     Notifications", "Portal SLO fast burn   Firing    #ops-oncall (notifying; it clears once the 1h burn rate drops)", "Portal down            Normal    #ops-oncall"] }]);
+    Object.assign(al, { out: ["Rule                   State     Notifications", "Portal SLO fast burn   Firing    silenced: 7c2e9f1a by web-team, 10/11 10:52 -> 17/11 10:52, 'noise during 4.6.0 deploy'", "Portal down            Normal    #ops-oncall"],
+      say: { en: "It has been firing since Tuesday, into a seven-day silence.", es: "Lleva disparándose desde el martes, dentro de un silencio de siete días." } });
+    const qr = rule("q-route");
+    const ROUTES = (ok) => ["{route=\"/api/orders/export\"}  " + (ok ? "0.003" : "0.612"), "{route=\"/api/stock\"}          0.002", "{route=\"/login\"}              0.001", "{route=\"/api/orders\"}         0.001"];
+    add(qr, [{ id: "q-route-ok", when: { rolledBack: true }, out: ROUTES(true) }]);
+    Object.assign(qr, { out: ROUTES(false), say: { en: "One route carries almost all the errors: the order export.", es: "Una ruta concentra casi todos los errores: la exportación de pedidos." } });
+    const q = rule("q");
+    add(q, [{ id: "q-ok", when: { rolledBack: true }, set: { errOk: true }, out: ["{} 0.0012"], say: { en: "0.1%: back under what the objective allows.", es: "0,1 %: de nuevo por debajo de lo que permite el objetivo." } }]);
+    Object.assign(q, { out: ["{} 0.043"], say: { en: "4.3% of all requests end in a 5xx.", es: "El 4,3 % de todas las peticiones acaba en un 5xx." } });
+    const ls = rule("ls");
+    add(ls, [{ id: "ls-rb", when: { linked: true }, out: ["drwxr-xr-x 6 portal portal 4096 Oct 14 09:02 4.5.1", "drwxr-xr-x 6 portal portal 4096 Oct 28 09:15 4.5.2", "drwxr-xr-x 6 portal portal 4096 Nov 10 10:40 4.6.0", "current -> /opt/contoso-portal/releases/4.5.2"] }]);
+    Object.assign(ls, { out: ["drwxr-xr-x 6 portal portal 4096 Oct 14 09:02 4.5.1", "drwxr-xr-x 6 portal portal 4096 Oct 28 09:15 4.5.2", "drwxr-xr-x 6 portal portal 4096 Nov 10 10:40 4.6.0", "current -> /opt/contoso-portal/releases/4.6.0"],
+      say: { en: "4.6.0 has run since Tuesday 10:40; 4.5.2 is still there.", es: "La 4.6.0 corre desde el martes a las 10:40; la 4.5.2 sigue ahí." } });
+    const j = rule("journal");
+    add(j, [{ id: "journal-rb", when: { rolledBack: true }, out: ["Nov 13 10:31:04 portal01 contoso-portal[30442]: contoso-portal 4.5.2 listening on 127.0.0.1:3000", "Nov 13 10:31:40 portal01 contoso-portal[30442]: GET /api/orders/export 200 1840ms"] }]);
+    Object.assign(j, { out: ["Nov 13 09:58:12 portal01 contoso-portal[2817]: GET /api/orders/export 504 30001ms", "Nov 13 09:58:12 portal01 contoso-portal[2817]: Error: query timeout after 30000 ms (orders_export_v2)", "Nov 13 09:58:40 portal01 contoso-portal[2817]: GET /api/orders/export 200 27410ms"],
+      say: { en: "The new export query takes about thirty seconds, and often more.", es: "La consulta nueva de exportación tarda unos treinta segundos, y a menudo más." } });
+  })();
+
+  /* ------------------------------------------------------------------ Career level 6: a GPU node with Xid errors */
+  const K6GP_NODE = "gpu-n03";
+  scenarios.push({
+    id: "gpu-xid-errors",
+    level: 2, career: 6,
+    topic: { en: "GPU cluster / a GPU with uncorrectable memory errors that still takes jobs", es: "Clúster de GPU / una GPU con errores de memoria incorregibles que sigue recibiendo trabajos" },
+    minutes: 16,
+    title: { en: "A GPU node with Xid errors and failing jobs", es: "Nodo GPU con errores Xid y trabajos que fallan" },
+    guide: GUIDE + "kubernetes-de-docker-compose-a-un-cluster-gestionado-despliegue-y-un-pod-en-crashloopbackoff.html",
+    machine: { host: "hpc-ctl01", user: "sysadmin", domain: "contoso.local", shell: "bash", prompt: "[sysadmin@hpc-ctl01 ~]$ " },
+    ticket: {
+      id: "INC-20799", from: "Gorka Iturbe (Quant research)", priority: "P2",
+      subject: { en: "Training jobs die with 'uncorrectable ECC error' since yesterday", es: "Los entrenamientos mueren con «uncorrectable ECC error» desde ayer" },
+      body: {
+        en: "Since yesterday afternoon about one in three of our training jobs on the GPU cluster dies after a few minutes with 'CUDA error: uncorrectable ECC error encountered'. We relaunch them and sometimes they finish. We need the risk model retrained for Monday's committee. Can someone just reboot the cluster?",
+        es: "Desde ayer por la tarde, más o menos uno de cada tres entrenamientos en el clúster de GPU muere a los pocos minutos con «CUDA error: uncorrectable ECC error encountered». Los relanzamos y a veces terminan. Necesitamos reentrenar el modelo de riesgo para el comité del lunes. ¿Puede alguien reiniciar el clúster sin más?",
+      },
+    },
+    intro: {
+      en: "You are on hpc-ctl01, the Slurm controller and login node of the quant research GPU cluster (gpu-n01 to gpu-n04, Dell PowerEdge XE8545, four NVIDIA A100 80GB each), as sysadmin with sudo for scontrol. You can ssh to the nodes (nvidia-smi, dmesg and dcgmi are there). gpu-n03's service tag is 4GPQX93, under ProSupport. `dell ...` is the Dell support portal and `onsite ...` the data room and Gorka (both simulated).",
+      es: "Estás en hpc-ctl01, el controlador de Slurm y nodo de acceso del clúster de GPU de investigación cuantitativa (gpu-n01 a gpu-n04, Dell PowerEdge XE8545, cuatro NVIDIA A100 80GB cada uno), como sysadmin con sudo para scontrol. Puedes entrar por ssh en los nodos (allí están nvidia-smi, dmesg y dcgmi). La etiqueta de servicio de gpu-n03 es 4GPQX93, con ProSupport. `dell ...` es el portal de soporte de Dell y `onsite ...` la sala técnica y Gorka (ambos simulados).",
+    },
+    requester: { name: "Gorka Iturbe", team: { en: "Quant research", es: "Investigación cuantitativa" }, user: "giturbe", location: { en: "Head office, trading floor (Madrid)", es: "Oficina central, sala de trading (Madrid)" }, device: "LAPTOP-0463" },
+    bind: [{ kind: "server", id: "GPU-N03", states: [{ when: { diagOk: true }, set: { status: "ok" } }, { when: { drainSet: true }, set: { status: "warn" }, note: { en: "Drained: GPU 2 Xid 48, RMA (INC-20799)", es: "Retirado: GPU 2 Xid 48, RMA (INC-20799)" } },
+      { set: { status: "bad" }, note: { en: "GPU 2: uncorrectable ECC errors (INC-20799)", es: "GPU 2: errores ECC incorregibles (INC-20799)" } }] }],
+    asset: {
+      title: { en: "Slurm · partition gpu · " + K6GP_NODE, es: "Slurm · partición gpu · " + K6GP_NODE },
+      fields: [
+        { label: { en: "Node state", es: "Estado del nodo" }, states: [
+          { when: { resumed: true }, value: { en: "idle (back in the pool)", es: "idle (de vuelta al pool)" }, tone: "ok" },
+          { when: { drained: true }, value: { en: "drained", es: "drained (retirado)" }, tone: "warn" },
+          { when: { drainSet: true }, value: { en: "draining", es: "draining (retirándose)" }, tone: "warn" },
+          { value: { en: "mixed: taking jobs", es: "mixed: recibe trabajos" }, tone: "bad" }] },
+        { label: "GPU 2 (0000:41:00.0)", states: [
+          { when: { swapped: true }, value: { en: "Replaced, no errors", es: "Sustituida, sin errores" }, tone: "ok" },
+          { when: { xidSeen: true }, value: { en: "Xid 48 (double-bit ECC), row remapping failed", es: "Xid 48 (ECC de doble bit), fallo de remapeo de filas" }, tone: "bad" },
+          { value: { en: "Not checked", es: "Sin revisar" }, tone: "muted" }] },
+        { label: { en: "Dell case", es: "Caso de Dell" }, states: [
+          { when: { swapped: true }, value: { en: "1820044931, GPU replaced", es: "1820044931, GPU sustituida" }, tone: "ok" },
+          { when: { caseOpen: true }, value: { en: "1820044931, part dispatched", es: "1820044931, pieza enviada" }, tone: "warn" },
+          { value: { en: "None", es: "Ninguno" }, tone: "muted" }] },
+      ],
+    },
+    actions: [
+      { id: "sinfo", label: { en: "Nodes", es: "Nodos" }, cmd: "sinfo -N -p gpu" },
+      { id: "failed", label: { en: "Failed jobs today", es: "Trabajos fallidos hoy" }, cmd: "sacct -a -X -S today --state=FAILED -o JobID,User,NodeList,ExitCode" },
+    ],
+    codes: ["hardware"],
+    state: { jobsSeen: false, xidSeen: false, eccSeen: false, rebooted: false, failAgain: false, drainSet: false, drained: false, diagFail: false, caseOpen: false, swapped: false, diagOk: false, resumed: false, testOk: false, userOk: false },
+    events: [
+      { when: { rebooted: true, failAgain: false }, set: { failAgain: true },
+        say: { en: "Twenty minutes after the reboot: job 88213 on gpu-n03 fails with 'uncorrectable ECC error encountered'.", es: "Veinte minutos después del reinicio: el trabajo 88213 en gpu-n03 falla con «uncorrectable ECC error encountered»." } },
+    ],
+    commands: [
+      { id: "sinfo", match: /^sinfo\b/, out: [] },
+      { id: "sacct", match: /^sacct\b/, set: { jobsSeen: true }, out: ["JobID      User      NodeList   ExitCode", "88141      giturbe   gpu-n03    1:0", "88156      amarin    gpu-n03    1:0", "88170      giturbe   gpu-n03    1:0", "88187      giturbe   gpu-n03    1:0"],
+        say: { en: "Every failure ran on the same node.", es: "Todos los fallos corrieron en el mismo nodo." } },
+      { id: "squeue", match: /^squeue\b/, out: [] },
+      { id: "xid", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*dmesg\\b"), set: { xidSeen: true }, out: [] },
+      { id: "ecc", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*nvidia-smi\\b.*(-q|--query)\\b"), set: { eccSeen: true }, out: [] },
+      { id: "smi", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*nvidia-smi\\b"), out: [] },
+      { id: "reboot", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*(reboot|shutdown\\s+-r)\\b"), when: { drainSet: false }, set: { rebooted: true }, out: ["Connection to gpu-n03 closed by remote host."],
+        say: { en: "The node reboots with two jobs running on it; they die, Slurm requeues them, and gpu-n03 comes back taking jobs.", es: "El nodo reinicia con dos trabajos corriendo; mueren, Slurm los reencola y gpu-n03 vuelve recibiendo trabajos." } },
+      { id: "reboot-drained", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*(reboot|shutdown\\s+-r)\\b"), out: ["Connection to gpu-n03 closed by remote host."], say: { en: "Rebooted. The GPU memory fault does not go away with a reboot.", es: "Reiniciado. El fallo de memoria de la GPU no se va con un reinicio." } },
+      { id: "requeue", match: /^(sudo\s+)?scontrol\s+requeue\b/, out: [""], say: { en: "Requeued: it may land on gpu-n03 again.", es: "Reencolado: puede volver a caer en gpu-n03." } },
+      { id: "drain", match: new RegExp("^(sudo\\s+)?scontrol\\s+update\\s+nodename=" + K6GP_NODE + "\\s+state=drain\\b.*reason="), set: { drainSet: true }, out: [""],
+        say: { en: "No new jobs go to gpu-n03; the two running ones finish first.", es: "Ya no van trabajos nuevos a gpu-n03; los dos que corren terminan antes." } },
+      { id: "drain-noreason", match: new RegExp("^(sudo\\s+)?scontrol\\s+update\\s+nodename=" + K6GP_NODE + "\\s+state=drain\\b"), error: true, out: ["You must specify a reason when DOWNING or DRAINING a node. Request denied"] },
+      { id: "diag-busy", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*dcgmi\\s+diag\\b"), when: { drained: false }, error: true, out: ["Error: Unable to run diagnostic: GPU(s) are in use by other processes (2 running jobs). Drain the node first."] },
+      { id: "diag-ok", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*dcgmi\\s+diag\\b"), when: { swapped: true }, set: { diagOk: true }, out: ["+---------------------------+------------------------------------------------+", "| Diagnostic                | Result                                         |", "+===========================+================================================+",
+        "| Memory                    | Pass - All                                     |", "| Diagnostic                | Pass - All                                     |", "| Targeted Stress           | Pass - All                                     |", "| Memory Bandwidth          | Pass - All                                     |", "+---------------------------+------------------------------------------------+"] },
+      { id: "diag", match: new RegExp("^ssh\\s+" + K6GP_NODE + "\\b.*dcgmi\\s+diag\\b"), set: { diagFail: true }, out: ["+---------------------------+------------------------------------------------+", "| Diagnostic                | Result                                         |", "+===========================+================================================+",
+        "| Memory                    | Fail - GPU: 2                                  |", "| Warning                   | GPU 2: DBE error(s) detected; row remapping failure. Run a field diagnostic and contact your support provider. |",
+        "| Diagnostic                | Skip - GPU: 2   Pass - GPUs: 0, 1, 3            |", "| Targeted Stress           | Skip - GPU: 2   Pass - GPUs: 0, 1, 3            |", "+---------------------------+------------------------------------------------+"],
+        say: { en: "Level 3 diagnostic: GPU 2 fails the memory test, the other three pass.", es: "Diagnóstico de nivel 3: la GPU 2 falla la prueba de memoria, las otras tres pasan." } },
+      { id: "dell-help", match: /^dell$/, out: ["Dell support portal (simulated):", "  dell case open --tag <service tag>   open a technical support case (attach the diagnostic)"] },
+      { id: "case", match: /^dell\s+case\s+open\b.*--tag\s+4gpqx93\b/, when: { diagFail: true }, set: { caseOpen: true }, out: ["Case 1820044931 opened (ProSupport, 4 h on-site).", "Dispatch: 1 x NVIDIA A100 80GB SXM4 module, technician on site today 15:00."],
+        say: { en: "With the failed memory test attached, Dell dispatches the part without more questions.", es: "Con la prueba de memoria fallida adjunta, Dell envía la pieza sin más preguntas." } },
+      { id: "case-early", match: /^dell\s+case\s+open\b/, error: true, out: ["Case not opened: Dell needs a failed field diagnostic for a GPU replacement (dcgmi diag -r 3 output or an ePSA log)."] },
+      { id: "onsite-help", match: /^onsite$/, out: ["What you can ask for (simulated):", "  onsite swap-gpu   the Dell technician replaces the faulty GPU module (once the part is dispatched)", "  onsite rerun      Gorka relaunches the risk model training"] },
+      { id: "swap", match: /^onsite\s+swap-gpu\b/, when: { caseOpen: true, drained: true }, set: { swapped: true }, out: [""],
+        say: { en: "15:20: the technician has replaced GPU 2 and powered the node back on. It is still drained.", es: "15:20: el técnico ha sustituido la GPU 2 y ha vuelto a encender el nodo. Sigue retirado." } },
+      { id: "swap-early", match: /^onsite\s+swap-gpu\b/, error: true, out: ["(the swap needs an open case with the part dispatched, and the node drained with no jobs on it)"] },
+      { id: "resume-ok", match: new RegExp("^(sudo\\s+)?scontrol\\s+update\\s+nodename=" + K6GP_NODE + "\\s+state=resume\\b"), when: { diagOk: true }, set: { resumed: true }, out: [""],
+        say: { en: "gpu-n03 is back in the pool.", es: "gpu-n03 vuelve al pool." } },
+      { id: "resume", match: new RegExp("^(sudo\\s+)?scontrol\\s+update\\s+nodename=" + K6GP_NODE + "\\s+state=resume\\b"), error: true, out: ["(not yet: the node goes back into the pool once it passes the diagnostic)"] },
+      { id: "test-ok", match: new RegExp("^srun\\b.*-w\\s+" + K6GP_NODE + "\\b"), when: { resumed: true }, set: { testOk: true }, out: ["GPU 0: NVIDIA A100-SXM4-80GB (UUID: GPU-5a1c0e7d-…)", "GPU 1: NVIDIA A100-SXM4-80GB (UUID: GPU-91f2b3a4-…)", "GPU 2: NVIDIA A100-SXM4-80GB (UUID: GPU-0d7e44c9-…)", "GPU 3: NVIDIA A100-SXM4-80GB (UUID: GPU-c3b8a610-…)"],
+        say: { en: "A job on gpu-n03 sees four GPUs, GPU 2 with a new UUID.", es: "Un trabajo en gpu-n03 ve cuatro GPU, la 2 con un UUID nuevo." } },
+      { id: "test", match: /^srun\b/, error: true, out: ["srun: error: Unable to allocate resources: Requested node configuration is not available"] },
+      { id: "rerun-ok", match: /^onsite\s+rerun\b/, when: { resumed: true }, set: { userOk: true }, out: [""], say: { en: "Gorka: 'Four runs in a row finished, one of them on gpu-n03. The model will be ready for Monday.'", es: "Gorka: «Cuatro ejecuciones seguidas terminadas, una de ellas en gpu-n03. El modelo estará para el lunes.»" } },
+      { id: "rerun-drained", match: /^onsite\s+rerun\b/, when: { drainSet: true }, out: [""], say: { en: "Gorka: 'They finish now, though the queue is slower with one node less.'", es: "Gorka: «Ahora terminan, aunque la cola va más lenta con un nodo menos.»" } },
+      { id: "rerun", match: /^onsite\s+rerun\b/, out: [""], say: { en: "Gorka: 'One of the three died again with the ECC error.'", es: "Gorka: «Uno de los tres ha vuelto a morir con el error de ECC.»" } },
+    ],
+    goal: { drainSet: true, caseOpen: true, swapped: true, diagOk: true, resumed: true, testOk: true, userOk: true },
+    stages: [
+      { id: "investigate", label: { en: "Find which node and which GPU, and what the errors are", es: "Averiguar qué nodo y qué GPU, y qué errores son" }, when: { jobsSeen: true, xidSeen: true, eccSeen: true } },
+      { id: "fix", label: { en: "Drain the node, prove the fault and have the GPU replaced", es: "Retirar el nodo, demostrar la avería y que sustituyan la GPU" }, when: { drained: true, diagFail: true, caseOpen: true, swapped: true } },
+      { id: "verify", label: { en: "Diagnostic passed, back in the pool, a test job and Gorka's runs", es: "Diagnóstico superado, de vuelta al pool, un trabajo de prueba y las ejecuciones de Gorka" }, when: { diagOk: true, resumed: true, testOk: true, userOk: true } },
+    ],
+    remarks: [
+      { when: { rebooted: true }, text: { en: "gpu-n03 was rebooted with jobs running and without draining it first", es: "Se reinició gpu-n03 con trabajos corriendo y sin retirarlo antes" } },
+    ],
+    resolved: { en: "Resolved: the faulty GPU is replaced and gpu-n03 is back in the pool. Now write the work note.", es: "Resuelto: la GPU averiada está sustituida y gpu-n03 vuelve al pool. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "Where did the failed jobs run (the button)? Then that node's kernel log: ssh gpu-n03 sudo dmesg -T | grep -i xid.", es: "¿Dónde corrieron los trabajos fallidos (el botón)? Después el registro del kernel de ese nodo: ssh gpu-n03 sudo dmesg -T | grep -i xid." },
+      { en: "ssh gpu-n03 nvidia-smi -q -d ECC,ROW_REMAPPER -i 2. A reboot does not mend GPU memory, and the node keeps taking jobs meanwhile.", es: "ssh gpu-n03 nvidia-smi -q -d ECC,ROW_REMAPPER -i 2. Un reinicio no arregla la memoria de una GPU, y el nodo sigue recibiendo trabajos mientras tanto." },
+      { en: "sudo scontrol update NodeName=gpu-n03 State=DRAIN Reason=\"GPU2 Xid 48, RMA\", wait until sinfo says drained, then ssh gpu-n03 sudo dcgmi diag -r 3 and dell case open --tag 4GPQX93.", es: "sudo scontrol update NodeName=gpu-n03 State=DRAIN Reason=\"GPU2 Xid 48, RMA\", espera a que sinfo diga drained, y después ssh gpu-n03 sudo dcgmi diag -r 3 y dell case open --tag 4GPQX93." },
+      { en: "onsite swap-gpu, the diagnostic again, State=RESUME, srun -w gpu-n03 --gres=gpu:4 nvidia-smi -L and onsite rerun.", es: "onsite swap-gpu, el diagnóstico otra vez, State=RESUME, srun -w gpu-n03 --gres=gpu:4 nvidia-smi -L y onsite rerun." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (GPU 2 of gpu-n03: Xid 48, uncorrectable double-bit ECC errors and a row remapping failure; the node kept taking jobs)", es: "la causa (la GPU 2 de gpu-n03: Xid 48, errores ECC de doble bit incorregibles y un fallo de remapeo de filas; el nodo seguía recibiendo trabajos)" }, any: ["xid 48", "xid", "ecc", "remap"] },
+      { kb: "fix", label: { en: "the fix (node drained, diagnostic failed on GPU 2, Dell case and the GPU replaced)", es: "la solución (nodo retirado, diagnóstico fallido en la GPU 2, caso de Dell y la GPU sustituida)" }, any: ["drain", "retir", "rma", "replaced", "sustitu", "1820044931"] },
+      { kb: "verify", label: { en: "how you checked it (dcgmi diag -r 3 passed, back in the pool, a test job, Gorka's runs)", es: "cómo lo comprobaste (dcgmi diag -r 3 superado, de vuelta al pool, un trabajo de prueba, las ejecuciones de Gorka)" }, any: ["dcgmi", "pass", "srun", "resume"] },
+      { kb: "followup", label: { en: "what follows (an alert on Xid errors that drains the node by itself, return the faulty module)", es: "lo que sigue (una alerta de errores Xid que retire el nodo sola, devolver el módulo averiado)" }, any: ["alert", "alerta", "health check", "healthcheck", "return", "devol"] },
+    ],
+    solution: ["sacct -a -X -S today --state=FAILED -o JobID,User,NodeList,ExitCode", "ssh gpu-n03 sudo dmesg -T | grep -i xid", "ssh gpu-n03 nvidia-smi -q -d ECC,ROW_REMAPPER -i 2",
+      "sudo scontrol update NodeName=gpu-n03 State=DRAIN Reason=\"GPU2 Xid 48, RMA\"", "sinfo -N -p gpu", "ssh gpu-n03 sudo dcgmi diag -r 3", "dell case open --tag 4GPQX93", "onsite swap-gpu",
+      "ssh gpu-n03 sudo dcgmi diag -r 3", "sudo scontrol update NodeName=gpu-n03 State=RESUME", "srun -w gpu-n03 --gres=gpu:4 nvidia-smi -L", "onsite rerun"],
+    sampleNote: {
+      en: "Every failed job since yesterday ran on gpu-n03. dmesg showed Xid 48 (uncorrectable double-bit ECC error) on GPU 2, PCI 0000:41:00, and nvidia-smi -q reported a row remapping failure: the GPU's memory is damaged and the node kept taking jobs. Drained gpu-n03 in Slurm (the two running jobs finished), ran dcgmi diag -r 3: GPU 2 failed the memory test, the other three passed. Opened Dell case 1820044931 with that output; the technician replaced GPU 2 this afternoon. Verified: dcgmi diag -r 3 passed, State=RESUME, a test job on gpu-n03 sees four GPUs, and Gorka's four runs finished. Rebooting would not have fixed the memory and would have killed the jobs running. Next: an alert on Xid errors that drains the node by itself, and return the faulty module to Dell.",
+      es: "Todos los trabajos fallidos desde ayer corrieron en gpu-n03. dmesg mostraba Xid 48 (error ECC de doble bit incorregible) en la GPU 2, PCI 0000:41:00, y nvidia-smi -q indicaba un fallo de remapeo de filas: la memoria de la GPU está dañada y el nodo seguía recibiendo trabajos. Retiré gpu-n03 en Slurm con DRAIN (los dos trabajos en marcha terminaron) y pasé dcgmi diag -r 3: la GPU 2 falló la prueba de memoria y las otras tres pasaron. Abrí el caso de Dell 1820044931 con esa salida; el técnico sustituyó la GPU 2 esta tarde. Comprobado: dcgmi diag -r 3 superado, State=RESUME, un trabajo de prueba en gpu-n03 ve cuatro GPU y las cuatro ejecuciones de Gorka terminaron. Reiniciar no habría arreglado la memoria y habría matado los trabajos en marcha. Pendiente: una alerta de errores Xid que retire el nodo sola, y devolver el módulo averiado a Dell.",
+    },
+    contact: {
+      tempting: ["reboot"], temptingWhen: { drainSet: false },
+      questions: [
+        { id: "where", kind: "useful",
+          text: { en: "Do the jobs that fail have anything in common?", es: "¿Tienen algo en común los trabajos que fallan?" },
+          answer: { en: "Ana noticed the failed ones say gpu-n03 in the log header. The ones on other nodes finish.", es: "Ana se fijó en que los fallidos dicen gpu-n03 en la cabecera del log. Los de otros nodos terminan." },
+          clue: { en: "The failures come from one node.", es: "Los fallos vienen de un nodo." } },
+        { id: "since", kind: "useful",
+          text: { en: "Did anything happen yesterday afternoon in the data room?", es: "¿Pasó algo ayer por la tarde en la sala técnica?" },
+          answer: { en: "Not that I know of. But the node's fans were very loud on Tuesday, Facilities said; it was a hot day for November.", es: "Que yo sepa, no. Pero el martes los ventiladores del nodo sonaban muchísimo, dijo Servicios generales; fue un día caluroso para noviembre." },
+          clue: { en: "The node has been running hot; the fault looks like hardware.", es: "El nodo ha estado trabajando caliente; la avería parece de hardware." } },
+        { id: "model", kind: "neutral",
+          text: { en: "Which framework do you train with?", es: "¿Con qué framework entrenáis?" },
+          answer: { en: "PyTorch 2.5 with CUDA 12.4, the cluster's standard image.", es: "PyTorch 2.5 con CUDA 12.4, la imagen estándar del clúster." } },
+        { id: "cpu", kind: "bad",
+          text: { en: "Can you train on CPU until we fix it?", es: "¿Podéis entrenar en CPU hasta que lo arreglemos?" },
+          answer: { en: "That would take weeks; the committee is on Monday.", es: "Eso tardaría semanas; el comité es el lunes." },
+          why: { en: "It does not help the user and leaves the faulty node taking jobs.", es: "No ayuda al usuario y deja el nodo averiado recibiendo trabajos." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "Give me your password and I'll relaunch your jobs myself.", es: "Pásame tu contraseña y relanzo yo tus trabajos." },
+          answer: { en: "No, I'll relaunch them; just tell me when.", es: "No, los relanzo yo; dime solo cuándo." },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "Do your training runs finish now?", es: "¿Terminan ya vuestros entrenamientos?" },
+          answer: { en: "Yes, four in a row, and the cluster is back to four nodes.", es: "Sí, cuatro seguidos, y el clúster vuelve a tener cuatro nodos." },
+          failed: { en: "No: one died again with the ECC error after the reboot, and two colleagues lost the runs they had going.", es: "No: uno ha vuelto a morir con el error de ECC tras el reinicio, y dos compañeros perdieron las ejecuciones que tenían en marcha." } },
+      ],
+    },
+  });
+  (function () {   // the node list, the queue and the GPU's state follow the session
+    const sc = scenarios[scenarios.length - 1];
+    const rule = (id) => sc.commands.find((r) => r.id === id);
+    const add = (base, list) => sc.commands.splice(sc.commands.indexOf(base), 0, ...list.map((v) => Object.assign({}, base, v)));
+    const SINFO = (st) => ["NODELIST   NODES PARTITION STATE", "gpu-n01        1      gpu* mixed", "gpu-n02        1      gpu* allocated", "gpu-n03        1      gpu* " + st, "gpu-n04        1      gpu* mixed"];
+    const si = rule("sinfo");
+    add(si, [{ id: "sinfo-up", when: { resumed: true }, out: SINFO("idle") }, { id: "sinfo-drained", when: { drainSet: true }, set: { drained: true }, out: SINFO("drained"), say: { en: "drained: no jobs left on gpu-n03.", es: "drained: ya no quedan trabajos en gpu-n03." } }]);
+    si.out = SINFO("mixed");
+    const sq = rule("squeue");
+    add(sq, [{ id: "squeue-drained", when: { drainSet: true }, set: { drained: true }, out: ["JOBID  PARTITION  NAME  USER  ST  TIME  NODES  NODELIST(REASON)"] }]);
+    sq.out = ["JOBID  PARTITION  NAME            USER      ST  TIME     NODES  NODELIST(REASON)", "88201  gpu        var-backtest    amarin    R   1:12:40  1      gpu-n03", "88204  gpu        risk-train-v7   giturbe   R   0:08:13  1      gpu-n03", "88209  gpu        risk-train-v7   giturbe   PD  0:00     1      (Resources)"];
+    const XID = ["[Wed Nov 12 16:41:07 2026] NVRM: Xid (PCI:0000:41:00): 48, pid=771204, name=python, An uncorrectable double bit error (DBE) has been detected on GPU in the framebuffer at partition 6, subpartition 0.",
+      "[Wed Nov 12 16:41:07 2026] NVRM: Xid (PCI:0000:41:00): 63, pid=771204, name=python, Row Remapper: New row marked for remapping, reset gpu to activate.", "[Thu Nov 13 07:58:31 2026] NVRM: Xid (PCI:0000:41:00): 48, pid=802917, name=python, An uncorrectable double bit error (DBE) has been detected on GPU in the framebuffer at partition 6, subpartition 0.",
+      "[Thu Nov 13 07:58:31 2026] NVRM: Xid (PCI:0000:41:00): 64, pid=802917, name=python, Row Remapper Error: row remapping failed."];
+    const x = rule("xid");
+    add(x, [{ id: "xid-new", when: { swapped: true }, out: [] }]);
+    Object.assign(x, { out: XID, say: { en: "Always the same GPU, 0000:41:00 (GPU 2): uncorrectable memory errors, and the spare rows have run out.", es: "Siempre la misma GPU, 0000:41:00 (la GPU 2): errores de memoria incorregibles, y las filas de reserva se han agotado." } });
+    const e = rule("ecc");
+    add(e, [{ id: "ecc-new", when: { swapped: true }, out: ["GPU 00000000:41:00.0", "    ECC Errors", "        Volatile", "            DRAM Uncorrectable    : 0", "    Remapped Rows", "        Pending                   : No", "        Remapping Failure Occurred : No"] }]);
+    Object.assign(e, { out: ["GPU 00000000:41:00.0", "    ECC Errors", "        Volatile", "            DRAM Uncorrectable    : 7", "        Aggregate", "            DRAM Uncorrectable    : 19", "    Remapped Rows", "        Correctable Error         : 0", "        Uncorrectable Error       : 8", "        Pending                   : Yes", "        Remapping Failure Occurred : Yes"],
+      say: { en: "Remapping Failure Occurred: Yes. That is not fixed in software: the GPU goes back to the vendor.", es: "Remapping Failure Occurred: Yes. Eso no se arregla con software: la GPU vuelve al fabricante." } });
+    const sm = rule("smi");
+    add(sm, [{ id: "smi-new", when: { swapped: true }, out: ["| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |", "|   2  NVIDIA A100-SXM4-80GB          On | 00000000:41:00.0   Off |                    0 |", "(GPUs 0, 1 and 3: 0)"] }]);
+    sm.out = ["| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |", "|   0  NVIDIA A100-SXM4-80GB          On | 00000000:01:00.0   Off |                    0 |", "|   1  NVIDIA A100-SXM4-80GB          On | 00000000:21:00.0   Off |                    0 |",
+      "|   2  NVIDIA A100-SXM4-80GB          On | 00000000:41:00.0   Off |                    7 |", "|   3  NVIDIA A100-SXM4-80GB          On | 00000000:61:00.0   Off |                    0 |"];
+  })();
+
+  /* ------------------------------------------------------------------ Career level 6: unauthorised crypto mining on three PCs */
+  const K6CM_PCS = "PC-DSN-01,PC-DSN-02,PC-DSN-03";
+  const K6CM_IC = /^invoke-command\b.*pc-dsn/;
+  const K6CM_ICS = (re) => new RegExp(K6CM_IC.source + ".*" + re);
+  scenarios.push({
+    id: "crypto-mining",
+    level: 2, career: 6,
+    topic: { en: "Security / unauthorised crypto mining with a scheduled task to come back", es: "Seguridad / minería de criptomonedas no autorizada con una tarea programada para volver" },
+    minutes: 17,
+    title: { en: "CPU at 100% at night on three PCs", es: "CPU al 100 % de noche en tres equipos" },
+    guide: GUIDE + "criptomonedas-en-la-empresa-mineria-no-autorizada-bloqueo-politica-custodia-nodos-y-un-servidor-al-100-de-cpu.html",
+    machine: { host: "ADM-WS01", user: "it.admin", domain: "CONTOSO", shell: "powershell", prompt: "PS C:\\Users\\it.admin> " },
+    ticket: {
+      id: "INC-20800", from: "Marina Soler (Marketing)", priority: "P2",
+      subject: { en: "The studio's render PCs roar all night and crawl in the morning", es: "Los PC de render del estudio rugen toda la noche y van a pedales por la mañana" },
+      body: {
+        en: "The three render PCs in the design studio have been running flat out every night for a week: the cleaning staff say the fans are deafening at one in the morning, and in the morning the renders take twice as long. Nobody leaves anything rendering overnight. The agency's freelancer installed some plugins last week. Can you take a look?",
+        es: "Los tres PC de render del estudio de diseño llevan una semana a tope todas las noches: el personal de limpieza dice que los ventiladores atruenan a la una de la mañana, y por la mañana los renders tardan el doble. Nadie deja nada renderizando por la noche. El freelance de la agencia instaló unos plugins la semana pasada. ¿Lo podéis mirar?",
+      },
+    },
+    intro: {
+      en: "You are on ADM-WS01 in PowerShell as it.admin, with WinRM to the studio's render PCs PC-DSN-01, PC-DSN-02 and PC-DSN-03. `edr ...` is the endpoint protection console from the shell (simulated): isolation cuts every connection except the console's and WinRM from ADM-WS01. The head office firewall is FGT-HQ-01, run by Asier. `onsite ...` is Marina, Asier and Bruno (IT security).",
+      es: "Estás en ADM-WS01 en PowerShell como it.admin, con WinRM a los PC de render del estudio PC-DSN-01, PC-DSN-02 y PC-DSN-03. `edr ...` es la consola de protección de equipos desde la shell (simulada): el aislamiento corta todas las conexiones salvo la de la consola y WinRM desde ADM-WS01. El cortafuegos de la oficina central es FGT-HQ-01, a cargo de Asier. `onsite ...` es Marina, Asier y Bruno (seguridad IT).",
+    },
+    requester: { name: "Marina Soler", team: { en: "Marketing", es: "Marketing" }, user: "msoler", location: { en: "Head office, design studio", es: "Oficina central, estudio de diseño" }, device: "PC-DSN-01" },
+    asset: {
+      title: { en: "Render PCs · PC-DSN-01 to 03", es: "PC de render · PC-DSN-01 a 03" },
+      fields: [
+        { label: { en: "Night CPU", es: "CPU de noche" }, states: [
+          { when: { cleanOk: true }, value: { en: "Idle", es: "En reposo" }, tone: "ok" },
+          { when: { procStopped: true, taskRemoved: true }, value: { en: "Stopped (not checked)", es: "Parado (sin comprobar)" }, tone: "muted" },
+          { value: { en: "100% from 01:00 to 07:00", es: "100 % de 01:00 a 07:00" }, tone: "bad" }] },
+        { label: { en: "Outbound to the pool", es: "Salida al pool" }, states: [
+          { when: { fwBlocked: true }, value: { en: "Blocked at the firewall", es: "Bloqueada en el cortafuegos" }, tone: "ok" },
+          { when: { isolated: true }, value: { en: "Cut by isolation", es: "Cortada por el aislamiento" }, tone: "warn" },
+          { when: { connSeen: true }, value: "203.0.113.200:3333", tone: "bad" },
+          { value: { en: "Not checked", es: "Sin comprobar" }, tone: "muted" }] },
+        { label: { en: "Persistence", es: "Persistencia" }, states: [
+          { when: { taskRemoved: true }, value: { en: "Removed", es: "Eliminada" }, tone: "ok" },
+          { when: { taskSeen: true }, value: { en: "Task \\WinSvcUpdate (startup, every 30 min)", es: "Tarea \\WinSvcUpdate (al inicio, cada 30 min)" }, tone: "bad" },
+          { value: { en: "Not checked", es: "Sin comprobar" }, tone: "muted" }] },
+        { label: { en: "Isolation", es: "Aislamiento" }, states: [
+          { when: { released: true }, value: { en: "Released after cleaning", es: "Liberado tras la limpieza" }, tone: "ok" },
+          { when: { isolated: true }, value: { en: "Isolated", es: "Aislados" }, tone: "warn" },
+          { value: { en: "On the network", es: "En la red" }, tone: "muted" }] },
+      ],
+    },
+    actions: [
+      { id: "top", label: { en: "Top processes", es: "Procesos que más consumen" }, cmd: "Invoke-Command -ComputerName " + K6CM_PCS + " { Get-Process | Sort-Object CPU -Descending | Select-Object -First 3 Name, Id, CPU, Path }" },
+      { id: "isolate", label: { en: "Isolate the three", es: "Aislar los tres" }, cmd: "edr isolate " + K6CM_PCS + " --comment INC-20800", when: { isolated: false } },
+    ],
+    codes: ["cause-removed"],
+    state: { procSeen: false, connSeen: false, taskSeen: false, entrySeen: false, isolated: false, killedEarly: false, procStopped: false, taskRemoved: false, filesRemoved: false, acctOff: false, fwBlocked: false, notified: false, cleanOk: false, released: false, userOk: false },
+    events: [
+      { when: { killedEarly: true, taskRemoved: false, procStopped: true }, set: { procStopped: false, killedEarly: false },
+        say: { en: "Half an hour later, \\WinSvcUpdate fires on the three PCs and svchosts.exe is running again.", es: "Media hora después, \\WinSvcUpdate se dispara en los tres PC y svchosts.exe vuelve a estar en marcha." } },
+    ],
+    commands: [
+      { id: "top", match: K6CM_ICS("get-process\\b"), set: { procSeen: true }, out: [] },
+      { id: "conn", match: K6CM_ICS("get-nettcpconnection\\b"), set: { connSeen: true }, out: [] },
+      { id: "task-del", match: K6CM_ICS("unregister-scheduledtask\\b.*winsvcupdate"), set: { taskRemoved: true }, out: [""],
+        say: { en: "The task is gone from the three PCs.", es: "La tarea ya no está en los tres PC." } },
+      { id: "task", match: K6CM_ICS("get-scheduledtask(info)?\\b"), set: { taskSeen: true }, out: [] },
+      { id: "kill", match: K6CM_ICS("stop-process\\b.*svchosts"), when: { taskRemoved: false }, set: { procStopped: true, killedEarly: true }, out: [""],
+        say: { en: "Stopped on the three. The CPU drops.", es: "Parado en los tres. La CPU baja." } },
+      { id: "kill-ok", match: K6CM_ICS("stop-process\\b.*svchosts"), set: { procStopped: true }, out: [""],
+        say: { en: "Stopped on the three, and nothing left to start it again.", es: "Parado en los tres, y ya nada que lo vuelva a arrancar." } },
+      { id: "rm-busy", match: K6CM_ICS("remove-item\\b.*winsvcupd"), when: { procStopped: false }, error: true, out: ["Remove-Item: Cannot remove item C:\\ProgramData\\WinSvcUpd\\svchosts.exe: The process cannot access the file because it is being used by another process."] },
+      { id: "rm", match: K6CM_ICS("remove-item\\b.*winsvcupd"), set: { filesRemoved: true }, out: [""] },
+      { id: "acct", match: K6CM_ICS("disable-localuser\\b.*render"), set: { acctOff: true }, out: [""],
+        say: { en: "The shared local account render is disabled on the three.", es: "La cuenta local compartida render queda deshabilitada en los tres." } },
+      { id: "entry", match: /^(invoke-command\b.*pc-dsn.*get-winevent|get-winevent\b.*pc-dsn)\b.*4698/, set: { entrySeen: true }, out: [] },
+      { id: "dns", match: /^resolve-dnsname\b.*pool-relay\.example/, out: ["Name                         Type   TTL   Section    IPAddress", "----                         ----   ---   -------    ---------", "xmr.pool-relay.example       A      300   Answer     203.0.113.200"] },
+      { id: "isolate", match: /^edr\s+isolate\b.*pc-dsn/, set: { isolated: true }, out: ["PC-DSN-01  isolation: on", "PC-DSN-02  isolation: on", "PC-DSN-03  isolation: on"],
+        say: { en: "Cut off from the network and the pool, still reachable from here to clean them.", es: "Cortados de la red y del pool, aún accesibles desde aquí para limpiarlos." } },
+      { id: "release-early", match: /^edr\s+release\b/, when: { cleanOk: false }, error: true, out: ["(they are still infected: release them once they are clean)"] },
+      { id: "release", match: /^edr\s+release\b.*pc-dsn/, set: { released: true }, out: ["PC-DSN-01  isolation: off", "PC-DSN-02  isolation: off", "PC-DSN-03  isolation: off"] },
+      { id: "scan-ok", match: /^edr\s+scan\b.*pc-dsn/, when: { filesRemoved: true, taskRemoved: true }, out: ["PC-DSN-01  full scan: no threats", "PC-DSN-02  full scan: no threats", "PC-DSN-03  full scan: no threats"] },
+      { id: "scan", match: /^edr\s+scan\b.*pc-dsn/, out: ["PC-DSN-01  full scan: PUA:Win32/CoinMiner (C:\\ProgramData\\WinSvcUpd\\svchosts.exe)", "PC-DSN-02  full scan: PUA:Win32/CoinMiner (C:\\ProgramData\\WinSvcUpd\\svchosts.exe)", "PC-DSN-03  full scan: PUA:Win32/CoinMiner (C:\\ProgramData\\WinSvcUpd\\svchosts.exe)"],
+        say: { en: "Detected as a potentially unwanted app: it was allowed, not blocked.", es: "Detectado como aplicación potencialmente no deseada: se permitió, no se bloqueó." } },
+      { id: "edr-help", match: /^edr$/, out: ["edr (simulated): the endpoint protection console", "  edr isolate <pcs> --comment <text>   isolate devices", "  edr release <pcs>                    end the isolation", "  edr scan <pcs>                       full scan"] },
+      { id: "onsite-help", match: /^onsite$/, out: ["Who you can ask (simulated):", "  onsite firewall   Asier blocks the pool's domain, address and ports on FGT-HQ-01", "  onsite security   tell Bruno (IT security) and hand him the evidence", "  onsite night      Marina tells you how the PCs were the next morning"] },
+      { id: "fw", match: /^onsite\s+firewall\b/, when: { connSeen: true }, set: { fwBlocked: true }, out: [""],
+        say: { en: "Asier: 'Blocked on FGT-HQ-01: xmr.pool-relay.example, 203.0.113.200, and outbound 3333 and 4444 for the whole office. Nobody here mines anything legitimately.'", es: "Asier: «Bloqueado en FGT-HQ-01: xmr.pool-relay.example, 203.0.113.200 y la salida a 3333 y 4444 para toda la oficina. Aquí nadie mina nada legítimamente.»" } },
+      { id: "fw-early", match: /^onsite\s+firewall\b/, out: [""], say: { en: "Asier: 'Block what? Tell me the destination and port first.'", es: "Asier: «¿Bloquear qué? Dime primero el destino y el puerto.»" } },
+      { id: "sec", match: /^onsite\s+security\b/, when: { entrySeen: true }, set: { notified: true }, out: [""],
+        say: { en: "Bruno: 'Security incident SEC-0412 opened. I'll check the freelancer's other installs and LAPS on the studio PCs. Thanks for the evidence.'", es: "Bruno: «Incidente de seguridad SEC-0412 abierto. Revisaré las otras instalaciones del freelance y LAPS en los PC del estudio. Gracias por las pruebas.»" } },
+      { id: "sec-early", match: /^onsite\s+security\b/, out: [""], say: { en: "Bruno: 'How did it get in, and with which account? I need that to open the incident.'", es: "Bruno: «¿Cómo entró, y con qué cuenta? Lo necesito para abrir el incidente.»" } },
+      { id: "night-ok", match: /^onsite\s+night\b/, when: { cleanOk: true, released: true }, set: { userOk: true }, out: [""], say: { en: "Marina: 'Silent all night, and this morning's render took 41 minutes, like before.'", es: "Marina: «En silencio toda la noche, y el render de esta mañana ha tardado 41 minutos, como antes.»" } },
+      { id: "night", match: /^onsite\s+night\b/, out: [""], say: { en: "Marina: 'The cleaners say they were roaring again at one.'", es: "Marina: «Las de la limpieza dicen que a la una volvían a rugir.»" } },
+    ],
+    goal: { isolated: true, taskRemoved: true, procStopped: true, filesRemoved: true, acctOff: true, fwBlocked: true, notified: true, cleanOk: true, released: true, userOk: true },
+    stages: [
+      { id: "investigate", label: { en: "Find what eats the CPU, where it talks to, what brings it back and how it got in", es: "Averiguar qué se come la CPU, con quién habla, qué lo trae de vuelta y cómo entró" }, when: { procSeen: true, connSeen: true, taskSeen: true, entrySeen: true } },
+      { id: "fix", label: { en: "Isolate, remove the persistence and the miner, close the way in and block the pool", es: "Aislar, quitar la persistencia y el minero, cerrar la entrada y bloquear el pool" }, when: { isolated: true, taskRemoved: true, procStopped: true, filesRemoved: true, acctOff: true, fwBlocked: true, notified: true } },
+      { id: "verify", label: { en: "Clean, back on the network, and a quiet night", es: "Limpios, de vuelta en la red y una noche tranquila" }, when: { cleanOk: true, released: true, userOk: true } },
+    ],
+    resolved: { en: "Resolved: the miner is gone with its persistence, the pool is blocked and security has the case. Now write the work note.", es: "Resuelto: el minero se ha ido con su persistencia, el pool está bloqueado y seguridad tiene el caso. Ahora escribe la nota de trabajo." },
+    hints: [
+      { en: "What eats the CPU (the button), and where it connects: Invoke-Command -ComputerName " + K6CM_PCS + " { Get-NetTCPConnection -State Established | ? RemotePort -in 3333,4444 }.", es: "Qué se come la CPU (el botón), y adónde se conecta: Invoke-Command -ComputerName " + K6CM_PCS + " { Get-NetTCPConnection -State Established | ? RemotePort -in 3333,4444 }." },
+      { en: "Killing it is not enough: what starts it again? Look for a scheduled task that runs something from C:\\ProgramData, and when it was created (event 4698).", es: "Matarlo no basta: ¿qué lo vuelve a arrancar? Busca una tarea programada que ejecute algo de C:\\ProgramData, y cuándo se creó (evento 4698)." },
+      { en: "edr isolate, then Unregister-ScheduledTask WinSvcUpdate, Stop-Process svchosts, Remove-Item C:\\ProgramData\\WinSvcUpd and Disable-LocalUser render on the three; onsite firewall and onsite security.", es: "edr isolate y después Unregister-ScheduledTask WinSvcUpdate, Stop-Process svchosts, Remove-Item C:\\ProgramData\\WinSvcUpd y Disable-LocalUser render en los tres; onsite firewall y onsite security." },
+      { en: "edr scan, the processes and connections again, edr release and onsite night.", es: "edr scan, los procesos y las conexiones otra vez, edr release y onsite night." },
+    ],
+    note: [
+      { kb: "cause", label: { en: "the cause (a miner disguised as svchosts.exe, mining to 203.0.113.200:3333, brought back by the task \\WinSvcUpdate; installed with a plugin pack through the shared local account render)", es: "la causa (un minero disfrazado de svchosts.exe, minando hacia 203.0.113.200:3333, devuelto por la tarea \\WinSvcUpdate; instalado con un paquete de plugins con la cuenta local compartida render)" }, any: ["svchosts", "3333", "winsvcupdate", "miner", "minero", "mineria", "mining"] },
+      { kb: "fix", label: { en: "the fix (isolated, task, process and files removed, render disabled, the pool blocked at FGT-HQ-01, security told)", es: "la solución (aislados, tarea, proceso y ficheros quitados, render deshabilitada, el pool bloqueado en FGT-HQ-01, seguridad avisada)" }, any: ["unregister", "isolat", "aisl", "fgt-hq-01", "blocked", "bloque"] },
+      { kb: "verify", label: { en: "how you checked it (clean scan, no process or connection, a quiet night)", es: "cómo lo comprobaste (análisis limpio, ni proceso ni conexión, una noche tranquila)" }, any: ["scan", "analisis", "no threats", "night", "noche"] },
+      { kb: "followup", label: { en: "what follows (SEC-0412: LAPS instead of a shared admin, PUA blocking, the freelancer's other installs)", es: "lo que sigue (SEC-0412: LAPS en lugar de un administrador compartido, bloqueo de PUA, las otras instalaciones del freelance)" }, any: ["sec-0412", "laps", "pua", "policy", "politica"] },
+    ],
+    solution: ["Invoke-Command -ComputerName " + K6CM_PCS + " { Get-Process | Sort-Object CPU -Descending | Select-Object -First 3 Name, Id, CPU, Path }",
+      "Invoke-Command -ComputerName " + K6CM_PCS + " { Get-NetTCPConnection -State Established | ? RemotePort -in 3333,4444 }",
+      "Invoke-Command -ComputerName " + K6CM_PCS + " { Get-ScheduledTask | ? { $_.Actions.Execute -like '*ProgramData*' } | Select-Object TaskName, Triggers, @{n='Run';e={$_.Actions.Execute + ' ' + $_.Actions.Arguments}} }",
+      "Get-WinEvent -ComputerName PC-DSN-01 -FilterHashtable @{LogName='Security';Id=4698}",
+      "edr isolate " + K6CM_PCS + " --comment INC-20800",
+      "Invoke-Command -ComputerName " + K6CM_PCS + " { Unregister-ScheduledTask -TaskName WinSvcUpdate -Confirm:$false }",
+      "Invoke-Command -ComputerName " + K6CM_PCS + " { Stop-Process -Name svchosts -Force }",
+      "Invoke-Command -ComputerName " + K6CM_PCS + " { Remove-Item C:\\ProgramData\\WinSvcUpd -Recurse -Force }",
+      "Invoke-Command -ComputerName " + K6CM_PCS + " { Disable-LocalUser -Name render }",
+      "onsite firewall", "onsite security", "edr scan " + K6CM_PCS,
+      "Invoke-Command -ComputerName " + K6CM_PCS + " { Get-Process | Sort-Object CPU -Descending | Select-Object -First 3 Name, Id, CPU, Path }",
+      "edr release " + K6CM_PCS, "onsite night"],
+    sampleNote: {
+      en: "The three render PCs PC-DSN-01 to 03 ran at 100% CPU every night: a miner disguised as svchosts.exe in C:\\ProgramData\\WinSvcUpd, connected to the pool xmr.pool-relay.example (203.0.113.200:3333). The scheduled task \\WinSvcUpdate (SYSTEM, at startup and every 30 minutes) started it again. Event 4698: created on 05/11 at 22:14 by the shared local account render, when the agency's freelancer ran a cracked plugin pack. Isolated the three, removed the task, stopped the process, deleted the folder and disabled render; Asier blocked the pool's domain, address and ports 3333 and 4444 on FGT-HQ-01, and Bruno opened SEC-0412. Verified: full scan with no threats, no svchosts or connection left, isolation released, and Marina says the night was quiet. Killing the process alone would have lasted half an hour. Next (SEC-0412): LAPS instead of a shared admin account, block PUA in the antivirus policy, and review the freelancer's other installs.",
+      es: "Los tres PC de render PC-DSN-01 a 03 iban al 100 % de CPU todas las noches: un minero disfrazado de svchosts.exe en C:\\ProgramData\\WinSvcUpd, conectado al pool xmr.pool-relay.example (203.0.113.200:3333). La tarea programada \\WinSvcUpdate (SYSTEM, al inicio y cada 30 minutos) lo volvía a arrancar. Evento 4698: creada el 05/11 a las 22:14 por la cuenta local compartida render, cuando el freelance de la agencia ejecutó un paquete de plugins pirata. Aislé los tres, quité la tarea, paré el proceso, borré la carpeta y deshabilité render; Asier bloqueó el dominio, la dirección y los puertos 3333 y 4444 del pool en FGT-HQ-01, y Bruno abrió el SEC-0412. Comprobado: análisis completo sin amenazas, ni svchosts ni conexión, aislamiento liberado, y Marina dice que la noche fue tranquila. Matar solo el proceso habría durado media hora. Pendiente (SEC-0412): LAPS en lugar de una cuenta de administrador compartida, bloquear PUA en la política del antivirus y revisar las otras instalaciones del freelance.",
+    },
+    contact: {
+      tempting: ["kill"], temptingWhen: { taskRemoved: false },
+      questions: [
+        { id: "plugins", kind: "useful",
+          text: { en: "What exactly did the freelancer install, and how?", es: "¿Qué instaló exactamente el freelance, y cómo?" },
+          answer: { en: "A 'LUT and plugin pack' from a USB stick, on the three PCs, with the render account; it's the one we use for installing because it's admin. Wednesday evening, I think.", es: "Un «paquete de LUT y plugins» desde un USB, en los tres PC, con la cuenta render; es la que usamos para instalar porque es administradora. El miércoles por la tarde, creo." },
+          clue: { en: "Something was installed on the three PCs last Wednesday evening with a shared admin account.", es: "Algo se instaló en los tres PC el miércoles pasado por la tarde con una cuenta de administrador compartida." } },
+        { id: "when", kind: "useful",
+          text: { en: "Does the noise start at a fixed time?", es: "¿El ruido empieza a una hora fija?" },
+          answer: { en: "The cleaners say always after one, until we arrive. And if someone turns a PC off, a while later it's at it again once it's back on.", es: "Las de la limpieza dicen que siempre después de la una, hasta que llegamos. Y si alguien apaga un PC, al rato de encenderlo vuelve a la carga." },
+          clue: { en: "Something starts it on a schedule and at startup.", es: "Algo lo arranca con un horario y al iniciar." } },
+        { id: "renders", kind: "neutral",
+          text: { en: "Which programs do you render with?", es: "¿Con qué programas renderizáis?" },
+          answer: { en: "Blender and After Effects, as always.", es: "Blender y After Effects, como siempre." } },
+        { id: "unplug", kind: "bad",
+          text: { en: "Shall we just switch them off at night?", es: "¿Los apagamos por la noche y listo?" },
+          answer: { en: "We could, but then it starts during the day and the renders are even slower.", es: "Se podría, pero entonces empieza de día y los renders van aún más lentos." },
+          why: { en: "It hides the symptom; the miner, its persistence and the way in stay.", es: "Esconde el síntoma; el minero, su persistencia y la vía de entrada se quedan." } },
+        { id: "password", kind: "bad", password: true,
+          text: { en: "What's the render account's password? I'll log in and look.", es: "¿Cuál es la contraseña de la cuenta render? Entro y lo miro." },
+          answer: { en: "It's on a sticker under the monitor... wait, should I be telling you that?", es: "Está en una pegatina bajo el monitor... espera, ¿debería decírtelo?" },
+          why: PASSWORD_WHY },
+        { id: "confirm", kind: "useful", requires: "fixed",
+          text: { en: "How were the render PCs last night?", es: "¿Cómo estuvieron anoche los PC de render?" },
+          answer: { en: "Silent, and the morning renders took the usual time.", es: "En silencio, y los renders de la mañana tardaron lo de siempre." },
+          failed: { en: "Roaring again at one, the cleaners say, and this morning's render was slow.", es: "Rugiendo otra vez a la una, dicen las de la limpieza, y el render de esta mañana fue lento." } },
+      ],
+    },
+  });
+  (function () {   // the processes, connections, task and events follow the state
+    const sc = scenarios[scenarios.length - 1];
+    const rule = (id) => sc.commands.find((r) => r.id === id);
+    const add = (base, list) => sc.commands.splice(sc.commands.indexOf(base), 0, ...list.map((v) => Object.assign({}, base, v)));
+    const PCS = ["PC-DSN-01", "PC-DSN-02", "PC-DSN-03"];
+    const top = rule("top");
+    add(top, [{ id: "top-clean", when: { procStopped: true, taskRemoved: true }, set: { procSeen: true, cleanOk: true }, out: ["Name        Id     CPU     Path                                                PSComputerName", "----        --     ---     ----                                                --------------"]
+      .concat(PCS.map((p, i) => "MsMpEng     " + (3120 + i) + "   41.2    C:\\ProgramData\\Microsoft\\Windows Defender\\...\\MsMpEng.exe   " + p)), say: { en: "Nothing unusual at the top.", es: "Nada raro arriba del todo." } }]);
+    Object.assign(top, { out: ["Name        Id     CPU        Path                                       PSComputerName", "----        --     ---        ----                                       --------------"]
+      .concat(PCS.map((p, i) => "svchosts    " + (7712 + i * 131) + "   " + (215433 + i * 4412) + ".5  C:\\ProgramData\\WinSvcUpd\\svchosts.exe     " + p)),
+      say: { en: "svchosts.exe, with an s, from C:\\ProgramData: not Windows' svchost.exe, which lives in System32.", es: "svchosts.exe, con s, desde C:\\ProgramData: no es el svchost.exe de Windows, que vive en System32." } });
+    const conn = rule("conn");
+    add(conn, [{ id: "conn-none", when: { procStopped: true, taskRemoved: true }, out: [""] }]);
+    Object.assign(conn, { out: ["LocalAddress   LocalPort RemoteAddress   RemotePort State       OwningProcess PSComputerName"].concat(PCS.map((p, i) => "10.20.4." + (61 + i) + "    5" + (1220 + i * 37) + "     203.0.113.200   3333       Established " + (7712 + i * 131) + "          " + p)),
+      say: { en: "Port 3333 to an outside address, from svchosts.exe: the usual port of a mining pool.", es: "El puerto 3333 hacia una dirección de fuera, desde svchosts.exe: el puerto típico de un pool de minería." } });
+    const task = rule("task");
+    add(task, [{ id: "task-none", when: { taskRemoved: true }, out: [""] }]);
+    Object.assign(task, { out: ["TaskName       Triggers                                 Run                                                                                         PSComputerName"].concat(PCS.map((p) => "WinSvcUpdate   {AtStartup, Daily 01:00 every 00:30:00}  C:\\ProgramData\\WinSvcUpd\\svchosts.exe -o xmr.pool-relay.example:3333 -u 48cx…w9Qf --cpu-max-threads-hint 100   " + p)),
+      say: { en: "The same task on the three, as SYSTEM: it starts the miner at startup and every half hour.", es: "La misma tarea en los tres, como SYSTEM: arranca el minero al iniciar y cada media hora." } });
+    Object.assign(rule("entry"), { out: ["TimeCreated          Id   Message", "05/11/2026 22:14:09  4698 A scheduled task was created.", "                          Subject: Account Name: render   Account Domain: PC-DSN-01", "                          Task Name: \\WinSvcUpdate",
+      "05/11/2026 22:13:51  4688 A new process has been created: C:\\Users\\render\\Downloads\\LUT-Plugin-Pack-2026-setup.exe"],
+      say: { en: "Created by the local account render, twenty seconds after a plugin pack's installer ran.", es: "Creada por la cuenta local render, veinte segundos después de ejecutarse el instalador de un paquete de plugins." } });
+  })();
+
   return scenarios;
 });

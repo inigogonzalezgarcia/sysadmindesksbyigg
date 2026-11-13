@@ -112,9 +112,29 @@
     },
   };
 
+  /* v0.16: in a bash desk, the command-line tools of the DevOps desks answer a line the desk does not model like themselves (an unknown
+     subcommand, a host pattern that matches nothing), instead of bash saying the tool does not exist */
+  const KUBECTL = "get describe logs apply create delete edit patch replace rollout scale autoscale set label annotate expose run exec cp port-forward top cordon uncordon drain taint explain diff config cluster-info api-resources api-versions version auth events debug wait certificate".split(" ");
+  const TERRAFORM = "init validate plan apply destroy console fmt force-unlock get graph import login logout metadata output providers refresh show state taint test untaint version workspace".split(" ");
+  const JENKINS = "build console list-jobs get-job who-am-i help version list-plugins list-credentials update-credentials-by-xml enable-job disable-job stop-builds".split(" ");
+  const BASH_TOOLS = {
+    kubectl: (a) => (KUBECTL.includes(a[1]) ? ["Error from server (NotFound): the server could not find the requested resource"]
+      : ['error: unknown command "' + (a[1] || "") + '" for "kubectl"', "Run 'kubectl --help' for usage."]),
+    terraform: (a) => (TERRAFORM.includes(a[1]) ? ["╷", "│ Error: Invalid arguments for \"terraform " + a[1] + "\"", "│", "│ Run \"terraform " + a[1] + " -help\" for the options.", "╵"]
+      : ['Terraform has no command named "' + (a[1] || "") + '".', "", "To see all of Terraform's top-level commands, run:", "  terraform -help"]),
+    ansible: (a) => ["[WARNING]: Could not match supplied host pattern, ignoring: " + (a[1] || ""), "[WARNING]: No hosts matched, nothing to do"],
+    "ansible-playbook": (a) => ["usage: ansible-playbook [-h] [--version] [-v] [-k] [-u REMOTE_USER] [-b] [-K] [-i INVENTORY] [-l SUBSET] playbook [playbook ...]",
+      "ansible-playbook: error: unrecognized arguments: " + a.slice(1).join(" ")],
+    "jenkins-cli": (a) => (JENKINS.includes(a[1]) ? ["ERROR: Unexpected arguments; see 'jenkins-cli help " + a[1] + "'"] : ["ERROR: No such command " + (a[1] || "") + ".", "Available commands are listed by 'jenkins-cli help'."]),
+    "nvidia-smi": () => ["Invalid combination of input arguments. Please run 'nvidia-smi -h' for help."],
+  };
+
   function notRecognised(cmd, sc) {
     const word = cmd.split(" ")[0];
-    if ((sc.machine || {}).shell === "bash") return [word + ": command not found"];
+    if ((sc.machine || {}).shell === "bash") {
+      const tool = BASH_TOOLS[word.toLowerCase()];
+      return tool ? tool(cmd.split(" ")) : [word + ": command not found"];
+    }
     // v0.13: an IBM i (AS400) 5250 command line
     if ((sc.machine || {}).shell === "ibmi") return ["CPD0030: Command " + word.toUpperCase() + " in library *LIBL not found."];
     // v0.14: an HPE Aruba (ArubaOS-Switch / ProCurve) switch console

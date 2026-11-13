@@ -49,6 +49,8 @@
     "laptop-rma": "hardware", "net-psu-rma": "hardware", "leaver-return": "hardware", "new-laptops-intake": "hardware", "ups-no-alert": "hardware", "pos-kitchen-printer": "hardware", "cashdro-close-mismatch": "hardware", "pms-room-charge": "hardware",
     "device42-rack-mismatch": "hardware", "idrac-no-alerts": "hardware", "ups-runtime-low": "hardware", "server-psu-rma": "hardware",
     "nutanix-disk-failed": "hardware", "zabbix-ups-ipmi": "hardware",
+    "k8s-crashloop": "linux", "terraform-drift": "linux", "ansible-patch-fails": "linux", "jenkins-pipeline-red": "linux", "grafana-slo-budget": "network",
+    "gpu-xid-errors": "hardware", "crypto-mining": "endpoint",
   };
   const LAB_AREA = Object.fromEntries(Lb.LABS.map((l) => [l.id, l.area]));
 
@@ -79,7 +81,8 @@
         "gmsa-service-fails", "iis-first-request-slow", "db-restore-test", "mysql-slow-queries", "ps-remoting-double-hop", "zabbix-ups-ipmi",
         "audit-4740-missing", "ad-time-skew", "ps-unsigned-script", "powercli-report", "esxi-not-responding", "dc-no-replication",
         "cyberark-cpm-fails", "rabbitmq-queue-growing", "es-read-only", "puppet-cert-agent", "postgres-bloat", "zos-batch-abend",
-        "redfish-firmware", "powerchute-shutdown", "nginx-balancer-sticky", "fleet-agent-offline", "splunk-source-missing"], labs: ["linux"] },
+        "redfish-firmware", "powerchute-shutdown", "nginx-balancer-sticky", "fleet-agent-offline", "splunk-source-missing",
+        "ansible-patch-fails", "jenkins-pipeline-red", "gpu-xid-errors"], labs: ["linux"] },
     { id: "netcloud", title: { en: "Network / Cloud", es: "Redes / Cloud" },
       what: { en: "Switches, the firewall and the branch, and cloud identity: Conditional Access and single sign-on.", es: "Switches, el cortafuegos y la sucursal, e identidad en la nube: acceso condicional e inicio de sesión único." },
       areas: ["network", "m365"],
@@ -90,7 +93,8 @@
         "zabbix-switch-snmp", "zabbix-service-down", "cisco-aaa-lockout", "cisco-portchannel-member", "mikrotik-wireguard",
         "pfsense-nat-rule", "opnsense-ips-block", "radius-peap-fail", "asterisk-trunk-down", "zabbix-alert-storm",
         "sentinel-impossible-travel", "azmon-agent-silent", "openshift-route-503", "voice-line-bank", "keycloak-ldap-login",
-        "pfsense-carp-failover", "grafana-site-panel", "azure-bill-spike", "aws-no-share", "graph-429-report", "cloudpc-no-connect"], labs: ["network"] },
+        "pfsense-carp-failover", "grafana-site-panel", "azure-bill-spike", "aws-no-share", "graph-429-report", "cloudpc-no-connect",
+        "k8s-crashloop", "terraform-drift", "grafana-slo-budget", "crypto-mining"], labs: ["network"] },
   ];
 
   const avg = (xs) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);

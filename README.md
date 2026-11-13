@@ -169,6 +169,13 @@ Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.
 | 155 | [The AWS server cannot reach the office share](https://sysadmindesksbyigg.pages.dev/tickets/aws-no-share) | AWS VPC: a subnet's route table without VPN route propagation, and a stateful security group | 2 |
 | 156 | [The Graph device report stops halfway](https://sysadmindesksbyigg.pages.dev/tickets/graph-429-report) | Python and Microsoft Graph: @odata.nextLink paging and Retry-After on a 429 | 2 |
 | 157 | [The contractors' Cloud PCs do not connect](https://sysadmindesksbyigg.pages.dev/tickets/cloudpc-no-connect) | Windows 365: an Azure network connection whose only DNS server is switched off at night | 2 |
+| 158 | [The pod is in CrashLoopBackOff after the release](https://sysadmindesksbyigg.pages.dev/tickets/k8s-crashloop) | Kubernetes: a release that reads a renamed setting the ConfigMap does not have, and a rollback | 2 |
+| 159 | [Someone changed the firewall by hand: the plan wants to undo it](https://sysadmindesksbyigg.pages.dev/tickets/terraform-drift) | Terraform: drift from a rule changed in the portal during an incident, brought into the code | 2 |
+| 160 | [The patching playbook fails on three servers](https://sysadmindesksbyigg.pages.dev/tickets/ansible-patch-fails) | Ansible: become that fails after the automation account changed, and --limit to the failed hosts | 2 |
+| 161 | [The scripts' pipeline has been red since yesterday](https://sysadmindesksbyigg.pages.dev/tickets/jenkins-pipeline-red) | Jenkins: PSScriptAnalyzer stops a script with a password in it; fix the script, not the test | 2 |
+| 162 | [The portal's error budget is spent](https://sysadmindesksbyigg.pages.dev/tickets/grafana-slo-budget) | SLO and error budget: one endpoint broken by a release, a silenced alert and a change freeze | 2 |
+| 163 | [A GPU node with Xid errors and failing jobs](https://sysadmindesksbyigg.pages.dev/tickets/gpu-xid-errors) | Slurm and NVIDIA: Xid 48 on one GPU, drain, DCGM diagnostic, RMA and back to the pool | 2 |
+| 164 | [CPU at 100% at night on three PCs](https://sysadmindesksbyigg.pages.dev/tickets/crypto-mining) | Security: a disguised miner, its scheduled task, isolation, blocking the pool and telling security | 2 |
 
 Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
 

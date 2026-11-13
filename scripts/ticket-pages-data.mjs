@@ -1081,4 +1081,46 @@ export const TICKET_SEO = {
     en: { title: "Windows 365: the new Cloud PCs do not connect", desc: "Practise how to find out why some Windows 365 Cloud PCs cannot be set up, fix it without touching the working ones and document it in the ticket.",
       skills: ["Read the Cloud PCs' status with Graph.", "Review the network connection's checks.", "Follow a vNet's DNS.", "Reprovision only what failed."] },
   },
+  "k8s-crashloop": {
+    es: { title: "Kubernetes: un pod en CrashLoopBackOff", desc: "Practica cómo averiguar por qué un pod de Kubernetes se queda en CrashLoopBackOff tras un despliegue, corregirlo y documentarlo en el ticket.",
+      skills: ["Leer el log del contenedor anterior.", "Comparar un ConfigMap con lo que espera la app.", "Volver atrás un Deployment.", "Comprobar el despliegue y los endpoints."] },
+    en: { title: "Kubernetes: a pod in CrashLoopBackOff", desc: "Practise how to find out why a Kubernetes pod stays in CrashLoopBackOff after a release, fix it and document it in the ticket.",
+      skills: ["Read the previous container's log.", "Compare a ConfigMap with what the app expects.", "Roll a Deployment back.", "Check the rollout and the endpoints."] },
+  },
+  "terraform-drift": {
+    es: { title: "Terraform: el plan quiere deshacer un cambio a mano", desc: "Practica cómo averiguar por qué un plan de Terraform quiere cambiar algo que nadie tocó en el código, corregir la deriva y documentarlo en el ticket.",
+      skills: ["Leer un plan de Terraform.", "Comparar el estado con el recurso real.", "Encontrar quién cambió algo en Azure.", "Llevar un cambio urgente al código."] },
+    en: { title: "Terraform: the plan wants to undo a manual change", desc: "Practise how to find out why a Terraform plan wants to change something nobody touched in the code, fix the drift and document it in the ticket.",
+      skills: ["Read a Terraform plan.", "Compare the state with the real resource.", "Find who changed something in Azure.", "Bring an urgent change into the code."] },
+  },
+  "ansible-patch-fails": {
+    es: { title: "Ansible: el playbook de parches falla en tres servidores", desc: "Practica cómo averiguar por qué un playbook de Ansible falla en unos servidores, parchearlos de verdad y documentarlo en el ticket.",
+      skills: ["Leer la salida detallada de Ansible.", "Entender become y sudo.", "Limitar un playbook a unos hosts.", "Comprobar el kernel en todo el grupo."] },
+    en: { title: "Ansible: the patching playbook fails on three servers", desc: "Practise how to find out why an Ansible playbook fails on some servers, really patch them and document it in the ticket.",
+      skills: ["Read Ansible's verbose output.", "Understand become and sudo.", "Limit a playbook to some hosts.", "Check the kernel across the group."] },
+  },
+  "jenkins-pipeline-red": {
+    es: { title: "Jenkins: el pipeline de los scripts en rojo", desc: "Practica cómo averiguar por qué un pipeline de Jenkins está en rojo, arreglar la causa sin saltarte las pruebas y documentarlo en el ticket.",
+      skills: ["Leer la consola de una build.", "Seguir el commit que la rompió.", "Pasar PSScriptAnalyzer en local.", "Confirmar un verde de verdad."] },
+    en: { title: "Jenkins: the scripts' pipeline is red", desc: "Practise how to find out why a Jenkins pipeline is red, fix the cause without skipping the tests and document it in the ticket.",
+      skills: ["Read a build's console.", "Follow the commit that broke it.", "Run PSScriptAnalyzer locally.", "Confirm a real green."] },
+  },
+  "grafana-slo-budget": {
+    es: { title: "SLO: presupuesto de errores agotado en el portal", desc: "Practica cómo averiguar qué ha agotado el presupuesto de errores de un SLO, recuperar el servicio sin mover el objetivo y documentarlo en el ticket.",
+      skills: ["Leer un SLO y su ritmo de consumo.", "Consultar Prometheus por ruta.", "Relacionar errores y despliegues.", "Revisar alertas silenciadas."] },
+    en: { title: "SLO: the portal's error budget is spent", desc: "Practise how to find out what spent an SLO's error budget, restore the service without moving the target and document it in the ticket.",
+      skills: ["Read an SLO and its burn rate.", "Query Prometheus by route.", "Link errors to releases.", "Review silenced alerts."] },
+  },
+  "gpu-xid-errors": {
+    es: { title: "GPU: un nodo con errores Xid", desc: "Practica cómo averiguar por qué fallan trabajos en un clúster de GPU, retirar el nodo averiado, gestionar el RMA y documentarlo en el ticket.",
+      skills: ["Leer los errores Xid de NVIDIA.", "Retirar un nodo de Slurm.", "Pasar un diagnóstico DCGM.", "Devolver el nodo al pool tras la prueba."] },
+    en: { title: "GPU: a node with Xid errors", desc: "Practise how to find out why jobs fail on a GPU cluster, drain the faulty node, handle the RMA and document it in the ticket.",
+      skills: ["Read NVIDIA Xid errors.", "Drain a Slurm node.", "Run a DCGM diagnostic.", "Return the node to the pool after a test."] },
+  },
+  "crypto-mining": {
+    es: { title: "Minería no autorizada: CPU al 100 % de noche", desc: "Practica cómo averiguar por qué unos equipos van al 100 % de CPU de noche, limpiarlos con su persistencia, bloquear el destino y documentarlo en el ticket.",
+      skills: ["Encontrar un proceso disfrazado.", "Ver a qué se conecta un proceso.", "Buscar persistencia en tareas programadas.", "Aislar y avisar a seguridad."] },
+    en: { title: "Unauthorised mining: CPU at 100% at night", desc: "Practise how to find out why some PCs run at 100% CPU at night, clean them with their persistence, block the destination and document it in the ticket.",
+      skills: ["Find a disguised process.", "See what a process connects to.", "Look for persistence in scheduled tasks.", "Isolate and tell security."] },
+  },
 };

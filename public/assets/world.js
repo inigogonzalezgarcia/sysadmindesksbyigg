@@ -173,6 +173,7 @@
     { name: "PC-CLN-P3-01", ou: "desktops", os: "Windows 11 Enterprise 24H2", user: null, note: { en: "Ward 3 nurses' station PC, Clínica Contoso Salud (shared; Citrix Workspace)", es: "PC del control de enfermería de la planta 3, Clínica Contoso Salud (compartido; Citrix Workspace)" } },
     { name: "LAPTOP-0451", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: null, note: { en: "New starter laptop (Autopilot, GD-Win-Autopilot-2026), one of LAPTOP-0451 to 0456", es: "Portátil de nueva incorporación (Autopilot, GD-Win-Autopilot-2026), uno de LAPTOP-0451 a 0456" } },
     { name: "PC-WRO-014", ou: "desktops", os: "Windows 11 Enterprise 24H2", user: "kwisniewska", note: { en: "Accounting, Wrocław plant (Poland), LAN 10.20.80.0/24", es: "Contabilidad, planta de Wrocław (Polonia), LAN 10.20.80.0/24" } },
+    { name: "PC-DSN-01", ou: "desktops", os: "Windows 11 Enterprise 24H2", user: null, note: { en: "Render PC, Marketing design studio (one of PC-DSN-01 to 03)", es: "PC de render, estudio de diseño de Marketing (uno de PC-DSN-01 a 03)" } },
     { name: "LAPTOP-RIB-02", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "agoikoetxea", note: { en: "Office laptop, Restaurante Ribera", es: "Portátil de la oficina, Restaurante Ribera" } },
   ];
 
@@ -290,6 +291,14 @@
       location: { en: "Head office data room, rack B (VM)", es: "Sala técnica de la oficina central, rack B (VM)" }, owner: { en: "Contoso Hospitality (booking centre)", es: "Contoso Hospitality (central de reservas)" }, patched: "09/11/2026" },
     { id: "SPLUNK01", role: { en: "Splunk Enterprise (security logs: firewall, Windows, Linux)", es: "Splunk Enterprise (registros de seguridad: firewall, Windows, Linux)" }, os: "Rocky Linux 9", ip: "10.20.1.152",
       location: { en: "Head office data room, rack A", es: "Sala técnica de la oficina central, rack A" }, owner: { en: "IT security", es: "Seguridad IT" }, patched: "02/11/2026" },
+    { id: "OPS-JMP01", role: { en: "Admin and automation host: kubectl, Terraform, the Ansible control node", es: "Equipo de administración y automatización: kubectl, Terraform, el nodo de control de Ansible" }, os: "Rocky Linux 9", ip: "10.20.1.153",
+      location: { en: "Head office data room, rack A (VM)", es: "Sala técnica de la oficina central, rack A (VM)" }, owner: { en: "IT infrastructure", es: "Infraestructura IT" }, patched: "11/11/2026" },
+    { id: "JENKINS01", role: { en: "Jenkins (the IT team's pipelines: it-scripts, infra-docs)", es: "Jenkins (los pipelines del equipo de IT: it-scripts, infra-docs)" }, os: "Ubuntu Server 24.04 LTS", ip: "10.20.1.154",
+      location: { en: "Head office data room, rack A (VM)", es: "Sala técnica de la oficina central, rack A (VM)" }, owner: { en: "IT infrastructure", es: "Infraestructura IT" }, patched: "05/11/2026" },
+    { id: "HPC-CTL01", role: { en: "Slurm controller and login node of the quant research GPU cluster (gpu-n01 to gpu-n04)", es: "Controlador de Slurm y nodo de acceso del clúster de GPU de investigación cuantitativa (gpu-n01 a gpu-n04)" }, os: "Rocky Linux 9", ip: "10.20.1.155",
+      location: { en: "Head office data room, rack C", es: "Sala técnica de la oficina central, rack C" }, owner: { en: "Quant research", es: "Investigación cuantitativa" }, patched: "04/11/2026" },
+    { id: "GPU-N03", role: { en: "GPU node of the quant research cluster (Dell PowerEdge XE8545, 4 × NVIDIA A100 80GB), service tag 4GPQX93", es: "Nodo GPU del clúster de investigación cuantitativa (Dell PowerEdge XE8545, 4 × NVIDIA A100 80GB), etiqueta de servicio 4GPQX93" }, os: "Rocky Linux 9", ip: "10.20.1.158",
+      location: { en: "Head office data room, rack C", es: "Sala técnica de la oficina central, rack C" }, owner: { en: "Quant research", es: "Investigación cuantitativa" }, patched: "04/11/2026" },
   ];
   const PRINTERS = [
     { id: "RECEPCION-MFP", model: { en: "Colour A3 multifunction", es: "Multifunción A3 color" }, ip: "10.20.3.41", queue: "PRT-SRV01", location: { en: "Ground floor, reception", es: "Planta baja, recepción" } },

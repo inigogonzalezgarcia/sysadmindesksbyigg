@@ -50,6 +50,8 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 
 Built-in commands: `help`, `hint`, `clear` / `cls`, `ticket`. Anything that matches no rule shows the shell's "not recognised" message and counts as an unknown command (2 points each after the first three).
 
+In a `bash` desk (v0.16), the DevOps tools answer a line the desk does not model like themselves rather than with `command not found`: `kubectl` (`error: unknown command "x" for "kubectl"`, or a NotFound from the server for a known verb), `terraform` (`Terraform has no command named "x".`, or invalid arguments for a known one), `ansible` (no hosts matched the pattern), `ansible-playbook` (its usage error), `jenkins-cli` (`ERROR: No such command x.`) and `nvidia-smi` (invalid combination of arguments). It still counts as an unknown command. Tools with no real CLI to copy (`gfctl`, `edr`, `dell`, `onsite`) stay simulated: the desk's intro says so and a bare `gfctl`, `edr` or `dell` lists what they do.
+
 ## Asset card and actions
 
 ```js

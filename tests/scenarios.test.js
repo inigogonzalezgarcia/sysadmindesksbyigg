@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 157);
+  assert.equal(SCENARIOS.length, 164);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -1896,4 +1896,109 @@ test("Windows 365: reprovisioning before the DNS is back fails again, everything
   sc.solution.forEach((c) => E.run(sess, c));
   assert.ok(sess.resolved);
   assert.ok(verdictOf(sc, sess).reasons.some((x) => /40 internal/.test(x)));
+});
+
+/* ---------- career level 6 (DevOps / SRE) */
+test("bash: the DevOps tools answer an unknown line like themselves, and it still counts as unknown", () => {
+  const { sess, results } = play(byId["k8s-crashloop"], ["kubectl frobnicate pods", "kubectl get nodes", "terraform plna", "ansible web99 -m ping", "jenkins-cli frob", "nvidia-smi --frob", "lsx"]);
+  assert.equal(results[0].lines[0].text, 'error: unknown command "frobnicate" for "kubectl"');
+  assert.equal(results[1].lines[0].text, "No resources found in expenses namespace.", "the desk's own catch-all for kubectl get");
+  assert.match(results[2].lines[0].text, /Terraform has no command named "plna"/);
+  assert.match(results[3].lines[0].text, /Could not match supplied host pattern, ignoring: web99/);
+  assert.match(results[4].lines[0].text, /No such command frob/);
+  assert.match(results[5].lines[0].text, /Invalid combination of input arguments/);
+  assert.equal(results[6].lines[0].text, "lsx: command not found");
+  assert.ok(results.filter((r, i) => i !== 1).every((r) => r.lines[0].kind === "err"));
+  assert.equal(sess.unknown, 6, "everything but the desk's own kubectl get");
+  assert.match(play(byId["ansible-patch-fails"], ["kubectl apply -f x.yaml"]).results[0].lines[0].text, /NotFound/, "a known kubectl verb");
+});
+
+test("Kubernetes: deleting the pod brings an identical one back; a rollback or DB_HOST plus a restart fixes it", () => {
+  const sc = byId["k8s-crashloop"];
+  const { sess, text } = play(sc, ["kubectl delete pod expenses-api-7f6b9c8d4-k2x9q -n expenses", "kubectl get pods -n expenses", "kubectl rollout restart deployment/expenses-api -n expenses", "kubectl get endpoints expenses-api -n expenses"]);
+  assert.match(text, /CrashLoopBackOff/);
+  assert.match(text, /<none>/);
+  assert.equal(sess.state.fixed, false);
+  const alt = play(sc, ["kubectl patch configmap expenses-config -n expenses --type merge -p '{\"data\":{\"DB_HOST\":\"pgsql-fin01.contoso.local\"}}'", "kubectl rollout status deployment/expenses-api -n expenses"]);
+  assert.equal(alt.sess.state.fixed, false, "the patch alone waits for the next restart");
+  E.run(alt.sess, "kubectl rollout restart deployment/expenses-api -n expenses");
+  assert.equal(alt.sess.state.fixed, true);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+});
+
+test("Terraform: a local apply removes the range and breaks the webhooks, the plan then looks clean, and the code fix puts it back", () => {
+  const sc = byId["terraform-drift"];
+  const { sess, results, text } = play(sc, ["terraform plan -var-file=envs/prod.tfvars", "gh pr merge 212 --squash", "terraform plan -target=azurerm_resource_group.app", "terraform apply -var-file=envs/prod.tfvars", "terraform plan -var-file=envs/prod.tfvars"]);
+  assert.match(txt(results[0]), /- \{ name = "allow-psp-webhooks", source_address_prefixes = \["198\.51\.100\.192\/27", "203\.0\.113\.128\/27"\]/);
+  assert.equal(results[1].lines[0].kind, "err");
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.match(text, /PayNorte webhooks failing/);
+  assert.match(txt(results[4]), /No changes/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /jump host/.test(x)));
+});
+
+test("Ansible: ignore_errors turns it green with nothing patched; the sudoers fix needs your account and -K", () => {
+  const sc = byId["ansible-patch-fails"];
+  const { sess, results } = play(sc, ["sed -i '/^- hosts:/a\\  ignore_errors: yes' patch-linux.yml", "ansible-playbook -i inventories/prod patch-linux.yml",
+    "ansible elk01,pup01,splunk01 -i inventories/prod -b -m copy -a \"src=files/sudoers-ansible dest=/etc/sudoers.d/ansible\"",
+    "ansible elk01,pup01,splunk01 -i inventories/prod -K -b -m copy -a \"src=files/sudoers-ansible dest=/etc/sudoers.d/ansible\""]);
+  assert.match(txt(results[1]), /failed=0 .*ignored=3/);
+  assert.equal(sess.state.patched, false);
+  assert.match(txt(results[2]), /Missing sudo password/);
+  assert.match(txt(results[3]), /Incorrect sudo password/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /ignore_errors/.test(x)));
+});
+
+test("Jenkins: catchError gives a green build with the lint failure deployed; the script fix gives a real one", () => {
+  const sc = byId["jenkins-pipeline-red"];
+  const { sess, results } = play(sc, ["sed -i \"s/pwsh 'Invoke-ScriptAnalyzer/catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { pwsh 'Invoke-ScriptAnalyzer/\" Jenkinsfile",
+    "git commit -am 'x'", "git push", "jenkins-cli console it-scripts/main", "sed -i 's/Kiosk2026!/Kiosk2027!/' scripts/Reset-KioskPassword.ps1"]);
+  assert.match(txt(results[3]), /PSAvoidUsingConvertToSecureStringWithPlainText[\s\S]*Finished: SUCCESS/);
+  assert.equal(sess.state.buildOk, false);
+  assert.equal(results[4].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /catchError/.test(x)));
+});
+
+test("SLO: lowering the objective only changes the panel; the rollback needs the link and the restart", () => {
+  const sc = byId["grafana-slo-budget"];
+  const { sess, results } = play(sc, ["gfctl slo set portal-availability --objective 99", "gfctl slo show portal-availability", "onsite export",
+    "ssh portal01 sudo systemctl restart contoso-portal", "gfctl silence extend 7c2e9f1a --duration 7d", "onsite freeze"]);
+  assert.match(txt(results[1]), /\+38% remaining/);
+  assert.match(txt(results[2]), /504/);
+  assert.equal(sess.state.rolledBack, false);
+  assert.equal(results[4].lines[0].kind, "err");
+  assert.equal(sess.state.freezeOk, false, "no freeze while the export is broken");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /99%/.test(x)));
+});
+
+test("GPU: a reboot without draining fails again, the diagnostic needs a drained node and Dell needs the diagnostic", () => {
+  const sc = byId["gpu-xid-errors"];
+  const { sess, results, text } = play(sc, ["ssh gpu-n03 sudo reboot", "ssh gpu-n03 sudo dcgmi diag -r 3", "dell case open --tag 4GPQX93", "sudo scontrol update NodeName=gpu-n03 State=DRAIN", "sudo scontrol update NodeName=gpu-n03 State=RESUME"]);
+  assert.match(text, /fails with 'uncorrectable ECC error encountered'/);
+  assert.ok(results.slice(1).every((r) => r.lines.some((l) => l.kind === "err")));
+  assert.match(txt(results[3]), /specify a reason/);
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
+  assert.ok(verdictOf(sc, sess).reasons.some((x) => /rebooted/.test(x)));
+});
+
+test("Crypto mining: killing the miner lasts half an hour, its folder is locked while it runs, and the isolation stays until it is clean", () => {
+  const sc = byId["crypto-mining"];
+  const ic = (x) => "Invoke-Command -ComputerName PC-DSN-01,PC-DSN-02,PC-DSN-03 { " + x + " }";
+  const { sess, results, text } = play(sc, [ic("Stop-Process -Name svchosts -Force"), ic("Get-Process | Sort-Object CPU -Descending | Select-Object -First 3"), ic("Remove-Item C:\\ProgramData\\WinSvcUpd -Recurse -Force"), "edr release PC-DSN-01,PC-DSN-02,PC-DSN-03"]);
+  assert.match(text, /svchosts\.exe is running again/);
+  assert.match(txt(results[1]), /svchosts/);
+  assert.equal(results[2].lines[0].kind, "err");
+  assert.equal(results[3].lines[0].kind, "err");
+  sc.solution.forEach((c) => E.run(sess, c));
+  assert.ok(sess.resolved);
 });

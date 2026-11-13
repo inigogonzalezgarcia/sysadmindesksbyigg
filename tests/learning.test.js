@@ -116,7 +116,11 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   "puppetserver ca sign", "pos-rpt01", "rpt_bi", "pg_terminate_backend", "idle_in_transaction", "CTBNITE", "CYL,(150", "svc-keycloak-ldap", "data 532",
   "172.16.99.2", "sync-password", "advskew 254", "5.10.50.00", "6.00.30.00", "--only-version", "pcns-phrase", "UPS-SALA-A", "--shutdown-after", "ip_hash", "WEB-RES02",
   "Plants/Wroclaw", "Sites/WRO", "massadd", "elk01-legacy", "fleet_server_host_id", "netfw", "srchIndexesDefault", "rg-loadtest-oct", "contoso-monthly",
-  "enable-vgw-route-propagation", "rt-private-app-a", "get_all(", "DETAIL_URL", "DC-AZ01", "shutdown-computevm", "runHealthChecks"];
+  "enable-vgw-route-propagation", "rt-private-app-a", "get_all(", "DETAIL_URL", "DC-AZ01", "shutdown-computevm", "runHealthChecks",
+  // career level 6
+  "DB_HOST", "DATABASE_HOST", "expenses-config", "203.0.113.128", "psp_ranges", "allow-psp-webhooks", "svc-ansible", "sudoers-ansible", "Missing sudo password",
+  "Reset-KioskPassword", "Kiosk2026", "KioskLocalAdmin", "PSAvoidUsingConvertToSecureStringWithPlainText", "catchError", "/api/orders/export", "7c2e9f1a", "4.5.2",
+  "Xid 48", "4GPQX93", "Remapping Failure", "svchosts", "WinSvcUpdate", "pool-relay", "203.0.113.200", "Disable-LocalUser"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();
@@ -279,7 +283,7 @@ test("profile: progress per area from the results, the activity and the labs", (
   const ad = agg.areas.find((a) => a.id === "ad");
   assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [10, 2, 80, 4, 5, 5, 40]);   // 3/4 × 2/10 + 1/4 × 5/5
   const net = agg.areas.find((a) => a.id === "network");
-  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [31, 1, 100, null, 2]);   // 1/31 × 75
+  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [32, 1, 100, null, 2]);   // 1/32 × 75
   const vdi = agg.areas.find((a) => a.id === "vdi");
   assert.equal(vdi.labTotal, 0); assert.equal(vdi.skill, 0);
   assert.equal(agg.areas.find((a) => a.id === "itsm").skill, 80);   // notes to the user 4/5

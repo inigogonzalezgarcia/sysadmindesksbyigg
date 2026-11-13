@@ -201,6 +201,15 @@ const TEMPTING = {
   "aws-no-share": ["aws ec2 authorize-security-group-ingress --group-id sg-0f1a2b3c4d5e6f708 --protocol -1 --cidr 0.0.0.0/0"],
   "graph-429-report": ["python3 devices_report.py --workers 16"],
   "cloudpc-no-connect": ["Get-MgBetaDeviceManagementVirtualEndpointCloudPc | % { Invoke-MgGraphRequest -Method POST -Uri \"beta/deviceManagement/virtualEndpoint/cloudPCs/$($_.Id)/reprovision\" }"],
+  // career level 6 (deleting the crashing pod; applying the plan with the drift; ignore_errors; catchError on the tests; lowering the SLO objective;
+  // rebooting the GPU node without draining it; killing the miner with its task still there)
+  "k8s-crashloop": ["kubectl delete pod expenses-api-7f6b9c8d4-k2x9q -n expenses"],
+  "terraform-drift": ["terraform apply -var-file=envs/prod.tfvars"],
+  "ansible-patch-fails": ["sed -i '/^- hosts:/a\\  ignore_errors: yes' patch-linux.yml", "ansible-playbook -i inventories/prod patch-linux.yml"],
+  "jenkins-pipeline-red": ["sed -i \"s/pwsh 'Invoke-ScriptAnalyzer/catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') { pwsh 'Invoke-ScriptAnalyzer/\" Jenkinsfile", "git commit -am 'Lint does not stop the build'", "git push"],
+  "grafana-slo-budget": ["gfctl slo set portal-availability --objective 99"],
+  "gpu-xid-errors": ["ssh gpu-n03 sudo reboot"],
+  "crypto-mining": ["Invoke-Command -ComputerName PC-DSN-01,PC-DSN-02,PC-DSN-03 { Stop-Process -Name svchosts -Force }"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

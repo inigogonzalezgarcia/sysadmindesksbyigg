@@ -162,6 +162,13 @@
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/aws-no-share</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/graph-429-report</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/cloudpc-no-connect</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/k8s-crashloop</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/terraform-drift</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ansible-patch-fails</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/jenkins-pipeline-red</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/grafana-slo-budget</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/gpu-xid-errors</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/crypto-mining</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/terms</loc><lastmod>2026-11-04</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/privacy</loc><lastmod>2026-11-04</lastmod></url>
 </urlset>
