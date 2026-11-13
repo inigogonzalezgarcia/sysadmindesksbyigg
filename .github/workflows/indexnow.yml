@@ -1,0 +1,48 @@
+name: IndexNow
+
+# After a push that changes public/, wait for Cloudflare Pages to publish it and tell the IndexNow engines (Bing, Yandex,
+# Seznam...) which pages changed. Run it by hand with "all" to send every URL in the sitemap.
+on:
+  push:
+    branches: [main]
+    paths: ["public/**"]
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "changed (the last push), all (the whole sitemap) or a date YYYY-MM-DD (sitemap lastmod on or after it)"
+        default: all
+
+permissions:
+  contents: read
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Wait for Cloudflare Pages
+        # the deploy usually takes under a minute; then check the key file answers with the key
+        run: |
+          sleep 90
+          KEY=$(ls public | grep -E '^[0-9a-f]{32}\.txt$' | sed 's/\.txt$//')
+          for i in $(seq 1 20); do
+            if [ "$(curl -fsS "https://sysadmindesksbyigg.pages.dev/$KEY.txt" || true)" = "$KEY" ]; then echo "key file live"; exit 0; fi
+            sleep 15
+          done
+          echo "the key file is not live yet"; exit 1
+      - name: Send the URLs
+        env:
+          SCOPE: ${{ github.event.inputs.scope }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$SCOPE" = "all" ]; then node scripts/indexnow.mjs --all
+          elif echo "$SCOPE" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then node scripts/indexnow.mjs --since "$SCOPE"
+          else
+            BASE="$BEFORE"; if [ -z "$BASE" ] || ! git cat-file -e "$BASE" 2>/dev/null; then BASE=HEAD~1; fi
+            node scripts/indexnow.mjs $(git diff --name-only "$BASE" HEAD -- public)
+          fi

@@ -9,7 +9,8 @@ const PUB = path.join(__dirname, "..", "public");
 const SCENARIOS = require("../public/assets/scenarios.js");
 const DOCS = ["about.html", "help.html", "faq.html", "terms.html", "privacy.html"];
 // v0.6.2: the public ticket pages (npm run pages) follow the same rules as the static pages
-const TICKETS = ["tickets/index.html"].concat(SCENARIOS.map((sc) => `tickets/${sc.id}.html`));
+const FAMILY_SLUGS = ["active-directory", "windows-server", "microsoft-365", "intune-endpoint", "linux-devops", "virtualisation-backup-databases", "networking", "hardware-servers"];
+const TICKETS = ["tickets/index.html"].concat(FAMILY_SLUGS.map((f) => `tickets/${f}.html`), SCENARIOS.map((sc) => `tickets/${sc.id}.html`));
 const PAGES = DOCS.concat(TICKETS);
 const read = (f) => fs.readFileSync(path.join(PUB, f), "utf8");
 // JSON-LD is the only <script> without src allowed: it is data, never run, so the CSP does not apply to it. Each block must be

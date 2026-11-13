@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { build, SCENARIOS, STATIC, SITE, ticketMeta, faqItems, words } from "../scripts/build-ticket-pages.mjs";
+import { build, SCENARIOS, STATIC, SITE, ticketMeta, faqItems, words, FAMILIES, familyOf } from "../scripts/build-ticket-pages.mjs";
 import { TICKET_SEO } from "../scripts/ticket-pages-data.mjs";
 
 const PUB = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
@@ -14,7 +14,8 @@ const read = (f) => readFileSync(join(PUB, f), "utf8");
 const attr = (h, re) => (h.match(re) || [])[1];
 const jsonLd = (h) => [...h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
 const PAGES = Object.entries(STATIC).map(([f, m]) => [f, m.path])
-  .concat([["tickets/index.html", "/tickets/"]], SCENARIOS.map((sc) => [`tickets/${sc.id}.html`, "/tickets/" + sc.id]));
+  .concat([["tickets/index.html", "/tickets/"]], FAMILIES.map((f) => [`tickets/${f.slug}.html`, "/tickets/" + f.slug]),
+    SCENARIOS.map((sc) => [`tickets/${sc.id}.html`, "/tickets/" + sc.id]));
 
 test("the generated pages and head blocks are up to date (npm run pages)", () => {
   for (const [rel, content] of Object.entries(build())) assert.equal(read(rel), content, rel + " is stale: run npm run pages");
@@ -84,9 +85,10 @@ test("JSON-LD: the tickets list is a CollectionPage of every desk, and each tick
   for (const sc of SCENARIOS) {
     const [bc] = jsonLd(read(`tickets/${sc.id}.html`));
     assert.equal(bc["@type"], "BreadcrumbList", sc.id);
-    assert.deepEqual(bc.itemListElement.map((x) => x.position), [1, 2, 3]);
-    assert.equal(bc.itemListElement[2].item, "https://sysadmindesksbyigg.pages.dev/tickets/" + sc.id);
-    assert.equal(bc.itemListElement[2].name, sc.title.es);
+    assert.deepEqual(bc.itemListElement.map((x) => x.position), [1, 2, 3, 4]);
+    assert.equal(bc.itemListElement[2].item, "https://sysadmindesksbyigg.pages.dev/tickets/" + familyOf(sc.id).slug);
+    assert.equal(bc.itemListElement[3].item, "https://sysadmindesksbyigg.pages.dev/tickets/" + sc.id);
+    assert.equal(bc.itemListElement[3].name, sc.title.es);
   }
 });
 
@@ -174,4 +176,36 @@ test("every ticket page links three related tickets that exist, in both language
       }
     }
   }
+});
+
+test("a page per family: every desk in exactly one, a CollectionPage of its desks, linked from the list and from each ticket", () => {
+  const slugs = FAMILIES.map((f) => f.slug);
+  assert.equal(new Set(slugs).size, slugs.length);
+  for (const s of slugs) assert.ok(!SCENARIOS.some((sc) => sc.id === s), s + " clashes with a desk id");
+  const index = read("tickets/index.html");
+  let total = 0;
+  for (const f of FAMILIES) {
+    const h = read(`tickets/${f.slug}.html`);
+    const desks = SCENARIOS.filter((sc) => familyOf(sc.id) === f);
+    assert.ok(desks.length >= 5, f.slug + " has enough tickets");
+    total += desks.length;
+    for (const lang of ["es", "en"]) assert.ok(f[lang].desc(999).length <= 155, `${f.slug} ${lang} description`);
+    const [graph] = jsonLd(h);
+    const [col, trail] = graph["@graph"];
+    assert.equal(col["@type"], "CollectionPage");
+    assert.deepEqual(col.mainEntity.itemListElement.map((x) => x.url).sort(), desks.map((sc) => SITE + "/tickets/" + sc.id).sort());
+    assert.deepEqual(trail.itemListElement.map((x) => x.item), [SITE + "/", SITE + "/tickets/", SITE + "/tickets/" + f.slug]);
+    for (const sc of desks) {
+      assert.ok(h.includes(`href="/tickets/${sc.id}"`), f.slug + " lists " + sc.id);
+      assert.ok(read(`tickets/${sc.id}.html`).includes(`<a href="/tickets/${f.slug}">`), sc.id + " links its family");
+    }
+    assert.ok(index.includes(`href="/tickets/${f.slug}"`), "index links " + f.slug);
+  }
+  assert.equal(total, SCENARIOS.length);
+});
+
+test("the FAQ gives the current number of tickets and links the list", () => {
+  const h = read("faq.html");
+  assert.ok(h.includes(`<p>${SCENARIOS.length} por ahora, ordenados por niveles de carrera`) && h.includes(`<p>${SCENARIOS.length} so far, ordered by career level`));
+  assert.ok(h.includes('<a href="/tickets/">lista de tickets</a>') && h.includes('<a href="/tickets/">tickets list</a>'));
 });

@@ -10,6 +10,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { TICKET_SEO } from "./ticket-pages-data.mjs";
+import { FAMILIES, familyOf, familyPath } from "./ticket-families.mjs";
+export { FAMILIES, familyOf, familyPath };
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -150,6 +152,9 @@ function staticPage(file, html) {
   if (file === "index.html") html = html
     .replace(/<p>[^<]*? tickets de primera y segunda línea\./, `<p>${Cap(words(N(), "es"))} tickets de primera y segunda línea.`)
     .replace(/<p>[^<]*? first and second line tickets\./, `<p>${Cap(words(N(), "en"))} first and second line tickets.`);
+  if (file === "faq.html") html = html
+    .replace(/<p>\d+ por ahora, ordenados por niveles de carrera/, `<p>${N()} por ahora, ordenados por niveles de carrera`)
+    .replace(/<p>\d+ so far, ordered by career level/, `<p>${N()} so far, ordered by career level`);
   if (file === "about.html") html = html
     .replace(/Ahora mismo hay [^<]*? tickets de primera y segunda línea/, `Ahora mismo hay ${words(N(), "es")} tickets de primera y segunda línea`)
     .replace(/There are [^<]*? tickets right now/, `There are ${words(N(), "en")} tickets right now`);
@@ -204,14 +209,16 @@ const T = {
     relH: "Tickets relacionados", prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
     idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.`,
-    idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
+    idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia", famN: (n) => `${n} tickets`, famOther: "Otras familias",
+    famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
     guideH: "Related guide", guide: (a) => `Want to brush up first? Read the ${a} on inigogonzalezgarcia.github.io, which explains what you practise on this ticket.`, guideA: "step-by-step guide",
     relH: "Related tickets", prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
     idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.`,
-    idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
+    idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family", famN: (n) => `${n} tickets`, famOther: "Other families",
+    famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
 
 // three tickets to practise next on each ticket page (same technology or the same kind of problem)
@@ -399,7 +406,7 @@ function ticketArticle(sc, lang) {
   const cta = `/?lang=${lang}#/desk/${sc.id}`;
   const art = lang === "es" ? '<article class="es" lang="es">' : '<article class="en" lang="en" id="en">';
   return `${art}
-<p class="tk-crumbs"><a href="/tickets/">${t.crumbs}</a> › ${esc(tx(sc.topic, lang))}</p>
+<p class="tk-crumbs"><a href="/tickets/">${t.crumbs}</a> › <a href="${familyPath(familyOf(sc.id))}">${esc(familyOf(sc.id)[lang].name)}</a> › ${esc(tx(sc.topic, lang))}</p>
 <h1>${esc(tx(sc.title, lang))}</h1>
 <p class="lead-p">${esc(seo.desc)}</p>
 <ul class="tk-meta">
@@ -442,18 +449,56 @@ function indexArticle(lang) {
   return `${art}
 <h1>${t.idxH1}</h1>
 <p class="lead-p">${esc(t.idxLead())}</p>
+<h2 id="${lang === "es" ? "familias" : "families"}">${t.famH}</h2>
+<ul class="tk-list">
+${FAMILIES.map((f) => `  <li><a href="${familyPath(f)}">${esc(f[lang].name)}</a> <span class="tk-tag">${t.famN(famDesks(f).length)}</span></li>`).join("\n")}
+</ul>
 ${levels.map((l) => `<h2 id="${lang === "es" ? "nivel" : "level"}-${l}">${l === 1 ? t.idxL1 : t.idxL2}</h2>\n${group(l)}`).join("\n")}
 <p class="tk-cta"><a class="btn tk-btn" href="/?lang=${lang}#/register">${t.start}</a></p>
 <p>${t.idxMore(`<a href="/about">${t.about}</a>`, `<a href="/help">${t.help}</a>`, `<a href="/faq">${t.faq}</a>`)}</p>
 </article>`;
 }
 
-// structured data: the trail home → tickets → ticket, and the list of tickets
+// a page per family: /tickets/<family>
+const famDesks = (f) => SCENARIOS.filter((sc) => familyOf(sc.id) === f);
+const famMeta = (f) => ({ path: familyPath(f), title: f.es.title, titleEn: f.en.title, desc: f.es.desc(famDesks(f).length) });
+function familyArticle(f, lang) {
+  const t = T[lang];
+  const art = lang === "es" ? '<article class="es" lang="es">' : '<article class="en" lang="en" id="en">';
+  const desks = famDesks(f).slice().sort((a, b) => (a.career ?? 0) - (b.career ?? 0));
+  return `${art}
+<p class="tk-crumbs"><a href="/tickets/">${t.crumbs}</a> › ${esc(f[lang].name)}</p>
+<h1>${esc(f[lang].title.replace(/ · .*$/, ""))}</h1>
+<p class="lead-p">${esc(f[lang].intro)}</p>
+<ul class="tk-list">
+${desks.map((sc) => `  <li><a href="${ticketPath(sc)}">${esc(tx(sc.title, lang))}</a> <span class="tk-tag">${esc(t.famLevel(sc.career ?? 0))} · ${esc(tx(sc.topic, lang))}</span></li>`).join("\n")}
+</ul>
+<p class="tk-cta"><a class="btn tk-btn" href="/?lang=${lang}#/register">${t.start}</a> <a href="/tickets/">${t.famMore}</a></p>
+<h2>${t.famOther}</h2>
+<ul class="tk-list">
+${FAMILIES.filter((g) => g !== f).map((g) => `  <li><a href="${familyPath(g)}">${esc(g[lang].name)}</a> <span class="tk-tag">${t.famN(famDesks(g).length)}</span></li>`).join("\n")}
+</ul>
+<p class="fine">${esc(t.fiction)}</p>
+</article>`;
+}
+function familyLd(f) {
+  const desks = famDesks(f);
+  return { "@context": "https://schema.org", "@graph": [
+    { "@type": "CollectionPage", name: f.es.name, url: SITE + familyPath(f), inLanguage: ["es", "en"], isPartOf: SITE_REF,
+      mainEntity: { "@type": "ItemList", numberOfItems: desks.length, itemListElement: desks.map((sc, i) => ({ "@type": "ListItem", position: i + 1, url: SITE + ticketPath(sc), name: tx(sc.title, "es") })) } },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "SysAdmin Desks", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: T.es.crumbs, item: SITE + "/tickets/" },
+      { "@type": "ListItem", position: 3, name: f.es.name, item: SITE + familyPath(f) }] }] };
+}
+
+// structured data: the trail home → tickets → family → ticket, and the list of tickets
 function breadcrumbs(sc) {
   return { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
     { "@type": "ListItem", position: 1, name: "SysAdmin Desks", item: SITE + "/" },
     { "@type": "ListItem", position: 2, name: T.es.crumbs, item: SITE + "/tickets/" },
-    { "@type": "ListItem", position: 3, name: tx(sc.title, "es"), item: SITE + ticketPath(sc) }] };
+    { "@type": "ListItem", position: 3, name: familyOf(sc.id).es.name, item: SITE + familyPath(familyOf(sc.id)) },
+    { "@type": "ListItem", position: 4, name: tx(sc.title, "es"), item: SITE + ticketPath(sc) }] };
 }
 function collection() {
   return { "@context": "https://schema.org", "@graph": [
@@ -467,6 +512,7 @@ export function build() {
   const out = {};
   for (const file of Object.keys(STATIC)) out[file] = staticPage(file, readFileSync(join(PUB, file), "utf8"));
   out["tickets/index.html"] = shell(TICKETS_INDEX, indexArticle("es") + "\n\n" + indexArticle("en"), "tickets", [jsonld(collection())]);
+  for (const f of FAMILIES) out[`tickets/${f.slug}.html`] = shell(famMeta(f), familyArticle(f, "es") + "\n\n" + familyArticle(f, "en"), "tickets", [jsonld(familyLd(f))]);
   for (const sc of SCENARIOS) out[`tickets/${sc.id}.html`] = shell(ticketMeta(sc), ticketArticle(sc, "es") + "\n\n" + ticketArticle(sc, "en"), undefined, [jsonld(breadcrumbs(sc))]);
   return out;
 }
