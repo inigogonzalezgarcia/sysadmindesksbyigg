@@ -205,20 +205,22 @@ ${mainHtml}
 const T = {
   es: { crumbs: "Tickets para practicar", cta: "Practícalo gratis", ticket: "El ticket", from: "Lo abre", skills: "Qué practicas",
     how: "Lo resuelves en una consola simulada (PowerShell, cmd o bash) con el directorio, el inventario y la ficha del ticket. Se corrige por el estado del sistema, no por una plantilla: tapar el síntoma no basta. Al cerrar escribes la nota de trabajo (causa, cambio, comprobación y seguimiento) y recibes la puntuación.",
+    howCase: "Es un caso de decisión: en vez de una consola de sistema tienes un expediente con documentos, partes interesadas a las que preguntar y varias opciones con su coste, su riesgo y su plazo. Decides, compruebas la decisión frente a los requisitos y la justificas en la nota para dirección (decisión, requisito que la decide, coste, riesgos, plan B y fechas), que es lo que se puntúa.",
     guideH: "Guía relacionada", guide: (a) => `¿Quieres repasar el tema antes? Lee la ${a} en inigogonzalezgarcia.github.io, que explica lo que practicas en este ticket.`, guideA: "guía paso a paso",
     relH: "Tickets relacionados", prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
     idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.`,
     idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia", famN: (n) => `${n} tickets`, famOther: "Otras familias",
-    famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
+    famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Arquitectura"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
+    howCase: "It is a decision case: instead of a system console you have a case file with documents, stakeholders to ask and several options with their cost, risk and time. You decide, check the decision against the requirements and justify it in the note for management (the decision, the requirement that decides it, cost, risks, plan B and dates), which is what gets scored.",
     guideH: "Related guide", guide: (a) => `Want to brush up first? Read the ${a} on inigogonzalezgarcia.github.io, which explains what you practise on this ticket.`, guideA: "step-by-step guide",
     relH: "Related tickets", prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
     idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.`,
     idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family", famN: (n) => `${n} tickets`, famOther: "Other families",
-    famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
+    famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Architect"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
 
 // three tickets to practise next on each ticket page (same technology or the same kind of problem)
@@ -387,6 +389,17 @@ export const RELATED = {
   "grafana-slo-budget": ["grafana-site-panel", "zabbix-alert-storm", "nginx-502"],
   "gpu-xid-errors": ["server-psu-rma", "nutanix-disk-failed", "redfish-firmware"],
   "crypto-mining": ["defender-asr-block", "sentinel-impossible-travel", "tanium-stale-endpoint"],
+  "dr-erp-rto": ["veeam-restore-test", "sql-restore-pit", "erp-ha"],
+  "cloud-placement": ["azure-bill-spike", "aws-no-share", "erp-ha"],
+  "new-site-network": ["aruba-voice-vlan", "wan-site-slow", "net-fortigate-branch"],
+  "erp-ha": ["vmware-host-maint", "esxi-not-responding", "dr-erp-rto"],
+  "ot-integration": ["net-fortigate-branch", "cyberark-cpm-fails", "new-site-network"],
+  "finops-commitments": ["azure-bill-spike", "cloud-placement", "terraform-drift"],
+  "hotel-preopening": ["pms-room-charge", "iptv-no-channels", "hotspot-vouchers"],
+  "oracle-hw-change": ["db-restore-test", "dr-erp-rto", "erp-ha"],
+  "win11-trading-hours": ["win-update-rollback", "intune-ring-stuck", "trading-switch-loop"],
+  "corner-preopening": ["store-4g-failover", "net-fortigate-branch", "zabbix-pos-down"],
+  "clinical-maintenance": ["citrix-clinical-app", "rabbitmq-queue-growing", "oracle-hw-change"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {
@@ -428,7 +441,7 @@ function ticketArticle(sc, lang) {
 <ul>
 ${seo.skills.map((s) => `  <li>${esc(s)}</li>`).join("\n")}
 </ul>
-<p>${esc(t.how)}</p>
+<p>${esc(sc.machine && sc.machine.shell === "case" ? t.howCase : t.how)}</p>
 ${sc.guide ? `
 <h2>${t.guideH}</h2>
 <p>${t.guide(`<a href="${esc(guideFor(sc.guide, lang))}" target="_blank" rel="noopener noreferrer">${t.guideA}</a>`)}</p>

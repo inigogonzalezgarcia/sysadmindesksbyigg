@@ -210,6 +210,21 @@ const TEMPTING = {
   "grafana-slo-budget": ["gfctl slo set portal-availability --objective 99"],
   "gpu-xid-errors": ["ssh gpu-n03 sudo reboot"],
   "crypto-mining": ["Invoke-Command -ComputerName PC-DSN-01,PC-DSN-02,PC-DSN-03 { Stop-Process -Name svchosts -Force }"],
+  // career level 7, decision cases (v0.17): the case file read, then the tempting option decided (the nightly copy to Zaragoza; the vendor's
+  // default AWS region; standalone switches and one fibre; a bigger host)
+  "dr-erp-rto": ["open bia", "open backup", "open budget", "ask network", "decide A"],
+  "cloud-placement": ["open requirements", "open gdpr", "open latency", "open costs", "ask plant", "decide B"],
+  "new-site-network": ["open devices", "open requirements", "open wan", "open budget", "ask network", "decide D"],
+  "erp-ha": ["open postmortem", "open cluster", "open replica", "open window", "ask dba", "decide A"],
+  // part B: routing the plant with an ACL; 3-year reservations for everything; TV and signage first; a backup and restore in one night;
+  // the whole trading floor in one weekend; the department store's free Wi-Fi; the vendor's Tuesday morning
+  "ot-integration": ["open inventory", "open remote", "open policy", "open flows", "ask network", "ask plant", "decide A"],
+  "finops-commitments": ["open usage", "open pricing", "open roadmap", "open budget", "ask pm", "ask dev", "decide B"],
+  "hotel-preopening": ["open checklist", "open suppliers", "open deps", "open opening", "ask gm", "ask network", "decide C"],
+  "oracle-hw-change": ["open servers", "open window", "open restore", "open licence", "ask dba", "ask clinic", "decide D"],
+  "win11-trading-hours": ["open floor", "open hours", "open apps", "open spares", "ask trader", "ask oms", "decide A"],
+  "corner-preopening": ["open status", "open rules", "open pci", "open needs", "ask network", "ask facilities", "decide A"],
+  "clinical-maintenance": ["open activity", "open contingency", "open upgrade", "open validation", "ask medical", "ask vendor", "decide B"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

@@ -176,8 +176,19 @@ Each desk also has its own page: [all tickets](https://sysadmindesksbyigg.pages.
 | 162 | [The portal's error budget is spent](https://sysadmindesksbyigg.pages.dev/tickets/grafana-slo-budget) | SLO and error budget: one endpoint broken by a release, a silenced alert and a change freeze | 2 |
 | 163 | [A GPU node with Xid errors and failing jobs](https://sysadmindesksbyigg.pages.dev/tickets/gpu-xid-errors) | Slurm and NVIDIA: Xid 48 on one GPU, drain, DCGM diagnostic, RMA and back to the pool | 2 |
 | 164 | [CPU at 100% at night on three PCs](https://sysadmindesksbyigg.pages.dev/tickets/crypto-mining) | Security: a disguised miner, its scheduled task, isolation, blocking the pool and telling security | 2 |
+| 165 | [ERP with a 4 h RTO and a 15 min RPO: design the recovery](https://sysadmindesksbyigg.pages.dev/tickets/dr-erp-rto) | Decision case: disaster recovery for the finance ERP against a BIA, a budget and a second site | 2 |
+| 166 | [The new app: on-premises, Azure or AWS?](https://sysadmindesksbyigg.pages.dev/tickets/cloud-placement) | Decision case: where a plant application runs, by latency, data protection, seasonal peaks and real cost | 2 |
+| 167 | [A new office for 120 people: the network design](https://sysadmindesksbyigg.pages.dev/tickets/new-site-network) | Decision case: ports, PoE per floor, redundancy and a WAN that keeps a phone service up | 2 |
+| 168 | [The ERP went down with its host: high availability](https://sysadmindesksbyigg.pages.dev/tickets/erp-ha) | Decision case: HA after a postmortem, anti-affinity, admission control and a tested replica failover | 2 |
+| 169 | [Connecting the plant's network with the corporate one](https://sysadmindesksbyigg.pages.dev/tickets/ot-integration) | Decision case: an industrial DMZ against routing with an ACL, NIS2, IEC 62443 and the suppliers' remote access | 2 |
+| 170 | [Reservations, savings plans or switching off: optimising the spend](https://sysadmindesksbyigg.pages.dev/tickets/finops-commitments) | Decision case: cutting an Azure bill with usage data, a commitments policy and a workload that is leaving | 2 |
+| 171 | [Hotel: ten days to opening and the IT checklist](https://sysadmindesksbyigg.pages.dev/tickets/hotel-preopening) | Decision case: ordering a hotel's pre-opening IT work by dependencies and suppliers, with a plan B | 2 |
+| 172 | [Changing the Oracle server without stopping the hospital](https://sysadmindesksbyigg.pages.dev/tickets/oracle-hw-change) | Decision case: moving a clinic's Oracle database to new hardware inside a two-hour window with a way back | 2 |
+| 173 | [Windows 11 on the trading desks without touching market hours](https://sysadmindesksbyigg.pages.dev/tickets/win11-trading-hours) | Decision case: certified apps, a pilot per desk, night waves and a spare beside each desk | 2 |
+| 174 | [A corner in a department store: it opens on Saturday](https://sysadmindesksbyigg.pages.dev/tickets/corner-preopening) | Decision case: opening without the line, within the store's rules and the card payments policy | 2 |
+| 175 | [A maintenance window on a 24x7 clinical system](https://sysadmindesksbyigg.pages.dev/tickets/clinical-maintenance) | Decision case: the window, the paper contingency, a go/no-go, a way back and validation with key users | 2 |
 
-Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up.
+Each desk has an investigate / fix / verify checklist, hints that cost points, one tempting wrong fix that does not solve the ticket, and a work note checked for cause, change, verification and follow-up. From career level 7 the tickets are decision cases (v0.17): a case file instead of a system console, four options and a note for management; see [scenario-format.md](scenario-format.md#decision-cases).
 
 ## The help desk
 

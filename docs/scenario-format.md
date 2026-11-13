@@ -11,7 +11,7 @@ Scenarios live in `public/assets/scenarios.js`. Each one is plain data that the 
 | `career` | 0-10: the level of levels.js at which the ticket joins the queue (a direct link opens any ticket) |
 | `title` | `{en, es}` |
 | `guide` | Link to the related guide on the website (`https://inigogonzalezgarcia.github.io/guias/<slug>.html`) |
-| `machine` | `host`, `user`, `domain`, `shell` (`powershell`, `bash`, `ibmi` for an IBM i command line, `procurve` for an HPE Aruba switch console, `racadm` for a Dell iDRAC SSH session, `routeros` for a MikroTik terminal or `ios` for a Cisco IOS console without the network simulator, used for the "not recognised" message) and `prompt` |
+| `machine` | `host`, `user`, `domain`, `shell` (`powershell`, `bash`, `ibmi` for an IBM i command line, `procurve` for an HPE Aruba switch console, `racadm` for a Dell iDRAC SSH session, `routeros` for a MikroTik terminal, `ios` for a Cisco IOS console without the network simulator, or `case` for a decision case's case file, used for the "not recognised" message) and `prompt` |
 | `ticket` | `id`, `from`, `priority` (P1-P3), `subject` and `body` `{en, es}` |
 | `intro` | What the engineer has (access, servers, constraints) `{en, es}` |
 | `state` | The initial flags, e.g. `{ locked: true, taskDisabled: false }` |
@@ -128,6 +128,45 @@ net: {
 
 `ship.flags` are checks over the ticket's shipments (type, serial, state, escrow, data, vendor, contract, destination, evidence, checklist items) or the inventory state of an asset; `ship ...` lines go to the shipments tool and rules with `on` react to its tags (`ship state rma transit`, `ship mark 3FJ7WR3 stock`...). Every detail is in [shipping.md](shipping.md). Shipping steps take simulated hours: the app charges them to the SLA unless the ticket is pending, so these desks expect *Pending vendor* while the courier works.
 
+## Decision cases (v0.17)
+
+From career level 7 (architect) a ticket can be a **decision case**: the same ticket (id, SLA, states, assign, pending, contact, note, code, score), but instead of diagnosing a system the engineer reads a case file, asks the stakeholders, compares three or four options, decides and checks the decision against the requirements. The console is the case file: `machine.shell` is `case`, an unknown line answers `x: not a case file command. Type help to see them.` (and counts as unknown), and `help` adds the case file's commands.
+
+A case is written with `caseDesk({...})` in `scenarios.js`, which builds the command rules, the state, the goal, the stages, the asset card, the actions, the reference solution and the tempting path from a `case` block:
+
+```js
+scenarios.push(caseDesk({
+  id, level: 2, career: 7, topic, minutes, title, guide, ticket, intro, requester, hints, note, sampleNote, resolved,
+  stageLabels: { investigate: { en, es }, fix: { en, es } },          // the verify stage is always "check the decision against every requirement"
+  contact: { questions: [...] },                                     // tempting and temptingWhen are added: deciding the trap
+  case: {
+    due: { en, es },                                                 // shown on the card while nothing is decided ("Pending: committee, Thursday 19/11")
+    assetTitle: { en, es }, fields: [ /* extra fixed card fields */ ],
+    docs: [{ id: "bia", key: true, button: { en, es }, title: { en, es }, text: { en: [lines], es: [lines] }, say }],
+    people: [{ id: "network", key: true, alias: ["asier"], name, role: { en, es }, answer: { en: [lines], es: [lines] } }],
+    table: { en: [lines], es: [lines] },                             // what `options` prints
+    options: [{ id: "A", verdict: "trap" | "best" | "ok" | "over", name, short, detail, plan, review: { en: [lines], es: [lines] }, reviewSay, remark }],
+  },
+}));
+```
+
+| Command | What it does |
+|---|---|
+| `docs` (`ls`, `dir`) | Lists the documents, numbered |
+| `open <doc>` (`cat`, `less`, `view`, `type`; by id or number) | Prints a document; sets `doc_<id>` |
+| `ask <who>` (`ask` alone lists them) | A stakeholder's answer; sets `ask_<id>` |
+| `options` / `option <id>` | The comparison table / one option in detail |
+| `decide <id>` | Records the choice (`choice`, `sound`); refused until every `key` document and person has been read or asked |
+| `plan` | The plan of the decided option |
+| `review` | Checks the decided option against the requirements, line by line (`[PASS]`, `[FAIL]`, `[NOTE]`); sets `reviewed` or `failedReview` |
+
+- **Verdicts.** Exactly one `best` option (resolves cleanly), one `ok` option that meets every requirement but is worse (it resolves, and its `remark` is a `remarks` entry: *resolved with observations*, minus 10 points), one `trap`, the tempting option that fails a requirement hidden in the file (it never resolves; it is the desk's tempting path for the contact's confirmation question and for `TEMPTING` in `tests/comms.test.js`), and one `over` that fails the budget or the timeline. Options are shown sorted by id; vary which letter is the best one.
+- **Stages and goal.** Investigate = the `key` documents and people; fix = `sound` (a best or ok option decided); verify = `reviewed`. The goal is all of them, so the reference solution (`open` the key documents, `ask` the key people, `options`, `decide <best>`, `plan`, `review`) resolves exactly at `review`. Deciding again after a failed review is allowed.
+- **Card and buttons.** The card shows the decision (pending, decided, reviewed or failing its review) and the requirements check, plus the case's own fields. The ticket's buttons open each document, compare the options, decide each option (once the key reading is done) and review, so a case can be played without typing.
+- **The note is the note for management.** Its elements are the parts of a good justification: the decision (`fix`), the requirement that decides it (`cause`), the cost (`fix`), the risks and their mitigation (`verify`) and the plan B with dates (`followup`). The resolution code is `decision` ("Decision documented and justified").
+- **Public pages.** The topic starts with "Decision case · " / "Caso de decisión · ", so the lists and the ticket page say so; the ticket page explains the format instead of the console, and the tests check that no option's name, review or remark appears on it.
+- **Numbers.** Keep the figures consistent between documents, the table, the details and the reviews (and with the rest of Contoso: the Madrid cluster's memory, the Zaragoza link, the people in world.js).
+
 ## Contact: `contact`
 
 ```js
@@ -154,7 +193,7 @@ contact: {
 
 - **SLA:** it starts when the user assigns the ticket: 20 minutes for P1, 30 for P2 and 45 for P3. Since v0.6 the ticket page has workflow states (New, In progress, Pending user, Pending vendor, Closed), kept per ticket in the browser (`sd.work[<id>]`) and handled by the pure module `public/assets/workflow.js`: while a ticket is pending the SLA is paused, *Unassign* sends it back to New with the SLA still running, and the minutes passed to `verdict` are the SLA minutes without the pauses. Scenarios need nothing new for this.
 - **Note to the user (v0.6.1):** a second note, marked x/5 apart from the work note by `checkUserNote` in `comms.js`. It never changes the verdict or the points; it gives a separate communication bonus.
-- **Resolution codes:** root cause removed, configuration corrected, space or quota freed, device brought into compliance, workaround, hardware repaired, replaced or returned (v0.7b), user guidance, no fault found.
+- **Resolution codes:** root cause removed, configuration corrected, space or quota freed, device brought into compliance, workaround, hardware repaired, replaced or returned (v0.7b), user guidance, no fault found, decision documented and justified (v0.17, decision cases).
 - **Result** (`verdict` in the engine), in three levels:
   - *Not resolved* when the goal is not met: it lists the stages not done, the ticket stays open and each early close costs 10 points later.
   - *Resolved with observations* when it is fixed but the note misses something, the code does not fit, the SLA was missed, it was closed early before, or one of the desk's `remarks` matches.

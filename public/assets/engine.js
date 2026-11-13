@@ -129,8 +129,19 @@
     "nvidia-smi": () => ["Invalid combination of input arguments. Please run 'nvidia-smi -h' for help."],
   };
 
+  /* v0.17: a decision case (machine.shell "case", career levels 7-10): a case file read with its own commands instead of a system console */
+  const CASE_HELP = {
+    en: ["Case file commands:", "  docs            list the documents in the case file", "  open <doc>      read a document (by name or number)",
+      "  ask <who>       ask a stakeholder (ask on its own lists them)", "  options         compare the options side by side", "  option <id>     one option in detail",
+      "  decide <id>     record your decision", "  plan            the plan of the option you decided", "  review          check the decision against the requirements in the file"],
+    es: ["Comandos del expediente:", "  docs            lista los documentos del expediente", "  open <doc>      lee un documento (por nombre o número)",
+      "  ask <quién>     pregunta a una parte interesada (ask solo, la lista)", "  options         compara las opciones lado a lado", "  option <id>     una opción en detalle",
+      "  decide <id>     registra tu decisión", "  plan            el plan de la opción que decidiste", "  review          comprueba la decisión frente a los requisitos del expediente"],
+  };
+
   function notRecognised(cmd, sc) {
     const word = cmd.split(" ")[0];
+    if ((sc.machine || {}).shell === "case") return [word + ": not a case file command. Type help to see them."];
     if ((sc.machine || {}).shell === "bash") {
       const tool = BASH_TOOLS[word.toLowerCase()];
       return tool ? tool(cmd.split(" ")) : [word + ": command not found"];
@@ -162,7 +173,11 @@
     const low = cmd.toLowerCase();
 
     if (low === "clear" || low === "cls") { res.clear = true; return res; }
-    if (low === "help" || (low === "?" && !(sess.net && NET().depth(sess.term)))) { BUILTIN.help[lang === "es" ? "es" : "en"].forEach((x) => res.lines.push({ text: x, kind: "say" })); return res; }
+    if (low === "help" || (low === "?" && !(sess.net && NET().depth(sess.term)))) {
+      BUILTIN.help[lang === "es" ? "es" : "en"].concat((sc.machine || {}).shell === "case" ? CASE_HELP[lang === "es" ? "es" : "en"] : [])
+        .forEach((x) => res.lines.push({ text: x, kind: "say" }));
+      return res;
+    }
     if (low === "ticket") { res.ticket = true; return res; }
     if (low === "hint") {
       const hs = sc.hints || [];
@@ -332,6 +347,7 @@
     { id: "hardware", label: { en: "Hardware repaired, replaced or returned", es: "Hardware reparado, sustituido o devuelto" } },
     { id: "user-guidance", label: { en: "User guidance", es: "Orientación al usuario" } },
     { id: "no-fault", label: { en: "No fault found", es: "Sin incidencia" } },
+    { id: "decision", label: { en: "Decision documented and justified", es: "Decisión documentada y justificada" } },   // v0.17: decision cases
   ];
   function codeLabel(id, lang) {
     const c = CODES.find((x) => x.id === id);

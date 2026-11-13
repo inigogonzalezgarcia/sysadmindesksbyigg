@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 164);
+  assert.equal(SCENARIOS.length, 175);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -2001,4 +2001,87 @@ test("Crypto mining: killing the miner lasts half an hour, its folder is locked 
   assert.equal(results[3].lines[0].kind, "err");
   sc.solution.forEach((c) => E.run(sess, c));
   assert.ok(sess.resolved);
+});
+
+/* ---------- v0.17: career level 7, decision cases (machine.shell "case": a case file instead of a system console) */
+const CASES = SCENARIOS.filter((s) => s.machine.shell === "case");
+const optionOf = (sc, verdict) => sc.case.options.find((o) => o.verdict === verdict);
+const caseRead = (sc) => sc.solution.slice(0, sc.solution.indexOf("options"));   // the key documents and the key questions
+
+test("decision cases: eleven at level 7, each with one best, one acceptable, one tempting and one oversized option, and a varied answer", () => {
+  assert.deepEqual(CASES.map((s) => s.id).sort(), ["clinical-maintenance", "cloud-placement", "corner-preopening", "dr-erp-rto", "erp-ha", "finops-commitments",
+    "hotel-preopening", "new-site-network", "oracle-hw-change", "ot-integration", "win11-trading-hours"]);
+  for (const sc of CASES) {
+    assert.equal(sc.career, 7, sc.id);
+    assert.ok(/^Decision case · /.test(sc.topic.en) && /^Caso de decisión · /.test(sc.topic.es), sc.id + " topic says it is a decision case");
+    assert.deepEqual(sc.case.options.map((o) => o.verdict).sort(), ["best", "ok", "over", "trap"], sc.id);
+    assert.deepEqual(sc.case.options.map((o) => o.id), ["A", "B", "C", "D"], sc.id + " options in order");
+    assert.deepEqual(sc.codes, ["decision"]);
+    assert.equal(E.codeLabel("decision", "es"), "Decisión documentada y justificada");
+    for (const o of sc.case.options) for (const k of ["name", "short", "detail", "plan", "review"]) assert.ok(o[k].en && o[k].es, `${sc.id}/${o.id}.${k}`);
+    assert.ok(optionOf(sc, "ok").remark.en && optionOf(sc, "ok").remark.es, sc.id + " remark for the acceptable option");
+  }
+  assert.ok(new Set(CASES.map((sc) => optionOf(sc, "best").id)).size >= 3, "the best option is not always the same letter");
+});
+
+test("decision cases: the case file answers in its own words, help lists its commands, and an unknown line still counts", () => {
+  const sc = byId["dr-erp-rto"];
+  const { sess, results } = play(sc, ["help", "frobnicate now", "docs", "open 2", "open nothing", "ask", "option Z", "decide", "plan", "review"], "es");
+  assert.ok(txt(results[0]).includes("Comandos del expediente:") && txt(results[0]).includes("decide <id>"));
+  assert.equal(results[1].lines[0].text, "frobnicate: not a case file command. Type help to see them.");
+  assert.equal(sess.unknown, 1);
+  assert.match(txt(results[2]), /^Expediente INC-20801: 6 documentos/);
+  assert.match(txt(results[3]), /Análisis de impacto en el negocio/);
+  assert.equal(sess.state.doc_bia, true, "open by number");
+  assert.equal(results[4].lines[0].kind, "err");
+  assert.match(txt(results[5]), /ask network\s+Asier Echevarría/);
+  assert.equal(results[6].lines[0].kind, "err");
+  assert.equal(results[7].lines[0].kind, "err");
+  assert.match(txt(results[8]), /Todavía no hay ninguna decisión/);
+  assert.match(txt(results[9]), /Nada que revisar/);
+  assert.equal(sess.unknown, 1, "only the first line was unknown");
+});
+
+test("decision cases: deciding before reading the file is refused, the tempting option fails its review, and the oversized one too", () => {
+  for (const sc of CASES) {
+    const best = optionOf(sc, "best"), trap = optionOf(sc, "trap"), over = optionOf(sc, "over");
+    const early = play(sc, ["decide " + best.id]);
+    assert.equal(early.results[0].lines[0].kind, "err", sc.id + " decide before reading");
+    assert.equal(early.sess.state.choice, "", sc.id);
+    assert.equal(E.cards(early.sess).actions.filter((a) => /^decide-/.test(a.id) && a.enabled).length, 0, sc.id + ": no decide buttons before reading");
+    const t = play(sc, caseRead(sc).concat(["decide " + trap.id, "plan", "review"]));
+    assert.ok(!t.sess.resolved, sc.id + " the trap does not resolve");
+    assert.ok(t.text.includes("[FAIL]"), sc.id + " the trap fails a requirement");
+    assert.equal(t.sess.state.failedReview, true);
+    assert.equal(E.cards(t.sess).asset.fields[0].tone, "bad", sc.id + " the card shows the failed review");
+    assert.equal(E.verdict(t.sess, null, { code: "decision", minutes: 5 }).level, "unresolved");
+    const o = play(sc, caseRead(sc).concat(["decide " + over.id, "review"]));
+    assert.ok(!o.sess.resolved && o.text.includes("[FAIL]"), sc.id + " the oversized option does not resolve");
+    // changing your mind after a failed review: the best option resolves it
+    ["decide " + best.id, "review"].forEach((c) => E.run(t.sess, c));
+    assert.ok(t.sess.resolved, sc.id + " resolved after deciding again");
+    assert.ok(!t.text.includes("[FALLA]"), "English review in English");
+  }
+});
+
+test("decision cases: the acceptable option resolves with a remark that costs 10 points; the best one resolves clean", () => {
+  for (const sc of CASES) {
+    const ok = optionOf(sc, "ok");
+    const note = E.checkNote(sc, sc.sampleNote.es, "es");
+    const a = play(sc, caseRead(sc).concat(["options", "decide " + ok.id, "review"]), "es");
+    assert.ok(a.sess.resolved, sc.id + " the acceptable option meets the requirements");
+    const v = E.verdict(a.sess, note, { code: "decision", minutes: 5 });
+    assert.equal(v.level, "observations", sc.id);
+    assert.deepEqual(v.reasons, [ok.remark.es], sc.id);
+    assert.equal(v.points, 90, sc.id);
+    const b = play(sc, sc.solution, "es");
+    assert.deepEqual([E.verdict(b.sess, note, { code: "decision", minutes: 5 }).level, b.sess.state.choice], ["resolved", optionOf(sc, "best").id], sc.id);
+    // the buttons play the same case: open every key document, decide and review without typing
+    const s = E.createSession(sc, "en");
+    sc.case.docs.filter((x) => x.key).forEach((x) => E.act(s, "open-" + x.id));
+    sc.case.people.filter((p) => p.key).forEach((p) => E.run(s, "ask " + p.id));
+    E.act(s, "decide-" + optionOf(sc, "best").id);
+    E.act(s, "review");
+    assert.ok(s.resolved, sc.id + " resolved from the ticket page's buttons");
+  }
 });

@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://sysadmindesksbyigg.pages.dev"><b>▶ Clock in and take your first ticket</b></a>
   &nbsp;·&nbsp;
-  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 164 tickets</a>
+  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 175 tickets</a>
 </p>
 
 ---

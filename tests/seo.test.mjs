@@ -209,3 +209,28 @@ test("the FAQ gives the current number of tickets and links the list", () => {
   assert.ok(h.includes(`<p>${SCENARIOS.length} por ahora, ordenados por niveles de carrera`) && h.includes(`<p>${SCENARIOS.length} so far, ordered by career level`));
   assert.ok(h.includes('<a href="/tickets/">lista de tickets</a>') && h.includes('<a href="/tickets/">tickets list</a>'));
 });
+
+test("decision cases (v0.17): their pages say so and give no option, verdict, review or remark away", () => {
+  const cases = SCENARIOS.filter((sc) => sc.machine.shell === "case");
+  assert.equal(cases.length, 11);
+  const index = read("tickets/index.html");
+  for (const sc of cases) {
+    const h = read(`tickets/${sc.id}.html`);
+    const plain = h.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+    assert.ok(plain.includes("Caso de decisión · ") && plain.includes("Decision case · "), sc.id + " says it is a decision case");
+    assert.ok(plain.includes("Es un caso de decisión: en vez de una consola") && plain.includes("It is a decision case: instead of a system console"), sc.id + " explains the format");
+    assert.ok(!plain.includes("Lo resuelves en una consola simulada"), sc.id + " does not promise a console");
+    assert.ok(index.includes(`href="/tickets/${sc.id}">${sc.title.es}</a> <span class="tk-tag">Caso de decisión · `), sc.id + " in the list as a decision case");
+    // the requester may mention the tempting option in the ticket ("Dell has sent a quote for a bigger host"); the rest of the page may not
+    const low = plain.toLowerCase().split(sc.ticket.body.es.toLowerCase()).join("").split(sc.ticket.body.en.toLowerCase()).join("");
+    for (const o of sc.case.options) {
+      for (const l of ["es", "en"]) {
+        for (const x of [o.name[l], o.short[l]].concat(o.review[l], o.detail[l], o.plan[l], o.remark ? [o.remark[l]] : [], o.reviewSay ? [o.reviewSay[l]] : [])) {
+          assert.ok(!low.includes(x.trim().toLowerCase()), `${sc.id} shows option ${o.id}: ${x}`);
+        }
+      }
+      assert.ok(!low.includes("decide " + o.id.toLowerCase() + " ") && !low.includes("decide " + o.id.toLowerCase() + "<"), `${sc.id} names a decision`);
+    }
+    for (const l of ["es", "en"]) for (const d of sc.case.docs) for (const x of d.text[l]) if (x.length > 25) assert.ok(!plain.includes(x), `${sc.id} shows the case file: ${x}`);
+  }
+});
