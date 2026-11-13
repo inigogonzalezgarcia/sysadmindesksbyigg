@@ -1231,4 +1231,40 @@ export const TICKET_SEO = {
     en: { title: "Decision case: an audit of the CMDB", desc: "Practise how to answer an audit finding about the CMDB with data sources, CI classes and owners, and document it in the ticket.",
       skills: ["Read an audit finding and its follow-up.", "Compare a CMDB's data sources.", "Think about owners by CI class.", "Propose evidence an auditor can check."] },
   },
+  "budget-cut-15": {
+    es: { title: "Caso de decisión: recorte del 15 % del presupuesto de IT", desc: "Practica cómo recortar un 15 % el presupuesto de IT de un grupo con cuatro divisiones, con contratos, licencias y proyectos, y documentarlo en el ticket.",
+      skills: ["Leer un presupuesto de IT por línea y por división.", "Separar lo que se puede recortar de lo que está atado por contrato o regulación.", "Buscar ahorros recurrentes antes que recortes de una sola vez.", "Explicar al comité lo que pierde cada división."] },
+    en: { title: "Decision case: a 15 % cut in the IT budget", desc: "Practise how to cut a group's IT budget by 15 % across four divisions, with contracts, licences and projects, and document it in the ticket.",
+      skills: ["Read an IT budget by line and by division.", "Tell what can be cut from what is tied by a contract or a regulator.", "Look for recurring savings before one-off cuts.", "Explain to the committee what each division loses."] },
+  },
+  "iso27001-six-weeks": {
+    es: { title: "Caso de decisión: auditoría ISO 27001 en seis semanas", desc: "Practica cómo preparar una recertificación ISO 27001 con no conformidades abiertas, decidiendo alcance y prioridades, y documentarlo en el ticket.",
+      skills: ["Leer el alcance de un certificado y sus no conformidades.", "Priorizar con la capacidad real de un equipo.", "Distinguir lo que impide la renovación de lo que se puede planificar.", "Preparar evidencias que un auditor pueda comprobar."] },
+    en: { title: "Decision case: an ISO 27001 audit in six weeks", desc: "Practise how to prepare an ISO 27001 recertification with nonconformities still open and little time, deciding scope and priorities, and document it.",
+      skills: ["Read a certificate's scope and its nonconformities.", "Prioritise with a team's real capacity.", "Tell what stops a renewal from what can be planned.", "Prepare evidence an auditor can check."] },
+  },
+  "critical-vulns-overdue": {
+    es: { title: "Caso de decisión: vulnerabilidades críticas fuera de plazo", desc: "Practica cómo ordenar vulnerabilidades críticas fuera de plazo en un grupo con sistemas clínicos, tiendas y trading, y documentarlo en el ticket.",
+      skills: ["Leer un informe de vulnerabilidades por división.", "Priorizar por exposición y explotación activa.", "Respetar las ventanas de cambio de cada negocio.", "Tratar lo que no se puede parchear con controles y aceptación de riesgo."] },
+    en: { title: "Decision case: critical vulnerabilities past their deadline", desc: "Practise how to order overdue critical vulnerabilities in a group with clinical systems, stores and trading, and document it in the ticket.",
+      skills: ["Read a vulnerability report by division.", "Prioritise by exposure and active exploitation.", "Respect each business's change windows.", "Handle what cannot be patched with controls and risk acceptance."] },
+  },
+  "three-projects-two-budgets": {
+    es: { title: "Caso de decisión: tres proyectos y presupuesto para dos", desc: "Practica cómo decidir la cartera de proyectos de IT de un año con tres business cases y capital para dos, y documentarlo en el ticket.",
+      skills: ["Comparar business cases de varias divisiones.", "Pesar plazos externos frente al retorno.", "Ajustar la cartera a la capacidad del equipo.", "Partir un proyecto en fases que valgan por sí solas."] },
+    en: { title: "Decision case: three projects and a budget for two", desc: "Practise how to choose a year's IT project portfolio with three business cases and capital for two, and document it in the ticket.",
+      skills: ["Compare business cases from several divisions.", "Weigh outside deadlines against return.", "Fit the portfolio to the team's capacity.", "Split a project into phases that stand on their own."] },
+  },
+  "worst-two-sites": {
+    es: { title: "Caso de decisión: las dos sedes con peores indicadores", desc: "Practica cómo decidir qué hacer con las dos sedes peores de un scorecard de IT multisede, buscando las causas, y documentarlo en el ticket.",
+      skills: ["Leer un scorecard de IT por sede.", "Buscar las causas antes que a los culpables.", "Plantear un plan de 90 días con KPI.", "Usar el presupuesto de cada división."] },
+    en: { title: "Decision case: the two sites with the worst indicators", desc: "Practise how to decide what to do with the two worst sites in a multi-site IT scorecard, looking for the causes, and document it in the ticket.",
+      skills: ["Read a multi-site IT scorecard.", "Look for causes before culprits.", "Set out a 90-day plan with KPIs.", "Use each division's own budget."] },
+  },
+  "global-admins-governance": {
+    es: { title: "Caso de decisión: gobierno de los administradores globales", desc: "Practica cómo ordenar los administradores globales de un tenant de Microsoft 365 con proveedores y cuentas de emergencia, y documentarlo en el ticket.",
+      skills: ["Revisar quién tiene roles privilegiados y para qué.", "Pensar el mínimo privilegio por equipo.", "Planificar un cambio de roles por fases sin cortar el soporte.", "Preparar una revisión de accesos para una auditoría."] },
+    en: { title: "Decision case: governing the Global Administrators", desc: "Practise how to sort out the Global Administrators of a Microsoft 365 tenant with suppliers and emergency accounts, and document it in the ticket.",
+      skills: ["Review who holds privileged roles and why.", "Think about least privilege per team.", "Plan a role change by phases without stopping support.", "Prepare an access review for an audit."] },
+  },
 };

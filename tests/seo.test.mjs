@@ -212,7 +212,7 @@ test("the FAQ gives the current number of tickets and links the list", () => {
 
 test("decision cases (v0.17): their pages say so and give no option, verdict, review or remark away", () => {
   const cases = SCENARIOS.filter((sc) => sc.machine.shell === "case");
-  assert.equal(cases.length, 18);
+  assert.equal(cases.length, 24);
   const index = read("tickets/index.html");
   for (const sc of cases) {
     const h = read(`tickets/${sc.id}.html`);
@@ -266,4 +266,11 @@ test("v0.18: the families are a row of buttons on the list and on every family p
   assert.ok(mg.includes("<h1>Casos de gestión de IT y servicio</h1>") && mg.includes("IT and service management"));
   assert.ok(mg.includes('<span class="tk-tag">Responsable de IT · Caso de decisión · ') && mg.includes('<span class="tk-tag">IT manager · Decision case · '));
   assert.ok(read("sitemap.xml").includes("<loc>https://sysadmindesksbyigg.pages.dev/tickets/management</loc>"));
+  // v0.20: the IT director's cases (career level 9) have their own family, leadership, ready for the CIO's (level 10)
+  for (const sc of cases.filter((x) => x.career >= 9)) assert.equal(familyOf(sc.id).slug, "leadership", sc.id);
+  assert.deepEqual(SCENARIOS.filter((sc) => familyOf(sc.id).slug === "leadership").map((sc) => sc.id).sort(), cases.filter((sc) => sc.career >= 9).map((sc) => sc.id).sort());
+  const ld = read("tickets/leadership.html");
+  assert.ok(ld.includes("<h1>Casos de dirección de IT y CIO</h1>") && ld.includes("IT leadership and CIO"));
+  assert.ok(ld.includes('<span class="tk-tag">Dirección de IT · Caso de decisión · ') && ld.includes('<span class="tk-tag">IT director · Decision case · '));
+  assert.ok(read("sitemap.xml").includes("<loc>https://sysadmindesksbyigg.pages.dev/tickets/leadership</loc>"));
 });

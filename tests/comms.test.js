@@ -234,6 +234,14 @@ const TEMPTING = {
   "risky-change-close": ["open rfc", "open calendar", "open advisory", "open test", "ask security", "ask finance", "decide C"],
   "servicedesk-backlog": ["open flow", "open age", "open categories", "open budget", "ask agent", "ask cfo", "decide B"],
   "cmdb-audit": ["open audit", "open sources", "open rules", "ask endpoint", "ask clinical", "decide C"],
+  // career level 9 (IT director): 15 % off every line; the whole group in this audit; everything patched this weekend; the two best returns;
+  // a new coordinator and the hotel outsourced; every Global Administrator removed on Friday
+  "budget-cut-15": ["open budget", "open divisions", "open contracts", "open licences", "open projects", "ask cfo", "ask security", "decide A"],
+  "iso27001-six-weeks": ["open scope", "open nonconformities", "open evidence", "open capacity", "ask markets", "ask privileged", "decide B"],
+  "critical-vulns-overdue": ["open qualys", "open policy", "open unpatchable", "open windows", "ask secops", "ask medical", "decide C"],
+  "three-projects-two-budgets": ["open cases", "open deadlines", "open dependencies", "open capacity", "ask compliance", "ask pm", "decide A"],
+  "worst-two-sites": ["open scorecard", "open hotel", "open plant", "open money", "ask hospitality", "ask operations", "decide D"],
+  "global-admins-governance": ["open admins", "open usage", "open emergency", "open audit", "ask privileged", "ask servicedesk", "decide B"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

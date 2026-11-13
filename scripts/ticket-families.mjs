@@ -80,6 +80,13 @@ export const FAMILIES = [
     en: { name: "IT and service management", title: "IT and service management cases · free tickets",
       desc: (n) => `${n} free IT manager decision cases to practise: suppliers and SLAs, contracts, major incidents, problems, changes and the CMDB.`,
       intro: "An IT manager's cases: you decide about people, suppliers, processes, service and money, and defend it to management, the CAB or audit. A supplier that misses its SLA, a contract that renews by itself, a major incident, a problem back every Monday, a change in closing week, a growing backlog and an audited CMDB." } },
+  { slug: "leadership",
+    es: { name: "Dirección de IT y CIO", title: "Casos de dirección de IT y CIO · tickets gratis",
+      desc: (n) => `${n} casos de decisión de dirección de IT para practicar gratis: presupuesto, ISO 27001, vulnerabilidades, cartera de proyectos, sedes y gobierno.`,
+      intro: "Casos de un director de IT para todo el grupo: decides con presupuesto, riesgo regulatorio, cartera de proyectos y personas, y lo defiendes ante el comité de dirección o el consejero delegado, con el impacto en cada división y lo que se deja de hacer. Un recorte del 15 %, una auditoría ISO 27001, vulnerabilidades críticas fuera de plazo, tres proyectos para dos presupuestos, las dos peores sedes y los administradores globales del tenant." },
+    en: { name: "IT leadership and CIO", title: "IT leadership and CIO cases · free tickets",
+      desc: (n) => `${n} free IT director decision cases to practise: budget cuts, ISO 27001, vulnerabilities, the project portfolio, sites and tenant governance.`,
+      intro: "An IT director's cases for the whole group: you decide with budget, regulatory risk, the project portfolio and people, and defend it to the executive committee or the CEO, with the impact on each division and what is not done. A 15 % cut, an ISO 27001 audit, critical vulnerabilities past their deadline, three projects for two budgets, the two worst sites and the tenant's Global Administrators." } },
 ];
 
 const byId = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));

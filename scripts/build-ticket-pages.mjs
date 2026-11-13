@@ -211,7 +211,7 @@ const T = {
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
     idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.`,
     idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia",
-    famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Arquitectura", "Responsable de IT"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
+    famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Arquitectura", "Responsable de IT", "Dirección de IT", "CIO"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
     howCase: "It is a decision case: instead of a system console you have a case file with documents, stakeholders to ask and several options with their cost, risk and time. You decide, check the decision against the requirements and justify it in the note for management (the decision, the requirement that decides it, cost, risks, plan B and dates), which is what gets scored.",
@@ -220,7 +220,7 @@ const T = {
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
     idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.`,
     idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family",
-    famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Architect", "IT manager"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
+    famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Architect", "IT manager", "IT director", "CIO"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
 
 // three tickets to practise next on each ticket page (same technology or the same kind of problem)
@@ -407,6 +407,12 @@ export const RELATED = {
   "risky-change-close": ["iis-503", "winserver-patch-cluster", "erp-ha"],
   "servicedesk-backlog": ["ad-lockout", "m365-licence", "confluence-runbook-stale"],
   "cmdb-audit": ["device42-rack-mismatch", "tanium-stale-endpoint", "oracle-hw-change"],
+  "budget-cut-15": ["finops-commitments", "firewall-contract-renewal", "o365-wrong-licence"],
+  "iso27001-six-weeks": ["cmdb-audit", "cyberark-cpm-fails", "veeam-restore-test"],
+  "critical-vulns-overdue": ["winserver-patch-cluster", "clinical-maintenance", "risky-change-close"],
+  "three-projects-two-budgets": ["finops-commitments", "voice-line-bank", "hotel-preopening"],
+  "worst-two-sites": ["wan-site-slow", "euc-provider-sla", "grafana-site-panel"],
+  "global-admins-governance": ["pim-role-expired", "ca-blocked", "cyberark-cpm-fails"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {

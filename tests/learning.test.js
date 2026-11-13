@@ -129,7 +129,9 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   "Galerias-Free", "FortiExtender", "CS-07", "PC-SAL-03", "go/no-go",
   // career level 8 (IT manager's decision cases): the clauses, dates and data that decide them
   "14.2", "18.1", "€111,000", "111.000 €", "31/05/2028", "28/11", "MIP-01", "BCP-MKT-04", "lock-all-tables", "single-transaction", "CHG-STD-118",
-  "ERP-SA-2026-09", "/api/import", "hiring freeze", "congelación de plantilla", "AUD-2026-14", "A.5.9"];
+  "ERP-SA-2026-09", "/api/import", "hiring freeze", "congelación de plantilla", "AUD-2026-14", "A.5.9",
+  // career level 9 (IT director's decision cases): the contracts, policies, nonconformities, projects and accounts that decide them
+  "CT-SOC-2026", "PRJ-124", "PRJ-133", "NC-01", "NC-02", "POL-SEC-04", "POL-SEC-07", "POL-IT-08", "adm-bg02", "stage 1", "fase 1"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();
@@ -292,7 +294,7 @@ test("profile: progress per area from the results, the activity and the labs", (
   const ad = agg.areas.find((a) => a.id === "ad");
   assert.deepEqual([ad.desks, ad.solved, ad.avgPoints, ad.comms, ad.labDone, ad.labTotal, ad.skill], [10, 2, 80, 4, 5, 5, 40]);   // 3/4 × 2/10 + 1/4 × 5/5
   const net = agg.areas.find((a) => a.id === "network");
-  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [36, 1, 100, null, 2]);   // 1/36 × 75
+  assert.deepEqual([net.desks, net.solved, net.avgPoints, net.comms, net.skill], [37, 1, 100, null, 2]);   // 1/37 × 75
   const vdi = agg.areas.find((a) => a.id === "vdi");
   assert.equal(vdi.labTotal, 0); assert.equal(vdi.skill, 0);
   assert.equal(agg.areas.find((a) => a.id === "itsm").skill, 80);   // notes to the user 4/5

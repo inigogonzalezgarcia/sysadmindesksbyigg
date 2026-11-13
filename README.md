@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://sysadmindesksbyigg.pages.dev"><b>▶ Clock in and take your first ticket</b></a>
   &nbsp;·&nbsp;
-  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 182 tickets</a>
+  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 188 tickets</a>
 </p>
 
 ---
@@ -42,8 +42,9 @@ The tickets follow a career path. Start with locked accounts and full disks, the
 | DevOps / SRE | Kubernetes, Terraform, Ansible, CI/CD, SLOs | 7 |
 | Architect | Decision cases: DR, cloud or on-premises, high availability, openings | 11 |
 | IT manager | Decision cases: suppliers and SLAs, contracts, major incidents, problems, changes, audit | 7 |
+| IT director | Decision cases for the whole group: budget, ISO 27001, vulnerabilities, the project portfolio, sites, tenant governance | 6 |
 
-From the architect up the tickets are decision cases: a case file, options and a note for management. Director and CIO are next.
+From the architect up the tickets are decision cases: a case file, options and a note for management. CIO is next.
 
 ## What is inside
 

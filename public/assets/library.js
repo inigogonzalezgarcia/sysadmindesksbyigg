@@ -28,7 +28,7 @@
   ];
 
   /* An article: { id (= its area), title, summary, tags, what: {en: [paragraphs], es}, tools: [tool], causes: {en: [..], es}, tips: {en, es},
-     desks: [desk ids], labs: [lab ids], guides: [slugs] }.
+     desks: [desk ids], labs: [lab ids], guides: [slugs, "qualys-agentes-etiquetas-priorizacion-y-la-vulnerabilidad-que-sigue-tras-parchear", "microsoft-365-roles-de-administracion-pim-y-cuentas-de-emergencia", "grafana-zabbix-y-elasticsearch-panel-por-sede-variables-aprovisionamiento-como-codigo-ldap-carpetas-y-no-data"] }.
      A tool: { cmd (what you type, with <placeholders>), try (a real line the tests run, when cmd has placeholders), what: {en, es}, on }.
      on: "ad" (the Directory console and the AD lab), "lab:<id>" (that lab's console), "desk:<id>" (that ticket's console), a network
      device id (its CLI, in the network room and the network lab), or "page:#/..." (a page of the app; then there is no command). */
@@ -170,7 +170,7 @@
           "Las directivas de acceso condicional son de Seguridad: una excepción es una petición, nunca una edición de la directiva.", "Los cambios de inicio de sesión y de permisos pueden tardar minutos: díselo al usuario."],
       },
       desks: ["m365-licence", "shared-mailbox", "mailbox-full", "aadc-sync", "ca-blocked", "sso-saml", "teams-no-audio", "room-no-display", "poly-room-no-camera", "sharepoint-shared-everyone", "crestron-room-teams", "graph-report-mfa",
-        "ca-trading-block", "pim-role-expired", "purview-label-cant-open", "o365-wrong-licence", "sentinel-impossible-travel", "azure-bill-spike", "graph-429-report"], labs: ["m365"],
+        "ca-trading-block", "pim-role-expired", "purview-label-cant-open", "o365-wrong-licence", "sentinel-impossible-travel", "azure-bill-spike", "graph-429-report", "global-admins-governance"], labs: ["m365"],
       guides: ["microsoft-365-asignar-y-retirar-licencias", "outlook-exchange-online-buzon-compartido-permisos-autorespuesta", "microsoft-graph-primeras-consultas-con-powershell-y-un-informe-que-no-existe-en-el-portal",
         "entra-conditional-access-politicas-base-y-usuario-bloqueado", "entra-sso-saml-dar-de-alta-una-aplicacion-y-login-que-falla",
         "salas-de-videoconferencia-poly-en-la-oficina-central-aprovisionamiento-y-soporte", "conditional-access-politicas-para-una-sede-con-sala-de-trading",
@@ -210,7 +210,7 @@
           "Tras un arreglo, sincroniza el equipo y vuelve a mirar su estado antes de cerrar."],
       },
       desks: ["intune-bitlocker", "mecm-app", "laptop-rma", "leaver-return", "epm-elevation", "android-work-profile", "iphone-no-policies", "mdm-lost-phone", "jamf-policy-not-running", "pdq-deploy-fails", "intune-ring-stuck", "ndes-wifi-cert",
-        "tanium-stale-endpoint", "defender-asr-block", "fleet-agent-offline", "crypto-mining", "win11-trading-hours"], labs: [],
+        "tanium-stale-endpoint", "defender-asr-block", "fleet-agent-offline", "crypto-mining", "win11-trading-hours", "critical-vulns-overdue"], labs: [],
       guides: ["intune-perfiles-y-cumplimiento-en-windows-macos-ios-android-y-dispositivo-que-no-cumple", "bitlocker-estado-y-clave-de-recuperacion", "mecm-sccm-empaquetar-una-aplicacion-y-desplegarla",
         "intune-anillos-de-windows-update-plazos-actualizaciones-urgentes-y-un-equipo-que-no-se-parchea", "intune-epm-quitar-administrador-local-y-elevar-solo-lo-necesario",
         "android-perfil-de-trabajo-intune", "iphone-ipad-enrolar-en-intune", "mdm-gestion-de-moviles-corporativos-en-plantas-y-sedes-de-varios-paises",
@@ -389,7 +389,7 @@
         "zabbix-agent-unreachable", "hotspot-vouchers", "aruba-voice-vlan", "wap-guest-portal", "cacti-graph-flat", "nagios-flapping",
         "wan-site-slow", "trading-switch-loop", "zabbix-switch-snmp", "zabbix-service-down", "cisco-aaa-lockout", "cisco-portchannel-member", "mikrotik-wireguard",
         "pfsense-nat-rule", "opnsense-ips-block", "radius-peap-fail", "asterisk-trunk-down", "zabbix-alert-storm", "voice-line-bank", "pfsense-carp-failover", "grafana-site-panel", "aws-no-share", "grafana-slo-budget",
-        "new-site-network", "ot-integration", "hotel-preopening", "corner-preopening"], labs: ["network"],
+        "new-site-network", "ot-integration", "hotel-preopening", "corner-preopening", "worst-two-sites"], labs: ["network"],
       guides: ["cisco-primeros-comandos-copia-de-configuracion-y-un-puerto-err-disabled", "cisco-vlans-troncales-router-de-la-sede-y-un-puerto-que-no-da-red", "switches-hp-aruba-vlans-copia-de-configuracion-firmware-y-puerto-a-100-mb",
         "fortigate-politicas-con-minimo-privilegio-vpn-con-entra-id-tuneles-entre-sedes-y-un-usuario-que-no-llega", "lan-wan-y-wifi-conectar-plantas-y-sedes-de-varios-paises",
         "solarwinds-anadir-un-nodo-afinar-una-alerta-y-leer-que-paso-antes-de-la-caida", "iptv-en-hotel-diagnostico-de-canales-multicast-y-televisores-de-habitacion",
@@ -481,9 +481,10 @@
           "Escribe la nota de trabajo sobre la marcha: causa, qué cambiaste, cómo lo comprobaste, qué queda.", "Pide al usuario que lo confirme antes de cerrar cuando puedas."],
       },
       desks: ["ad-lockout", "print-queue", "laptop-rma", "net-fortigate-branch", "confluence-runbook-stale", "git-script-overwritten",
-        "euc-provider-sla", "firewall-contract-renewal", "major-incident-mail", "monday-problem", "risky-change-close", "servicedesk-backlog", "cmdb-audit"], labs: [],
+        "euc-provider-sla", "firewall-contract-renewal", "major-incident-mail", "monday-problem", "risky-change-close", "servicedesk-backlog", "cmdb-audit", "budget-cut-15", "iso27001-six-weeks", "three-projects-two-budgets"], labs: [],
       guides: ["jira-service-management-un-ticket-bien-hecho", "glpi-inventario-con-glpi-agent-tickets-sla-y-un-equipo-que-deja-de-reportar", "confluence-espacio-de-it-y-runbooks-que-se-usan", "entorno-de-pruebas-para-validar-cambios-en-plataformas-criticas",
-        "cmdb-clases-de-ci-relaciones-reconciliacion-calidad-del-dato-y-auditorias", "monitorizacion-desplegar-alarmas-y-responder-en-plataformas-24x7", "presupuesto-de-it-preparar-y-seguir-el-presupuesto-anual-en-una-empresa-multisede"],
+        "cmdb-clases-de-ci-relaciones-reconciliacion-calidad-del-dato-y-auditorias", "monitorizacion-desplegar-alarmas-y-responder-en-plataformas-24x7", "presupuesto-de-it-preparar-y-seguir-el-presupuesto-anual-en-una-empresa-multisede",
+        "business-case-de-it-opciones-costes-beneficios-medibles-y-la-decision-del-comite", "iso-27001-nis2-y-rgpd-en-it-controles-evidencias-plazos-y-un-portatil-perdido"],
     },
   ];
 

@@ -29,6 +29,7 @@
     { id: "markets", name: "Markets", parent: "users" },
     { id: "facilities", name: "Facilities", parent: "users" },
     { id: "it", name: "IT", parent: "users" },
+    { id: "executive", name: "Executive", parent: "users" },
     { id: "shared", name: "Shared accounts", parent: null },
     { id: "service", name: "Service accounts", parent: null },
     { id: "groups", name: "Groups", parent: null },
@@ -187,7 +188,7 @@
       groups: ["GG-M365-F3"], device: "PC-CLN-FAR01", pwdLastSet: "19/10/2026 07:20", lastLogon: "12/11/2026 07:25" },
     // v0.19: the people of the career level 8 cases (IT management): the IT director, the CFO, the service desk lead, the change manager,
     // procurement, internal audit, Contoso Markets' COO and internal communications
-    { sam: "earrese", name: "Elena Arrese", ou: "it", title: { en: "Group IT director", es: "Directora de IT del grupo" }, dept: "IT",
+    { sam: "earrese", name: "Elena Arrese", ou: "it", title: { en: "Group CIO", es: "CIO del grupo" }, dept: "IT",
       groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0480", pwdLastSet: "26/10/2026 08:00", lastLogon: "13/11/2026 08:05" },
     { sam: "iferrer", name: "Ignacio Ferrer", ou: "finance", title: { en: "Group CFO", es: "Director financiero del grupo" }, dept: "Finance",
       groups: ["GG-Finance", "GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0481", pwdLastSet: "19/10/2026 08:30", lastLogon: "13/11/2026 08:40" },
@@ -203,6 +204,18 @@
       groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0482", pwdLastSet: "20/10/2026 07:30", lastLogon: "13/11/2026 07:35" },
     { sam: "mazkue", name: "Maialen Azkue", ou: "marketing", title: { en: "Internal communications", es: "Comunicación interna" }, dept: "Marketing",
       groups: ["GG-Marketing", "GG-M365-E3"], device: "LAPTOP-0483", pwdLastSet: "29/10/2026 09:20", lastLogon: "13/11/2026 09:25" },
+    // v0.20: the people of the career level 9 cases (IT director): the group's CEO, the managing directors of three divisions and
+    // Contoso Markets' compliance officer (Contoso Markets' COO, Andrés Urquijo, is above)
+    { sam: "maldama", name: "Mercedes Aldama", ou: "executive", title: { en: "Group CEO", es: "Consejera delegada del grupo" }, dept: "Executive",
+      groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0485", pwdLastSet: "22/10/2026 08:15", lastLogon: "13/11/2026 08:20" },
+    { sam: "jetxaniz", name: "Jon Etxaniz", ou: "hospitality", title: { en: "Managing director, Contoso Hospitality", es: "Director general, Contoso Hospitality" }, dept: "Hospitality",
+      groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0486", pwdLastSet: "27/10/2026 08:40", lastLogon: "13/11/2026 08:45" },
+    { sam: "cmendizabal", name: "Carlota Mendizábal", ou: "stores", title: { en: "Managing director, Contoso Luxury Retail", es: "Directora general, Contoso Luxury Retail" }, dept: "Retail",
+      groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0487", pwdLastSet: "30/10/2026 09:00", lastLogon: "13/11/2026 09:05" },
+    { sam: "agaray", name: "Ainhoa Garay", ou: "health", title: { en: "Managing director, Contoso Salud", es: "Directora general, Contoso Salud" }, dept: "Health",
+      groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0488", pwdLastSet: "23/10/2026 08:10", lastLogon: "13/11/2026 08:15" },
+    { sam: "lbengoa", name: "Lourdes Bengoa", ou: "markets", title: { en: "Compliance officer, Contoso Markets", es: "Responsable de cumplimiento normativo, Contoso Markets" }, dept: "Markets",
+      groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0489", pwdLastSet: "28/10/2026 07:50", lastLogon: "13/11/2026 07:55" },
     { sam: "recepcion", name: "Recepción", ou: "shared", title: { en: "Reception desk (shared)", es: "Recepción (compartida)" }, dept: "Reception",
       groups: ["GG-Reception", "GG-Printers-HQ"], device: "PC-REC-001", pwdLastSet: "01/07/2026 08:00", lastLogon: "26/10/2026 08:30" },
     { sam: "svc-scan", name: "svc-scan", ou: "service", title: { en: "Scan to folder (FS-SCAN01)", es: "Escanear a carpeta (FS-SCAN01)" }, dept: "IT",
@@ -301,6 +314,12 @@
     { name: "PC-IT-010", ou: "desktops", os: "Windows 11 Enterprise 24H2", user: "lmendez" },
     { name: "PC-IT-011", ou: "desktops", os: "Windows 11 Enterprise 24H2", user: "nlarranaga" },
     { name: "PC-FIN-040", ou: "desktops", os: "Windows 11 Enterprise 24H2", user: "pgarate" },
+    // v0.20: the IT director cases' people
+    { name: "LAPTOP-0485", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "maldama", note: { en: "Group CEO", es: "Consejera delegada del grupo" } },
+    { name: "LAPTOP-0486", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "jetxaniz", note: { en: "Contoso Hospitality, management", es: "Contoso Hospitality, dirección" } },
+    { name: "LAPTOP-0487", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "cmendizabal", note: { en: "Contoso Luxury Retail, management", es: "Contoso Luxury Retail, dirección" } },
+    { name: "LAPTOP-0488", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "agaray", note: { en: "Contoso Salud, management", es: "Contoso Salud, dirección" } },
+    { name: "LAPTOP-0489", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "lbengoa", note: { en: "Contoso Markets, compliance", es: "Contoso Markets, cumplimiento normativo" } },
   ];
 
   // the inventory: servers (also computer objects in OU=Servers) and printers
@@ -620,13 +639,27 @@
     { id: "cantabrico", division: "corporate", name: "Redes Cantábrico", org: "Redes Cantábrico S.A.", role: { en: "reseller of the head office firewall's support and subscriptions (contract CT-FW-2023)", es: "distribuidor del soporte y las suscripciones del cortafuegos de la sede (contrato CT-FW-2023)" } },
     { id: "cantabrico-am", division: "corporate", name: "Redes Cantábrico's account manager", org: "Redes Cantábrico S.A.", role: { en: "account manager for the firewall renewal", es: "comercial de la renovación del cortafuegos" } },
     { id: "bastion", division: "corporate", name: "Bastión Mail", org: "Bastión Mail S.L.", role: { en: "the group's email security gateway, in front of Exchange Online (contract CT-MAIL-2024)", es: "la pasarela de seguridad de correo del grupo, delante de Exchange Online (contrato CT-MAIL-2024)" } },
+    // v0.20: the suppliers of the IT director cases
+    { id: "vigia", division: "corporate", name: "Vigía Ciberseguridad", org: "Vigía Ciberseguridad S.L.", role: { en: "the group's 24x7 security operations centre (SOC), contract CT-SOC-2026", es: "el centro de operaciones de seguridad (SOC) 24x7 del grupo, contrato CT-SOC-2026" } },
   ];
 
   /* v0.19: the IT contracts the cases name: supplier (a CONTACTS id), what it covers, its division and its term */
   const CONTRACTS = [
     { id: "CT-EUC-2025", supplier: "norte", division: "retail", what: { en: "On-site end-user support for the boutiques, the corners and the hotels: €18,500 a month, SLA and service credits", es: "Soporte de puesto de trabajo presencial de las boutiques, los corners y los hoteles: 18.500 € al mes, SLA y penalizaciones" }, ends: "28/02/2028" },
     { id: "CT-FW-2023", supplier: "cantabrico", division: "corporate", what: { en: "Support and security subscriptions of FGT-HQ-01, the head office firewall (36 months, renews by itself)", es: "Soporte y suscripciones de seguridad de FGT-HQ-01, el cortafuegos de la sede (36 meses, se renueva solo)" }, ends: "13/12/2026" },
+    { id: "CT-SOC-2026", supplier: "vigia", division: "corporate", what: { en: "24x7 security operations centre for the whole group (monitoring, triage and response), fixed monthly fee", es: "Centro de operaciones de seguridad 24x7 de todo el grupo (monitorización, triaje y respuesta), cuota mensual fija" }, ends: "31/12/2027" },
     { id: "CT-MAIL-2024", supplier: "bastion", division: "corporate", what: { en: "Email security gateway for the whole group (inbound and outbound filtering in front of Exchange Online)", es: "Pasarela de seguridad de correo de todo el grupo (filtrado de entrada y salida delante de Exchange Online)" }, ends: "31/05/2027" },
+  ];
+
+  /* v0.20: the IT project portfolio the cases name (PRJ-…): division, sponsor (a USERS sam), what it is and its status */
+  const PROJECTS = [
+    { id: "PRJ-112", division: "corporate", sponsor: "pherrero", name: { en: "The BI data warehouse moves to Microsoft Fabric (DWH-AZ's VMs deleted on 31/03/2027)", es: "El almacén de datos de BI pasa a Microsoft Fabric (las VM de DWH-AZ se borran el 31/03/2027)" }, status: "approved" },
+    { id: "PRJ-124", division: "hospitality", sponsor: "jetxaniz", name: { en: "Wi-Fi 6 in the Bilbao hotel and the restaurant", es: "WiFi 6 en el hotel y el restaurante de Bilbao" }, status: "proposed" },
+    { id: "PRJ-125", division: "corporate", sponsor: "barana", name: { en: "NIS2 security plan, 2027 phase (segmentation and access logs, the whole group)", es: "Plan de seguridad NIS2, fase 2027 (segmentación y registro de accesos, todo el grupo)" }, status: "approved" },
+    { id: "PRJ-126", division: "corporate", sponsor: "lmendez", name: { en: "Self-service portal, phase 2", es: "Portal de autoservicio, fase 2" }, status: "proposed" },
+    { id: "PRJ-131", division: "hospitality", sponsor: "jetxaniz", name: { en: "New booking engine and guest CRM", es: "Motor de reservas y CRM de huéspedes nuevos" }, status: "proposed" },
+    { id: "PRJ-132", division: "retail", sponsor: "cmendizabal", name: { en: "Clienteling for the boutiques (with the stock data clean-up first)", es: "Clienteling para las boutiques (con la limpieza de los datos de stock primero)" }, status: "proposed" },
+    { id: "PRJ-133", division: "markets", sponsor: "lbengoa", name: { en: "Communications archive for Markets: voice, chat and email, kept and searchable (committed with the supervisor for 30/06/2027)", es: "Archivo de comunicaciones de Markets: voz, chat y correo, conservados y con búsqueda (comprometido con el supervisor para el 30/06/2027)" }, status: "proposed" },
   ];
 
   /* v0.18: Contoso is a group with four divisions and the group's corporate services. Every site, person, computer, server,
@@ -671,16 +704,16 @@
   };
   // what belongs to a division other than corporate services (everything else is corporate): users, computers, servers, printers, devices
   const IN_DIVISION = {
-    hospitality: ["agoikoetxea", "mugarte", "lzubiaurre", "iolano", "alasa", "PC-HTL-REC01", "PC-HTL-MNT01", "TPV-RIB-01", "LAPTOP-RIB-02", "TC-RES-07",
+    hospitality: ["jetxaniz", "LAPTOP-0486", "agoikoetxea", "mugarte", "lzubiaurre", "iolano", "alasa", "PC-HTL-REC01", "PC-HTL-MNT01", "TPV-RIB-01", "LAPTOP-RIB-02", "TC-RES-07",
       "LAPTOP-0471", "CALL-W11-01", "PMS-HTL01", "NTX-HTL01", "NTNX-HTL-N1", "NTNX-HTL-N2", "NTNX-HTL-N3", "HTL-PE01", "VDI-PE01", "VDI-PE02", "RES-DB01",
       "LB-RES01", "WEB-RES01", "WEB-RES02", "WEB-UBU02", "HZN-CS01", "PRN-COC-01", "PRN-RECEPCION", "FW-HTL01", "FW-HTL02", "RTR-HTL-01", "SW-HTL-P4",
       "UPS-HTL-01", "RTR-RIB-01", "DATAFONO-01", "TABLET-01"],
-    retail: ["jarrieta", "nsaez", "amedina", "rcampos", "cortega", "TPV-T03-01", "TPV-T07-01", "TPV-T07-02", "TPV-T12-01", "TPV-C21-01", "PORTAL01",
+    retail: ["cmendizabal", "LAPTOP-0487", "jarrieta", "nsaez", "amedina", "rcampos", "cortega", "TPV-T03-01", "TPV-T07-01", "TPV-T07-02", "TPV-T12-01", "TPV-C21-01", "PORTAL01",
       "APP-IIS01", "DB-MAR01", "STOCK-APP01", "DB-TEST01", "PRN-T07", "RTR-T07", "SW-T07", "RUT-T03"],
-    health: ["murrutia", "aetxebarria", "mibarra", "izabala", "eruiz", "PC-CLN-P3-01", "PC-CLN-IT01", "PC-CLN-DIR01", "PC-CLN-FAR01", "RMQ-CLN01",
+    health: ["agaray", "LAPTOP-0488", "murrutia", "aetxebarria", "mibarra", "izabala", "eruiz", "PC-CLN-P3-01", "PC-CLN-IT01", "PC-CLN-DIR01", "PC-CLN-FAR01", "RMQ-CLN01",
       "ORA-CLN01", "ORA-CLN02", "LIS-CLN01", "CTX-CLN01", "CTX-CLN02", "CTX-CLN03", "CTX-CLN04"],
     markets: ["rlarrea", "giturbe", "mgil.trd", "LAPTOP-0441", "LAPTOP-0442", "LAPTOP-0463", "TRD-VOX01", "SBC-TRD01", "HPC-CTL01", "GPU-N01", "GPU-N02",
-      "GPU-N03", "GPU-N04", "SW-TRD-01", "aurquijo", "LAPTOP-0482"],
+      "GPU-N03", "GPU-N04", "SW-TRD-01", "aurquijo", "LAPTOP-0482", "lbengoa", "LAPTOP-0489"],
   };
   const DIVISION_OF = {};
   Object.keys(IN_DIVISION).forEach((d) => IN_DIVISION[d].forEach((id) => { DIVISION_OF[id.toLowerCase()] = d; }));
@@ -1017,6 +1050,6 @@
 
   function tasks(w, lang) { return TASKS.map((x) => ({ id: x.id, label: t(x.label, lang), done: Boolean(x.check(w)) })); }
 
-  return { DC, OUS, GROUPS, USERS, COMPUTERS, SERVERS, PRINTERS, DEVICES, CONTACTS, CONTRACTS, SITES, COMPANY, TASKS, CMD, t, createWorld, snapshot, restore, user, view,
+  return { DC, OUS, GROUPS, USERS, COMPUTERS, SERVERS, PRINTERS, DEVICES, CONTACTS, CONTRACTS, PROJECTS, SITES, COMPANY, TASKS, CMD, t, createWorld, snapshot, restore, user, view,
     group, computer, allComputers, members, ouPath, userDn, under, parse, run, tasks, divisionOf, division, names, IN_DIVISION };
 });

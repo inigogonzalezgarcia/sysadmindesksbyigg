@@ -13,8 +13,9 @@
   const AREA_FAMILY = { ad: "active-directory", windows: "windows-server", m365: "microsoft-365", endpoint: "intune-endpoint",
     linux: "linux-devops", vdi: "virtualisation-backup-databases", data: "virtualisation-backup-databases", network: "networking",
     hardware: "hardware-servers", itsm: "windows-server" };
-  // decision cases by career level -> family slug: the architect's cases (7) and the IT manager's (8)
-  const CASE_FAMILY = { 7: "architecture", 8: "management" };
+  // decision cases by career level -> family slug: the architect's cases (7), the IT manager's (8), and the IT director's (9) and
+  // the CIO's (10) together in leadership
+  const CASE_FAMILY = { 7: "architecture", 8: "management", 9: "leadership", 10: "leadership" };
 
   // the families in the order the pages and the queue show them
   const FAMILIES = [
@@ -28,6 +29,7 @@
     { slug: "hardware-servers", name: { es: "Hardware, servidores y RMA", en: "Hardware, servers and RMA" } },
     { slug: "architecture", name: { es: "Arquitectura y casos de decisión", en: "Architecture and decision cases" } },
     { slug: "management", name: { es: "Gestión de IT y servicio", en: "IT and service management" } },
+    { slug: "leadership", name: { es: "Dirección de IT y CIO", en: "IT leadership and CIO" } },
   ];
 
   // the family slug of a scenario, given the areas of the profile (DESK_AREA); throws for a desk without one

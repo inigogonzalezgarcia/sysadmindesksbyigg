@@ -280,6 +280,12 @@ test("Contoso is a group of divisions, and everything in the world says its divi
   for (const sc of SCENARIOS) for (const m of JSON.stringify(sc).matchAll(/\bCT-[A-Z]+-\d{4}\b/g)) named.add(m[0]);
   named.forEach((id) => assert.ok(contracts.has(id), "contract " + id + " is not in world.js"));
   assert.deepEqual([...named].sort(), [...contracts].sort(), "every declared contract is used by a ticket");
+  // v0.20: the same for the project portfolio (PRJ-…): declared with its division and a sponsor from the directory, and used by a ticket
+  const projects = new Set(W.PROJECTS.map((p) => p.id));
+  W.PROJECTS.forEach((p) => assert.ok(ids.includes(p.division) && W.USERS.some((u) => u.sam === p.sponsor) && p.name.en && p.name.es && /^PRJ-\d{3}$/.test(p.id), p.id));
+  const named2 = new Set();
+  for (const sc of SCENARIOS) for (const m of JSON.stringify(sc).matchAll(/\bPRJ-\d{3}\b/g)) named2.add(m[0]);
+  assert.deepEqual([...named2].sort(), [...projects].sort(), "every project a ticket names is declared, and every declared one is used");
   // no two things share an address (the network room's devices included)
   const N = require("../public/assets/netcli.js");
   const seen = {};
