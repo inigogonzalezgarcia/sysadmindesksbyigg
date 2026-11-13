@@ -204,7 +204,7 @@
         ],
         endK: "05 · Start your shift", endH: "Ready for your first shift?", endP: "Create a free account and take your first ticket. Sign in with email or with Google.",
         footBlurb: "Hands-on IT support practice with realistic tickets, a simulated console and scored work notes.",
-        colDesks: "Desks", allDesks: (n) => `All ${n} tickets →`, colGuides: "Guides", colProject: "Project", colHelp: "Help",
+        colDesks: "Roles", allDesks: (n) => `All ${n} tickets →`, colGuides: "Guides", colProject: "Project", colHelp: "Help",
         guideLinks: [["All guides", "guias.html"], ["Level 1: first steps", "guias/nivel-1.html"], ["Level 2: solid foundations", "guias/nivel-2.html"], ["Level 3: advanced", "guias/nivel-3.html"], ["Level 4: expert", "guias/nivel-4.html"]],
         projectLinks: [["About me", "about.html"], ["Blog", "blog/"], ["Contact", "about.html#contacto"]],
         legal: "Educational simulation with a fictional company and people. Not real IT access.",
@@ -743,6 +743,25 @@
     return el("span", { class: "stars", "aria-label": n + "/3" }, "★".repeat(n), el("span", { class: "off" }, "★".repeat(3 - n)));
   }
 
+  /* ---------- the top menu: Puestos, Guías, Proyecto, Ayuda (the same as the landing footer columns), each one a drop-down */
+  function navMenu() {
+    const LT = L().land;
+    const ext = (href, text) => el("a", { href, target: "_blank", rel: "noopener noreferrer", text });
+    const dd = (label, items) => el("details", { class: "nav-dd" }, el("summary", { text: label }),
+      el("ul", { class: "nav-dd-panel" }, items.map((x) => el("li", {}, x))));
+    document.getElementById("nav-menu").replaceChildren(
+      dd(LT.colDesks, [el("a", { class: "nav-dd-all", href: "/tickets/", text: LT.allDesks(SCENARIOS.length) }),
+        ...Lv.LEVELS.map((x, c) => el("a", { href: "/tickets/#" + (lang === "es" ? "carrera-" : "career-") + c, text: t(x.name, lang) }))]),
+      dd(LT.colGuides, LT.guideLinks.map(([x, h]) => ext(SITE + h, x))),
+      dd(LT.colProject, [...LT.projectLinks.map(([x, h]) => ext(SITE + h, x)), ext("https://www.linkedin.com/in/igonzalez93", "LinkedIn")]),
+      dd(LT.colHelp, [...DOCS.map(([k, h]) => el("a", { href: h, text: L()[k] })), ext(REPORT, L().report)]));
+    const tg = document.getElementById("nav-toggle");
+    tg.setAttribute("aria-label", lang === "es" ? "Menú" : "Menu");
+  }
+  function closeMenus(except) {
+    document.querySelectorAll("#nav-menu details[open]").forEach((d) => { if (d !== except) d.open = false; });
+  }
+
   /* ---------- chrome */
   function chrome() {
     document.documentElement.lang = lang;
@@ -750,10 +769,9 @@
     const b = document.getElementById("lang");
     b.textContent = L().langBtn;
     b.setAttribute("aria-label", L().langLabel);
-    document.getElementById("nav-guides").textContent = L().guides;
+    navMenu();
     document.getElementById("foot-text").textContent = user ? L().footUser : L().footAnon;
     ["about", "help", "faq", "terms", "privacy", "report", "cookies"].forEach((k) => { const a = document.getElementById("foot-" + k); if (a) a.textContent = L()[k]; });
-    const nh = document.getElementById("nav-help"); if (nh) nh.textContent = L().navHelp;
     const who = document.getElementById("who");
     who.replaceChildren(...(user
       ? [levelChip(), el("a", { class: "who", href: "#/account", title: L().account }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))]
@@ -3800,6 +3818,14 @@
     route();
   });
   window.addEventListener("hashchange", () => route());
+  // the top menu: one drop-down open at a time; a click outside, Escape or following a link closes it; ☰ shows it on a phone
+  const navEl = document.getElementById("nav-menu"), navTg = document.getElementById("nav-toggle");
+  const navShow = (on) => { navEl.classList.toggle("open", on); navTg.setAttribute("aria-expanded", String(on)); if (!on) closeMenus(); };
+  navTg.addEventListener("click", () => navShow(!navEl.classList.contains("open")));
+  navEl.addEventListener("toggle", (ev) => { if (ev.target.open) closeMenus(ev.target); }, true);
+  navEl.addEventListener("click", (ev) => { if (ev.target.closest("a")) navShow(false); });
+  document.addEventListener("click", (ev) => { if (!ev.target.closest(".top-nav")) navShow(false); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && (navEl.classList.contains("open") || navEl.querySelector("details[open]"))) { navShow(false); navTg.focus(); } });
 
   // who is signed in, then the first view; ?auth=... comes back from the Google sign-in
   (async function boot() {
