@@ -6,8 +6,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { build, SCENARIOS, STATIC, SITE, ticketMeta, faqItems, words, FAMILIES, familyOf } from "../scripts/build-ticket-pages.mjs";
+import { build, SCENARIOS, STATIC, SITE, ticketMeta, faqItems, words, FAMILIES, familyOf, roleAnchor } from "../scripts/build-ticket-pages.mjs";
 import { TICKET_SEO } from "../scripts/ticket-pages-data.mjs";
+import { createRequire } from "node:module";
+const { LEVELS } = createRequire(import.meta.url)("../public/assets/levels.js");
 
 const PUB = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 const read = (f) => readFileSync(join(PUB, f), "utf8");
@@ -96,10 +98,10 @@ test("the counts in words follow the number of desks", () => {
   const n = SCENARIOS.length;
   const es = words(n, "es"), en = words(n, "en");
   const cap = (s) => s[0].toUpperCase() + s.slice(1);
-  assert.ok(read("index.html").includes(`${cap(es)} tickets de primera y segunda línea.`));
-  assert.ok(read("index.html").includes(`${cap(en)} first and second line tickets.`));
-  assert.ok(read("tickets/index.html").includes(`${cap(es)} tickets de una mesa de soporte`));
-  assert.ok(read("tickets/index.html").includes(`${cap(en)} first and second line help desk tickets`));
+  assert.ok(read("index.html").includes(`${cap(es)} tickets, de becario/a a CIO.`));
+  assert.ok(read("index.html").includes(`${cap(en)} tickets, from intern to CIO.`));
+  assert.ok(read("tickets/index.html").includes(`${cap(es)} tickets de una mesa de soporte de una empresa ficticia, ordenados por puesto`));
+  assert.ok(read("tickets/index.html").includes(`${cap(en)} help desk tickets from a fictional company, ordered by role`));
   assert.ok(read("about.html").includes(`Ahora mismo hay ${es} tickets`) && read("about.html").includes(`There are ${en} tickets right now`));
   assert.equal(words(21, "es"), "veintiún"); assert.equal(words(24, "es"), "veinticuatro"); assert.equal(words(31, "es"), "treinta y un");
   assert.equal(words(24, "en"), "twenty-four"); assert.equal(words(30, "en"), "thirty");
@@ -112,7 +114,11 @@ test("the home page has a static, bilingual intro with real desks and links, and
   const intro = h.slice(h.indexOf('<main id="app"'), h.indexOf("</main>"));
   assert.ok(intro.includes("<h1>SysAdmin Desks: simulador gratuito de soporte IT</h1>"), "Spanish H1");
   assert.ok(intro.includes('<article class="en" lang="en" id="en">') && intro.includes("<h2>Qué tickets puedes practicar</h2>"));
-  for (const sc of SCENARIOS) assert.ok(intro.includes(`<a href="/tickets/${sc.id}">`), "intro links " + sc.id);
+  // by role, not every ticket: a link per career level to its section of /tickets/, and none to single tickets
+  for (const c of LEVELS.keys()) for (const lang of ["es", "en"]) assert.ok(intro.includes(`href="/tickets/#${roleAnchor(c, lang)}"`), "intro links role " + c + lang);
+  assert.ok(!SCENARIOS.some((sc) => intro.includes(`<a href="/tickets/${sc.id}">`)), "the intro does not list every ticket");
+  const idx = read("tickets/index.html");
+  for (const c of LEVELS.keys()) for (const lang of ["es", "en"]) assert.ok(idx.includes(`<h2 id="${roleAnchor(c, lang)}">`), "tickets index has role section " + c + lang);
   for (const href of ["/about", "/help", "/faq", "/tickets/", "https://inigogonzalezgarcia.github.io/guias.html"]) assert.ok(intro.includes(`href="${href}"`), "intro links " + href);
   const code = h.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, "");
   assert.ok(!/<script(?![^>]*\bsrc=)[^>]*>/.test(code) && !/\sstyle=|<style/.test(code) && !/\son[a-z]+=/.test(code), "no inline code");
@@ -251,7 +257,7 @@ test("decision cases (v0.17): their pages say so and give no option, verdict, re
 test("v0.18: the families are a row of buttons on the list and on every family page, and the decision cases have their own", () => {
   const nav = (h) => h.match(/<nav class="tk-fams" aria-label="[^"]+">[\s\S]*?<\/nav>/g) || [];
   const index = read("tickets/index.html");
-  assert.equal(nav(index).length, 2, "one row per language on /tickets/");
+  assert.equal(nav(index).length, 4, "one row of roles and one of families per language on /tickets/");
   assert.ok(index.indexOf('class="tk-fams"') < index.indexOf('class="tk-list"'), "the buttons come before the lists");
   assert.ok(!nav(index).join("").includes("aria-current"), "no family is current on the list");
   for (const f of FAMILIES) {

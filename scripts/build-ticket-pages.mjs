@@ -18,6 +18,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PUB = join(ROOT, "public");
 export const SITE = "https://sysadmindesksbyigg.pages.dev";
 export const SCENARIOS = require("../public/assets/scenarios.js");
+const { LEVELS } = require("../public/assets/levels.js");
 const CSP = "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; base-uri 'none'; form-action 'none'";
 const GUIDES = "https://inigogonzalezgarcia.github.io/guias.html";
 const REPORT = "https://inigogonzalezgarcia.github.io/about.html?tema=sysadmindesks#contacto";
@@ -135,9 +136,20 @@ function faqPage(html) {
 }
 
 const LEVEL = { es: (n) => `Nivel ${n} · ${n === 1 ? "primera" : "segunda"} línea`, en: (n) => `Level ${n} · ${n === 1 ? "first" : "second"} line` };
+// the career levels (roles) with their number of tickets: the home page and about.html show these instead of every ticket,
+// each one a link to its section of /tickets/ (#carrera-N in Spanish, #career-N in English)
+export const roleAnchor = (c, lang) => `${lang === "es" ? "carrera" : "career"}-${c}`;
+const roleDesks = (c) => SCENARIOS.filter((sc) => (sc.career ?? 0) === c);
+function roleNav(lang) {
+  const t = T[lang];
+  return `<nav class="tk-fams" aria-label="${esc(t.roleH)}">
+<ul>
+${LEVELS.map((l, c) => `  <li><a class="tk-fam" href="/tickets/#${roleAnchor(c, lang)}">${esc(l.name[lang])} <span class="tk-fam-n">${roleDesks(c).length}</span></a></li>`).join("\n")}
+</ul>
+</nav>`;
+}
 function deskList(lang) {
-  return '<ul class="tk-list">\n' + SCENARIOS.map((sc) =>
-    `  <li><a href="${ticketPath(sc)}">${esc(tx(sc.title, lang))}</a> <span class="tk-tag">${esc(LEVEL[lang](sc.level))} · ${esc(tx(sc.topic, lang))}</span></li>`).join("\n") + "\n</ul>";
+  return roleNav(lang) + `\n<p><a href="/tickets/">${esc(T[lang].allN(N()))}</a></p>`;
 }
 
 function replaceBlock(html, start, end, body, file) {
@@ -148,13 +160,13 @@ function replaceBlock(html, start, end, body, file) {
 function staticPage(file, html) {
   const m = STATIC[file];
   if (file === "index.html") html = html
-    .replace(/<p>[^<]*? tickets de primera y segunda línea\./, `<p>${Cap(words(N(), "es"))} tickets de primera y segunda línea.`)
-    .replace(/<p>[^<]*? first and second line tickets\./, `<p>${Cap(words(N(), "en"))} first and second line tickets.`);
+    .replace(/<p>[^<]*? tickets, de becario\/a a CIO\./, `<p>${Cap(words(N(), "es"))} tickets, de becario/a a CIO.`)
+    .replace(/<p>[^<]*? tickets, from intern to CIO\./, `<p>${Cap(words(N(), "en"))} tickets, from intern to CIO.`);
   if (file === "faq.html") html = html
     .replace(/<p>\d+ por ahora, ordenados por niveles de carrera/, `<p>${N()} por ahora, ordenados por niveles de carrera`)
     .replace(/<p>\d+ so far, ordered by career level/, `<p>${N()} so far, ordered by career level`);
   if (file === "about.html") html = html
-    .replace(/Ahora mismo hay [^<]*? tickets de primera y segunda línea/, `Ahora mismo hay ${words(N(), "es")} tickets de primera y segunda línea`)
+    .replace(/Ahora mismo hay [^<]*? tickets, de becario/, `Ahora mismo hay ${words(N(), "es")} tickets, de becario`)
     .replace(/There are [^<]*? tickets right now/, `There are ${words(N(), "en")} tickets right now`);
   // v0.21: "N tickets, de becario/a a CIO" / "N tickets, from intern to CIO" on the about, help and FAQ pages
   if (["about.html", "help.html", "faq.html"].includes(file)) html = html
@@ -214,8 +226,8 @@ const T = {
     guideH: "Guía relacionada", guide: (a) => `¿Quieres repasar el tema antes? Lee la ${a} en inigogonzalezgarcia.github.io, que explica lo que practicas en este ticket.`, guideA: "guía paso a paso",
     relH: "Tickets relacionados", prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
-    idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.`,
-    idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia",
+    idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de una empresa ficticia, ordenados por puesto: de becario/a a CIO. Cada uno se resuelve en el navegador, gratis, con una consola simulada o, desde arquitectura, con un expediente de decisión, y se cierra con una nota puntuada.`,
+    roleH: "Por puesto", allN: (n) => `Ver los ${n} tickets →`, idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia",
     famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Arquitectura", "Responsable de IT", "Dirección de IT", "CIO"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
@@ -223,8 +235,8 @@ const T = {
     guideH: "Related guide", guide: (a) => `Want to brush up first? Read the ${a} on inigogonzalezgarcia.github.io, which explains what you practise on this ticket.`, guideA: "step-by-step guide",
     relH: "Related tickets", prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
-    idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.`,
-    idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family",
+    idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} help desk tickets from a fictional company, ordered by role: from intern to CIO. Each one is solved in the browser, free, with a simulated console or, from the architect up, a decision case file, and closed with a scored note.`,
+    roleH: "By role", allN: (n) => `See all ${n} tickets →`, idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family",
     famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Architect", "IT manager", "IT director", "CIO"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
 
@@ -479,15 +491,16 @@ ${relatedList(sc, lang)}
 function indexArticle(lang) {
   const t = T[lang];
   const art = lang === "es" ? '<article class="es" lang="es">' : '<article class="en" lang="en" id="en">';
-  const group = (lvl) => '<ul class="tk-list">\n' + SCENARIOS.filter((sc) => sc.level === lvl).map((sc) =>
+  const group = (c) => '<ul class="tk-list">\n' + roleDesks(c).map((sc) =>
     `  <li><a href="${ticketPath(sc)}">${esc(tx(sc.title, lang))}</a> <span class="tk-tag">${esc(tx(sc.topic, lang))} · ${esc(sc.ticket.priority)}</span></li>`).join("\n") + "\n</ul>";
-  const levels = [...new Set(SCENARIOS.map((sc) => sc.level))].sort();
   return `${art}
 <h1>${t.idxH1}</h1>
 <p class="lead-p">${esc(t.idxLead())}</p>
+<h2 id="${lang === "es" ? "puestos" : "roles"}">${t.roleH}</h2>
+${roleNav(lang)}
 <h2 id="${lang === "es" ? "familias" : "families"}">${t.famH}</h2>
 ${famNav(lang, null)}
-${levels.map((l) => `<h2 id="${lang === "es" ? "nivel" : "level"}-${l}">${l === 1 ? t.idxL1 : t.idxL2}</h2>\n${group(l)}`).join("\n")}
+${LEVELS.map((l, c) => roleDesks(c).length ? `<h2 id="${roleAnchor(c, lang)}">${esc(l.name[lang])}</h2>\n${group(c)}` : "").filter(Boolean).join("\n")}
 <p class="tk-cta"><a class="btn tk-btn" href="/?lang=${lang}#/register">${t.start}</a></p>
 <p>${t.idxMore(`<a href="/about">${t.about}</a>`, `<a href="/help">${t.help}</a>`, `<a href="/faq">${t.faq}</a>`)}</p>
 </article>`;
