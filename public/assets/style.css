@@ -1240,3 +1240,8 @@ body.landing-on .nav-toggle { color: var(--term-ink); border-color: rgba(215, 22
 .who.nav-signin { color: var(--accent); white-space: nowrap; }
 .doc-nav { flex-wrap: nowrap; }
 @media (max-width: 480px) { body.doc-es .top-nav .who.nav-signin > .es, body.doc-en .top-nav .who.nav-signin > .en { display: inline; } }
+.nav-menu > .nav-plain { padding: 6px 8px; border-radius: 8px; font-size: 15px; color: var(--ink); white-space: nowrap; }
+.nav-menu > .nav-plain:hover, .nav-menu > .nav-plain[aria-current="page"] { background: var(--soft); }
+body.landing-on .nav-menu > .nav-plain { color: var(--term-ink); }
+body.landing-on .nav-menu > .nav-plain:hover { background: rgba(215, 228, 221, .08); }
+@media (max-width: 820px) { .nav-menu > .nav-plain { padding: 12px 8px; font-size: 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; } body.landing-on .nav-menu > .nav-plain { border-color: rgba(215, 228, 221, .1); } }

@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { TICKET_SEO } from "./ticket-pages-data.mjs";
 import { FAMILIES, familyOf, familyPath } from "./ticket-families.mjs";
+import { TEAMS_META, teamsArticle } from "./teams-page.mjs";
 export { FAMILIES, familyOf, familyPath };
 
 const require = createRequire(import.meta.url);
@@ -202,12 +203,13 @@ const mDrop = (es, en, items) => `      <details class="nav-dd"><summary>${bi(es
 ${items.map((x) => "          " + x).join("\n")}
         </ul>
       </details>`;
-function topMenu() {
+function topMenu(current) {
   return `    <button type="button" id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Menú / Menu" hidden>☰</button>
     <div id="nav-menu" class="nav-menu">
 ${mDrop("Puestos", "Roles", [mLink("/tickets/", bi(`Los ${N()} tickets →`, `All ${N()} tickets →`), "nav-dd-all"),
     ...LEVELS.map((l, c) => `<li><a class="es" href="/tickets/#${roleAnchor(c, "es")}">${esc(l.name.es)}</a><a class="en" href="/tickets/#${roleAnchor(c, "en")}">${esc(l.name.en)}</a></li>`)])}
 ${mDrop("Guías", "Guides", MENU.guides.map(([es, en, h]) => mLink(GSITE + h, bi(es, en))))}
+      <a class="nav-plain" href="/equipos"${current === "equipos" ? ' aria-current="page"' : ""}>${bi("Para equipos", "For teams")}</a>
 ${mDrop("Proyecto", "Project", MENU.project.map(([es, en, h]) => mLink(h, bi(es, en))))}
 ${mDrop("Ayuda", "Help", MENU.help.map(([es, en, h]) => mLink(h, bi(es, en))))}
     </div>`;
@@ -233,7 +235,7 @@ ${seoHead(m, extra)}
 <header class="top">
   <a class="brand" href="/"><span class="mark" aria-hidden="true">&gt;_</span><span>SysAdmin Desks</span><small>by IGG</small></a>
   <nav class="top-nav doc-nav">
-${topMenu()}
+${topMenu(current)}
     <a class="who nav-signin" href="/#/start"><span class="es">Entrar</span><span class="en">Sign in</span></a>
     <button type="button" id="doc-lang" class="lang" hidden>EN</button>
   </nav>
@@ -595,6 +597,8 @@ function collection() {
 export function build() {
   const out = {};
   for (const file of Object.keys(STATIC)) out[file] = staticPage(file, readFileSync(join(PUB, file), "utf8"));
+  out["equipos.html"] = shell(TEAMS_META, teamsArticle("es", N()) + "\n\n" + teamsArticle("en", N()), "equipos",
+    [jsonld({ "@context": "https://schema.org", ...crumbs2("Para equipos", "/equipos") })]);
   out["tickets/index.html"] = shell(TICKETS_INDEX, indexArticle("es") + "\n\n" + indexArticle("en"), "tickets", [jsonld(collection())]);
   for (const f of FAMILIES) out[`tickets/${f.slug}.html`] = shell(famMeta(f), familyArticle(f, "es") + "\n\n" + familyArticle(f, "en"), "tickets", [jsonld(familyLd(f))]);
   for (const sc of SCENARIOS) out[`tickets/${sc.id}.html`] = shell(ticketMeta(sc), ticketArticle(sc, "es") + "\n\n" + ticketArticle(sc, "en"), undefined, [jsonld(breadcrumbs(sc))]);

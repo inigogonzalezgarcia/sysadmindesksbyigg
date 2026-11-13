@@ -16,7 +16,7 @@ const read = (f) => readFileSync(join(PUB, f), "utf8");
 const attr = (h, re) => (h.match(re) || [])[1];
 const jsonLd = (h) => [...h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
 const PAGES = Object.entries(STATIC).map(([f, m]) => [f, m.path])
-  .concat([["tickets/index.html", "/tickets/"]], FAMILIES.map((f) => [`tickets/${f.slug}.html`, "/tickets/" + f.slug]),
+  .concat([["equipos.html", "/equipos"], ["tickets/index.html", "/tickets/"]], FAMILIES.map((f) => [`tickets/${f.slug}.html`, "/tickets/" + f.slug]),
     SCENARIOS.map((sc) => [`tickets/${sc.id}.html`, "/tickets/" + sc.id]));
 
 test("the generated pages and head blocks are up to date (npm run pages)", () => {
@@ -297,4 +297,16 @@ test("v0.18: the families are a row of buttons on the list and on every family p
   assert.ok(ld.includes('<span class="tk-tag">CIO · Caso de decisión · ') && ld.includes('<span class="tk-tag">CIO · Decision case · '));
   for (const id of ["erp-renew-or-saas", "copilot-group-wide", "divestiture-tenant-split", "three-year-board-plan", "ransomware-board"])
     assert.ok(read("sitemap.xml").includes(`<loc>https://sysadmindesksbyigg.pages.dev/tickets/${id}</loc>`), id + " in the sitemap");
+});
+
+test("/equipos: the service for teams, in both languages, reachable from the menus, contact only by the form or LinkedIn", () => {
+  const h = read("equipos.html");
+  assert.ok(h.includes("<h1>SysAdmin Desks para equipos de IT</h1>") && h.includes("<h1>SysAdmin Desks for IT teams</h1>"));
+  assert.ok(h.includes('href="https://inigogonzalezgarcia.github.io/about.html?tema=sysadmindesks-equipos#contacto"'), "the contact form, with the topic");
+  assert.ok(h.includes('href="https://www.linkedin.com/in/igonzalez93"'));
+  assert.ok(!/mailto:|@[a-z0-9-]+\.[a-z]/i.test(h.replace(/<script[\s\S]*?<\/script>/g, "").replace(/https?:\/\/[^"\s]+/g, "")), "no email address");
+  assert.ok(!/\d\s?€|€\s?\d/.test(h), "no prices");
+  assert.ok(h.includes(`${SCENARIOS.length} tickets`), "the catalogue count follows the desks");
+  for (const f of ["tickets/index.html", "tickets/ad-lockout.html"]) assert.ok(read(f).includes('<a class="nav-plain" href="/equipos">'), f + " menu links /equipos");
+  assert.ok(read("assets/app.js").includes('href: "/equipos"'), "the simulator menu links /equipos");
 });
