@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://sysadmindesksbyigg.pages.dev"><b>▶ Clock in and take your first ticket</b></a>
   &nbsp;·&nbsp;
-  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 188 tickets</a>
+  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 193 tickets</a>
 </p>
 
 ---
@@ -27,9 +27,9 @@ Courses explain the theory. The job is a user who cannot work, a clock that keep
 4. **Prove it works** and write the work note.
 5. **Get your score** and an example note to compare with yours.
 
-## From intern to DevOps
+## From intern to CIO
 
-The tickets follow a career path. Start with locked accounts and full disks, then move up to servers, networks, cloud and pipelines.
+The tickets follow a career path: 193 tickets, from intern to CIO. Start with locked accounts and full disks, move up to servers, networks, cloud and pipelines, and finish deciding the group's strategy before the Board.
 
 | Level | You deal with | Tickets |
 |---|---|---|
@@ -43,8 +43,9 @@ The tickets follow a career path. Start with locked accounts and full disks, the
 | Architect | Decision cases: DR, cloud or on-premises, high availability, openings | 11 |
 | IT manager | Decision cases: suppliers and SLAs, contracts, major incidents, problems, changes, audit | 7 |
 | IT director | Decision cases for the whole group: budget, ISO 27001, vulnerabilities, the project portfolio, sites, tenant governance | 6 |
+| CIO | Decision cases for the Board: the ERP, Copilot, selling a unit, a three-year IT plan, ransomware | 5 |
 
-From the architect up the tickets are decision cases: a case file, options and a note for management. CIO is next.
+From the architect up the tickets are decision cases: a case file, options and a note for management. The CIO's note goes to the Board: the recommendation in one sentence, the business case, the risks to the business and how it is governed.
 
 ## What is inside
 

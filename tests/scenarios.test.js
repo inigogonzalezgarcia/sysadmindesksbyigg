@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 188);
+  assert.equal(SCENARIOS.length, 193);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -2008,15 +2008,17 @@ const CASES = SCENARIOS.filter((s) => s.machine.shell === "case");
 const optionOf = (sc, verdict) => sc.case.options.find((o) => o.verdict === verdict);
 const caseRead = (sc) => sc.solution.slice(0, sc.solution.indexOf("options"));   // the key documents and the key questions
 
-test("decision cases: eleven at level 7, seven at level 8 and six at level 9, each with one best, one acceptable, one tempting and one oversized option, and a varied answer", () => {
+test("decision cases: eleven at level 7, seven at level 8, six at level 9 and five at level 10, each with one best, one acceptable, one tempting and one oversized option, and a varied answer", () => {
   assert.deepEqual(CASES.filter((s) => s.career === 7).map((s) => s.id).sort(), ["clinical-maintenance", "cloud-placement", "corner-preopening", "dr-erp-rto", "erp-ha", "finops-commitments",
     "hotel-preopening", "new-site-network", "oracle-hw-change", "ot-integration", "win11-trading-hours"]);
   assert.deepEqual(CASES.filter((s) => s.career === 8).map((s) => s.id).sort(), ["cmdb-audit", "euc-provider-sla", "firewall-contract-renewal", "major-incident-mail",
     "monday-problem", "risky-change-close", "servicedesk-backlog"]);
   assert.deepEqual(CASES.filter((s) => s.career === 9).map((s) => s.id).sort(), ["budget-cut-15", "critical-vulns-overdue", "global-admins-governance",
     "iso27001-six-weeks", "three-projects-two-budgets", "worst-two-sites"]);
+  assert.deepEqual(CASES.filter((s) => s.career === 10).map((s) => s.id).sort(), ["copilot-group-wide", "divestiture-tenant-split", "erp-renew-or-saas",
+    "ransomware-board", "three-year-board-plan"]);
   for (const sc of CASES) {
-    assert.ok(sc.career >= 7 && sc.career <= 9, sc.id);
+    assert.ok(sc.career >= 7 && sc.career <= 10, sc.id);
     assert.ok(/^Decision case · /.test(sc.topic.en) && /^Caso de decisión · /.test(sc.topic.es), sc.id + " topic says it is a decision case");
     assert.deepEqual(sc.case.options.map((o) => o.verdict).sort(), ["best", "ok", "over", "trap"], sc.id);
     assert.deepEqual(sc.case.options.map((o) => o.id), ["A", "B", "C", "D"], sc.id + " options in order");
@@ -2029,6 +2031,35 @@ test("decision cases: eleven at level 7, seven at level 8 and six at level 9, ea
   assert.ok(new Set(CASES.filter((sc) => sc.career === 8).map((sc) => optionOf(sc, "best").id)).size >= 3, "nor at level 8");
   assert.ok(new Set(CASES.filter((sc) => sc.career === 9).map((sc) => optionOf(sc, "best").id)).size >= 3, "nor at level 9");
   assert.ok(new Set(CASES.filter((sc) => sc.career === 9).map((sc) => optionOf(sc, "trap").id)).size >= 3, "and the trap moves too at level 9");
+  assert.ok(new Set(CASES.filter((sc) => sc.career === 10).map((sc) => optionOf(sc, "best").id)).size >= 3, "nor at level 10");
+  assert.ok(new Set(CASES.filter((sc) => sc.career === 10).map((sc) => optionOf(sc, "trap").id)).size >= 3, "and the trap moves too at level 10");
+});
+
+test("decision cases at level 10 (CIO): for the Board, and the note adds the recommendation, the business case, the risks to the business and governance", () => {
+  const W = require("../public/assets/world.js");
+  const divisions = W.COMPANY.divisions.map((d) => d.name.en);
+  const LABELS = { recommendation: "the recommendation in one sentence", business: "the business case (total cost over 3-5 years and a measurable benefit)",
+    risks: "the risks to the business", governance: "how it is governed (who decides what, milestones and how the Board is informed)" };
+  const WITHOUT = { recommendation: /recomendaci[oó]n|recomendamos/gi, business: /caso de negocio|coste total|tco/gi, risks: /riesgos? (para el|de) negocio/gi, governance: /gobernanza|gobierno|se gobierna/gi };
+  for (const sc of CASES.filter((s) => s.career === 10)) {
+    assert.equal(sc.machine.user, "cio", sc.id);
+    assert.ok(sc.minutes >= 20 && sc.minutes <= 30, sc.id + " minutes");
+    // the IT director's elements are all still there
+    for (const label of ["the impact on each division", "what is not done (the opportunity cost)", "how it is communicated and to whom", "the risks and how they are mitigated"])
+      assert.ok(sc.note.some((n) => n.label.en === label), sc.id + " keeps " + label);
+    for (const lang of ["en", "es"]) assert.deepEqual(E.checkNote(sc, sc.sampleNote[lang], lang).missing, [], sc.id + " sample note " + lang);
+    for (const k of Object.keys(LABELS)) {
+      const el = sc.note.find((n) => n.label.en === LABELS[k]);
+      assert.ok(el, sc.id + " has " + k);
+      assert.deepEqual(E.checkNote(sc, sc.sampleNote.es.replace(WITHOUT[k], "además"), "es").missing, [el.label.es], sc.id + ": a note without " + k + " misses it");
+    }
+    // the case crosses divisions and asks people from more than one place
+    const file = JSON.stringify(sc.case.docs) + JSON.stringify(sc.case.people);
+    assert.ok(divisions.filter((d) => file.includes(d) || file.includes(d.replace("Contoso ", ""))).length >= 2, sc.id + " names two divisions or more");
+    assert.ok(sc.case.people.length >= 3, sc.id + " people");
+    assert.ok(/Board|consejo/.test(sc.intro.en + sc.intro.es), sc.id + " the note is for the Board");
+  }
+  assert.equal(byId["budget-cut-15"].machine.user, "director");
 });
 
 test("decision cases at level 9 (IT director): for the whole group, and the note also says the impact on each division and what is not done", () => {

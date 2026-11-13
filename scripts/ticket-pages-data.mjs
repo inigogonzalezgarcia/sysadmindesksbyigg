@@ -1267,4 +1267,34 @@ export const TICKET_SEO = {
     en: { title: "Decision case: governing the Global Administrators", desc: "Practise how to sort out the Global Administrators of a Microsoft 365 tenant with suppliers and emergency accounts, and document it in the ticket.",
       skills: ["Review who holds privileged roles and why.", "Think about least privilege per team.", "Plan a role change by phases without stopping support.", "Prepare an access review for an audit."] },
   },
+  "erp-renew-or-saas": {
+    es: { title: "Caso de decisión: renovar el ERP o migrar a SaaS", desc: "Practica cómo decidir el futuro del ERP de un grupo con cuatro divisiones, con el coste a cinco años y los riesgos, y documentarlo en el ticket.",
+      skills: ["Comparar el coste total a cinco años de varias ofertas.", "Comprobar que una opción cubre lo que necesita cada división.", "Plantear un proyecto por fases con un go/no-go y una salida.", "Escribir una recomendación para el consejo."] },
+    en: { title: "Decision case: renew the ERP or move to SaaS", desc: "Practise how to decide the future of a four-division group's ERP, with the five-year cost and the risks, and document it in the ticket.",
+      skills: ["Compare the five-year total cost of several offers.", "Check that an option covers what each division needs.", "Set out a project by phases with a go/no-go and an exit.", "Write a recommendation for the Board."] },
+  },
+  "copilot-group-wide": {
+    es: { title: "Caso de decisión: Copilot para toda la empresa", desc: "Practica cómo decidir si un grupo despliega Microsoft 365 Copilot tras un piloto, con datos sensibles y gobierno de la IA, y documentarlo en el ticket.",
+      skills: ["Leer los resultados de un piloto por función.", "Revisar qué datos están sobrecompartidos antes de una IA.", "Pensar una política de IA y un registro de casos de uso.", "Llevar al consejo un sí, un no o un cómo."] },
+    en: { title: "Decision case: Copilot for the whole company", desc: "Practise how to decide whether a group rolls out Microsoft 365 Copilot after a pilot, with sensitive data and AI governance, and document it.",
+      skills: ["Read a pilot's results by function.", "Review which data is overshared before an AI reads it.", "Think about an AI policy and a register of use cases.", "Bring the Board a yes, a no or a how."] },
+  },
+  "divestiture-tenant-split": {
+    es: { title: "Caso de decisión: se vende una división y sale del tenant", desc: "Practica cómo separar del tenant del grupo una unidad que se vende, con servicios transitorios y datos mezclados, y documentarlo en el ticket.",
+      skills: ["Leer el anexo de IT de un contrato de compraventa.", "Inventariar lo que una unidad comparte con el grupo.", "Separar los datos antes de entregarlos.", "Planificar una migración de tenant a tenant por oleadas."] },
+    en: { title: "Decision case: a division is sold and leaves the tenant", desc: "Practise how to separate a unit being sold from the group's tenant and systems, with transitional services and mixed data, and document it.",
+      skills: ["Read the IT annex of a sale agreement.", "Inventory what a unit shares with the group.", "Split the data before handing it over.", "Plan a tenant-to-tenant migration in waves."] },
+  },
+  "three-year-board-plan": {
+    es: { title: "Caso de decisión: plan de IT a tres años para el consejo", desc: "Practica cómo llevar al consejo un plan de IT a tres años ligado a la estrategia de cada división, con hitos y KPI, y documentarlo en el ticket.",
+      skills: ["Relacionar iniciativas con los objetivos de negocio.", "Financiar primero la seguridad, la continuidad y la deuda técnica.", "Ajustar un plan al dinero y a la capacidad.", "Elegir indicadores que un consejo entienda."] },
+    en: { title: "Decision case: a three-year IT plan for the Board", desc: "Practise how to bring the Board a three-year IT plan tied to each division's strategy, with yearly milestones and KPIs, and document it.",
+      skills: ["Tie initiatives to business goals.", "Fund security, continuity and technical debt first.", "Fit a plan to the money and the capacity.", "Choose indicators a Board understands."] },
+  },
+  "ransomware-board": {
+    es: { title: "Caso de decisión: ransomware en una sede y el consejo", desc: "Practica cómo decidir la respuesta a un ransomware en una planta, con copias, plazos de notificación y el consejo, y documentarlo en el ticket.",
+      skills: ["Leer el alcance de un incidente de ransomware.", "Restaurar por prioridad de negocio desde copias limpias.", "Cumplir los plazos de notificación.", "Preparar lo que se cuenta al consejo y fuera."] },
+    en: { title: "Decision case: ransomware at a site and the Board", desc: "Practise how to decide the response to ransomware at a plant, with backups, notification deadlines and the Board, and document it in the ticket.",
+      skills: ["Read the scope of a ransomware incident.", "Restore by business priority from clean copies.", "Meet the notification deadlines.", "Prepare what the Board and the outside are told."] },
+  },
 };

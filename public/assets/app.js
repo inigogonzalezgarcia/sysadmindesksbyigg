@@ -575,7 +575,7 @@
     lvTitle: "Your level", lvPoints: (n) => `${n} points`, lvNext: (n, name) => `${n} points to ${name}`, lvTop: "Top level: well done.",
     lvBreak: (p) => `Tickets ${p.tickets} · Labs ${p.labs} · Communication ${p.comms} · Weekly goals ${p.goals} · Full shifts ${p.shifts}`,
     lvHow: "Points: the best result of each ticket (a replay counts only if it beats it), 10 per lab task, the best communication bonus of each ticket, the weekly goals' rewards and each lab's first full shift. Free tickets never count.",
-    qLocked: (n, name, min) => `🔒 ${n} more ${n === 1 ? "ticket joins" : "tickets join"} the queue as you level up. Next: ${name} (${min} points).`, lvLadder: "The levels", lvFrom: (n) => `from ${n}`, lvUpTitle: "New level!", lvUpText: (n) => `You are now ${n}. Keep it up.`, lvUpOk: "Great",
+    qLocked: (n, name, min) => `🔒 ${n} more ${n === 1 ? "ticket joins" : "tickets join"} the queue as you level up. Next: ${name} (${min} points).`, lvLadder: "The levels", lvFrom: (n) => `from ${n}`, lvUpTitle: "New level!", lvUpText: (n) => `You are now ${n}. Keep it up.`, lvUpTop: (n) => `You are now ${n}: the last level of the career, from intern to CIO. Its cases go to the Board and are in your queue.`, lvUpOk: "Great",
     ccTitle: "How you close tickets", ccClean: "Clean closes", ccCleanX: "Resolved the first time, with no remarks", ccRemarks: "With observations", ccRemarksX: "Resolved with observations to improve",
     ccFalse: "False closures", ccFalseX: "Closing attempts before it was fixed (Not resolved)",
     wgTitle: "This week's goals", wgSub: (w) => `Three goals for ${w}, the same for everyone. They change on Monday at 00:00 in your time zone; each reward counts once.`,
@@ -598,7 +598,7 @@
     lvTitle: "Tu nivel", lvPoints: (n) => `${n} puntos`, lvNext: (n, name) => `Faltan ${n} puntos para ${name}`, lvTop: "Nivel máximo: buen trabajo.",
     lvBreak: (p) => `Tickets ${p.tickets} · Laboratorios ${p.labs} · Comunicación ${p.comms} · Objetivos semanales ${p.goals} · Turnos completos ${p.shifts}`,
     lvHow: "Puntos: el mejor resultado de cada ticket (repetirlo solo cuenta si lo mejora), 10 por tarea de laboratorio, el mejor bonus de comunicación de cada ticket, las recompensas de los objetivos semanales y el primer turno completo de cada laboratorio. Los tickets libres nunca cuentan.",
-    qLocked: (n, name, min) => `🔒 ${n} ${n === 1 ? "ticket más entra" : "tickets más entran"} en la cola al subir de nivel. Siguiente: ${name} (${min} puntos).`, lvLadder: "Los niveles", lvFrom: (n) => `desde ${n}`, lvUpTitle: "¡Nivel nuevo!", lvUpText: (n) => `Ahora eres ${n}. Sigue así.`, lvUpOk: "Genial",
+    qLocked: (n, name, min) => `🔒 ${n} ${n === 1 ? "ticket más entra" : "tickets más entran"} en la cola al subir de nivel. Siguiente: ${name} (${min} puntos).`, lvLadder: "Los niveles", lvFrom: (n) => `desde ${n}`, lvUpTitle: "¡Nivel nuevo!", lvUpText: (n) => `Ahora eres ${n}. Sigue así.`, lvUpTop: (n) => `Ahora eres ${n}: el último nivel de la carrera, de becario/a a CIO. Sus casos van al consejo y ya están en tu cola.`, lvUpOk: "Genial",
     ccTitle: "Cómo cierras los tickets", ccClean: "Cierres limpios", ccCleanX: "Resueltos a la primera y sin observaciones", ccRemarks: "Con observaciones", ccRemarksX: "Resueltos, con observaciones que mejorar",
     ccFalse: "Cierres en falso", ccFalseX: "Intentos de cierre antes de estar arreglado (No resuelto)",
     wgTitle: "Objetivos de la semana", wgSub: (w) => `Tres objetivos para la ${w}, los mismos para todo el mundo. Cambian el lunes a las 00:00 de tu zona horaria; cada recompensa cuenta una vez.`,
@@ -962,7 +962,7 @@
     celebrate("level");
     const box = el("div", { class: "lvl-up", id: "lvl-up", role: "status", "aria-live": "polite" },
       el("span", { class: "lvl-up-ico", "aria-hidden": "true", text: "▲" }),
-      el("div", { class: "grow" }, el("b", { text: L().lvUpTitle }), el("p", { text: L().lvUpText(l.name) }), levelBar(l)),
+      el("div", { class: "grow" }, el("b", { text: L().lvUpTitle }), el("p", { text: l.next ? L().lvUpText(l.name) : L().lvUpTop(l.name) }), levelBar(l)),
       el("button", { type: "button", class: "btn sm", id: "lvl-up-ok", text: L().lvUpOk, onclick: () => box.remove() }));
     document.body.append(box);
     setTimeout(() => { if (box.isConnected) box.remove(); }, 9000);

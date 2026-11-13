@@ -188,7 +188,9 @@
       groups: ["GG-M365-F3"], device: "PC-CLN-FAR01", pwdLastSet: "19/10/2026 07:20", lastLogon: "12/11/2026 07:25" },
     // v0.19: the people of the career level 8 cases (IT management): the IT director, the CFO, the service desk lead, the change manager,
     // procurement, internal audit, Contoso Markets' COO and internal communications
-    { sam: "earrese", name: "Elena Arrese", ou: "it", title: { en: "Group CIO", es: "CIO del grupo" }, dept: "IT",
+    // v0.21: Elena Arrese was the group's CIO (the IT manager's and the IT director's cases are hers) and is now an independent director
+    // on the Board for technology; the player is the new CIO (career level 10)
+    { sam: "earrese", name: "Elena Arrese", ou: "executive", title: { en: "Independent director (technology) on the Board; group CIO until November 2026", es: "Consejera independiente de tecnología; CIO del grupo hasta noviembre de 2026" }, dept: "Board",
       groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0480", pwdLastSet: "26/10/2026 08:00", lastLogon: "13/11/2026 08:05" },
     { sam: "iferrer", name: "Ignacio Ferrer", ou: "finance", title: { en: "Group CFO", es: "Director financiero del grupo" }, dept: "Finance",
       groups: ["GG-Finance", "GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0481", pwdLastSet: "19/10/2026 08:30", lastLogon: "13/11/2026 08:40" },
@@ -216,6 +218,10 @@
       groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0488", pwdLastSet: "23/10/2026 08:10", lastLogon: "13/11/2026 08:15" },
     { sam: "lbengoa", name: "Lourdes Bengoa", ou: "markets", title: { en: "Compliance officer, Contoso Markets", es: "Responsable de cumplimiento normativo, Contoso Markets" }, dept: "Markets",
       groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0489", pwdLastSet: "28/10/2026 07:50", lastLogon: "13/11/2026 07:55" },
+    // v0.21: the people of the CIO's cases (career level 10): the group's data protection officer (the Board's members who are not
+    // employees are in CONTACTS and BOARD)
+    { sam: "igorostiza", name: "Irati Gorostiza", ou: "legal", title: { en: "Data protection officer (DPO) of the group", es: "Delegada de protección de datos (DPD) del grupo" }, dept: "Legal",
+      groups: ["GG-M365-E3", "GG-VPN-Users"], device: "LAPTOP-0490", pwdLastSet: "24/10/2026 08:35", lastLogon: "13/11/2026 08:40" },
     { sam: "recepcion", name: "Recepción", ou: "shared", title: { en: "Reception desk (shared)", es: "Recepción (compartida)" }, dept: "Reception",
       groups: ["GG-Reception", "GG-Printers-HQ"], device: "PC-REC-001", pwdLastSet: "01/07/2026 08:00", lastLogon: "26/10/2026 08:30" },
     { sam: "svc-scan", name: "svc-scan", ou: "service", title: { en: "Scan to folder (FS-SCAN01)", es: "Escanear a carpeta (FS-SCAN01)" }, dept: "IT",
@@ -320,6 +326,8 @@
     { name: "LAPTOP-0487", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "cmendizabal", note: { en: "Contoso Luxury Retail, management", es: "Contoso Luxury Retail, dirección" } },
     { name: "LAPTOP-0488", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "agaray", note: { en: "Contoso Salud, management", es: "Contoso Salud, dirección" } },
     { name: "LAPTOP-0489", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "lbengoa", note: { en: "Contoso Markets, compliance", es: "Contoso Markets, cumplimiento normativo" } },
+    // v0.21: the CIO cases' people
+    { name: "LAPTOP-0490", ou: "laptops", os: "Windows 11 Enterprise 24H2", user: "igorostiza", note: { en: "Data protection officer", es: "Delegada de protección de datos" } },
   ];
 
   // the inventory: servers (also computer objects in OU=Servers) and printers
@@ -641,6 +649,13 @@
     { id: "bastion", division: "corporate", name: "Bastión Mail", org: "Bastión Mail S.L.", role: { en: "the group's email security gateway, in front of Exchange Online (contract CT-MAIL-2024)", es: "la pasarela de seguridad de correo del grupo, delante de Exchange Online (contrato CT-MAIL-2024)" } },
     // v0.20: the suppliers of the IT director cases
     { id: "vigia", division: "corporate", name: "Vigía Ciberseguridad", org: "Vigía Ciberseguridad S.L.", role: { en: "the group's 24x7 security operations centre (SOC), contract CT-SOC-2026", es: "el centro de operaciones de seguridad (SOC) 24x7 del grupo, contrato CT-SOC-2026" } },
+    // v0.21: the CIO cases: the Board's members who are not employees, the buyer of the restaurants unit, the cyber insurer and the ERP vendors
+    { id: "board-chair", division: "corporate", name: "Fernando Aguirre", org: { en: "Contoso Group's Board of directors", es: "Consejo de administración del Grupo Contoso" }, role: { en: "chair of the Board", es: "presidente del consejo de administración" } },
+    { id: "audit-chair", division: "corporate", name: "Rosa Lekue", org: { en: "Contoso Group's Board of directors", es: "Consejo de administración del Grupo Contoso" }, role: { en: "independent director, chair of the audit and risk committee", es: "consejera independiente, presidenta de la comisión de auditoría y riesgos" } },
+    { id: "ondarra", division: "hospitality", name: "Grupo Ondarra's IT director", org: "Grupo Ondarra", role: { en: "IT of the buyer of the restaurants unit (Ribera Restauración); transitional services under CT-TSA-2027", es: "IT del comprador de la unidad de restaurantes (Ribera Restauración); servicios transitorios según CT-TSA-2027" } },
+    { id: "arrasate", division: "corporate", name: "Seguros Arrasate's incident line", org: "Seguros Arrasate", role: { en: "the group's cyber insurer (policy CT-CYB-2026), 24-hour incident line", es: "la aseguradora de ciberriesgos del grupo (póliza CT-CYB-2026), línea de incidentes 24 horas" } },
+    { id: "erp-vendor", division: "corporate", name: "Contoso ERP's vendor", org: { en: "the ERP's vendor", es: "el fabricante del ERP" }, role: { en: "vendor of Contoso ERP 11 and of its cloud edition (contract CT-ERP-2019)", es: "fabricante de Contoso ERP 11 y de su edición en la nube (contrato CT-ERP-2019)" } },
+    { id: "nimbo", division: "corporate", name: "Nimbo ERP Cloud", org: "Nimbo Software", role: { en: "a SaaS ERP that bid for the group's ERP", es: "un ERP SaaS que se presentó para el ERP del grupo" } },
   ];
 
   /* v0.19: the IT contracts the cases name: supplier (a CONTACTS id), what it covers, its division and its term */
@@ -648,6 +663,9 @@
     { id: "CT-EUC-2025", supplier: "norte", division: "retail", what: { en: "On-site end-user support for the boutiques, the corners and the hotels: €18,500 a month, SLA and service credits", es: "Soporte de puesto de trabajo presencial de las boutiques, los corners y los hoteles: 18.500 € al mes, SLA y penalizaciones" }, ends: "28/02/2028" },
     { id: "CT-FW-2023", supplier: "cantabrico", division: "corporate", what: { en: "Support and security subscriptions of FGT-HQ-01, the head office firewall (36 months, renews by itself)", es: "Soporte y suscripciones de seguridad de FGT-HQ-01, el cortafuegos de la sede (36 meses, se renueva solo)" }, ends: "13/12/2026" },
     { id: "CT-SOC-2026", supplier: "vigia", division: "corporate", what: { en: "24x7 security operations centre for the whole group (monitoring, triage and response), fixed monthly fee", es: "Centro de operaciones de seguridad 24x7 de todo el grupo (monitorización, triaje y respuesta), cuota mensual fija" }, ends: "31/12/2027" },
+    { id: "CT-ERP-2019", supplier: "erp-vendor", division: "corporate", what: { en: "Licences and support of Contoso ERP 11 for the whole group: standard support of version 11 until 31/12/2028, €280,000 a year", es: "Licencias y soporte de Contoso ERP 11 para todo el grupo: soporte estándar de la versión 11 hasta el 31/12/2028, 280.000 € al año" }, ends: "31/12/2028" },
+    { id: "CT-TSA-2027", supplier: "ondarra", division: "hospitality", what: { en: "Transitional services to the buyer of the restaurants unit after closing (31/03/2027): at most six months, at cost plus 8 %, service by service", es: "Servicios transitorios al comprador de la unidad de restaurantes tras el cierre (31/03/2027): como mucho seis meses, a coste más un 8 %, servicio a servicio" }, ends: "30/09/2027" },
+    { id: "CT-CYB-2026", supplier: "arrasate", division: "corporate", what: { en: "Cyber insurance for the whole group: incident response panel, restoration and lost production from the second day; ransoms not covered", es: "Seguro de ciberriesgos de todo el grupo: panel de respuesta, restauración y producción perdida desde el segundo día; los rescates no están cubiertos" }, ends: "31/12/2027" },
     { id: "CT-MAIL-2024", supplier: "bastion", division: "corporate", what: { en: "Email security gateway for the whole group (inbound and outbound filtering in front of Exchange Online)", es: "Pasarela de seguridad de correo de todo el grupo (filtrado de entrada y salida delante de Exchange Online)" }, ends: "31/05/2027" },
   ];
 
@@ -659,6 +677,9 @@
     { id: "PRJ-126", division: "corporate", sponsor: "lmendez", name: { en: "Self-service portal, phase 2", es: "Portal de autoservicio, fase 2" }, status: "proposed" },
     { id: "PRJ-131", division: "hospitality", sponsor: "jetxaniz", name: { en: "New booking engine and guest CRM", es: "Motor de reservas y CRM de huéspedes nuevos" }, status: "proposed" },
     { id: "PRJ-132", division: "retail", sponsor: "cmendizabal", name: { en: "Clienteling for the boutiques (with the stock data clean-up first)", es: "Clienteling para las boutiques (con la limpieza de los datos de stock primero)" }, status: "proposed" },
+    { id: "PRJ-140", division: "corporate", sponsor: "iferrer", name: { en: "The group's ERP to the vendor's cloud edition, by phases (2027-2028)", es: "El ERP del grupo a la edición en la nube del fabricante, por fases (2027-2028)" }, status: "proposed" },
+    { id: "PRJ-141", division: "corporate", sponsor: "maldama", name: { en: "Copilot by functions: overshared sites closed, labels, the AI policy and a register of use cases first", es: "Copilot por funciones: primero cerrar los sitios sobrecompartidos, etiquetas, la política de IA y un registro de casos de uso" }, status: "proposed" },
+    { id: "PRJ-142", division: "hospitality", sponsor: "jetxaniz", name: { en: "Separating the restaurants unit (Ribera Restauración) from the group's tenant and systems for its sale", es: "Separar la unidad de restaurantes (Ribera Restauración) del tenant y los sistemas del grupo para su venta" }, status: "approved" },
     { id: "PRJ-133", division: "markets", sponsor: "lbengoa", name: { en: "Communications archive for Markets: voice, chat and email, kept and searchable (committed with the supervisor for 30/06/2027)", es: "Archivo de comunicaciones de Markets: voz, chat y correo, conservados y con búsqueda (comprometido con el supervisor para el 30/06/2027)" }, status: "proposed" },
   ];
 
@@ -673,7 +694,7 @@
     { id: "cloud", division: "corporate", name: { en: "Azure and AWS", es: "Azure y AWS" } },
     { id: "hotel-bilbao", division: "hospitality", name: { en: "Hotel Ribera Bilbao", es: "Hotel Ribera Bilbao" } },
     { id: "hotel-donostia", division: "hospitality", name: { en: "Hotel Ribera Donostia (opens 24/11/2026)", es: "Hotel Ribera Donostia (abre el 24/11/2026)" } },
-    { id: "restaurant", division: "hospitality", name: { en: "Restaurante Ribera (Bilbao)", es: "Restaurante Ribera (Bilbao)" } },
+    { id: "restaurant", division: "hospitality", name: { en: "Restaurante Ribera (Bilbao), for sale with the restaurants unit", es: "Restaurante Ribera (Bilbao), en venta con la unidad de restaurantes" }, forSale: true },
     { id: "booking-centre", division: "hospitality", name: { en: "Booking centre (Bilbao)", es: "Central de reservas (Bilbao)" } },
     { id: "store-03", division: "retail", name: { en: "Store 03 Bilbao", es: "Tienda 03 Bilbao" } },
     { id: "store-07", division: "retail", name: { en: "Store 07 Valencia", es: "Tienda 07 Valencia" } },
@@ -701,6 +722,23 @@
         what: { en: "Head office, IT, Finance, HR, Legal, Sales and Marketing, the warehouse and the plants in Zaragoza and Wrocław", es: "Sede central, IT, Finanzas, RR. HH., Legal, Ventas y Marketing, el almacén y las plantas de Zaragoza y Wrocław" },
         sites: ["hq", "warehouse", "zaragoza", "wroclaw", "valencia", "cloud"] },
     ],
+  };
+  /* v0.21: the Board of directors the CIO answers to (career level 10), and its audit and risk committee. Each member is a USERS sam
+     (employees and Elena Arrese) or a CONTACTS id (directors who are not employees). */
+  const BOARD = {
+    name: { en: "Contoso Group's Board of directors", es: "Consejo de administración del Grupo Contoso" },
+    members: [
+      { ref: "board-chair", role: { en: "Chair", es: "Presidente" } },
+      { ref: "maldama", role: { en: "Executive director (CEO)", es: "Consejera ejecutiva (consejera delegada)" } },
+      { ref: "earrese", role: { en: "Independent director, technology (group CIO until November 2026)", es: "Consejera independiente de tecnología (CIO del grupo hasta noviembre de 2026)" } },
+      { ref: "audit-chair", role: { en: "Independent director, chair of the audit and risk committee", es: "Consejera independiente, presidenta de la comisión de auditoría y riesgos" } },
+    ],
+    committees: [{ id: "audit-risk", name: { en: "Audit and risk committee", es: "Comisión de auditoría y riesgos" }, chair: "audit-chair", members: ["audit-chair", "earrese"] }],
+  };
+  /* v0.21: the unit being sold (divestiture-tenant-split): Contoso Hospitality's restaurants and bars, to Grupo Ondarra */
+  const SALE = {
+    unit: { en: "Ribera Restauración: Contoso Hospitality's restaurants and bars (Restaurante Ribera and five more venues, 140 people)", es: "Ribera Restauración: los restaurantes y bares de Contoso Hospitality (el Restaurante Ribera y cinco locales más, 140 personas)" },
+    division: "hospitality", sites: ["restaurant"], buyer: "ondarra", signing: "18/12/2026", closing: "31/03/2027", tsa: "CT-TSA-2027", project: "PRJ-142",
   };
   // what belongs to a division other than corporate services (everything else is corporate): users, computers, servers, printers, devices
   const IN_DIVISION = {
@@ -1050,6 +1088,6 @@
 
   function tasks(w, lang) { return TASKS.map((x) => ({ id: x.id, label: t(x.label, lang), done: Boolean(x.check(w)) })); }
 
-  return { DC, OUS, GROUPS, USERS, COMPUTERS, SERVERS, PRINTERS, DEVICES, CONTACTS, CONTRACTS, PROJECTS, SITES, COMPANY, TASKS, CMD, t, createWorld, snapshot, restore, user, view,
+  return { DC, OUS, GROUPS, USERS, COMPUTERS, SERVERS, PRINTERS, DEVICES, CONTACTS, CONTRACTS, PROJECTS, BOARD, SALE, SITES, COMPANY, TASKS, CMD, t, createWorld, snapshot, restore, user, view,
     group, computer, allComputers, members, ouPath, userDn, under, parse, run, tasks, divisionOf, division, names, IN_DIVISION };
 });

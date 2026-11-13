@@ -210,9 +210,22 @@ test("the FAQ gives the current number of tickets and links the list", () => {
   assert.ok(h.includes('<a href="/tickets/">lista de tickets</a>') && h.includes('<a href="/tickets/">tickets list</a>'));
 });
 
+test("v0.21: the about, help and FAQ pages and the README tell the career from intern to CIO with the current number of tickets", () => {
+  const n = SCENARIOS.length;
+  for (const f of ["about.html", "help.html", "faq.html"]) {
+    const h = read(f);
+    assert.ok(h.includes(`${n} tickets, de becario/a a CIO`) && h.includes(`${n} tickets, from intern to CIO`), f);
+  }
+  const readme = readFileSync(join(PUB, "..", "README.md"), "utf8");
+  assert.ok(readme.includes(`See all ${n} tickets`) && readme.includes(`${n} tickets, from intern to CIO`) && readme.includes("## From intern to CIO"), "README");
+  // the README's table by level adds up to the total
+  const rows = [...readme.matchAll(/^\|[^|\n]+\|[^|\n]+\| (\d+) \|$/gm)].map((m) => Number(m[1]));
+  assert.equal(rows.reduce((a, b) => a + b, 0), n, "README table");
+});
+
 test("decision cases (v0.17): their pages say so and give no option, verdict, review or remark away", () => {
   const cases = SCENARIOS.filter((sc) => sc.machine.shell === "case");
-  assert.equal(cases.length, 24);
+  assert.equal(cases.length, 29);
   const index = read("tickets/index.html");
   for (const sc of cases) {
     const h = read(`tickets/${sc.id}.html`);
@@ -273,4 +286,9 @@ test("v0.18: the families are a row of buttons on the list and on every family p
   assert.ok(ld.includes("<h1>Casos de dirección de IT y CIO</h1>") && ld.includes("IT leadership and CIO"));
   assert.ok(ld.includes('<span class="tk-tag">Dirección de IT · Caso de decisión · ') && ld.includes('<span class="tk-tag">IT director · Decision case · '));
   assert.ok(read("sitemap.xml").includes("<loc>https://sysadmindesksbyigg.pages.dev/tickets/leadership</loc>"));
+  // v0.21: the CIO's cases (career level 10) close the family: eleven cases, the CIO's tagged as such
+  assert.equal(cases.filter((sc) => sc.career >= 9).length, 11);
+  assert.ok(ld.includes('<span class="tk-tag">CIO · Caso de decisión · ') && ld.includes('<span class="tk-tag">CIO · Decision case · '));
+  for (const id of ["erp-renew-or-saas", "copilot-group-wide", "divestiture-tenant-split", "three-year-board-plan", "ransomware-board"])
+    assert.ok(read("sitemap.xml").includes(`<loc>https://sysadmindesksbyigg.pages.dev/tickets/${id}</loc>`), id + " in the sitemap");
 });

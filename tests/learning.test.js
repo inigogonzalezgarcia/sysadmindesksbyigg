@@ -131,7 +131,9 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   "14.2", "18.1", "€111,000", "111.000 €", "31/05/2028", "28/11", "MIP-01", "BCP-MKT-04", "lock-all-tables", "single-transaction", "CHG-STD-118",
   "ERP-SA-2026-09", "/api/import", "hiring freeze", "congelación de plantilla", "AUD-2026-14", "A.5.9",
   // career level 9 (IT director's decision cases): the contracts, policies, nonconformities, projects and accounts that decide them
-  "CT-SOC-2026", "PRJ-124", "PRJ-133", "NC-01", "NC-02", "POL-SEC-04", "POL-SEC-07", "POL-IT-08", "adm-bg02", "stage 1", "fase 1"];
+  "CT-SOC-2026", "PRJ-124", "PRJ-133", "NC-01", "NC-02", "POL-SEC-04", "POL-SEC-07", "POL-IT-08", "adm-bg02", "stage 1", "fase 1",
+  // career level 10 (CIO's decision cases): the contracts, offers, policies and data that decide them
+  "CT-ERP-2019", "Nimbo", "CT-TSA-2027", "CT-CYB-2026", "POL-SEC-09", "POL-SEC-12", "BCP-ZAR-02", "PRJ-141", "PRJ-142", "Grupo Ondarra", "Ribera Restauración"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();

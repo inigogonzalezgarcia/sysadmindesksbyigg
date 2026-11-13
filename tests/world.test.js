@@ -286,6 +286,15 @@ test("Contoso is a group of divisions, and everything in the world says its divi
   const named2 = new Set();
   for (const sc of SCENARIOS) for (const m of JSON.stringify(sc).matchAll(/\bPRJ-\d{3}\b/g)) named2.add(m[0]);
   assert.deepEqual([...named2].sort(), [...projects].sort(), "every project a ticket names is declared, and every declared one is used");
+  // v0.21: the Board (each member a directory account or a contact) and the unit being sold (a site marked for sale, its buyer, TSA and project)
+  const refOk = (r) => W.USERS.some((u) => u.sam === r) || W.CONTACTS.some((c) => c.id === r);
+  W.BOARD.members.forEach((m) => assert.ok(refOk(m.ref) && m.role.en && m.role.es, "board member " + m.ref));
+  W.BOARD.committees.forEach((c) => assert.ok(c.members.concat(c.chair).every(refOk) && c.name.en && c.name.es, "committee " + c.id));
+  assert.ok(W.BOARD.members.some((m) => m.ref === "earrese"), "Elena Arrese sits on the Board");
+  assert.match(W.USERS.find((u) => u.sam === "earrese").title.en, /Independent director.*CIO until/);
+  assert.ok(ids.includes(W.SALE.division) && W.SALE.sites.every((s) => W.SITES.find((x) => x.id === s && x.forSale && x.division === W.SALE.division)), "the unit for sale and its sites");
+  assert.ok(W.CONTACTS.some((c) => c.id === W.SALE.buyer) && contracts.has(W.SALE.tsa) && projects.has(W.SALE.project), "the buyer, the TSA and the separation project");
+  assert.deepEqual(W.SITES.filter((s) => s.forSale).map((s) => s.id), W.SALE.sites, "only the unit's sites are for sale");
   // no two things share an address (the network room's devices included)
   const N = require("../public/assets/netcli.js");
   const seen = {};

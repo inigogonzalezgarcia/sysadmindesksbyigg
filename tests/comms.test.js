@@ -242,6 +242,12 @@ const TEMPTING = {
   "three-projects-two-budgets": ["open cases", "open deadlines", "open dependencies", "open capacity", "ask compliance", "ask pm", "decide A"],
   "worst-two-sites": ["open scorecard", "open hotel", "open plant", "open money", "ask hospitality", "ask operations", "decide D"],
   "global-admins-governance": ["open admins", "open usage", "open emergency", "open audit", "ask privileged", "ask servicedesk", "decide B"],
+  // career level 10 (CIO): the cheapest SaaS; Copilot for everyone in January; the unit cut on closing day; all 25 initiatives; pay and stay quiet
+  "erp-renew-or-saas": ["open tco", "open contract", "open needs", "open custom", "ask salud", "ask markets", "decide A"],
+  "copilot-group-wide": ["open pilot", "open sharing", "open labels", "open policy", "ask security", "ask dpo", "decide B"],
+  "divestiture-tenant-split": ["open spa", "open inventory", "open data", "open timeline", "ask legal", "ask restaurant", "decide C"],
+  "three-year-board-plan": ["open strategy", "open debt", "open risks", "open initiatives", "ask cfo", "ask audit", "decide B"],
+  "ransomware-board": ["open scope", "open backups", "open bcp", "open duties", "ask soc", "ask dpo", "decide D"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

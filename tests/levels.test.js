@@ -29,6 +29,12 @@ test("levels: eleven levels in order, from intern to CIO, named in both language
   // the most points there are today reach Infra / Cloud engineer without the weekly goals; the levels above need weekly goals and new tickets
   const max = DESKS.length * 100 + Lb.summary({}).totalTasks * V.LAB_TASK_POINTS + DESKS.length * 10 + Lb.LABS.length * V.SHIFT.points;
   assert.ok(max >= V.LEVELS[5].min + 300, "Infra / Cloud engineer is reachable without the weekly goals");
+  // v0.21: the career ends at CIO: the tickets below career level 10 (with their communication bonus) are enough to reach it, so the CIO's
+  // cases, which join the queue at that level, can be unlocked without them
+  const below = SCENARIOS.filter((sc) => (sc.career || 0) < 10).length * 110;
+  assert.ok(below >= V.LEVELS[10].min, "CIO is reachable with the tickets below it: " + below);
+  assert.ok(SCENARIOS.some((sc) => sc.career === 10) && SCENARIOS.every((sc) => (sc.career || 0) <= 10), "the last tickets are the CIO's");
+  assert.equal(V.LEVELS.length, 11);
 });
 
 test("levels: points = best results + 10 per lab task + best comms bonus per ticket + goals + shifts; free tickets never count", () => {

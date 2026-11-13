@@ -147,8 +147,6 @@ function replaceBlock(html, start, end, body, file) {
 }
 function staticPage(file, html) {
   const m = STATIC[file];
-  const extra = file === "index.html" ? [jsonld(webApp())] : file === "faq.html" ? [jsonld(faqPage(html))]
-    : file === "about.html" ? [jsonld(aboutPage())] : file === "help.html" ? [jsonld(helpCrumbs())] : [];
   if (file === "index.html") html = html
     .replace(/<p>[^<]*? tickets de primera y segunda línea\./, `<p>${Cap(words(N(), "es"))} tickets de primera y segunda línea.`)
     .replace(/<p>[^<]*? first and second line tickets\./, `<p>${Cap(words(N(), "en"))} first and second line tickets.`);
@@ -158,6 +156,13 @@ function staticPage(file, html) {
   if (file === "about.html") html = html
     .replace(/Ahora mismo hay [^<]*? tickets de primera y segunda línea/, `Ahora mismo hay ${words(N(), "es")} tickets de primera y segunda línea`)
     .replace(/There are [^<]*? tickets right now/, `There are ${words(N(), "en")} tickets right now`);
+  // v0.21: "N tickets, de becario/a a CIO" / "N tickets, from intern to CIO" on the about, help and FAQ pages
+  if (["about.html", "help.html", "faq.html"].includes(file)) html = html
+    .replace(/\d+ tickets, de becario\/a a CIO/g, `${N()} tickets, de becario/a a CIO`)
+    .replace(/\d+ tickets, from intern to CIO/g, `${N()} tickets, from intern to CIO`);
+  // the JSON-LD after the counts above, so the FAQPage carries the same numbers as the visible FAQ on the first run
+  const extra = file === "index.html" ? [jsonld(webApp())] : file === "faq.html" ? [jsonld(faqPage(html))]
+    : file === "about.html" ? [jsonld(aboutPage())] : file === "help.html" ? [jsonld(helpCrumbs())] : [];
   let out = html.replace(/<html lang="[a-z]+"[^>]*>/, `<html lang="es" data-title-en="${esc(m.titleEn)}">`);
   out = replaceBlock(out, "<!-- seo -->", "<!-- /seo -->", seoHead(m, extra).replace(/\n<!-- \/seo -->$/, ""), file);
   for (const lang of ["es", "en"]) {
@@ -413,6 +418,11 @@ export const RELATED = {
   "three-projects-two-budgets": ["finops-commitments", "voice-line-bank", "hotel-preopening"],
   "worst-two-sites": ["wan-site-slow", "euc-provider-sla", "grafana-site-panel"],
   "global-admins-governance": ["pim-role-expired", "ca-blocked", "cyberark-cpm-fails"],
+  "erp-renew-or-saas": ["dr-erp-rto", "erp-ha", "three-projects-two-budgets"],
+  "copilot-group-wide": ["sharepoint-shared-everyone", "purview-label-cant-open", "global-admins-governance"],
+  "divestiture-tenant-split": ["leaver-return", "aadc-sync", "m365-licence"],
+  "three-year-board-plan": ["budget-cut-15", "three-projects-two-budgets", "worst-two-sites"],
+  "ransomware-board": ["veeam-restore-test", "major-incident-mail", "crypto-mining"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {

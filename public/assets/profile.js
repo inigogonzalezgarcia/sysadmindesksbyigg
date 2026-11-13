@@ -58,6 +58,8 @@
     "risky-change-close": "itsm", "servicedesk-backlog": "itsm", "cmdb-audit": "itsm",
     "budget-cut-15": "itsm", "iso27001-six-weeks": "itsm", "critical-vulns-overdue": "endpoint", "three-projects-two-budgets": "itsm",
     "worst-two-sites": "network", "global-admins-governance": "m365",
+    "erp-renew-or-saas": "data", "copilot-group-wide": "m365", "divestiture-tenant-split": "m365", "three-year-board-plan": "itsm",
+    "ransomware-board": "data",
   };
   const LAB_AREA = Object.fromEntries(Lb.LABS.map((l) => [l.id, l.area]));
 
@@ -92,7 +94,8 @@
         "ansible-patch-fails", "jenkins-pipeline-red", "gpu-xid-errors", "dr-erp-rto", "erp-ha",
         "oracle-hw-change", "win11-trading-hours", "clinical-maintenance",
         "euc-provider-sla", "monday-problem", "risky-change-close", "servicedesk-backlog", "cmdb-audit",
-        "budget-cut-15", "iso27001-six-weeks", "critical-vulns-overdue", "three-projects-two-budgets"], labs: ["linux"] },
+        "budget-cut-15", "iso27001-six-weeks", "critical-vulns-overdue", "three-projects-two-budgets",
+        "erp-renew-or-saas", "three-year-board-plan", "ransomware-board"], labs: ["linux"] },
     { id: "netcloud", title: { en: "Network / Cloud", es: "Redes / Cloud" },
       what: { en: "Switches, the firewall and the branch, and cloud identity: Conditional Access and single sign-on.", es: "Switches, el cortafuegos y la sucursal, e identidad en la nube: acceso condicional e inicio de sesión único." },
       areas: ["network", "m365"],
@@ -106,7 +109,7 @@
         "pfsense-carp-failover", "grafana-site-panel", "azure-bill-spike", "aws-no-share", "graph-429-report", "cloudpc-no-connect",
         "k8s-crashloop", "terraform-drift", "grafana-slo-budget", "crypto-mining", "cloud-placement", "new-site-network",
         "ot-integration", "finops-commitments", "hotel-preopening", "corner-preopening", "firewall-contract-renewal", "major-incident-mail",
-        "worst-two-sites", "global-admins-governance"], labs: ["network"] },
+        "worst-two-sites", "global-admins-governance", "copilot-group-wide", "divestiture-tenant-split"], labs: ["network"] },
   ];
 
   const avg = (xs) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : null);
