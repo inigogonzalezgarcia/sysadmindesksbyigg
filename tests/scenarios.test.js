@@ -34,7 +34,7 @@ test("every scenario is complete in English and Spanish", () => {
       if (r.say && typeof r.say !== "string") assert.ok(r.say.en && r.say.es, `${sc.id}/${r.id} say needs en and es`);
     }
   }
-  assert.equal(SCENARIOS.length, 175);
+  assert.equal(SCENARIOS.length, 182);
 });
 
 test("every scenario has a career level (levels.js) from 0 to 10, and the level-0 queue is first line only", () => {
@@ -2008,11 +2008,13 @@ const CASES = SCENARIOS.filter((s) => s.machine.shell === "case");
 const optionOf = (sc, verdict) => sc.case.options.find((o) => o.verdict === verdict);
 const caseRead = (sc) => sc.solution.slice(0, sc.solution.indexOf("options"));   // the key documents and the key questions
 
-test("decision cases: eleven at level 7, each with one best, one acceptable, one tempting and one oversized option, and a varied answer", () => {
-  assert.deepEqual(CASES.map((s) => s.id).sort(), ["clinical-maintenance", "cloud-placement", "corner-preopening", "dr-erp-rto", "erp-ha", "finops-commitments",
+test("decision cases: eleven at level 7 and seven at level 8, each with one best, one acceptable, one tempting and one oversized option, and a varied answer", () => {
+  assert.deepEqual(CASES.filter((s) => s.career === 7).map((s) => s.id).sort(), ["clinical-maintenance", "cloud-placement", "corner-preopening", "dr-erp-rto", "erp-ha", "finops-commitments",
     "hotel-preopening", "new-site-network", "oracle-hw-change", "ot-integration", "win11-trading-hours"]);
+  assert.deepEqual(CASES.filter((s) => s.career === 8).map((s) => s.id).sort(), ["cmdb-audit", "euc-provider-sla", "firewall-contract-renewal", "major-incident-mail",
+    "monday-problem", "risky-change-close", "servicedesk-backlog"]);
   for (const sc of CASES) {
-    assert.equal(sc.career, 7, sc.id);
+    assert.ok(sc.career === 7 || sc.career === 8, sc.id);
     assert.ok(/^Decision case · /.test(sc.topic.en) && /^Caso de decisión · /.test(sc.topic.es), sc.id + " topic says it is a decision case");
     assert.deepEqual(sc.case.options.map((o) => o.verdict).sort(), ["best", "ok", "over", "trap"], sc.id);
     assert.deepEqual(sc.case.options.map((o) => o.id), ["A", "B", "C", "D"], sc.id + " options in order");
@@ -2022,6 +2024,19 @@ test("decision cases: eleven at level 7, each with one best, one acceptable, one
     assert.ok(optionOf(sc, "ok").remark.en && optionOf(sc, "ok").remark.es, sc.id + " remark for the acceptable option");
   }
   assert.ok(new Set(CASES.map((sc) => optionOf(sc, "best").id)).size >= 3, "the best option is not always the same letter");
+  assert.ok(new Set(CASES.filter((sc) => sc.career === 8).map((sc) => optionOf(sc, "best").id)).size >= 3, "nor at level 8");
+});
+
+test("decision cases at level 8 (IT manager): the note also says how it is communicated and to whom, and the case file is the manager's", () => {
+  for (const sc of CASES.filter((s) => s.career === 8)) {
+    assert.equal(sc.machine.user, "itmanager", sc.id);
+    const comms = sc.note.find((n) => n.label.en === "how it is communicated and to whom");
+    assert.ok(comms, sc.id + " has the communication element");
+    const without = sc.sampleNote.es.replace(/[Cc]omunica\w*/g, "avisa");
+    assert.deepEqual(E.checkNote(sc, without, "es").missing, [comms.label.es], sc.id + ": a note that does not say how it is communicated misses it");
+    assert.ok(sc.case.people.length >= 3, sc.id + " people");
+  }
+  assert.equal(byId["dr-erp-rto"].machine.user, "architect");
 });
 
 test("decision cases: the case file answers in its own words, help lists its commands, and an unknown line still counts", () => {

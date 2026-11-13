@@ -126,7 +126,10 @@ const SPOILERS = ["FS-SCAN01", "ScanToFinance", "scheduled task", "tarea program
   "Spain Central", "us-east-1", "eu-central-1", "RAT-031", "QualiTrack", "StackPower", "9300-48P", "820 W", "second carrier", "segundo operador",
   "anti-affinity", "antiafinidad", "admission control", "control de admisión", "target_session_attrs", "BI-TEST01", "Q-2026-1187",
   "ZAR-DMZ01", "VLAN 270", "SEC-OT-01", "FIN-07", "DWH-AZ", "PRJ-112", "SLA-CLN-02", "snapshot standby", "ORA-CLN02", "TF-02", "7.4.2",
-  "Galerias-Free", "FortiExtender", "CS-07", "PC-SAL-03", "go/no-go"];
+  "Galerias-Free", "FortiExtender", "CS-07", "PC-SAL-03", "go/no-go",
+  // career level 8 (IT manager's decision cases): the clauses, dates and data that decide them
+  "14.2", "18.1", "€111,000", "111.000 €", "31/05/2028", "28/11", "MIP-01", "BCP-MKT-04", "lock-all-tables", "single-transaction", "CHG-STD-118",
+  "ERP-SA-2026-09", "/api/import", "hiring freeze", "congelación de plantilla", "AUD-2026-14", "A.5.9"];
 test("library: no article gives a desk's root cause away", () => {
   for (const a of Lib.ARTICLES) for (const lang of ["en", "es"]) {
     const text = [Lib.t(a.title, lang), Lib.t(a.summary, lang)].concat(Lib.textOf(a, lang)).join("\n").toLowerCase();

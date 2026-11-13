@@ -306,6 +306,7 @@
     linux: { icon: "$", en: "Calm root", es: "Root sin sustos" }, vdi: { icon: "▣", en: "Smooth session", es: "Sesión fluida" },
     data: { icon: "⛁", en: "Safe data", es: "Datos a salvo" }, network: { icon: "⌗", en: "Loop-free network", es: "Red sin bucles" },
     hardware: { icon: "⇪", en: "Workshop up to date", es: "Taller al día" },
+    itsm: { icon: "▤", en: "Service under control", es: "Servicio bajo control" },
   };
   const MASTERY_MIN = 90;
   const deskOfArea = (f, ar) => (f.desks || []).filter((d) => PF.DESK_AREA[d] === ar);
@@ -313,7 +314,8 @@
     windows: { en: "Windows shift", es: "Turno de Windows" }, m365: { en: "Microsoft 365 shift", es: "Turno de Microsoft 365" }, linux: { en: "Linux shift", es: "Turno de Linux" } };
   const AREA_NAME = (ar) => ({ ad: { en: "Active Directory", es: "Active Directory" }, windows: { en: "Windows", es: "Windows" }, m365: { en: "Microsoft 365", es: "Microsoft 365" },
     endpoint: { en: "Intune and BitLocker", es: "Intune y BitLocker" }, linux: { en: "Linux", es: "Linux" }, vdi: { en: "Citrix and VDI", es: "Citrix y VDI" },
-    data: { en: "backup and SQL Server", es: "copias y SQL Server" }, network: { en: "network", es: "red" }, hardware: { en: "hardware and RMA", es: "hardware y RMA" } })[ar];
+    data: { en: "backup and SQL Server", es: "copias y SQL Server" }, network: { en: "network", es: "red" }, hardware: { en: "hardware and RMA", es: "hardware y RMA" },
+    itsm: { en: "IT and service management", es: "gestión de IT y servicio" } })[ar];
   const EXTRA = [].concat(
     Object.entries(MASTERY).map(([ar, m]) => ({ id: "master-" + ar, group: "area", area: ar, icon: m.icon, name: { en: m.en, es: m.es },
       rule: { en: `Resolve every ${AREA_NAME(ar).en} ticket with ${MASTERY_MIN} or more.`, es: `Resuelve todos los tickets de ${AREA_NAME(ar).es} con ${MASTERY_MIN} o más.` },

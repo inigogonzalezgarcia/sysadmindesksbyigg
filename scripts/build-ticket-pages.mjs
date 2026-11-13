@@ -210,8 +210,8 @@ const T = {
     relH: "Tickets relacionados", prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
     idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de primera y segunda línea, de una empresa ficticia. Cada uno se resuelve en el navegador, gratis, con una consola simulada, y se cierra con una nota de trabajo puntuada.`,
-    idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia", famN: (n) => `${n} tickets`, famOther: "Otras familias",
-    famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Arquitectura"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
+    idxL1: "Nivel 1 · primera línea", idxL2: "Nivel 2 · segunda línea", idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia",
+    famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Arquitectura", "Responsable de IT"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
     howCase: "It is a decision case: instead of a system console you have a case file with documents, stakeholders to ask and several options with their cost, risk and time. You decide, check the decision against the requirements and justify it in the note for management (the decision, the requirement that decides it, cost, risks, plan B and dates), which is what gets scored.",
@@ -219,8 +219,8 @@ const T = {
     relH: "Related tickets", prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
     idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} first and second line help desk tickets from a fictional company. Each one is solved in the browser, free, with a simulated console, and closed with a scored work note.`,
-    idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family", famN: (n) => `${n} tickets`, famOther: "Other families",
-    famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Architect"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
+    idxL1: "Level 1 · first line", idxL2: "Level 2 · second line", idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family",
+    famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Architect", "IT manager"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
 
 // three tickets to practise next on each ticket page (same technology or the same kind of problem)
@@ -400,6 +400,13 @@ export const RELATED = {
   "win11-trading-hours": ["win-update-rollback", "intune-ring-stuck", "trading-switch-loop"],
   "corner-preopening": ["store-4g-failover", "net-fortigate-branch", "zabbix-pos-down"],
   "clinical-maintenance": ["citrix-clinical-app", "rabbitmq-queue-growing", "oracle-hw-change"],
+  "euc-provider-sla": ["laptop-rma", "store-label-printer", "finops-commitments"],
+  "firewall-contract-renewal": ["net-fortigate-branch", "opnsense-ips-block", "finops-commitments"],
+  "major-incident-mail": ["voice-line-bank", "zabbix-alert-storm", "mailbox-full"],
+  "monday-problem": ["mysql-slow-queries", "db-restore-test", "nginx-balancer-sticky"],
+  "risky-change-close": ["iis-503", "winserver-patch-cluster", "erp-ha"],
+  "servicedesk-backlog": ["ad-lockout", "m365-licence", "confluence-runbook-stale"],
+  "cmdb-audit": ["device42-rack-mismatch", "tanium-stale-endpoint", "oracle-hw-change"],
 };
 const BY_ID = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 function relatedList(sc, lang) {
@@ -463,9 +470,7 @@ function indexArticle(lang) {
 <h1>${t.idxH1}</h1>
 <p class="lead-p">${esc(t.idxLead())}</p>
 <h2 id="${lang === "es" ? "familias" : "families"}">${t.famH}</h2>
-<ul class="tk-list">
-${FAMILIES.map((f) => `  <li><a href="${familyPath(f)}">${esc(f[lang].name)}</a> <span class="tk-tag">${t.famN(famDesks(f).length)}</span></li>`).join("\n")}
-</ul>
+${famNav(lang, null)}
 ${levels.map((l) => `<h2 id="${lang === "es" ? "nivel" : "level"}-${l}">${l === 1 ? t.idxL1 : t.idxL2}</h2>\n${group(l)}`).join("\n")}
 <p class="tk-cta"><a class="btn tk-btn" href="/?lang=${lang}#/register">${t.start}</a></p>
 <p>${t.idxMore(`<a href="/about">${t.about}</a>`, `<a href="/help">${t.help}</a>`, `<a href="/faq">${t.faq}</a>`)}</p>
@@ -474,6 +479,15 @@ ${levels.map((l) => `<h2 id="${lang === "es" ? "nivel" : "level"}-${l}">${l === 
 
 // a page per family: /tickets/<family>
 const famDesks = (f) => SCENARIOS.filter((sc) => familyOf(sc.id) === f);
+// the families as a row of buttons (links that look like chips, with their number of tickets); the current one is marked
+function famNav(lang, current) {
+  const t = T[lang];
+  return `<nav class="tk-fams" aria-label="${esc(t.famH)}">
+<ul>
+${FAMILIES.map((f) => `  <li><a class="tk-fam" href="${familyPath(f)}"${f === current ? ' aria-current="page"' : ""}>${esc(f[lang].name)} <span class="tk-fam-n">${famDesks(f).length}</span></a></li>`).join("\n")}
+</ul>
+</nav>`;
+}
 const famMeta = (f) => ({ path: familyPath(f), title: f.es.title, titleEn: f.en.title, desc: f.es.desc(famDesks(f).length) });
 function familyArticle(f, lang) {
   const t = T[lang];
@@ -483,14 +497,11 @@ function familyArticle(f, lang) {
 <p class="tk-crumbs"><a href="/tickets/">${t.crumbs}</a> › ${esc(f[lang].name)}</p>
 <h1>${esc(f[lang].title.replace(/ · .*$/, ""))}</h1>
 <p class="lead-p">${esc(f[lang].intro)}</p>
+${famNav(lang, f)}
 <ul class="tk-list">
 ${desks.map((sc) => `  <li><a href="${ticketPath(sc)}">${esc(tx(sc.title, lang))}</a> <span class="tk-tag">${esc(t.famLevel(sc.career ?? 0))} · ${esc(tx(sc.topic, lang))}</span></li>`).join("\n")}
 </ul>
 <p class="tk-cta"><a class="btn tk-btn" href="/?lang=${lang}#/register">${t.start}</a> <a href="/tickets/">${t.famMore}</a></p>
-<h2>${t.famOther}</h2>
-<ul class="tk-list">
-${FAMILIES.filter((g) => g !== f).map((g) => `  <li><a href="${familyPath(g)}">${esc(g[lang].name)}</a> <span class="tk-tag">${t.famN(famDesks(g).length)}</span></li>`).join("\n")}
-</ul>
 <p class="fine">${esc(t.fiction)}</p>
 </article>`;
 }

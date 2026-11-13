@@ -165,6 +165,7 @@ scenarios.push(caseDesk({
 - **Card and buttons.** The card shows the decision (pending, decided, reviewed or failing its review) and the requirements check, plus the case's own fields. The ticket's buttons open each document, compare the options, decide each option (once the key reading is done) and review, so a case can be played without typing.
 - **The note is the note for management.** Its elements are the parts of a good justification: the decision (`fix`), the requirement that decides it (`cause`), the cost (`fix`), the risks and their mitigation (`verify`) and the plan B with dates (`followup`). The resolution code is `decision` ("Decision documented and justified").
 - **Public pages.** The topic starts with "Decision case · " / "Caso de decisión · ", so the lists and the ticket page say so; the ticket page explains the format instead of the console, and the tests check that no option's name, review or remark appears on it.
+- **Career level 8 (IT manager, v0.19).** The same `caseDesk()`, with `career: 8`: the case file's user is `itmanager`, the decisions are about people, suppliers, processes, service and money, and the note goes to management or a committee (the CAB, the service review, audit). Its note elements are `CASE_NOTE_MGMT`: the level 7 tail plus "how it is communicated and to whom" (`comunica` / `communicat`). These cases are in the area `itsm` of the profile and in the family `management` ("IT and service management", `/tickets/management`). Every supplier and contract a case names is in `world.js` (`CONTACTS` with its division, `CONTRACTS`).
 - **Numbers.** Keep the figures consistent between documents, the table, the details and the reviews (and with the rest of Contoso: the Madrid cluster's memory, the Zaragoza link, the people in world.js).
 
 ## Contact: `contact`
@@ -208,4 +209,5 @@ contact: {
 - Base it on a real, common ticket, with one cause that the console can reveal and one tempting wrong fix (unlocking without finding the cause, restarting the spooler without clearing the file, raising a quota the licence does not allow).
 - Make the user prove the fix (the `verify` stage) before the ticket can be closed.
 - Keep the company, people and outputs fictional; no real tenant, domain or person.
+- Use the world (v0.18): every server, PC, network device and named person a desk mentions (in the ticket, the outputs, the card, `requester`, `contact` or a case file) must be declared in `public/assets/world.js`, in its division and with an IP address of its own; `tests/world.test.js` lists what is missing. A retired server or an option that was never built goes in that test's `NOT_IN_WORLD`, with the reason.
 - Add tests: the reference solution, and at least one wrong path that must not resolve the ticket.

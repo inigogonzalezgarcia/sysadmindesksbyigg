@@ -212,7 +212,7 @@ test("the FAQ gives the current number of tickets and links the list", () => {
 
 test("decision cases (v0.17): their pages say so and give no option, verdict, review or remark away", () => {
   const cases = SCENARIOS.filter((sc) => sc.machine.shell === "case");
-  assert.equal(cases.length, 11);
+  assert.equal(cases.length, 18);
   const index = read("tickets/index.html");
   for (const sc of cases) {
     const h = read(`tickets/${sc.id}.html`);
@@ -233,4 +233,37 @@ test("decision cases (v0.17): their pages say so and give no option, verdict, re
     }
     for (const l of ["es", "en"]) for (const d of sc.case.docs) for (const x of d.text[l]) if (x.length > 25) assert.ok(!plain.includes(x), `${sc.id} shows the case file: ${x}`);
   }
+});
+
+test("v0.18: the families are a row of buttons on the list and on every family page, and the decision cases have their own", () => {
+  const nav = (h) => h.match(/<nav class="tk-fams" aria-label="[^"]+">[\s\S]*?<\/nav>/g) || [];
+  const index = read("tickets/index.html");
+  assert.equal(nav(index).length, 2, "one row per language on /tickets/");
+  assert.ok(index.indexOf('class="tk-fams"') < index.indexOf('class="tk-list"'), "the buttons come before the lists");
+  assert.ok(!nav(index).join("").includes("aria-current"), "no family is current on the list");
+  for (const f of FAMILIES) {
+    const h = read(`tickets/${f.slug}.html`);
+    const rows = nav(h);
+    assert.equal(rows.length, 2, f.slug + " has the row in both languages");
+    for (const row of rows) {
+      assert.equal((row.match(/aria-current="page"/g) || []).length, 1, f.slug + ": exactly one current family");
+      assert.ok(row.includes(`<a class="tk-fam" href="/tickets/${f.slug}" aria-current="page">`), f.slug + " is the current one");
+      FAMILIES.forEach((g) => assert.ok(row.includes(`href="/tickets/${g.slug}"`), `${f.slug} links ${g.slug}`));
+      assert.ok(!/style=/.test(row), "no inline styles (the CSP forbids them)");
+    }
+  }
+  const cases = SCENARIOS.filter((sc) => sc.machine.shell === "case");
+  assert.ok(cases.length >= 5);
+  for (const sc of cases.filter((x) => x.career === 7)) assert.equal(familyOf(sc.id).slug, "architecture", sc.id);
+  assert.deepEqual(SCENARIOS.filter((sc) => familyOf(sc.id).slug === "architecture").map((sc) => sc.id).sort(), cases.filter((sc) => sc.career === 7).map((sc) => sc.id).sort());
+  const css = readFileSync(new URL("../public/assets/style.css", import.meta.url), "utf8");
+  assert.ok(css.includes(".tk-fam[aria-current=\"page\"]") && css.includes(".tk-fams ul"), "the buttons are styled in style.css");
+  assert.ok(read("sitemap.xml").includes("<loc>https://sysadmindesksbyigg.pages.dev/tickets/architecture</loc>"));
+  // v0.19: the IT manager's cases (career level 8) have their own family, management
+  for (const sc of cases.filter((x) => x.career === 8)) assert.equal(familyOf(sc.id).slug, "management", sc.id);
+  assert.deepEqual(SCENARIOS.filter((sc) => familyOf(sc.id).slug === "management").map((sc) => sc.id).sort(), cases.filter((sc) => sc.career === 8).map((sc) => sc.id).sort());
+  const mg = read("tickets/management.html");
+  assert.ok(mg.includes("<h1>Casos de gestión de IT y servicio</h1>") && mg.includes("IT and service management"));
+  assert.ok(mg.includes('<span class="tk-tag">Responsable de IT · Caso de decisión · ') && mg.includes('<span class="tk-tag">IT manager · Decision case · '));
+  assert.ok(read("sitemap.xml").includes("<loc>https://sysadmindesksbyigg.pages.dev/tickets/management</loc>"));
 });

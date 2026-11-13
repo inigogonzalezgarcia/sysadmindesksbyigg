@@ -1189,4 +1189,46 @@ export const TICKET_SEO = {
     en: { title: "Decision case: a window on a 24x7 clinical system", desc: "Practise how to choose a maintenance window for a clinical system that never stops, with contingency, a way back and validation, and document it.",
       skills: ["Read a system's activity by hour.", "Use a paper contingency procedure.", "Set a go/no-go point and a way back.", "Organise the validation with key users."] },
   },
+  "euc-provider-sla": {
+    es: { title: "Caso de decisión: un proveedor de soporte que incumple el SLA", desc: "Practica cómo decidir qué hacer con un proveedor de soporte al puesto que incumple el SLA, con el contrato en la mano, y documentarlo en el ticket.",
+      skills: ["Leer informes mensuales de SLA y tickets reabiertos.", "Aplicar las cláusulas de un contrato de servicio.", "Valorar el coste y el plazo de cambiar de proveedor.", "Preparar una revisión de servicio y comunicarla a las tiendas."] },
+    en: { title: "Decision case: a support provider that misses its SLA", desc: "Practise how to decide what to do with an end-user support provider that misses its SLA, with the contract in hand, and document it in the ticket.",
+      skills: ["Read monthly SLA reports and reopened tickets.", "Apply the clauses of a service contract.", "Weigh the cost and time of changing provider.", "Prepare a service review and tell the stores."] },
+  },
+  "firewall-contract-renewal": {
+    es: { title: "Caso de decisión: renovar el contrato del cortafuegos", desc: "Practica cómo decidir la renovación del soporte de un cortafuegos con su ciclo de vida, el uso real y el presupuesto, y documentarlo en el ticket.",
+      skills: ["Leer las cláusulas de renovación de un contrato.", "Cruzar un contrato con el ciclo de vida del equipo.", "Ajustar lo contratado al uso real.", "Presentar la decisión a Compras y a Finanzas."] },
+    en: { title: "Decision case: renewing the firewall contract", desc: "Practise how to decide the support renewal of a firewall against its lifecycle, its real use and the budget, and document it in the ticket.",
+      skills: ["Read a contract's renewal clauses.", "Check a contract against the equipment's lifecycle.", "Fit what is bought to what is used.", "Present the decision to Procurement and Finance."] },
+  },
+  "major-incident-mail": {
+    es: { title: "Caso de decisión: liderar un incidente grave de correo", desc: "Practica cómo liderar un incidente grave que deja sin correo a todo el grupo, con roles, comunicación y continuidad, y documentarlo en el ticket.",
+      skills: ["Leer una línea temporal y el impacto por división.", "Aplicar un procedimiento de incidente grave.", "Organizar la comunicación con el negocio durante la caída.", "Activar la continuidad de un servicio crítico."] },
+    en: { title: "Decision case: leading a major mail incident", desc: "Practise how to lead a major incident that leaves the whole group without email, with roles, communication and continuity, and document it in the ticket.",
+      skills: ["Read a timeline and the impact by division.", "Apply a major incident procedure.", "Organise the communication with the business during the outage.", "Start a critical service's continuity plan."] },
+  },
+  "monday-problem": {
+    es: { title: "Caso de decisión: el mismo incidente cada lunes", desc: "Practica cómo convertir un incidente que se repite cada lunes en una gestión de problemas con causa raíz y su cambio, y documentarlo en el ticket.",
+      skills: ["Encontrar el patrón en incidentes cerrados como resueltos.", "Cruzar incidentes con el calendario de cambios.", "Separar la gestión de incidentes de la de problemas.", "Llevar la solución al CAB."] },
+    en: { title: "Decision case: the same incident every Monday", desc: "Practise how to turn an incident that comes back every Monday into problem management with a root cause and its change, and document it in the ticket.",
+      skills: ["Find the pattern in incidents closed as resolved.", "Check incidents against the change calendar.", "Tell incident management apart from problem management.", "Take the fix to the CAB."] },
+  },
+  "risky-change-close": {
+    es: { title: "Caso de decisión: un cambio de riesgo en semana de cierre", desc: "Practica cómo tratar un cambio urgente y de riesgo durante la congelación del cierre contable, con su aviso de seguridad, y documentarlo en el ticket.",
+      skills: ["Leer una RFC y su plan de vuelta atrás.", "Aplicar los tipos de cambio y una congelación.", "Separar contener un riesgo de corregirlo.", "Usar un entorno de pruebas antes de producción."] },
+    en: { title: "Decision case: a risky change in closing week", desc: "Practise how to handle an urgent, risky change during the accounting close freeze, with its security advisory, and document it in the ticket.",
+      skills: ["Read an RFC and its way back.", "Apply the change types and a freeze.", "Tell containing a risk apart from fixing it.", "Use a test environment before production."] },
+  },
+  "servicedesk-backlog": {
+    es: { title: "Caso de decisión: el backlog del service desk", desc: "Practica cómo decidir qué hacer con un backlog de service desk que crece cada semana, con datos de demanda y presupuesto, y documentarlo en el ticket.",
+      skills: ["Leer entradas, salidas y antigüedad de un backlog.", "Analizar la demanda por categorías.", "Decidir dentro de un presupuesto y una plantilla fijos.", "Definir KPI semanales del service desk."] },
+    en: { title: "Decision case: the service desk backlog", desc: "Practise how to decide what to do with a service desk backlog that grows every week, with demand and budget data, and document it in the ticket.",
+      skills: ["Read a backlog's flow in and out and its age.", "Analyse the demand by category.", "Decide within a fixed budget and team.", "Define weekly service desk KPIs."] },
+  },
+  "cmdb-audit": {
+    es: { title: "Caso de decisión: una auditoría de la CMDB", desc: "Practica cómo responder a un hallazgo de auditoría sobre la CMDB con fuentes, clases de CI y dueños, y documentarlo en el ticket.",
+      skills: ["Leer un hallazgo de auditoría y su seguimiento.", "Comparar las fuentes de datos de una CMDB.", "Pensar dueños por clase de CI.", "Proponer evidencias que un auditor pueda comprobar."] },
+    en: { title: "Decision case: an audit of the CMDB", desc: "Practise how to answer an audit finding about the CMDB with data sources, CI classes and owners, and document it in the ticket.",
+      skills: ["Read an audit finding and its follow-up.", "Compare a CMDB's data sources.", "Think about owners by CI class.", "Propose evidence an auditor can check."] },
+  },
 };

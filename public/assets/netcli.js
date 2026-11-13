@@ -79,7 +79,7 @@
     99: { name: "MGMT", net: "10.20.99." }, 140: { name: "USERS", net: "10.20.14." }, 150: { name: "VOICE", net: "10.20.15." },
     999: { name: "PARKING" },
   };
-  const NAMES = { "erp.contoso.local": "10.20.1.52", "intranet.contoso.local": "10.20.1.15", "timesheets.contoso.local": "10.20.1.40",
+  const NAMES = { "erp.contoso.local": "10.20.1.52", "intranet.contoso.local": "10.20.1.15", "timesheets.contoso.local": "10.20.1.41",
     "dc01": "10.20.1.10", "dc01.contoso.local": "10.20.1.10", "prt-srv01": "10.20.1.30" };
   const SERVICES = { ALL: { proto: "any" }, HTTPS: { proto: "tcp", port: 443 }, HTTP: { proto: "tcp", port: 80 }, PING: { proto: "icmp" },
     RDP: { proto: "tcp", port: 3389 }, SSH: { proto: "tcp", port: 22 }, DNS: { proto: "udp", port: 53 }, SMB: { proto: "tcp", port: 445 } };
@@ -103,7 +103,7 @@
     // servers (static, VLAN 10 on the core)
     [["DC01", "10.20.1.10", "0050.56a1.1010"], ["DC02", "10.20.1.11", "0050.56a1.1011"], ["INTRANET01", "10.20.1.15", "0050.56a1.1015"],
      ["FS01", "10.20.1.20", "0050.56a1.1020"], ["FS-SCAN01", "10.20.1.24", "0050.56a1.1024"], ["PRT-SRV01", "10.20.1.30", "0050.56a1.1030"],
-     ["app-lnx01", "10.20.1.40", "0050.56a1.1040"], ["SQL-ERP01", "10.20.1.45", "0050.56a1.1045"], ["ERPWEB02", "10.20.1.52", "0050.56a1.1052"]]
+     ["app-lnx01", "10.20.1.41", "0050.56a1.1041"], ["SQL-ERP01", "10.20.1.53", "0050.56a1.1053"], ["ERPWEB02", "10.20.1.52", "0050.56a1.1052"]]
       .forEach(([id, ip, mac]) => add(id, { kind: "server", mac, dhcp: false, ip }));
     add("ADM-WS01", { mac: "c8d9.d2a0.3e11", lease: { 140: "10.20.14.50" } });
     // 2nd floor (Finance), Cisco access switch
@@ -243,7 +243,7 @@
           { name: "N-VLC-ALL", subnet: "10.40.0.0 255.255.0.0" },
           { name: "N-VLC-USERS", subnet: "10.40.10.0 255.255.255.0" },
           { name: "H-INTRANET", subnet: "10.20.1.15 255.255.255.255" },
-          { name: "H-TIMESHEETS", subnet: "10.20.1.40 255.255.255.255" },
+          { name: "H-TIMESHEETS", subnet: "10.20.1.41 255.255.255.255" },
           { name: "H-ERPWEB01", subnet: "10.20.1.51 255.255.255.255", comment: "Decommissioned in CHG-4471" },
           { name: "H-ERPWEB02", subnet: "10.20.1.52 255.255.255.255", comment: "CHG-4471 ERP web front migration (ERPWEB02)" },
         ],

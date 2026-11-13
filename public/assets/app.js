@@ -9,6 +9,7 @@
   const Lib = window.SDLibrary;  // v0.8: the documentation library
   const Lb = window.SDLabs;      // v0.8: labs by area
   const PF = window.SDProfile;   // v0.8: profile and career path
+  const SF = window.SDFamilies;  // v0.18: the ticket families (the same as the public pages /tickets/<family>)
   const t = E.t;
 
   const UI = {
@@ -57,7 +58,7 @@
       footAnon: "Fictional company and people.", backHome: "← Back to the home page",
       about: "About", help: "Help", faq: "FAQ", terms: "Terms", report: "Report a problem", cookies: "Cookie settings", navHelp: "Help", accHelp: "Something not working, or an idea for a ticket?",
       navLabel: "Help desk", deskName: "Contoso help desk", navTickets: "Tickets", navProgress: "Progress", navGuides: "Guides", navAccount: "My account", navTour: "Take the tour",
-      qTitle: "Ticket queue", shift: "Morning shift · on duty", tabOpen: "Open", tabClosed: "Closed",
+      qTitle: "Ticket queue", shift: "Morning shift · on duty", tabOpen: "Open", tabClosed: "Closed", qFamily: "Ticket family", qAllFamilies: "All families", qNoneInFamily: "No tickets of this family here.",
       colTicket: "Ticket", colSubject: "Subject", colRequester: "Requester", colPriority: "Priority", colStatus: "Status", colAssignee: "Assigned to",
       colResult: "Result", colPoints: "Score", colDate: "Closed on", colTopic: "Topic", colBest: "Best result",
       status: { new: "New", progress: "In progress", "pending-user": "Pending user", "pending-vendor": "Pending vendor", closed: "Closed" }, unassigned: "Unassigned", replay: "Replay",
@@ -95,7 +96,7 @@
       dUsers: "Users", dGroups: "Groups", dComputers: "Computers", dNone: "Nothing matches.", dPick: "Pick a user, group or computer to see its details.",
       dEnabled: "Enabled", dDisabled: "Disabled", dLocked: "Locked out", dMustChangeShort: "Must change password",
       dTicket: "Part of an open ticket:", dTitleF: "Job title", dDept: "Department", dPwdSet: "Password last set", dMustChange: "Change password at next sign-in",
-      yes: "Yes", no: "No", dLastLogon: "Last sign-in", dDevice: "Computer", dUnlock: "Unlock", dReset: "Reset password", dDisable: "Disable account", dEnable: "Enable account",
+      yes: "Yes", no: "No", dLastLogon: "Last sign-in", dDevice: "Computer", dBatch: "Same batch", dUnlock: "Unlock", dReset: "Reset password", dDisable: "Disable account", dEnable: "Enable account",
       dGroupsT: "Member of", dRemove: (g) => `Remove from ${g}`, dAddGroup: "Add to a group", dChoose: "Choose a group", dAdd: "Add",
       dResetTitle: "Reset password", dResetText: "A temporary password is set. Give it to the user by phone, never by email.", dResetMust: "User must change password at next sign-in",
       dResetUnlock: "Unlock the user's account", dResetOk: "Reset", dCancel: "Cancel", dScope: "Scope", dScopeVal: "Global security group",
@@ -104,7 +105,9 @@
       dWelcome: "Connected to ADM-WS01 as CONTOSO\\it.admin with the ActiveDirectory module. Type help if you need it.",
       dRouted: (id) => `(Sent to ticket ${id}: the account belongs to an open ticket.)`,
       dAssignFirst: (n, id) => `${n}'s account is part of ticket ${id}, still unassigned. Assign the ticket to yourself to work on it.`,
-      iTitle: "Inventory", iSub: "Servers, printers and network devices. The status follows the open tickets.", iAll: "All", iServers: "Servers", iPrinters: "Printers", iProblems: "With an incident",
+      iTitle: "Inventory", iSub: "Servers, printers, network devices and endpoints of the Contoso group. The status follows the open tickets.", iAll: "All",
+      colDivision: "Division", iDivision: "Division", iAllDivisions: "All divisions", iDevices: "Other equipment",
+      iDev: { switch: "Switch", router: "Router", firewall: "Firewall", ap: "Access point", ups: "UPS", pdu: "PDU", payment: "Card terminal", tablet: "Tablet", phone: "Mobile phone" }, iServers: "Servers", iPrinters: "Printers", iProblems: "With an incident",
       colName: "Name", colType: "Type", colRole: "Role / model", colLocation: "Location", colTickets: "Tickets", iServer: "Server", iPrinter: "Printer",
       st: { ok: "OK", warn: "Warning", bad: "Error" }, iNoProblem: "Nothing to report.", iPick: "Pick a row to see the details.", iNoIssue: "Nothing to report.",
       navMail: "Mail", navKb: "Knowledge base", unreadN: (n) => `${n} unread`,
@@ -254,7 +257,7 @@
       footAnon: "Empresa y personas ficticias.", backHome: "← Volver a la portada",
       about: "Qué es", help: "Ayuda", faq: "Preguntas frecuentes", terms: "Términos", report: "Informar de un error", cookies: "Preferencias de cookies", navHelp: "Ayuda", accHelp: "¿Algo no funciona o tienes una idea para un ticket?",
       navLabel: "Mesa de soporte", deskName: "Mesa de soporte de Contoso", navTickets: "Tickets", navProgress: "Progreso", navGuides: "Guías", navAccount: "Mi cuenta", navTour: "Ver el tour",
-      qTitle: "Cola de tickets", shift: "Turno de mañana · de guardia", tabOpen: "Abiertos", tabClosed: "Cerrados",
+      qTitle: "Cola de tickets", shift: "Turno de mañana · de guardia", tabOpen: "Abiertos", tabClosed: "Cerrados", qFamily: "Familia de tickets", qAllFamilies: "Todas las familias", qNoneInFamily: "No hay tickets de esta familia aquí.",
       colTicket: "Ticket", colSubject: "Asunto", colRequester: "Solicitante", colPriority: "Prioridad", colStatus: "Estado", colAssignee: "Asignado a",
       colResult: "Resultado", colPoints: "Puntuación", colDate: "Cerrado el", colTopic: "Tema", colBest: "Mejor resultado",
       status: { new: "Nuevo", progress: "En curso", "pending-user": "Pendiente del usuario", "pending-vendor": "Pendiente del proveedor", closed: "Cerrado" }, unassigned: "Sin asignar", replay: "Repetir",
@@ -292,7 +295,7 @@
       dUsers: "Usuarios", dGroups: "Grupos", dComputers: "Equipos", dNone: "No hay resultados.", dPick: "Elige un usuario, grupo o equipo para ver sus datos.",
       dEnabled: "Habilitada", dDisabled: "Deshabilitada", dLocked: "Bloqueada", dMustChangeShort: "Debe cambiar la contraseña",
       dTicket: "Forma parte de un ticket abierto:", dTitleF: "Puesto", dDept: "Departamento", dPwdSet: "Último cambio de contraseña", dMustChange: "Cambiar la contraseña al iniciar sesión",
-      yes: "Sí", no: "No", dLastLogon: "Último inicio de sesión", dDevice: "Equipo", dUnlock: "Desbloquear", dReset: "Restablecer contraseña", dDisable: "Deshabilitar cuenta", dEnable: "Habilitar cuenta",
+      yes: "Sí", no: "No", dLastLogon: "Último inicio de sesión", dDevice: "Equipo", dBatch: "Mismo lote", dUnlock: "Desbloquear", dReset: "Restablecer contraseña", dDisable: "Deshabilitar cuenta", dEnable: "Habilitar cuenta",
       dGroupsT: "Miembro de", dRemove: (g) => `Quitar de ${g}`, dAddGroup: "Añadir a un grupo", dChoose: "Elige un grupo", dAdd: "Añadir",
       dResetTitle: "Restablecer contraseña", dResetText: "Se pone una contraseña temporal. Dásela al usuario por teléfono, nunca por correo.", dResetMust: "El usuario debe cambiar la contraseña al iniciar sesión",
       dResetUnlock: "Desbloquear la cuenta del usuario", dResetOk: "Restablecer", dCancel: "Cancelar", dScope: "Ámbito", dScopeVal: "Grupo de seguridad global",
@@ -301,7 +304,9 @@
       dWelcome: "Conectado a ADM-WS01 como CONTOSO\\it.admin con el módulo ActiveDirectory. Escribe help si lo necesitas.",
       dRouted: (id) => `(Enviado al ticket ${id}: la cuenta forma parte de un ticket abierto.)`,
       dAssignFirst: (n, id) => `La cuenta de ${n} forma parte del ticket ${id}, aún sin asignar. Asígnate el ticket para trabajar en ella.`,
-      iTitle: "Inventario", iSub: "Servidores, impresoras y equipos de red. El estado sigue a los tickets abiertos.", iAll: "Todo", iServers: "Servidores", iPrinters: "Impresoras", iProblems: "Con incidencia",
+      iTitle: "Inventario", iSub: "Servidores, impresoras, equipos de red y puestos del grupo Contoso. El estado sigue a los tickets abiertos.", iAll: "Todo",
+      colDivision: "División", iDivision: "División", iAllDivisions: "Todas las divisiones", iDevices: "Otros equipos",
+      iDev: { switch: "Switch", router: "Router", firewall: "Cortafuegos", ap: "Punto de acceso", ups: "SAI", pdu: "PDU", payment: "Datáfono", tablet: "Tableta", phone: "Móvil" }, iServers: "Servidores", iPrinters: "Impresoras", iProblems: "Con incidencia",
       colName: "Nombre", colType: "Tipo", colRole: "Función / modelo", colLocation: "Ubicación", colTickets: "Tickets", iServer: "Servidor", iPrinter: "Impresora",
       st: { ok: "Correcto", warn: "Aviso", bad: "Error" }, iNoProblem: "Nada que destacar.", iPick: "Elige una fila para ver el detalle.", iNoIssue: "Nada que destacar.",
       navMail: "Correo", navKb: "Base de conocimiento", unreadN: (n) => `${n} sin leer`,
@@ -760,6 +765,7 @@
   let fsHandler = null;   // v0.9: the open desk's reaction to entering or leaving full screen
   document.addEventListener("fullscreenchange", () => { if (fsHandler) fsHandler(); });
   let queueTab = "open";
+  let queueFam = "all";   // v0.18: the queue's family filter (a family slug or "all")
   const live = {};        // deskId -> {sess, log: [{text, kind}], hist: [], pos: 0, closed: false, result: null}
   function work() { return load("work", {}); }
   function setWork(id, value) {
@@ -1059,12 +1065,23 @@
     const view = shell("tickets");
     document.title = L().qTitle + " · SysAdmin Desks";
     const w = work();
-    const open = SCENARIOS.filter(isQueued).sort((a, b) => (w[b.id] ? 1 : 0) - (w[a.id] ? 1 : 0) || a.ticket.priority.localeCompare(b.ticket.priority));
-    const closed = SCENARIOS.filter((s) => progress[s.id] && !w[s.id]);
+    const allOpen = SCENARIOS.filter(isQueued).sort((a, b) => (w[b.id] ? 1 : 0) - (w[a.id] ? 1 : 0) || a.ticket.priority.localeCompare(b.ticket.priority));
+    const allClosed = SCENARIOS.filter((s) => progress[s.id] && !w[s.id]);
+    // v0.18: filter by ticket family (free tickets have none, so they show only with "All families")
+    const famOf = (sc) => SF.familyOf(sc, PF.DESK_AREA);
+    const inFam = (sc) => queueFam === "all" || famOf(sc) === queueFam;
+    const open = allOpen.filter(inFam);
+    const closed = allClosed.filter(inFam);
     // v0.9: free tickets (freetix.js): the user's own practice tickets, marked and never graded
-    const frees = freeStore().list;
+    const frees = queueFam === "all" ? freeStore().list : [];
     const freeOpen = frees.filter(FT.isOpen).sort((a, b) => a.priority.localeCompare(b.priority));
     const freeClosed = frees.filter((x) => !FT.isOpen(x)).sort((a, b) => b.closed.at - a.closed.at);
+    const inTab = queueTab === "open" ? allOpen : allClosed;
+    const famCount = (slug) => inTab.filter((sc) => slug === "all" || famOf(sc) === slug).length;
+    const fams = el("div", { class: "qtabs q-fams", role: "group", "aria-label": L().qFamily },
+      [["all", L().qAllFamilies]].concat(SF.FAMILIES.filter((f) => famCount(f.slug) || queueFam === f.slug).map((f) => [f.slug, f.name[lang] || f.name.en])).map(([k, text]) =>
+        el("button", { type: "button", class: "qtab" + (queueFam === k ? " on" : ""), "aria-pressed": queueFam === k ? "true" : "false", onclick: () => { queueFam = k; queue(); } },
+          text + " ", el("span", { class: "count", text: String(famCount(k)) }))));
     const person = (sam) => { const u = Wd.user(world, sam); return u ? u.name : sam; };
     const freeTag = () => el("span", { class: "pill free-pill", text: L().ftFree });
     const tabs = el("div", { class: "qtabs", role: "tablist" }, [["open", L().tabOpen, open.length + freeOpen.length], ["closed", L().tabClosed, closed.length + freeClosed.length]].map(([k, text, n]) =>
@@ -1101,7 +1118,7 @@
             el("td", { "data-label": L().colStatus }, pill(st, L().status[st])),
             el("td", { "data-label": L().colAssignee }, tk.rec && st !== "new" && user ? el("span", { class: "assignee" }, avatarImg(user.avatar, "avatar sm"), el("span", { text: user.name }))
               : el("span", { class: "muted", text: L().unassigned })));
-        })))) : el("p", { class: "empty", text: L().emptyOpen });
+        })))) : el("p", { class: "empty", text: queueFam === "all" ? L().emptyOpen : L().qNoneInFamily });
     } else {
       table = closed.length || freeClosed.length ? el("table", { class: "qtable" },
         el("thead", {}, el("tr", {}, th(L().colTicket), th(L().colSubject), th(L().colResult), th(L().colPoints), th(L().colDate), th(""))),
@@ -1121,13 +1138,13 @@
           el("td", { "data-label": L().colResult }, pill("closed", L().status.closed)),
           el("td", { "data-label": L().colPoints }, el("span", { class: "muted", title: L().ftFreeLong, text: L().ftNoScore })),
           el("td", { "data-label": L().colDate, text: Pf.dayIn(tk.closed.at, zone()) }),
-          el("td", {}, el("a", { class: "btn ghost sm", href: "#/free/" + tk.id, text: L().ftOpen }))))))) : el("p", { class: "empty", text: L().emptyClosed });
+          el("td", {}, el("a", { class: "btn ghost sm", href: "#/free/" + tk.id, text: L().ftOpen }))))))) : el("p", { class: "empty", text: queueFam === "all" ? L().emptyClosed : L().qNoneInFamily });
     }
     view.append(
       el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().qTitle }), el("p", { class: "sub", text: user ? L().hello(user.name) : "" })),
         el("div", { class: "q-head-r" }, el("p", { class: "shift" }, el("span", { class: "dot", "aria-hidden": "true" }), L().shift),
           el("a", { class: "btn sm", href: "#/free/new", id: "free-new", text: "＋ " + L().ftNew }))),
-      tabs, el("div", { class: "qwrap" }, table), queueTab === "open" ? lockedNote() : null);
+      tabs, fams, el("div", { class: "qwrap" }, table), queueTab === "open" ? lockedNote() : null);
     // v0.8: the guided first ticket for a new technician; "what's new" once for one who already took the tour
     if (queueTab === "open" && tourAt == null) setTimeout(() => {
       if (!document.getElementById("tour-queue") || document.querySelector(".tour")) return;
@@ -2291,6 +2308,7 @@
   const dirHist = [];
   let dirPos = 0;
   let invFilter = "all";
+  let invDiv = "all";        // v0.18: the division filter of the inventory
   let invSel = null;
 
   // [{kind, id, set, note, sc, sess, live}] for every open ticket that touches the directory or the inventory
@@ -2453,7 +2471,8 @@
           u.mustChange ? pill("progress", L().dMustChangeShort) : null),
         b ? el("p", { class: "dir-ticket" }, el("span", { text: L().dTicket + " " }), ticketPill(b.sc)) : null,
         fieldsDl([{ label: L().dTitleF, value: Wd.t(u.title, lang) }, { label: L().dDept, value: u.dept }, { label: L().dPwdSet, value: u.pwdLastSet },
-          { label: L().dMustChange, value: u.mustChange ? L().yes : L().no }, { label: L().dLastLogon, value: u.lastLogon }, { label: L().dDevice, value: u.device },
+          { label: L().dMustChange, value: u.mustChange ? L().yes : L().no }, { label: L().dLastLogon, value: u.lastLogon }, { label: L().dDevice, value: u.device || "–" },
+          { label: L().iDivision, value: Wd.t((Wd.division(u.division) || {}).name, lang) },
           { label: "DN", value: Wd.userDn(u) }]),
         el("div", { class: "acts" }, el("p", { class: "acts-h", text: L().actionsT }),
           u.locked ? el("button", { type: "button", class: "btn sm", text: L().dUnlock, onclick: () => exec(Wd.CMD.unlock(u.sam), true) }) : null,
@@ -2478,7 +2497,8 @@
       put(detailBox, el("h3", { class: "dtitle", text: c.name }),
         fieldsDl([{ label: L().iOs, value: c.os }, { label: "DN", value: `CN=${c.name},${Wd.ouPath(c.ou)}` },
           u ? { label: L().dAssigned, value: u.name } : null, srv ? { label: L().colRole, value: Wd.t(srv.role, lang) } : null, srv ? { label: "IP", value: srv.ip } : null,
-          c.note ? { label: L().dNote, value: Wd.t(c.note, lang) } : null].filter(Boolean)),
+          c.note ? { label: L().dNote, value: Wd.t(c.note, lang) } : null, { label: L().iDivision, value: Wd.t((Wd.division(c.division || Wd.divisionOf(c.name)) || {}).name, lang) },
+          c.also ? { label: L().dBatch, value: c.also.join(", ") } : null].filter(Boolean)),
         srv ? el("p", {}, el("a", { href: "#/inventory", onclick: () => { invSel = srv.id; }, text: L().dInInventory })) : null);
     }
     function renderAll() { renderTasks(); renderTree(); renderList(); renderDetail(); }
@@ -2508,6 +2528,10 @@
       // v0.7a: the switches, the router and the firewall, with the status of the network room (health and open tickets)
       const ns = netStatus(d.id);
       return { kind: "network", id: d.id, d: Object.assign({}, d, { ip: d.mgmt }), status: ns.tone, notes: ns.notes.concat(ns.health.unsaved && !ns.notes.length ? [L().nUnsaved] : []), jobs: 0, tickets: netTickets(d.id), health: ns.health };
+    })).concat(Wd.DEVICES.map((d) => {
+      // v0.18: the rest of the equipment the tickets name (switches and routers outside the network room, UPS, PDU, card terminals…)
+      const b = binds.filter((y) => y.kind === "device" && y.id === d.id);
+      return { kind: "device", id: d.id, d: Object.assign({}, d, { ip: d.ip || "–", role: d.model }), status: "ok", notes: b.map((y) => y.note).filter(Boolean), jobs: 0, tickets: linked(d.id) };
     })).concat(SH.ASSETS.map((a) => {
       // v0.7b: laptops, phones and spare parts from the asset register, in the state their shipments give them (in RMA, on loan, replaced...)
       const ds = SH.deviceState(allStores(), a.serial);
@@ -2516,18 +2540,26 @@
       const tk = SCENARIOS.filter((sc) => sc.ship && (sc.requester.device === a.id || JSON.stringify(sc.ship.flags).includes('"' + a.serial + '"')));
       return { kind: "endpoint", id: a.id, d: Object.assign({}, a, { ip: "–", role: `${a.model} · ${label}` }), status: tone, notes: tone === "ok" ? [] : [L().shDeviceNote + " " + label], jobs: 0, tickets: tk, devState: ds };
     }));
-    const shown = items.filter((x) => invFilter === "all" || (invFilter === "problems" ? x.status !== "ok" : x.kind === invFilter));
-    const chips = el("div", { class: "qtabs inv-chips", role: "tablist" }, [["all", L().iAll], ["server", L().iServers], ["printer", L().iPrinters], ["network", L().iNetwork], ["endpoint", L().iEndpoints], ["problems", L().iProblems]].map(([k, text]) =>
+    items.forEach((x) => { x.division = Wd.divisionOf(x.id); });
+    const divName = (id) => { const d = Wd.division(id); return d ? Wd.t(d.name, lang) : ""; };
+    const inDiv = (x) => invDiv === "all" || x.division === invDiv;
+    const shown = items.filter((x) => inDiv(x) && (invFilter === "all" || (invFilter === "problems" ? x.status !== "ok" : x.kind === invFilter)));
+    const chips = el("div", { class: "qtabs inv-chips", role: "tablist" }, [["all", L().iAll], ["server", L().iServers], ["printer", L().iPrinters], ["network", L().iNetwork], ["device", L().iDevices], ["endpoint", L().iEndpoints], ["problems", L().iProblems]].map(([k, text]) =>
       el("button", { type: "button", role: "tab", class: "qtab" + (invFilter === k ? " on" : ""), "aria-selected": invFilter === k ? "true" : "false", onclick: () => { invFilter = k; inventory(); } },
-        text + " ", el("span", { class: "count", text: String(items.filter((x) => k === "all" || (k === "problems" ? x.status !== "ok" : x.kind === k)).length) }))));
+        text + " ", el("span", { class: "count", text: String(items.filter((x) => inDiv(x) && (k === "all" || (k === "problems" ? x.status !== "ok" : x.kind === k))).length) }))));
+    // v0.18: Contoso is a group: filter by division (the same buttons as the kinds, in a row of their own)
+    const divChips = el("div", { class: "qtabs inv-chips inv-divs", role: "group", "aria-label": L().iDivision }, [["all", L().iAllDivisions]].concat(Wd.COMPANY.divisions.map((d) => [d.id, Wd.t(d.name, lang)])).map(([k, text]) =>
+      el("button", { type: "button", class: "qtab" + (invDiv === k ? " on" : ""), "aria-pressed": invDiv === k ? "true" : "false", onclick: () => { invDiv = k; inventory(); } },
+        text + " ", el("span", { class: "count", text: String(items.filter((x) => k === "all" || x.division === k).length) }))));
     const stPill = (s) => el("span", { class: "inv-st " + s }, el("span", { class: "tdot", "aria-hidden": "true" }), el("span", { text: L().st[s] }));
     const table = shown.length ? el("table", { class: "qtable inv" },
-      el("thead", {}, el("tr", {}, [L().colStatus, L().colName, L().colType, L().colRole, "IP", L().colTickets].map((x) => el("th", { scope: "col", text: x })))),
+      el("thead", {}, el("tr", {}, [L().colStatus, L().colName, L().colType, L().colRole, L().colDivision, "IP", L().colTickets].map((x) => el("th", { scope: "col", text: x })))),
       el("tbody", {}, shown.map((x) => el("tr", { class: invSel === x.id ? "active" : "" },
         el("td", { "data-label": L().colStatus }, stPill(x.status)),
         el("td", { class: "subj", "data-label": L().colName }, el("button", { type: "button", class: "link-row", text: x.id, onclick: () => { invSel = x.id; inventory(); } })),
-        el("td", { "data-label": L().colType, text: x.kind === "server" ? L().iServer : x.kind === "network" ? L().nType[x.d.kind] : x.kind === "endpoint" ? L().iEndpoint[x.d.kind] : L().iPrinter }),
+        el("td", { "data-label": L().colType, text: x.kind === "server" ? L().iServer : x.kind === "network" ? L().nType[x.d.kind] : x.kind === "endpoint" ? L().iEndpoint[x.d.kind] : x.kind === "device" ? L().iDev[x.d.kind] : L().iPrinter }),
         el("td", { "data-label": L().colRole, text: Wd.t(x.kind === "printer" ? x.d.model : x.d.role, lang) }),
+        el("td", { "data-label": L().colDivision, text: divName(x.division) }),
         el("td", { class: "mono", "data-label": "IP", text: x.d.ip }),
         el("td", { "data-label": L().colTickets }, x.tickets.length ? x.tickets.map((sc) => el("a", { class: "tkt mono", href: "#/desk/" + sc.id, text: sc.ticket.id }))
           : el("span", { class: "muted", text: "–" })))))) : el("p", { class: "empty", text: L().iNoProblem });
@@ -2538,15 +2570,18 @@
       detail = el("section", { class: "panel inv-detail" },
         el("div", { class: "row" }, el("h2", { class: "dtitle", text: sel.id }), stPill(sel.status)),
         sel.notes.length ? el("ul", { class: "inv-notes" }, sel.notes.map((n) => el("li", { text: n }))) : el("p", { class: "sub", text: L().iNoIssue }),
-        fieldsDl(sel.kind === "endpoint" ? [{ label: L().colRole, value: d.model }, { label: L().iSerial, value: d.serial }, { label: L().iUser, value: d.user || "–" },
+        fieldsDl((sel.kind === "endpoint" ? [{ label: L().colRole, value: d.model }, { label: L().iSerial, value: d.serial }, { label: L().iUser, value: d.user || "–" },
           { label: L().iDevState, value: SH.t(SH.DEVICE[sel.devState], lang), tone: sel.status === "ok" ? "ok" : "warn" }, { label: L().iWarranty, value: SH.t(d.warranty, lang) }]
           : sel.kind === "network" ? [{ label: L().colRole, value: Wd.t(d.role, lang) }, { label: L().nModel, value: d.model }, { label: L().nOs, value: d.version },
           { label: L().nMgmt, value: d.mgmt }, { label: L().colLocation, value: Wd.t(d.location, lang) }, { label: L().iOwner, value: Wd.t(d.owner, lang) },
           { label: L().nConfig, value: sel.health.unsaved ? L().nUnsaved : d.os === "fortios" ? L().nAutoSave : L().nSaved, tone: sel.health.unsaved ? "warn" : "ok" }]
           : sel.kind === "server" ? [{ label: L().colRole, value: Wd.t(d.role, lang) }, { label: L().iOs, value: d.os }, { label: "IP", value: d.ip },
           { label: L().colLocation, value: Wd.t(d.location, lang) }, { label: L().iOwner, value: Wd.t(d.owner, lang) }, { label: L().iPatched, value: d.patched }]
-          : [{ label: L().colRole, value: Wd.t(d.model, lang) }, { label: "IP", value: d.ip }, { label: L().iQueue, value: d.queue },
-            { label: L().iJobs, value: String(sel.jobs), tone: sel.jobs ? "bad" : "" }, { label: L().colLocation, value: Wd.t(d.location, lang) }]),
+          : sel.kind === "device" ? [{ label: L().colType, value: L().iDev[d.kind] }, { label: L().nModel, value: d.model }, { label: "IP", value: d.ip },
+          { label: L().colLocation, value: Wd.t(d.location, lang) }]
+          : [{ label: L().colRole, value: Wd.t(d.model, lang) }, { label: "IP", value: d.ip }, { label: L().iQueue, value: d.queue || "–" },
+            { label: L().iJobs, value: String(sel.jobs), tone: sel.jobs ? "bad" : "" }, { label: L().colLocation, value: Wd.t(d.location, lang) }]).concat(
+          [{ label: L().iDivision, value: divName(sel.division) }])),
         el("h3", { text: L().colTickets }),
         sel.tickets.length ? el("ul", { class: "inv-tickets" }, sel.tickets.map((sc) => el("li", {}, ticketPill(sc), el("span", { text: " " + t(sc.title, lang) })))) : el("p", { class: "sub", text: L().iNone }),
         sel.kind === "server" ? el("p", {}, el("a", { href: "#/directory", onclick: () => { dirOu = "servers"; dirSel = { type: "computer", id: sel.id }; }, text: L().iInDir })) : null,
@@ -2557,7 +2592,7 @@
           el("p", {}, el("a", { href: "#/shipping", id: "inv-to-shipping", text: L().iToShipping }))) : null);
     }
     view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().iTitle }), el("p", { class: "sub", text: L().iSub }))),
-      chips, el("div", { class: "inv-grid" }, el("div", { class: "qwrap" }, table), detail));
+      chips, divChips, el("div", { class: "inv-grid" }, el("div", { class: "qwrap" }, table), detail));
   }
 
   /* ---------- v0.7a: the network room. Devices of an open network ticket show that ticket's net (and their CLI works on the

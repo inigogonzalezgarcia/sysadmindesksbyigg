@@ -225,6 +225,15 @@ const TEMPTING = {
   "win11-trading-hours": ["open floor", "open hours", "open apps", "open spares", "ask trader", "ask oms", "decide A"],
   "corner-preopening": ["open status", "open rules", "open pci", "open needs", "ask network", "ask facilities", "decide A"],
   "clinical-maintenance": ["open activity", "open contingency", "open upgrade", "open validation", "ask medical", "ask vendor", "decide B"],
+  // career level 8 (IT manager): terminating the EUC provider now; letting the firewall contract renew for three years; diagnosing on the
+  // bridge yourself; more staff on Mondays; the upgrade as a standard change in the freeze; two more technicians; fixing the audit sample by hand
+  "euc-provider-sla": ["open reports", "open contract", "open reopened", "open alternatives", "ask legal", "ask stores", "decide B"],
+  "firewall-contract-renewal": ["open contract", "open eol", "open offers", "open usage", "open migration", "ask network", "ask cfo", "decide D"],
+  "major-incident-mail": ["open timeline", "open impact", "open mip", "open bcp", "ask tech", "ask comms", "decide C"],
+  "monday-problem": ["open incidents", "open changes", "open backuplog", "open kedb", "ask dba", "ask servicedesk", "decide A"],
+  "risky-change-close": ["open rfc", "open calendar", "open advisory", "open test", "ask security", "ask finance", "decide C"],
+  "servicedesk-backlog": ["open flow", "open age", "open categories", "open budget", "ask agent", "ask cfo", "decide B"],
+  "cmdb-audit": ["open audit", "open sources", "open rules", "ask endpoint", "ask clinical", "decide C"],
 };
 
 test("every desk has 5-7 questions in both languages: at least 2 useful with a clue, 1 bad, and one confirmation", () => {

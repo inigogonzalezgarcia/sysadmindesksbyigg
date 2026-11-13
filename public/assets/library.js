@@ -480,8 +480,10 @@
         es: ["Haz preguntas abiertas y útiles: cuándo empezó, qué cambió, si le pasa a alguien más.", "Pon el ticket en pendiente con un motivo claro cuando esperas a alguien.",
           "Escribe la nota de trabajo sobre la marcha: causa, qué cambiaste, cómo lo comprobaste, qué queda.", "Pide al usuario que lo confirme antes de cerrar cuando puedas."],
       },
-      desks: ["ad-lockout", "print-queue", "laptop-rma", "net-fortigate-branch", "confluence-runbook-stale", "git-script-overwritten"], labs: [],
-      guides: ["jira-service-management-un-ticket-bien-hecho", "glpi-inventario-con-glpi-agent-tickets-sla-y-un-equipo-que-deja-de-reportar", "confluence-espacio-de-it-y-runbooks-que-se-usan", "entorno-de-pruebas-para-validar-cambios-en-plataformas-criticas"],
+      desks: ["ad-lockout", "print-queue", "laptop-rma", "net-fortigate-branch", "confluence-runbook-stale", "git-script-overwritten",
+        "euc-provider-sla", "firewall-contract-renewal", "major-incident-mail", "monday-problem", "risky-change-close", "servicedesk-backlog", "cmdb-audit"], labs: [],
+      guides: ["jira-service-management-un-ticket-bien-hecho", "glpi-inventario-con-glpi-agent-tickets-sla-y-un-equipo-que-deja-de-reportar", "confluence-espacio-de-it-y-runbooks-que-se-usan", "entorno-de-pruebas-para-validar-cambios-en-plataformas-criticas",
+        "cmdb-clases-de-ci-relaciones-reconciliacion-calidad-del-dato-y-auditorias", "monitorizacion-desplegar-alarmas-y-responder-en-plataformas-24x7", "presupuesto-de-it-preparar-y-seguir-el-presupuesto-anual-en-una-empresa-multisede"],
     },
   ];
 

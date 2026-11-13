@@ -1,15 +1,12 @@
-// The ticket families for the public pages /tickets/<family>: each desk belongs to the family of its area in the profile
-// (public/assets/profile.js, DESK_AREA), with Citrix and VDI joined to virtualisation. One page per family with its own title,
-// description and intro, so a search for "practise Linux" or "ejercicios de redes Cisco" lands on the right list.
+// The ticket families for the public pages /tickets/<family>. Which family each desk belongs to (by its area in the profile, and the
+// decision cases by career level) lives in public/assets/families.js, shared with the queue's family filter; this file adds each
+// family's title, description and intro, so a search for "practise Linux" or "ejercicios de redes Cisco" lands on the right list.
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const { DESK_AREA } = require("../public/assets/profile.js");
-
-// area in the profile -> family slug
-const AREA_FAMILY = { ad: "active-directory", windows: "windows-server", m365: "microsoft-365", endpoint: "intune-endpoint",
-  linux: "linux-devops", vdi: "virtualisation-backup-databases", data: "virtualisation-backup-databases", network: "networking",
-  hardware: "hardware-servers", itsm: "windows-server" };
+const SCENARIOS = require("../public/assets/scenarios.js");
+const SF = require("../public/assets/families.js");
 
 // n: the number of tickets in the family. desc at most 155 characters with n up to 999.
 export const FAMILIES = [
@@ -69,11 +66,29 @@ export const FAMILIES = [
     en: { name: "Hardware, servers and RMA", title: "Practise hardware, servers and RMA · free tickets",
       desc: (n) => `${n} free hardware tickets to practise: warranty RMAs, iDRAC, UPS, Nutanix, servers, POS, and equipment that arrives or is returned.`,
       intro: "Drives about to fail, failed power supplies, the room UPS, the iDRAC, Nutanix, shop and restaurant POS, and equipment that arrives or goes back. Many are closed with a shipment or an RMA to the vendor." } },
+  { slug: "architecture",
+    es: { name: "Arquitectura y casos de decisión", title: "Casos de arquitectura IT y decisiones · tickets gratis",
+      desc: (n) => `${n} casos de decisión de arquitectura para practicar gratis: DR con RTO y RPO, nube o local, alta disponibilidad, redes de sede y FinOps.`,
+      intro: "Casos de un arquitecto de infraestructura: lees el expediente, preguntas a las partes interesadas, comparas tres o cuatro opciones con su coste, su riesgo y su plazo, decides y lo defiendes en una nota para dirección. Recuperación ante desastres, nube o local, alta disponibilidad, una sede nueva, aperturas y ventanas de mantenimiento." },
+    en: { name: "Architecture and decision cases", title: "IT architecture and decision cases · free tickets",
+      desc: (n) => `${n} free architecture decision cases to practise: DR with RTO and RPO, cloud or on-premises, high availability, site networks and FinOps.`,
+      intro: "An infrastructure architect's cases: read the case file, ask the stakeholders, compare three or four options with their cost, risk and time, decide and defend it in a note for management. Disaster recovery, cloud or on-premises, high availability, a new site, openings and maintenance windows." } },
+  { slug: "management",
+    es: { name: "Gestión de IT y servicio", title: "Casos de gestión de IT y servicio · tickets gratis",
+      desc: (n) => `${n} casos de decisión de un responsable de IT para practicar gratis: proveedores y SLA, contratos, incidentes graves, problemas, cambios y CMDB.`,
+      intro: "Casos de un responsable de IT: decides sobre personas, proveedores, procesos, servicio y dinero, y lo defiendes ante dirección, el CAB o auditoría. Un proveedor que incumple el SLA, un contrato que se renueva solo, un incidente grave, un problema que vuelve cada lunes, un cambio en semana de cierre, un backlog que crece y una CMDB auditada." },
+    en: { name: "IT and service management", title: "IT and service management cases · free tickets",
+      desc: (n) => `${n} free IT manager decision cases to practise: suppliers and SLAs, contracts, major incidents, problems, changes and the CMDB.`,
+      intro: "An IT manager's cases: you decide about people, suppliers, processes, service and money, and defend it to management, the CAB or audit. A supplier that misses its SLA, a contract that renews by itself, a major incident, a problem back every Monday, a change in closing week, a growing backlog and an audited CMDB." } },
 ];
 
+const byId = Object.fromEntries(SCENARIOS.map((sc) => [sc.id, sc]));
 export const familyOf = (id) => {
-  const a = DESK_AREA[id];
-  if (!a || !AREA_FAMILY[a]) throw new Error("no family for desk " + id);
-  return FAMILIES.find((f) => f.slug === AREA_FAMILY[a]);
+  if (!byId[id]) throw new Error("no desk " + id);
+  return FAMILIES.find((f) => f.slug === SF.familyOf(byId[id], DESK_AREA));
 };
+// the same families, in the same order and with the same names, as the queue's filter (families.js)
+if (FAMILIES.map((f) => f.slug + f.es.name + f.en.name).join() !== SF.FAMILIES.map((f) => f.slug + f.name.es + f.name.en).join()) {
+  throw new Error("scripts/ticket-families.mjs and public/assets/families.js list different families");
+}
 export const familyPath = (f) => "/tickets/" + f.slug;

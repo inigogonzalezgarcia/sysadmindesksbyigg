@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://sysadmindesksbyigg.pages.dev"><b>▶ Clock in and take your first ticket</b></a>
   &nbsp;·&nbsp;
-  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 175 tickets</a>
+  <a href="https://sysadmindesksbyigg.pages.dev/tickets/">See all 182 tickets</a>
 </p>
 
 ---
@@ -40,8 +40,10 @@ The tickets follow a career path. Start with locked accounts and full disks, the
 | SysAdmin | Windows and Linux servers, virtualisation, monitoring | 51 |
 | Infra / Cloud | Azure, AWS, automation | 25 |
 | DevOps / SRE | Kubernetes, Terraform, Ansible, CI/CD, SLOs | 7 |
+| Architect | Decision cases: DR, cloud or on-premises, high availability, openings | 11 |
+| IT manager | Decision cases: suppliers and SLAs, contracts, major incidents, problems, changes, audit | 7 |
 
-Architect, manager, director and CIO are next, as decision cases.
+From the architect up the tickets are decision cases: a case file, options and a note for management. Director and CIO are next.
 
 ## What is inside
 
