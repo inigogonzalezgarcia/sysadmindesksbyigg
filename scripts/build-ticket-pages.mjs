@@ -183,6 +183,36 @@ function staticPage(file, html) {
   return out;
 }
 
+/* ---------- the top menu of the generated pages: the same drop-downs as the simulator (Puestos, Guías, Proyecto, Ayuda),
+   in both languages (doc.js shows one); <details> so it works without JavaScript */
+const GSITE = "https://inigogonzalezgarcia.github.io/";
+const MENU = {
+  guides: [["Todas las guías", "All guides", "guias.html"], ["Nivel 1: primeros pasos", "Level 1: first steps", "guias/nivel-1.html"],
+    ["Nivel 2: base sólida", "Level 2: solid foundations", "guias/nivel-2.html"], ["Nivel 3: avanzado", "Level 3: advanced", "guias/nivel-3.html"],
+    ["Nivel 4: experto", "Level 4: expert", "guias/nivel-4.html"]],
+  project: [["Sobre mí", "About me", GSITE + "about.html"], ["Blog", "Blog", GSITE + "blog/"], ["Contacto", "Contact", GSITE + "about.html#contacto"],
+    ["LinkedIn", "LinkedIn", "https://www.linkedin.com/in/igonzalez93"]],
+  help: [["Qué es", "About", "/about"], ["Ayuda", "Help", "/help"], ["Preguntas frecuentes", "FAQ", "/faq"], ["Términos", "Terms", "/terms"],
+    ["Privacidad", "Privacy", "/privacy"], ["Informar de un error", "Report a problem", REPORT]],
+};
+const bi = (es, en) => `<span class="es">${esc(es)}</span><span class="en">${esc(en)}</span>`;
+const mLink = (href, html, cls) => `<li><a${cls ? ` class="${cls}"` : ""} href="${esc(href)}"${/^https?:/.test(href) ? ' target="_blank" rel="noopener noreferrer"' : ""}>${html}</a></li>`;
+const mDrop = (es, en, items) => `      <details class="nav-dd"><summary>${bi(es, en)}</summary>
+        <ul class="nav-dd-panel">
+${items.map((x) => "          " + x).join("\n")}
+        </ul>
+      </details>`;
+function topMenu() {
+  return `    <button type="button" id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Menú / Menu" hidden>☰</button>
+    <div id="nav-menu" class="nav-menu">
+${mDrop("Puestos", "Roles", [mLink("/tickets/", bi(`Los ${N()} tickets →`, `All ${N()} tickets →`), "nav-dd-all"),
+    ...LEVELS.map((l, c) => `<li><a class="es" href="/tickets/#${roleAnchor(c, "es")}">${esc(l.name.es)}</a><a class="en" href="/tickets/#${roleAnchor(c, "en")}">${esc(l.name.en)}</a></li>`)])}
+${mDrop("Guías", "Guides", MENU.guides.map(([es, en, h]) => mLink(GSITE + h, bi(es, en))))}
+${mDrop("Proyecto", "Project", MENU.project.map(([es, en, h]) => mLink(h, bi(es, en))))}
+${mDrop("Ayuda", "Help", MENU.help.map(([es, en, h]) => mLink(h, bi(es, en))))}
+    </div>`;
+}
+
 /* ---------- the generated pages (same header, footer and style as about.html) */
 function shell(m, mainHtml, current, extra) {
   const nav = [["/tickets/", "Tickets", "Tickets", "tickets"], ["/about", "Qué es", "About"], ["/help", "Ayuda", "Help"], ["/faq", "Preguntas frecuentes", "FAQ"]];
@@ -203,7 +233,8 @@ ${seoHead(m, extra)}
 <header class="top">
   <a class="brand" href="/"><span class="mark" aria-hidden="true">&gt;_</span><span>SysAdmin Desks</span><small>by IGG</small></a>
   <nav class="top-nav doc-nav">
-${nav.map(([h, es, en, key]) => `    <a href="${h}"${key && key === current ? ' aria-current="page"' : ""}><span class="es">${es}</span><span class="en">${en}</span></a>`).join("\n")}
+${topMenu()}
+    <a class="who nav-signin" href="/#/start"><span class="es">Entrar</span><span class="en">Sign in</span></a>
     <button type="button" id="doc-lang" class="lang" hidden>EN</button>
   </nav>
 </header>

@@ -23,11 +23,25 @@
     // a link to a section (/privacy#cookies) lands on that section in the language shown
     var h = location.hash.slice(1);
     if (h && h !== "en") {
-      var base = h.replace(/-en$/, ""), want = lang === "en" ? base + "-en" : base;
+      var role = /^(carrera|career)-(\d+)$/.exec(h);
+      var base = h.replace(/-en$/, ""), want = role ? (lang === "en" ? "career-" : "carrera-") + role[2] : lang === "en" ? base + "-en" : base;
       var t = document.getElementById(want);
       if (t && want !== h) { history.replaceState(null, "", "#" + want); t.scrollIntoView(); }
     }
   }
+  // the top menu (/tickets/ pages): one drop-down open at a time; a click outside or Escape closes it; ☰ shows it on a phone
+  var menu = document.getElementById("nav-menu"), tg = document.getElementById("nav-toggle");
+  if (menu && tg) {
+    tg.hidden = false;
+    var closeAll = function (except) { Array.prototype.forEach.call(menu.querySelectorAll("details[open]"), function (d) { if (d !== except) d.open = false; }); };
+    var show = function (on) { menu.classList.toggle("open", on); tg.setAttribute("aria-expanded", String(on)); if (!on) closeAll(); };
+    tg.addEventListener("click", function () { show(!menu.classList.contains("open")); });
+    menu.addEventListener("toggle", function (ev) { if (ev.target.open) closeAll(ev.target); }, true);
+    document.addEventListener("click", function (ev) { if (!ev.target.closest(".top-nav") || ev.target.closest("#nav-menu a")) show(false); });
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") show(false); });
+  }
+  // the roles on /tickets/: #carrera-N in Spanish is #career-N in English
+  window.addEventListener("hashchange", function () { apply(); });
   btn.hidden = false;
   btn.addEventListener("click", function () { lang = lang === "es" ? "en" : "es"; save(lang); apply(); });
   apply();

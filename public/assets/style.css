@@ -1237,3 +1237,6 @@ body.landing-on .nav-toggle { color: var(--term-ink); border-color: rgba(215, 22
   body.landing-on .nav-dd + .nav-dd { border-color: rgba(215, 228, 221, .1); }
   body.landing-on .nav-dd-panel { background: transparent; box-shadow: none; }
 }
+.who.nav-signin { color: var(--accent); white-space: nowrap; }
+.doc-nav { flex-wrap: nowrap; }
+@media (max-width: 480px) { body.doc-es .top-nav .who.nav-signin > .es, body.doc-en .top-nav .who.nav-signin > .en { display: inline; } }
