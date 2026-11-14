@@ -15,6 +15,8 @@ const PUB = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 const read = (f) => readFileSync(join(PUB, f), "utf8");
 const attr = (h, re) => (h.match(re) || [])[1];
 const jsonLd = (h) => [...h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+// descriptions tuned to a query people really search: aadc-sync for "azure ad connect sync status" (position 2, Nov 2026)
+const SEARCH_TUNED = new Set(["aadc-sync"]);
 const PAGES = Object.entries(STATIC).map(([f, m]) => [f, m.path])
   .concat([["equipos.html", "/equipos"], ["tickets/index.html", "/tickets/"]], FAMILIES.map((f) => [`tickets/${f.slug}.html`, "/tickets/" + f.slug]),
     SCENARIOS.map((sc) => [`tickets/${sc.id}.html`, "/tickets/" + sc.id]));
@@ -138,7 +140,9 @@ test("a public page per desk: title, description, CTA, guide, and nothing that g
     for (const lang of ["es", "en"]) {
       const d = TICKET_SEO[sc.id][lang].desc;
       assert.ok(d.length <= 155, `${sc.id} ${lang} description ${d.length} > 155`);
-      assert.ok(lang === "es" ? /^Practica cómo .+ y documentarlo en el ticket\.$/.test(d) : /^Practise how to .+ document it( in the ticket)?\.$/.test(d), `${sc.id} ${lang} description pattern`);
+      // the usual pattern, or a description written for a real search query (Search Console), which still says it is free practice
+      const tuned = SEARCH_TUNED.has(sc.id) && (lang === "es" ? /^Practica gratis: .+\.$/ : /^Free practice: .+\.$/).test(d);
+      assert.ok(tuned || (lang === "es" ? /^Practica cómo .+ y documentarlo en el ticket\.$/.test(d) : /^Practise how to .+ document it( in the ticket)?\.$/.test(d)), `${sc.id} ${lang} description pattern`);
       assert.ok(TICKET_SEO[sc.id][lang].skills.length >= 3, sc.id + " skills");
       assert.ok(h.includes(`href="/?lang=${lang}#/desk/${sc.id}"`), `${sc.id} ${lang} CTA`);
     }
@@ -309,4 +313,11 @@ test("/equipos: the service for teams, in both languages, reachable from the men
   assert.ok(h.includes(`${SCENARIOS.length} tickets`), "the catalogue count follows the desks");
   for (const f of ["tickets/index.html", "tickets/ad-lockout.html"]) assert.ok(read(f).includes('<a class="nav-plain" href="/equipos">'), f + " menu links /equipos");
   assert.ok(read("assets/app.js").includes('href: "/equipos"'), "the simulator menu links /equipos");
+});
+
+test("v0.23: the home page links every family page by technology and /equipos", () => {
+  const h = read("index.html");
+  for (const f of FAMILIES) assert.ok(h.includes(`<a class="tk-fam" href="/tickets/${f.slug}">`), "home links " + f.slug);
+  assert.ok(h.includes("<h3>Por tecnología</h3>") && h.includes("<h3>By technology</h3>"));
+  assert.ok(h.includes('<li><a href="/equipos">Para equipos de IT</a>') && h.includes('<li><a href="/equipos">For IT teams</a>'));
 });

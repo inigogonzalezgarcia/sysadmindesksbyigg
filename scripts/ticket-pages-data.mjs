@@ -76,10 +76,10 @@ export const TICKET_SEO = {
         "Grant only the access that was requested.", "Check that the mailbox shows up in Outlook."] },
   },
   "aadc-sync": {
-    es: { title: "Azure AD Connect: usuario que no sincroniza", desc: "Practica cómo averiguar por qué una cuenta nueva de Active Directory no llega a Microsoft 365 con Azure AD Connect, arreglarlo y documentarlo en el ticket.",
+    es: { title: "Azure AD Connect: usuario que no sincroniza", desc: "Practica gratis: una cuenta nueva de AD no llega a Microsoft 365. Revisa el estado de la sincronización de Azure AD Connect, arréglalo y documéntalo.",
       skills: ["Seguir una cuenta desde Active Directory hasta Entra ID.", "Revisar la configuración y el estado de Azure AD Connect.",
         "Lanzar una sincronización y leer su resultado.", "Comprobar que la cuenta existe en Microsoft 365."] },
-    en: { title: "Azure AD Connect: user not syncing to M365", desc: "Practise how to investigate why an account created in Active Directory does not reach Microsoft 365 through Azure AD Connect, fix it and document it.",
+    en: { title: "Azure AD Connect: user not syncing to M365", desc: "Free practice: a new AD account is not syncing to Microsoft 365. Check the Azure AD Connect sync status, fix the cause and write it up in the ticket.",
       skills: ["Follow an account from Active Directory to Entra ID.", "Review Azure AD Connect's configuration and status.",
         "Run a sync and read its result.", "Check that the account exists in Microsoft 365."] },
   },

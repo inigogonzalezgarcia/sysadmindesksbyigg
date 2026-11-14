@@ -150,7 +150,8 @@ ${LEVELS.map((l, c) => `  <li><a class="tk-fam" href="/tickets/#${roleAnchor(c, 
 </nav>`;
 }
 function deskList(lang) {
-  return roleNav(lang) + `\n<p><a href="/tickets/">${esc(T[lang].allN(N()))}</a></p>`;
+  // v0.23: below the roles, the families by technology, so the home page links each family page (real links, not #anchors)
+  return roleNav(lang) + `\n<h3>${T[lang].techH}</h3>\n` + famNav(lang, null, T[lang].techH) + `\n<p><a href="/tickets/">${esc(T[lang].allN(N()))}</a></p>`;
 }
 
 function replaceBlock(html, start, end, body, file) {
@@ -260,7 +261,7 @@ const T = {
     relH: "Tickets relacionados", prio: (p) => `Prioridad ${p} · SLA ${SLA[p]} min`, mins: (n) => `Unos ${n} minutos`, all: "Ver todos los tickets",
     fiction: "Empresa (Contoso), personas y datos ficticios. Es práctica, no un sistema real.",
     idxH1: "Tickets para practicar soporte IT", idxLead: () => `${Cap(words(N(), "es"))} tickets de una mesa de soporte de una empresa ficticia, ordenados por puesto: de becario/a a CIO. Cada uno se resuelve en el navegador, gratis, con una consola simulada o, desde arquitectura, con un expediente de decisión, y se cierra con una nota puntuada.`,
-    roleH: "Por puesto", allN: (n) => `Ver los ${n} tickets →`, idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia",
+    roleH: "Por puesto", techH: "Por tecnología", allN: (n) => `Ver los ${n} tickets →`, idxMore: (a, b, c) => `¿Cómo funciona? Lo tienes en ${a}, la ${b} y las ${c}.`, famH: "Por familia",
     famLevel: (c) => ["Becario", "N1", "N1 sénior / N2", "N2 / junior", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Arquitectura", "Responsable de IT", "Dirección de IT", "CIO"][c] || "", famMore: "Todos los tickets", about: "qué es SysAdmin Desks", help: "ayuda", faq: "preguntas frecuentes", start: "Empieza gratis" },
   en: { crumbs: "Tickets to practise", cta: "Practise it free", ticket: "The ticket", from: "Opened by", skills: "What you practise",
     how: "You solve it in a simulated console (PowerShell, cmd or bash) with the directory, the inventory and the ticket page. It is checked against the state of the system, not a template: hiding the symptom is not enough. When you close it you write the work note (cause, change, check and follow-up) and get your score.",
@@ -269,7 +270,7 @@ const T = {
     relH: "Related tickets", prio: (p) => `Priority ${p} · SLA ${SLA[p]} min`, mins: (n) => `About ${n} minutes`, all: "See all the tickets",
     fiction: "Fictional company (Contoso), people and data. It is practice, not a real system.",
     idxH1: "Tickets to practise IT support", idxLead: () => `${Cap(words(N(), "en"))} help desk tickets from a fictional company, ordered by role: from intern to CIO. Each one is solved in the browser, free, with a simulated console or, from the architect up, a decision case file, and closed with a scored note.`,
-    roleH: "By role", allN: (n) => `See all ${n} tickets →`, idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family",
+    roleH: "By role", techH: "By technology", allN: (n) => `See all ${n} tickets →`, idxMore: (a, b, c) => `How does it work? See ${a}, the ${b} and the ${c}.`, famH: "By family",
     famLevel: (c) => ["Intern", "Tier 1", "Tier 2", "Sysadmin Jr", "Sysadmin", "Infra / Cloud", "DevOps / SRE", "Architect", "IT manager", "IT director", "CIO"][c] || "", famMore: "All the tickets", about: "what SysAdmin Desks is", help: "help", faq: "FAQ", start: "Start free" },
 };
 
@@ -542,9 +543,9 @@ ${LEVELS.map((l, c) => roleDesks(c).length ? `<h2 id="${roleAnchor(c, lang)}">${
 // a page per family: /tickets/<family>
 const famDesks = (f) => SCENARIOS.filter((sc) => familyOf(sc.id) === f);
 // the families as a row of buttons (links that look like chips, with their number of tickets); the current one is marked
-function famNav(lang, current) {
+function famNav(lang, current, label) {
   const t = T[lang];
-  return `<nav class="tk-fams" aria-label="${esc(t.famH)}">
+  return `<nav class="tk-fams" aria-label="${esc(label || t.famH)}">
 <ul>
 ${FAMILIES.map((f) => `  <li><a class="tk-fam" href="${familyPath(f)}"${f === current ? ' aria-current="page"' : ""}>${esc(f[lang].name)} <span class="tk-fam-n">${famDesks(f).length}</span></a></li>`).join("\n")}
 </ul>
