@@ -16,6 +16,9 @@
   // decision cases by career level -> family slug: the architect's cases (7), the IT manager's (8), and the IT director's (9) and
   // the CIO's (10) together in leadership
   const CASE_FAMILY = { 7: "architecture", 8: "management", 9: "leadership", 10: "leadership" };
+  // desks whose topic fits another family better than their profile area: the VPN ticket is counted under Windows in the
+  // profile, but people look for it with networking
+  const DESK_FAMILY = { "vpn-anyconnect": "networking" };
 
   // the families in the order the pages and the queue show them
   const FAMILIES = [
@@ -39,10 +42,11 @@
       if (!slug) throw new Error(`no family for the decision cases of career level ${sc.career} (${sc.id})`);
       return slug;
     }
+    if (DESK_FAMILY[sc.id]) return DESK_FAMILY[sc.id];
     const a = deskArea[sc.id];
     if (!a || !AREA_FAMILY[a]) throw new Error("no family for desk " + sc.id);
     return AREA_FAMILY[a];
   }
 
-  return { AREA_FAMILY, CASE_FAMILY, FAMILIES, familyOf };
+  return { AREA_FAMILY, CASE_FAMILY, DESK_FAMILY, FAMILIES, familyOf };
 });

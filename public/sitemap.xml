@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://sysadmindesksbyigg.pages.dev/</loc><lastmod>2026-11-14</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/about</loc><lastmod>2026-11-14</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/help</loc><lastmod>2026-11-13</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/about</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/help</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/equipos</loc><lastmod>2026-11-13</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/faq</loc><lastmod>2026-11-13</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/</loc><lastmod>2026-11-13</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/faq</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/active-directory</loc><lastmod>2026-11-13</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/windows-server</loc><lastmod>2026-11-13</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/windows-server</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/microsoft-365</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/intune-endpoint</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/linux-devops</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/virtualisation-backup-databases</loc><lastmod>2026-11-13</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/networking</loc><lastmod>2026-11-13</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/networking</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/hardware-servers</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/architecture</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/ad-lockout</loc><lastmod>2026-11-13</lastmod></url>
@@ -21,7 +21,7 @@
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/print-queue</loc><lastmod>2026-11-14</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/mailbox-full</loc><lastmod>2026-11-14</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/intune-bitlocker</loc><lastmod>2026-11-14</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/vpn-anyconnect</loc><lastmod>2026-11-13</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/vpn-anyconnect</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/m365-licence</loc><lastmod>2026-11-14</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/shared-mailbox</loc><lastmod>2026-11-14</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/aadc-sync</loc><lastmod>2026-11-14</lastmod></url>
@@ -190,8 +190,8 @@
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/win11-trading-hours</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/corner-preopening</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/clinical-maintenance</loc><lastmod>2026-11-13</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/terms</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://sysadmindesksbyigg.pages.dev/privacy</loc><lastmod>2026-11-04</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/terms</loc><lastmod>2026-11-15</lastmod></url>
+  <url><loc>https://sysadmindesksbyigg.pages.dev/privacy</loc><lastmod>2026-11-15</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/management</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/euc-provider-sla</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://sysadmindesksbyigg.pages.dev/tickets/firewall-contract-renewal</loc><lastmod>2026-11-13</lastmod></url>

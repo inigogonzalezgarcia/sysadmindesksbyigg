@@ -179,6 +179,8 @@ function staticPage(file, html) {
     : file === "about.html" ? [jsonld(aboutPage())] : file === "help.html" ? [jsonld(helpCrumbs())] : [];
   let out = html.replace(/<html lang="[a-z]+"[^>]*>/, `<html lang="es" data-title-en="${esc(m.titleEn)}">`);
   out = replaceBlock(out, "<!-- seo -->", "<!-- /seo -->", seoHead(m, extra).replace(/\n<!-- \/seo -->$/, ""), file);
+  // v0.25: the documentation pages get the same top menu as the ticket pages, with the current page marked
+  out = out.replace(/  <nav class="top-nav doc-nav">[\s\S]*?<\/nav>\n/, () => docNav(m.path));
   for (const lang of ["es", "en"]) {
     if (out.includes(`<!-- tickets:${lang} -->`)) out = replaceBlock(out, `<!-- tickets:${lang} -->`, `<!-- /tickets:${lang} -->`, deskList(lang), file);
   }
@@ -214,6 +216,16 @@ ${mDrop("Guías", "Guides", MENU.guides.map(([es, en, h]) => mLink(GSITE + h, bi
 ${mDrop("Proyecto", "Project", MENU.project.map(([es, en, h]) => mLink(h, bi(es, en))))}
 ${mDrop("Ayuda", "Help", MENU.help.map(([es, en, h]) => mLink(h, bi(es, en))))}
     </div>`;
+}
+
+function docNav(path) {
+  const nav = `  <nav class="top-nav doc-nav">
+${topMenu()}
+    <a class="who nav-signin" href="/#/start"><span class="es">Entrar</span><span class="en">Sign in</span></a>
+    <button type="button" id="doc-lang" class="lang" hidden>EN</button>
+  </nav>
+`;
+  return nav.replace(`href="${path}"`, `href="${path}" aria-current="page"`);
 }
 
 /* ---------- the generated pages (same header, footer and style as about.html) */

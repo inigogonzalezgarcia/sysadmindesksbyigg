@@ -321,3 +321,13 @@ test("v0.23: the home page links every family page by technology and /equipos", 
   assert.ok(h.includes("<h3>Por tecnología</h3>") && h.includes("<h3>By technology</h3>"));
   assert.ok(h.includes('<li><a href="/equipos">Para equipos de IT</a>') && h.includes('<li><a href="/equipos">For IT teams</a>'));
 });
+
+test("v0.25: the documentation pages have the same top menu as the ticket pages, and the VPN ticket is in networking", () => {
+  for (const [f, path] of [["help.html", "/help"], ["about.html", "/about"], ["faq.html", "/faq"], ["terms.html", "/terms"], ["privacy.html", "/privacy"]]) {
+    const h = read(f);
+    assert.ok(h.includes('<div id="nav-menu" class="nav-menu">') && h.includes('<a class="nav-plain" href="/equipos">'), f + " has the menu");
+    assert.ok(h.includes(`href="${path}" aria-current="page"`), f + " marks itself");
+    assert.ok(h.includes('<script src="assets/doc.js" defer></script>'), f + " loads doc.js for the menu");
+  }
+  assert.equal(familyOf("vpn-anyconnect").slug, "networking");
+});
