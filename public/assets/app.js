@@ -87,7 +87,13 @@
       timeUsed: (m, l) => `Time: ${m} of ${l} min`, codeUsed: (c) => `Code: ${c}`,
       pTitle: "Your progress", pSub: "Your best result on each ticket is saved in your account. Your streak, goal, badges, articles and mail answers stay in this browser.", tClosed: "Tickets closed", tStars: "Stars", tPoints: "Points", tAvg: "Average score", notYet: "Not yet",
       tourNext: "Next", tourBack: "Back", tourSkip: "Skip the tour", tourDone: "Start the shift", tourStep: (i, n) => `${i} of ${n}`,
-      navDirectory: "Directory", navInventory: "Inventory", navNetwork: "Network room",
+      navDirectory: "Directory", navInventory: "Inventory", navNetwork: "Network room", navMap: "Office map",
+      mapTitle: "Office map", mapSub: "Every Contoso site seen from above, floor by floor: the areas, the desks and who sits at them, the meeting rooms, the printers and the comms rooms. Click a person, a printer or a room to see the details.",
+      mapGoLabel: "Go to the map of:", mapPick: "Pick a person, a printer or a room to see the details.", mapFree: "Free desk", mapDesk: "desk", mapLegUser: "Person",
+      mapLegTicket: "Has open tickets", mapOpenN: (n) => n === 1 ? "1 open ticket" : n + " open tickets", mapDept: "Department", mapWhere: "Where", mapDevice: "Computer", mapUser: "User",
+      mapTickets: "Tickets they opened", mapInDir: "Show in the directory", mapInInv: "Show in the inventory", mapPcNote: "A computer connected to this desk's socket; the directory does not name its user.",
+      mapRacks: "Racks", mapInRack: "In the rack", mapOpenRoom: "Open in the network room",
+      mapZone: { meeting: "Meeting room", training: "Training room", comms: "Comms room or cabinet", dataroom: "Data room", core: "", area: "", team: "" },
       tabConsole: "Console", tabDesk: (h) => `Go to the desk · ${h}`, evTitle: "Event Viewer", terminal: "Terminal", deskRan: "[desk]", equivalent: "Same as typing:",
       lvlNames: { error: "Error", warning: "Warning", information: "Information" }, evSource: "Source", evId: "Event ID",
       dTitle: "Directory", dSub: "contoso.local · Active Directory (simulated). The same users and computers as the tickets.", dTree: "Organisational units",
@@ -301,7 +307,13 @@
       timeUsed: (m, l) => `Tiempo: ${m} de ${l} min`, codeUsed: (c) => `Código: ${c}`,
       pTitle: "Tu progreso", pSub: "Tu mejor resultado en cada ticket se guarda en tu cuenta. Tu racha, objetivo, insignias, artículos y respuestas de correo se quedan en este navegador.", tClosed: "Tickets cerrados", tStars: "Estrellas", tPoints: "Puntos", tAvg: "Puntuación media", notYet: "Aún no",
       tourNext: "Siguiente", tourBack: "Atrás", tourSkip: "Saltar el tour", tourDone: "Empezar el turno", tourStep: (i, n) => `${i} de ${n}`,
-      navDirectory: "Directorio", navInventory: "Inventario", navNetwork: "Sala de red",
+      navDirectory: "Directorio", navInventory: "Inventario", navNetwork: "Sala de red", navMap: "Mapa de oficinas",
+      mapTitle: "Mapa de oficinas", mapSub: "Todas las sedes de Contoso vistas desde arriba, planta a planta: las zonas, las mesas y quién se sienta en ellas, las salas de reuniones, las impresoras y los cuartos de comunicaciones. Haz clic en una persona, una impresora o una sala para ver los detalles.",
+      mapGoLabel: "Ir al mapa de:", mapPick: "Elige una persona, una impresora o una sala para ver los detalles.", mapFree: "Mesa libre", mapDesk: "mesa", mapLegUser: "Persona",
+      mapLegTicket: "Tiene tickets abiertos", mapOpenN: (n) => n === 1 ? "1 ticket abierto" : n + " tickets abiertos", mapDept: "Departamento", mapWhere: "Dónde", mapDevice: "Equipo", mapUser: "Usuario",
+      mapTickets: "Tickets que ha abierto", mapInDir: "Ver en el directorio", mapInInv: "Ver en el inventario", mapPcNote: "Un equipo conectado a la toma de esta mesa; el directorio no dice de quién es.",
+      mapRacks: "Racks", mapInRack: "En el rack", mapOpenRoom: "Abrir en la sala de red",
+      mapZone: { meeting: "Sala de reuniones", training: "Sala de formación", comms: "Cuarto o armario de comunicaciones", dataroom: "Sala técnica", core: "", area: "", team: "" },
       tabConsole: "Consola", tabDesk: (h) => `Ir al puesto · ${h}`, evTitle: "Visor de eventos", terminal: "Terminal", deskRan: "[puesto]", equivalent: "Igual que escribir:",
       lvlNames: { error: "Error", warning: "Advertencia", information: "Información" }, evSource: "Origen", evId: "Id. del evento",
       dTitle: "Directorio", dSub: "contoso.local · Active Directory (simulado). Los mismos usuarios y equipos que los tickets.", dTree: "Unidades organizativas",
@@ -1080,6 +1092,7 @@
       item("#/mail", "✉", L().navMail, "mail", unreadN ? el("span", { class: "badge", "aria-label": L().unreadN(unreadN), text: String(unreadN) }) : null),
       item("#/directory", "◫", L().navDirectory, "directory"),
       item("#/inventory", "▦", L().navInventory, "inventory"),
+      item("#/map", "⌖", L().navMap, "map"),
       item("#/network", "⌗", L().navNetwork, "network"),
       item("#/shipping", "⇪", L().navShipping, "shipping"),
       item("#/kb", "▧", L().navKb, "kb"),
@@ -2913,6 +2926,125 @@
       it.kind === "pdu0" ? el("p", { class: "sub", text: L().rmPdu0Note }) : null);
   }
 
+  /* ---------- v0.11: the office map. A floor plan of every site (offices.js): areas, desks with their person, meeting
+     rooms, printers and the comms rooms, which open in the network room. */
+  const OF = window.SDOffices;
+  let mapSite = "hq", mapLevel = "f2", mapSel = null;   // mapSel: {type: "user"|"pc"|"thing"|"zone", id, zone}
+  const initials = (name) => name.split(/\s+/).filter((w) => /^[A-ZÁÉÍÓÚÑ]/.test(w)).slice(0, 2).map((w) => w[0]).join("");
+  const userTickets = (sam) => SCENARIOS.filter((sc) => sc.requester && sc.requester.user === sam);
+  function mapThing(id) {
+    const pr = Wd.PRINTERS.find((x) => x.id === id);
+    if (pr) return { id, kind: "printer", label: L().iPrinter, rec: pr, icon: "⎙" };
+    const d = Wd.DEVICES.find((x) => x.id === id);
+    return d ? { id, kind: "device", label: L().iDev[d.kind] || d.kind, rec: d, icon: d.kind === "ap" ? "◉" : d.kind === "payment" ? "▭" : d.kind === "tablet" ? "▯" : "▣" } : null;
+  }
+  function officeMap(selId) {
+    const view = shell("map");
+    document.title = L().mapTitle + " · SysAdmin Desks";
+    if (selId) {
+      const w = OF.find(selId);
+      if (w) { mapSite = w.site.id; mapLevel = w.level.id; mapSel = w.desk ? { type: w.desk.kind === "pc" ? "pc" : "user", id: selId } : { type: "thing", id: selId }; }
+    }
+    const site = OF.SITES.find((s) => s.id === mapSite) || OF.SITES[0];
+    const level = site.levels.find((l) => l.id === mapLevel) || site.levels[0];
+    const ds = OF.desks(level);
+    const users = Object.fromEntries(Wd.USERS.map((u) => [u.sam, u]));
+    const go = (sel, hash) => { mapSel = sel; if (hash && location.hash !== hash) location.hash = hash; else officeMap(null); };
+    const setSite = (id) => { const s = OF.SITES.find((x) => x.id === id); mapSite = id; mapLevel = s.levels[0].id; mapSel = null; if (location.hash !== "#/map") location.hash = "#/map"; else officeMap(null); };
+    const isSel = (type, id) => mapSel && mapSel.type === type && mapSel.id === id;
+    const levels = site.levels.slice().sort((a, b) => (b.floor ?? -1) - (a.floor ?? -1));
+    const zoneEl = (z, i) => {
+      const head = el("span", { class: "fz-name", text: t(z.name, lang) });
+      const things = z.things.map(mapThing).filter(Boolean).map((x) => el("button", { type: "button", class: "fthing" + (isSel("thing", x.id) ? " on" : ""), title: `${x.id} · ${x.label}`,
+        "aria-label": `${x.id}, ${x.label}`, onclick: () => go({ type: "thing", id: x.id }, "#/map/" + x.id) }, el("span", { class: "fthing-ico", "aria-hidden": "true", text: x.icon }), el("span", { class: "mono", text: x.id })));
+      let body = null;
+      if (z.type === "team") {
+        body = el("div", { class: "fdesks" }, ds[i].map((d) => {
+          if (d.kind === "free") return el("span", { class: "fdesk fd-free", title: L().mapFree + (d.desk ? " " + d.desk : "") }, el("span", { class: "fdesk-n", text: d.desk || "" }));
+          if (d.kind === "pc") return el("button", { type: "button", class: "fdesk fd-pc" + (isSel("pc", d.id) ? " on" : ""), title: d.id, "aria-label": `${L().mapDesk} ${d.desk || ""}: ${d.id}`,
+            onclick: () => go({ type: "pc", id: d.id }, "#/map/" + d.id) }, el("span", { class: "fdesk-who", text: "PC" }), el("span", { class: "fdesk-n", text: d.desk || "" }));
+          const u = users[d.id];
+          const open = userTickets(d.id).filter(isOpen).length;
+          return el("button", { type: "button", class: "fdesk fd-user" + (isSel("user", d.id) ? " on" : ""), title: `${u.name} · ${t(u.title, lang)}`,
+            "aria-label": `${u.name}, ${t(u.title, lang)}${d.desk ? ", " + L().mapDesk + " " + d.desk : ""}${open ? ", " + L().mapOpenN(open) : ""}`,
+            onclick: () => go({ type: "user", id: d.id }, "#/map/" + d.id) },
+            el("span", { class: "fdesk-who", text: initials(u.name) }), el("span", { class: "fdesk-n", text: d.desk || "" }), open ? el("span", { class: "fdesk-tk", "aria-hidden": "true" }) : null);
+        }), things);
+      } else if (z.type === "meeting" || z.type === "training") {
+        body = el("span", { class: "froom-table", "aria-hidden": "true" });
+      } else if (z.type === "comms" || z.type === "dataroom") {
+        body = el("span", { class: "fracks", "aria-hidden": "true" }, Array.from({ length: z.type === "dataroom" ? 3 : 1 }, () => el("span", { class: "frack" })), things.length ? null : null);
+      } else if (z.type === "area") body = el("div", { class: "fdesks" }, things);
+      const clickable = z.type !== "core" && z.type !== "team" && z.type !== "area";
+      const cls = `fzone t-${z.type} fw${z.w} fh${z.h}` + (isSel("zone", i) ? " on" : "");
+      const inner = [el("span", { class: "fz-head" }, head, z.type === "team" ? el("span", { class: "fz-n", text: String(z.users.length) }) : null), body,
+        (z.type === "comms" && things.length) ? el("div", { class: "fdesks" }, things) : null];
+      return clickable ? el("div", { class: cls }, el("button", { type: "button", class: "fzone-btn", "aria-label": t(z.name, lang), onclick: () => go({ type: "zone", id: i }, null) }), ...inner)
+        : el("div", { class: cls }, inner);
+    };
+    const detail = el("section", { class: "panel inv-detail map-detail", id: "map-detail" });
+    view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().mapTitle }), el("p", { class: "sub", text: L().mapSub }))),
+      el("div", { class: "inv-grid net-grid is-map" }, el("div", { class: "nmap fmap" },
+        el("div", { class: "rsite" }, el("h2", { class: "rsite-name", text: t(site.name, lang) }), el("p", { class: "rgo-label", id: "map-go-label", text: L().mapGoLabel }),
+          el("div", { class: "rgo", role: "group", "aria-labelledby": "map-go-label" }, OF.SITES.filter((s) => s.id !== site.id).map((s) => el("button", { type: "button", class: "rgo-btn", id: "map-site-" + s.id,
+            onclick: () => setSite(s.id) }, t(s.name, lang), el("span", { "aria-hidden": "true", text: " →" }))))),
+        site.levels.length > 1 ? el("div", { class: "rlevels", role: "group", "aria-label": L().rmLevels }, levels.map((l) => el("button", { type: "button", id: "map-level-" + l.id,
+          class: "rlevel" + (l.id === level.id ? " on" : ""), "aria-pressed": l.id === level.id ? "true" : "false", onclick: () => { mapLevel = l.id; mapSel = null; officeMap(null); } },
+          el("span", { text: t(l.name, lang) })))) : null,
+        el("h3", { class: "rlevel-title", text: t(level.name, lang) }),
+        el("div", { class: "fplan", role: "group", "aria-label": t(level.name, lang) }, level.zones.map(zoneEl)),
+        el("p", { class: "nlegend" }, el("span", { class: "nleg" }, el("span", { class: "fdesk fd-user mini", "aria-hidden": "true" }), L().mapLegUser),
+          el("span", { class: "nleg" }, el("span", { class: "fdesk fd-free mini", "aria-hidden": "true" }), L().mapFree),
+          el("span", { class: "nleg" }, el("span", { class: "fdesk-tk inline", "aria-hidden": "true" }), L().mapLegTicket))), detail));
+    renderMapDetail(detail, site, level, ds);
+    if (selId) {
+      const b = view.querySelector(".fplan .on");
+      if (b && window.matchMedia("(max-width: 1100px)").matches) detail.scrollIntoView({ behavior: motion(), block: "start" });
+    }
+  }
+  function renderMapDetail(box, site, level, ds) {
+    if (!mapSel) { box.replaceChildren(el("p", { class: "empty", text: L().mapPick })); return; }
+    const where = (z, d) => `${t(site.name, lang)} · ${t(level.name, lang).split(" · ")[0]} · ${t(z.name, lang)}${d && d.desk ? " · " + L().mapDesk + " " + d.desk : ""}`;
+    const zi = (pred) => level.zones.findIndex((z, i) => pred(z, i));
+    if (mapSel.type === "user" || mapSel.type === "pc") {
+      const i = zi((z, k) => ds[k].some((d) => d.id === mapSel.id));
+      const z = level.zones[i];
+      const d = ds[i].find((x) => x.id === mapSel.id);
+      if (mapSel.type === "pc") {
+        put(box, el("h2", { class: "dtitle", text: d.id }), el("p", { class: "sub", text: L().mapPcNote }), fieldsDl([{ label: L().mapWhere, value: where(z, d) }]));
+        return;
+      }
+      const u = Wd.USERS.find((x) => x.sam === mapSel.id);
+      const tks = userTickets(u.sam);
+      put(box,
+        el("div", { class: "row" }, el("span", { class: "fdesk fd-user big", "aria-hidden": "true" }, el("span", { class: "fdesk-who", text: initials(u.name) })), el("h2", { class: "dtitle", text: u.name })),
+        el("p", { class: "sub", text: t(u.title, lang) }),
+        fieldsDl([{ label: L().mapDept, value: u.dept }, { label: L().mapWhere, value: where(z, d) }, { label: L().mapDevice, value: u.device || "–" }, { label: L().mapUser, value: u.sam }]),
+        el("h3", { text: L().mapTickets }),
+        tks.length ? el("ul", { class: "inv-tickets" }, tks.map((sc) => el("li", {}, ticketPill(sc), el("span", { text: " " + t(sc.title, lang) })))) : el("p", { class: "sub", text: L().iNone }),
+        el("p", {}, el("a", { href: "#/directory", onclick: () => { dirOu = u.ou; dirSel = { type: "user", id: u.sam }; }, text: L().mapInDir })));
+      return;
+    }
+    if (mapSel.type === "thing") {
+      const x = mapThing(mapSel.id);
+      const i = zi((z) => z.things.includes(x.id));
+      const z = level.zones[i];
+      const racked = RM.find(x.id);
+      put(box, el("h2", { class: "dtitle", text: x.id }), el("p", { class: "sub", text: `${x.label} · ${t(x.rec.model, lang)}` }),
+        fieldsDl([{ label: "IP", value: x.rec.ip || "–" }, { label: L().mapWhere, value: where(z) }, { label: L().colLocation, value: t(x.rec.location, lang) }]),
+        el("p", {}, racked ? el("a", { href: "#/network/" + x.id, text: L().iInRoom }) : el("a", { href: "#/inventory", onclick: () => { invSel = x.id; }, text: L().mapInInv })));
+      return;
+    }
+    const z = level.zones[mapSel.id];
+    if (!z) { box.replaceChildren(el("p", { class: "empty", text: L().mapPick })); return; }
+    const rackW = z.rack ? RM.SITES.flatMap((s) => s.levels.flatMap((l) => l.racks.map((r) => ({ s, l, r })))).find((x) => x.r.id === z.rack) : null;
+    const rackItems = rackW ? rackW.r.items.filter((it) => it.kind === "net" || it.kind === "dev" || it.kind === "srv") : [];
+    put(box, el("h2", { class: "dtitle", text: t(z.name, lang) }), el("p", { class: "sub", text: L().mapZone[z.type] }),
+      fieldsDl([{ label: L().mapWhere, value: `${t(site.name, lang)} · ${t(level.name, lang)}` }].concat(rackW ? [{ label: L().mapRacks, value: rackW.l.racks.length > 1 && z.type === "dataroom" ? rackW.l.racks.map((r) => t(r.name, lang)).join(", ") : `${t(rackW.r.name, lang)} · ${rackW.r.units}U` },
+        { label: L().mapInRack, value: rackItems.map((it) => it.id).join(", ") || "–" }] : [])),
+      rackW ? el("p", {}, el("a", { class: "btn sm", href: "#/network/" + (rackItems[0] || rackW.r.items[0]).id, text: L().mapOpenRoom })) : null);
+  }
+
   function networkRoom(selId) {
     const view = shell("network");
     document.title = L().nTitle + " · SysAdmin Desks";
@@ -4034,6 +4166,7 @@
     const km = h.match(/^#\/kb(?:\/([a-z0-9-]+))?$/);
     const mm = h.match(/^#\/mail(?:\/([a-z0-9-]+))?$/);
     const nm = h.match(/^#\/network(?:\/([A-Za-z0-9-]+))?$/);
+    const mpm = h.match(/^#\/map(?:\/([A-Za-z0-9.-]+))?$/);
     const lbm = h.match(/^#\/library(?:\/([a-z0-9-]+))?$/);
     const lam = h.match(/^#\/labs(?:\/([a-z0-9-]+))?$/);
     const sm = h.match(/^#\/shipping(?:\/([A-Za-z0-9-]+))?(?:\/([a-z0-9-]+))?$/);
@@ -4053,6 +4186,7 @@
     else if (h === "#/directory" && user) directory();
     else if (h === "#/inventory" && user) inventory();
     else if (nm && user) networkRoom(nm[1] || null);
+    else if (mpm && user) officeMap(mpm[1] || null);
     else if (sm && user) shippingPage(sm[1] || null, sm[2] || null);
     else if (km && user) kbPage(km[1] || null);
     else if (lbm && user) libraryPage(lbm[1] || null);

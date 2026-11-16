@@ -1021,6 +1021,53 @@ body.doc-es .legal article + article, body.doc-en .legal article + article { mar
 @media (max-width: 520px) { .rrow { grid-template-columns: 40px minmax(0, 1fr); } .rgo-btn, .rlevel { min-height: 44px; } .rrack { --u: 32px; }
   .rgo { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 4px; } .rgo-btn { flex: none; scroll-snap-align: start; } .rgo-label { flex: none; } }
 @media (prefers-reduced-motion: reduce) { .rdev, .rlevel, .rdev:active, .rlevel:active { transition: none; transform: none; } }
+/* v0.11: the office map, a floor plan seen from above */
+.fplan { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: minmax(92px, auto); grid-auto-flow: row dense; gap: 0;
+  padding: 10px; border: 3px solid var(--ink); border-radius: 6px; background-color: var(--card);
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 16px 16px; }
+.fzone { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 10px; margin: -1px 0 0 -1px; border: 2px solid #4d5a54; background: rgba(255, 255, 255, .72); min-width: 0; }
+.fw3 { grid-column: span 3; } .fw4 { grid-column: span 4; } .fw6 { grid-column: span 6; } .fw8 { grid-column: span 8; } .fw12 { grid-column: span 12; }
+.fzone.fh2 { grid-row: span 2; }
+.fz-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; position: relative; z-index: 1; pointer-events: none; }
+.fz-name { font-weight: 700; font-size: 13.5px; line-height: 1.25; }
+.fz-n { font: 600 11px/1 var(--mono); color: var(--muted); }
+.fzone.t-meeting, .fzone.t-training { background: rgba(61, 107, 158, .10); }
+.fzone.t-comms, .fzone.t-dataroom { background: var(--term-bg); color: var(--term-ink); border-color: #0b1310; }
+.fzone.t-core { background: repeating-linear-gradient(45deg, rgba(93, 107, 100, .14) 0 6px, transparent 6px 12px); color: var(--muted); }
+.fzone.t-core .fz-name { font-weight: 500; font-size: 12.5px; }
+.fzone.t-area { background: rgba(161, 92, 0, .06); border-style: dashed; }
+.fzone-btn { position: absolute; inset: 0; z-index: 0; border: 0; background: transparent; border-radius: 0; }
+.fzone-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+@media (hover: hover) and (pointer: fine) { .fzone-btn:hover { background: rgba(15, 107, 79, .06); } .t-comms .fzone-btn:hover, .t-dataroom .fzone-btn:hover { background: rgba(94, 224, 160, .08); } }
+.fzone.on { box-shadow: inset 0 0 0 3px var(--accent); }
+.fzone.t-comms.on, .fzone.t-dataroom.on { box-shadow: inset 0 0 0 3px var(--term-ok); }
+.fdesks { display: flex; flex-wrap: wrap; gap: 8px; position: relative; z-index: 1; }
+.fdesk { position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 46px; height: 46px; padding: 0;
+  border-radius: 6px; border: 1px solid #b9c4bf; background: #fbfaf6; color: var(--ink); font: inherit; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.fdesk.fd-user { background: var(--soft); border-color: #9cc8b3; }
+.fdesk.fd-user .fdesk-who { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 700 11px/1 system-ui, sans-serif; }
+.fdesk.fd-pc .fdesk-who { font: 700 10px/1 var(--mono); color: var(--muted); }
+.fdesk.fd-free { border-style: dashed; background: transparent; }
+.fdesk-n { font: 10px/1 var(--mono); color: var(--muted); margin-top: 3px; }
+.fdesk-tk { position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--p2); box-shadow: 0 0 0 2px #fbfaf6; }
+.fdesk-tk.inline { position: static; display: inline-block; box-shadow: none; }
+.fdesk.on { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15, 107, 79, .25); }
+.fdesk:active { transform: scale(.96); transition: transform 100ms ease-out; }
+@media (hover: hover) and (pointer: fine) { button.fdesk:hover { border-color: var(--accent); } }
+.fdesk.mini { width: 14px; height: 14px; border-radius: 3px; vertical-align: middle; }
+.fdesk.big { width: 44px; height: 44px; border-radius: 50%; flex: none; }
+.fthing { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 8px; border-radius: 6px; border: 1px solid #c9b48f; background: #fff7ea; color: #6b4a12; font-size: 11.5px; position: relative; z-index: 1; }
+.t-comms .fthing { background: #1b2622; border-color: #33423c; color: var(--term-ink); }
+.fthing.on { border-color: var(--p2); box-shadow: 0 0 0 3px rgba(161, 92, 0, .25); }
+.fthing-ico { font-size: 14px; }
+.froom-table { align-self: center; width: 60%; max-width: 160px; height: 34px; border-radius: 999px; border: 2px solid rgba(61, 107, 158, .55); position: relative; z-index: 1; pointer-events: none; margin-top: auto; margin-bottom: auto; }
+.fracks { display: flex; gap: 6px; position: relative; z-index: 1; pointer-events: none; }
+.frack { width: 22px; height: 34px; border-radius: 3px; background: #24312c; box-shadow: inset 0 0 0 1px #3c4d46, inset 0 6px 0 #1a2521, inset 0 14px 0 #2c3a35; }
+.fzone.t-comms .fz-name, .fzone.t-dataroom .fz-name { color: #eef5f1; }
+.map-detail .row { align-items: center; gap: 10px; justify-content: flex-start; }
+@media (max-width: 700px) { .fplan { grid-template-columns: repeat(6, minmax(0, 1fr)); } .fw3 { grid-column: span 3; } .fw4, .fw6, .fw8, .fw12 { grid-column: span 6; } .fzone.fh2 { grid-row: span 1; } }
+@media (max-width: 520px) { .fdesk { width: 44px; height: 48px; } .fplan { padding: 6px; } }
+@media (prefers-reduced-motion: reduce) { .fdesk, .fdesk:active { transition: none; transform: none; } }
 @media (max-width: 1100px) { .net-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 520px) { .net-diag-row .btn { width: 100%; min-height: 44px; } .net-detail .acts .btn { min-height: 44px; } }
 
