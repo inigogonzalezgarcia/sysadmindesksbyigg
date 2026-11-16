@@ -1,7 +1,7 @@
 // SEO copy for the public ticket pages (public/tickets/<id>.html), one entry per desk in public/assets/scenarios.js.
 // desc: the meta description (Spanish, at most 155 characters) and its English twin for the page;
 // title (optional): the words people search for, used in <title> instead of the ticket title (the H1 keeps the story);
-// skills: what the desk practises. Never the root cause, the fix commands or the tempting fix: the page must not spoil the ticket.
+// skills: what the desk practises. The searched tool and command names are fine; never the exact solution steps, the hints or the tempting fix.
 export const TICKET_SEO = {
   "ad-lockout": {
     es: { title: "Cuenta AD bloqueada cada mañana (evento 4740)", desc: "Practica cómo investigar una cuenta de Active Directory que se bloquea cada mañana, encontrar el origen de los bloqueos y documentarlo en el ticket.",
@@ -12,35 +12,41 @@ export const TICKET_SEO = {
         "Tell unlocking the account apart from removing what locks it.", "Check that the account stays unlocked before closing."] },
   },
   "dns-intranet": {
-    es: { title: "DNS: Internet funciona, la intranet no", desc: "Practica cómo diagnosticar un portátil que navega por Internet pero no abre la intranet ni las carpetas compartidas, y documentarlo en el ticket.",
-      skills: ["Revisar la configuración de red y los servidores DNS de un portátil con ipconfig.", "Probar la resolución de nombres internos con nslookup.",
+    es: { title: "DNS: Internet funciona, la intranet no", desc: "Practica gratis: diagnostica un DNS que no resuelve la intranet con ipconfig (/all, /flushdns) y nslookup. Internet va y las carpetas no; documéntalo.",
+      skills: ["Revisar la configuración de red y los servidores DNS de un portátil con ipconfig.", "Probar la resolución de nombres internos con nslookup.", "Vaciar la caché DNS del equipo (ipconfig con /flushdns) y saber cuándo hace falta.",
         "Separar un problema de conectividad de uno de resolución de nombres.", "Comprobar que la intranet y la unidad de red vuelven a responder."] },
-    en: { title: "DNS: Internet works, the intranet does not", desc: "Practise how to diagnose a laptop that reaches the internet but not the intranet or the shared drives, and document it in the ticket.",
-      skills: ["Review a laptop's network settings and DNS servers with ipconfig.", "Test internal name resolution with nslookup.",
+    en: { title: "DNS: Internet works, the intranet does not", desc: "Free practice: diagnose DNS that does not resolve the intranet with ipconfig (/all, /flushdns) and nslookup. Internet works, shares do not; document it.",
+      skills: ["Review a laptop's network settings and DNS servers with ipconfig.", "Test internal name resolution with nslookup.", "Clear the PC's DNS cache (ipconfig with /flushdns) and know when it is needed.",
         "Tell a connectivity problem apart from a name resolution one.", "Check that the intranet and the network drive answer again."] },
   },
   "disk-full": {
-    es: { title: "Disco lleno en Windows: Excel no puede guardar", desc: "Practica cómo liberar espacio en un equipo Windows con el disco lleno sin romper nada, comprobar que Excel vuelve a guardar y documentarlo en el ticket.",
+    es: { title: "Disco lleno en Windows: Excel no puede guardar", desc: "Practica gratis: libera espacio en un Windows con disco lleno: Get-PSDrive, %TEMP% y la caché de Windows Update (SoftwareDistribution), sin borrar datos.",
       skills: ["Averiguar qué ocupa el disco de un equipo Windows con PowerShell (Get-PSDrive, Get-ChildItem).", "Liberar espacio sin borrar nada que el usuario o Windows necesiten.",
+        "Saber qué se puede vaciar: la carpeta %TEMP% (Remove-Item $env:TEMP) y la caché de Windows Update (C:\\Windows\\SoftwareDistribution).",
         "Evitar los atajos que dejan el equipo peor de lo que estaba.", "Comprobar el espacio libre antes de cerrar."] },
-    en: { title: "Windows disk full: Excel cannot save", desc: "Practise how to free space on a Windows PC with a full disk without breaking anything, check Excel saves again and document it in the ticket.",
+    en: { title: "Windows disk full: Excel cannot save", desc: "Free practice: free space on a full Windows disk with Get-PSDrive, %TEMP% and the Windows Update cache (SoftwareDistribution), no documents lost.",
       skills: ["Find out what fills the disk of a Windows PC with PowerShell (Get-PSDrive, Get-ChildItem).", "Free space without deleting anything the user or Windows needs.",
+        "Know what can be emptied: the %TEMP% folder (Remove-Item $env:TEMP) and the Windows Update cache (C:\\Windows\\SoftwareDistribution).",
         "Avoid the shortcuts that leave the PC worse than before.", "Check the free space before closing."] },
   },
   "print-queue": {
-    es: { title: "Cola de impresión atascada (Spooler)", desc: "Practica cómo desatascar la cola de una impresora compartida que no se vacía, comprobar que vuelve a imprimir y documentarlo en el ticket.",
+    es: { title: "Cola de impresión atascada (Spooler)", desc: "Practica gratis: desatasca la cola de impresión con Get-PrintJob, Restart-Service -Name Spooler y spool\\PRINTERS. Comprueba que imprime y documéntalo.",
       skills: ["Revisar la cola y los trabajos de una impresora compartida con Get-Printer y Get-PrintJob.", "Encontrar qué impide que la cola avance en el servidor de impresión, incluido el estado del servicio Cola de impresión (Spooler).",
+        "Trabajar con el servicio Spooler (Restart-Service -Name Spooler) y la carpeta C:\\Windows\\System32\\spool\\PRINTERS.",
         "Hacer una prueba de impresión para confirmar el arreglo.", "Explicar a recepción qué ha pasado sin jerga."] },
-    en: { title: "Print queue stuck (Print Spooler)", desc: "Practise how to clear a shared printer queue that will not empty, check that it prints again and document it in the ticket.",
+    en: { title: "Print queue stuck (Print Spooler)", desc: "Free practice: clear a stuck print queue with Get-PrintJob, Restart-Service -Name Spooler and spool\\PRINTERS. Check that it prints and document it.",
       skills: ["Review a shared printer's queue and jobs with Get-Printer and Get-PrintJob.", "Find what stops the queue moving on the print server, including the state of the Print Spooler service.",
+        "Work with the Spooler service (Restart-Service -Name Spooler) and the C:\\Windows\\System32\\spool\\PRINTERS folder.",
         "Print a test page to confirm the fix.", "Explain to reception what happened without jargon."] },
   },
   "mailbox-full": {
-    es: { title: "Buzón lleno en Exchange Online: rebotes", desc: "Practica cómo investigar por qué rebotan los correos externos de un directivo en Exchange Online, resolverlo sin perder correo y documentarlo en el ticket.",
+    es: { title: "Buzón lleno en Exchange Online: rebotes", desc: "Practica gratis: resuelve un buzón lleno en Exchange Online que rebota correos con Get-Mailbox, la cuota y el archivo en línea, sin perder correo.",
       skills: ["Leer un informe de no entrega (NDR, código 5.2.2) y lo que dice del problema.", "Revisar el tamaño y la cuota de un buzón de Exchange Online con Get-EXOMailboxStatistics.",
+        "Ver la cuota con Get-Mailbox (ProhibitSendReceiveQuota) y habilitar el archivo en línea (Enable-Mailbox -Archive).",
         "Elegir un arreglo que no haga perder correo al usuario.", "Tratar un P1 de un directivo con la prisa y el cuidado que pide."] },
-    en: { title: "Exchange Online mailbox full: emails bounce", desc: "Practise how to investigate why external email to an executive bounces in Exchange Online, fix it without losing mail and document it in the ticket.",
+    en: { title: "Exchange Online mailbox full: emails bounce", desc: "Free practice: fix a full Exchange Online mailbox that bounces email with Get-Mailbox, the quota and the online archive, without losing mail.",
       skills: ["Read a non-delivery report (NDR, code 5.2.2) and what it says about the problem.", "Check an Exchange Online mailbox's size and quota with Get-EXOMailboxStatistics.",
+        "Check the quota with Get-Mailbox (ProhibitSendReceiveQuota) and enable the online archive (Enable-Mailbox -Archive).",
         "Choose a fix that does not make the user lose mail.", "Handle an executive's P1 with the speed and care it needs."] },
   },
   "intune-bitlocker": {
@@ -108,7 +114,7 @@ export const TICKET_SEO = {
         "Free resources on a production server without breaking anything.", "Check that the site answers and leave the follow-up."] },
   },
   "citrix-session": {
-    es: { desc: "Practica cómo investigar una aplicación de Citrix que se queda en «Iniciando...» para un solo usuario, resolverlo y documentarlo en el ticket.",
+    es: { title: "Citrix: app stuck on 'Starting...' (Iniciando...)", desc: "Practica cómo investigar una aplicación de Citrix que se queda en «Iniciando...» para un solo usuario, resolverlo y documentarlo en el ticket.",
       skills: ["Buscar las sesiones de un usuario en Citrix Virtual Apps and Desktops.", "Trabajar desde el Delivery Controller con PowerShell de Citrix.",
         "Entender por qué afecta a un usuario y no a sus compañeros.", "Comprobar que el usuario vuelve a abrir el CRM."] },
     en: { desc: "Practise how to investigate a Citrix app that stays on 'Starting...' for one user only, fix it and document it in the ticket.",
@@ -230,7 +236,7 @@ export const TICKET_SEO = {
         "Use a meeting room display's network control.", "Leave the room ready and stop it happening again."] },
   },
   "win-temp-profile": {
-    es: { title: "Perfil temporal en Windows: escritorio vacío", desc: "Practica cómo atender a un usuario que inicia sesión y encuentra el escritorio vacío, sin perder ninguno de sus archivos, y documentarlo en el ticket.",
+    es: { title: "Perfil temporal Windows (temporary profile)", desc: "Practica cómo atender a un usuario que inicia sesión y encuentra el escritorio vacío, sin perder ninguno de sus archivos, y documentarlo en el ticket.",
       skills: ["Saber qué perfil ha cargado Windows para un usuario y dónde están sus datos.", "Leer los eventos del servicio de perfiles de usuario en el Visor de eventos.",
         "Separar un perfil que no se carga de unos datos que se han perdido.", "Comprobar con el usuario que recupera su escritorio antes de cerrar."] },
     en: { title: "Windows temporary profile: empty desktop", desc: "Practise how to help a user who signs in to an empty desktop, without losing any of their files, and document it in the ticket.",

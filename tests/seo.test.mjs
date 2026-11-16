@@ -15,8 +15,9 @@ const PUB = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 const read = (f) => readFileSync(join(PUB, f), "utf8");
 const attr = (h, re) => (h.match(re) || [])[1];
 const jsonLd = (h) => [...h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
-// descriptions tuned to a query people really search: aadc-sync for "azure ad connect sync status" (position 2, Nov 2026)
-const SEARCH_TUNED = new Set(["aadc-sync"]);
+// descriptions tuned to a query people really search: aadc-sync for "azure ad connect sync status" (position 2, Nov 2026);
+// disk-full, print-queue, dns-intranet and mailbox-full for the command names people search (Nov 2026)
+const SEARCH_TUNED = new Set(["aadc-sync", "disk-full", "print-queue", "dns-intranet", "mailbox-full"]);
 const PAGES = Object.entries(STATIC).map(([f, m]) => [f, m.path])
   .concat([["equipos.html", "/equipos"], ["tickets/index.html", "/tickets/"]], FAMILIES.map((f) => [`tickets/${f.slug}.html`, "/tickets/" + f.slug]),
     SCENARIOS.map((sc) => [`tickets/${sc.id}.html`, "/tickets/" + sc.id]));
