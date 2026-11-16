@@ -137,6 +137,11 @@
       nReset: "Reset the network room", nResetDone: "Network room reset: every device outside a ticket is back as it was at the start of the shift.",
       colDevice: "Device", colModel: "Model", colMgmt: "Management IP", nType: { switch: "Switch", router: "Router", firewall: "Firewall" },
       nTabs: { general: "General", health: "Health", diag: "Diagnostics" }, nPick: "Pick a device to see its details.",
+      // v0.10: the room drawn as its racks
+      nViewMap: "Racks", nViewList: "List", nViewLabel: "How to show the room", nMapHint: "Click a device to see its details.",
+      nPortSt: { connected: "link up", notconnect: "no link", disabled: "shut down", "err-disabled": "err-disabled" },
+      nLegend: "Ports:", nTicketsN: (n) => n === 1 ? "1 ticket" : n + " tickets", nUnit: "U", nLinks: "Links",
+      nPeerWan: "Internet", nPeerTunnel: (x) => `IPsec tunnel to ${x}`, nPortWord: "port", nDevAria: (id, st, u, n) => `${id}: ${st}, ${u} of ${n} ports up`,
       nModel: "Model", nSerial: "Serial number", nOs: "OS / firmware", nLocation: "Location and rack", nMgmt: "Management IP", nOwner: "Owner", nRole: "Role", nSite: "Site",
       nSites: { HQ: "Head office", VLC: "Valencia branch" },
       nCpu: "CPU (5 min)", nMem: "Memory", nUptime: "Uptime", nTemp: "Temperature", nPsu: "Power supplies", nFans: "Fans", nPorts: "Ports up", nPortsVal: (u, n) => `${u} of ${n}`,
@@ -337,6 +342,10 @@
       nReset: "Restablecer la sala de red", nResetDone: "Sala de red restablecida: los equipos que no están en un ticket vuelven a estar como al empezar el turno.",
       colDevice: "Equipo", colModel: "Modelo", colMgmt: "IP de gestión", nType: { switch: "Switch", router: "Router", firewall: "Cortafuegos" },
       nTabs: { general: "General", health: "Salud", diag: "Diagnóstico" }, nPick: "Elige un equipo para ver sus detalles.",
+      nViewMap: "Racks", nViewList: "Lista", nViewLabel: "Cómo ver la sala", nMapHint: "Haz clic en un equipo para ver sus detalles.",
+      nPortSt: { connected: "con enlace", notconnect: "sin enlace", disabled: "apagado", "err-disabled": "err-disabled" },
+      nLegend: "Puertos:", nTicketsN: (n) => n === 1 ? "1 ticket" : n + " tickets", nUnit: "U", nLinks: "Enlaces",
+      nPeerWan: "Internet", nPeerTunnel: (x) => `túnel IPsec a ${x}`, nPortWord: "puerto", nDevAria: (id, st, u, n) => `${id}: ${st}, ${u} de ${n} puertos activos`,
       nModel: "Modelo", nSerial: "Número de serie", nOs: "Sistema / firmware", nLocation: "Ubicación y rack", nMgmt: "IP de gestión", nOwner: "Responsable", nRole: "Función", nSite: "Sede",
       nSites: { HQ: "Oficina central", VLC: "Sucursal de Valencia" },
       nCpu: "CPU (5 min)", nMem: "Memoria", nUptime: "Tiempo encendido", nTemp: "Temperatura", nPsu: "Fuentes de alimentación", nFans: "Ventiladores", nPorts: "Puertos activos", nPortsVal: (u, n) => `${u} de ${n}`,
@@ -2675,13 +2684,74 @@
   const netTickets = (id) => SCENARIOS.filter((sc) => sc.net && sc.net.devices.includes(id));
   const stPillN = (s) => el("span", { class: "inv-st " + s }, el("span", { class: "tdot", "aria-hidden": "true" }), el("span", { text: L().st[s] }));
 
+  /* v0.10: the room drawn as its racks. Each device is a faceplate with one LED per port (the same port status the CLI shows),
+     grouped by the cabinet in its location; clicking one selects it like a row of the list. */
+  let netView = load("netview", "map") === "list" ? "list" : "map";
+  const cabinetOf = (dev) => t(dev.location, "en").replace(/,\s*U\d+$/, "");
+  const unitOf = (dev) => { const m = /U(\d+)$/.exec(t(dev.location, "en")); return m ? Number(m[1]) : 0; };
+  function portLeds(net, dev) {
+    const phys = (dev.ifaces || []).filter((p) => dev.os === "fortios" ? !p.tunnel : p.mode !== "svi");
+    const fast = (p) => /^Ten|^Te\d/.test(p.name) || (p.type && /SFP/.test(p.type));
+    const led = (p) => {
+      const st = dev.os === "fortios" ? (p.admin === false ? "disabled" : "connected") : NN.status(net, dev, p);
+      const label = (p.short || p.name) + (p.alias ? " " + p.alias : "") + " · " + L().nPortSt[st] + (p.desc ? " · " + p.desc : "");
+      return el("span", { class: "nled " + st, title: label });
+    };
+    const groups = [phys.filter((p) => !fast(p)), phys.filter(fast)].filter((g) => g.length);
+    return el("span", { class: "nports", "aria-hidden": "true" }, groups.map((g) => el("span", { class: "nport-grp" + (g.length > 6 ? " two" : "") }, g.map(led))));
+  }
+  function devLinks(net, dev) {
+    const out = [];
+    const nm = (p) => { const x = p.short || p.name; return /^\d+$/.test(x) ? L().nPortWord + " " + x : x; };
+    // the device at the far end of a tunnel: the one with an interface on the tunnel's remote address
+    const farEnd = (ip) => (NN.list(net).find((d) => (d.ifaces || []).some((i) => i.ip === ip)) || {}).id;
+    (dev.ifaces || []).forEach((p) => {
+      if (p.peer && p.peer.dev) out.push(`${nm(p)} → ${p.peer.dev}`);
+      else if (p.peer && p.peer.wan) out.push(`${nm(p)} → ${L().nPeerWan}`);
+      else if (p.tunnel) out.push(`${p.name} · ${L().nPeerTunnel(farEnd(p.tunnel.remote) || p.alias || p.tunnel.remote)}`);
+      else if (/^Tunnel/.test(p.name)) { const m = /to (\S+)/.exec(p.desc || ""); out.push(`${nm(p)} · ${L().nPeerTunnel(m ? m[1] : "")}`); }
+      else if (dev.os === "fortios" && /^wan/.test(p.name)) out.push(`${p.name} → ${L().nPeerWan}`);
+    });
+    return out;
+  }
+  function netMap(rows) {
+    const cabs = [];
+    rows.slice().sort((a, b) => unitOf(b.dev) - unitOf(a.dev)).forEach((x) => {
+      const key = cabinetOf(x.dev);
+      let c = cabs.find((y) => y.key === key);
+      if (!c) cabs.push(c = { key, label: t(x.dev.location, lang).replace(/,\s*U\d+$/, ""), site: x.dev.site, items: [] });
+      c.items.push(x);
+    });
+    cabs.sort((a, b) => (a.site === b.site ? 0 : a.site === "HQ" ? -1 : 1) || b.items.length - a.items.length);
+    const legend = el("p", { class: "nlegend" }, el("span", { text: L().nLegend }),
+      ["connected", "notconnect", "disabled", "err-disabled"].map((k) => el("span", { class: "nleg" }, el("span", { class: "nled " + k, "aria-hidden": "true" }), L().nPortSt[k])));
+    return el("div", { class: "nmap", id: "net-map" },
+      el("p", { class: "sub nmap-hint", text: L().nMapHint }),
+      el("div", { class: "nracks" }, cabs.map((c) => el("figure", { class: "nrack" },
+        el("figcaption", { class: "nrack-name" }, el("span", { class: "nrack-site", text: L().nSites[c.site] }), el("span", { text: c.label })),
+        el("div", { class: "nrack-body" }, c.items.map((x) => {
+          const tk = netTickets(x.dev.id);
+          return el("button", { type: "button", class: "ndev " + x.tone + (netSel === x.dev.id ? " on" : ""), "data-dev": x.dev.id,
+            "aria-pressed": netSel === x.dev.id ? "true" : "false", "aria-label": L().nDevAria(x.dev.id, L().st[x.tone], x.health.up, x.health.ports),
+            onclick: () => { netSel = x.dev.id; if (location.hash !== "#/network/" + x.dev.id) location.hash = "#/network/" + x.dev.id; else networkRoom(x.dev.id); } },
+            el("span", { class: "nu", "aria-hidden": "true", text: L().nUnit + unitOf(x.dev) }),
+            el("span", { class: "nface" },
+              el("span", { class: "nface-top" }, el("span", { class: "nstat", "aria-hidden": "true" }), el("span", { class: "nid", text: x.dev.id }),
+                tk.length ? el("span", { class: "ntk", text: L().nTicketsN(tk.length) }) : null),
+              portLeds(x.net, x.net.devices[x.dev.id]),
+              el("span", { class: "nmodel", text: `${L().nType[x.dev.kind]} · ${x.dev.model}` })));
+        })),
+        el("ul", { class: "nlinks", "aria-label": L().nLinks }, c.items.flatMap((x) => devLinks(x.net, x.net.devices[x.dev.id]).map((l) => el("li", { class: "mono", text: c.items.length > 1 ? `${x.dev.id} ${l}` : l }))))))),
+      legend);
+  }
+
   function networkRoom(selId) {
     const view = shell("network");
     document.title = L().nTitle + " · SysAdmin Desks";
     ensureRoom();
     if (selId && roomNet.devices[selId]) netSel = selId;
     const devs = NN.list(roomNet);
-    const rows = devs.map((d) => Object.assign({ d }, netStatus(d.id)));
+    const rows = devs.map((d) => Object.assign({ d, dev: d }, netStatus(d.id)));
     const table = el("table", { class: "qtable inv net-table" },
       el("thead", {}, el("tr", {}, [L().colStatus, L().colDevice, L().colMgmt, L().colTickets].map((x) => el("th", { scope: "col", text: x })))),
       el("tbody", {}, rows.map((x) => el("tr", { class: netSel === x.d.id ? "active" : "" },
@@ -2694,8 +2764,16 @@
     view.append(el("header", { class: "view-head" }, el("div", {}, el("h1", { text: L().nTitle }), el("p", { class: "sub", text: L().nSub })),
       el("button", { type: "button", class: "link-btn", id: "net-reset", text: L().nReset, onclick: () => {
         roomNet = NN.createNet([]); netCli = null; netDiag = { what: "ping", target: "", out: [L().nResetDone] }; try { localStorage.removeItem("sd.room"); } catch (e) { /* ignore */ } networkRoom(netSel); } })),
-      el("div", { class: "inv-grid net-grid" }, el("div", { class: "qwrap" }, table), detail), cliBox);
+      el("div", { class: "qtabs net-view", role: "group", "aria-label": L().nViewLabel }, [["map", L().nViewMap], ["list", L().nViewList]].map(([k, x]) =>
+        el("button", { type: "button", class: "qtab" + (netView === k ? " on" : ""), id: "net-view-" + k, "aria-pressed": netView === k ? "true" : "false",
+          onclick: () => { netView = k; save("netview", k); networkRoom(netSel); } }, x))),
+      el("div", { class: "inv-grid net-grid" + (netView === "map" ? " is-map" : "") }, netView === "map" ? netMap(rows) : el("div", { class: "qwrap" }, table), detail), cliBox);
     renderNetDetail(detail, cliBox);
+    if (selId && netView === "map") {
+      const b = view.querySelector(`.ndev[data-dev="${selId}"]`);
+      if (b) b.focus({ preventScroll: true });
+      if (window.matchMedia("(max-width: 1100px)").matches) detail.scrollIntoView({ behavior: motion(), block: "start" });
+    }
     renderNetCli(cliBox);
     saveRoom();
   }
@@ -2712,7 +2790,7 @@
     if (netTab === "general") {
       body = fieldsDl([{ label: L().nRole, value: t(dev.role, lang) }, { label: L().nModel, value: dev.model }, { label: L().nSerial, value: dev.serial },
         { label: L().nOs, value: dev.os === "ios" ? "Cisco IOS XE " + dev.version : dev.os === "aruba" ? "ArubaOS-Switch " + dev.version : "FortiOS " + dev.version },
-        { label: L().nLocation, value: t(dev.location, lang) }, { label: L().nSite, value: L().nSites[dev.site] }, { label: L().nMgmt, value: dev.mgmt }, { label: L().nOwner, value: t(dev.owner, lang) }]);
+        { label: L().nLocation, value: t(dev.location, lang) }, { label: L().nSite, value: L().nSites[dev.site] }, { label: L().nOwner, value: t(dev.owner, lang) }]);
     } else if (netTab === "health") {
       const pct = (n) => el("span", { class: "net-meter" }, el("meter", { min: "0", max: "100", low: "60", high: "85", optimum: "10", value: String(n) }), el("span", { text: n + " %" }));
       const fields = [{ label: L().nCpu, value: pct(h.cpu) }, { label: L().nMem, value: pct(h.mem) }, { label: L().nUptime, value: h.uptimeText },
@@ -2743,6 +2821,9 @@
     put(box,
       el("div", { class: "row" }, el("h2", { class: "dtitle", text: dev.id }), stPillN(st.tone)),
       el("p", { class: "sub", text: `${L().nType[dev.kind]} · ${dev.model}` }),
+      el("dl", { class: "fields net-summary" }, el("dt", { text: L().colMgmt }), el("dd", { class: "mono", text: dev.mgmt }),
+        el("dt", { text: L().nPorts }), el("dd", { text: dev.os === "fortios" ? L().nPortsVal((dev.ifaces || []).filter((p) => !p.tunnel && p.admin !== false).length, (dev.ifaces || []).filter((p) => !p.tunnel).length) : L().nPortsVal(h.up, h.ports) }),
+        el("dt", { text: L().colTickets }), el("dd", {}, netTickets(dev.id).length ? netTickets(dev.id).map((sc) => el("a", { class: "tkt mono", href: "#/desk/" + sc.id, text: sc.ticket.id })) : el("span", { class: "muted", text: "–" }))),
       st.notes.length ? el("ul", { class: "inv-notes" }, st.notes.map((n) => el("li", { text: n }))) : null,
       src ? el("p", { class: "dir-ticket" }, el("span", { text: L().dTicket + " " }), ticketPill(src.sc)) : null,
       tabs, el("div", { class: "net-tab-body", role: "tabpanel" }, body),

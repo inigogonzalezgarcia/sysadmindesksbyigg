@@ -894,6 +894,47 @@ body.doc-es .legal article + article, body.doc-en .legal article + article { mar
 .net-cli .row { align-items: center; margin-bottom: 8px; }
 .net-cli h2 { margin: 0; }
 .term.net-term { min-height: 260px; max-height: 60vh; }
+/* v0.10: the room drawn as its racks */
+.net-view { margin: 4px 0 12px; }
+.nmap-hint { margin: 0 0 10px; font-size: 14px; }
+.nracks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; align-items: start; }
+.nrack { margin: 0; background: var(--term-bg); color: var(--term-ink); border-radius: var(--radius); padding: 12px 12px 10px; box-shadow: 0 1px 2px rgba(14, 23, 20, .18), 0 6px 18px rgba(14, 23, 20, .12); }
+.nrack-name { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 1.35; margin-bottom: 10px; color: var(--term-ink); }
+.nrack-site { font: 600 11px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--term-ok); }
+.nrack-body { display: grid; gap: 6px; padding: 6px; border-radius: 8px; background: repeating-linear-gradient(180deg, #121d19 0 22px, #0b1310 22px 23px); border-left: 3px solid #26332e; border-right: 3px solid #26332e; }
+.ndev { display: grid; grid-template-columns: 30px minmax(0, 1fr); align-items: stretch; gap: 6px; width: 100%; padding: 0; text-align: left; color: inherit; background: none; border: 0; border-radius: 8px; }
+.nu { font: 11px/1 var(--mono); color: var(--term-dim); align-self: center; text-align: right; }
+.nface { display: grid; gap: 6px; padding: 8px 10px; border-radius: 6px; background: linear-gradient(180deg, #24312c, #1a2521); border: 1px solid #33423c; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06); transition: border-color 150ms ease, box-shadow 150ms ease; }
+.nface-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.nstat { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--term-ok); box-shadow: 0 0 6px rgba(94, 224, 160, .55); }
+.ndev.warn .nstat { background: var(--term-ev); box-shadow: 0 0 6px rgba(255, 210, 122, .55); }
+.ndev.bad .nstat { background: var(--term-err); box-shadow: 0 0 6px rgba(255, 138, 122, .6); }
+.nid { font: 700 13.5px/1.2 var(--mono); color: #eef5f1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ntk { margin-left: auto; flex: none; font: 600 11px/1 var(--mono); color: var(--term-ev); border: 1px solid rgba(255, 210, 122, .45); border-radius: 999px; padding: 3px 7px; }
+.nmodel { font-size: 12px; color: var(--term-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nports { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.nport-grp { display: inline-grid; grid-auto-flow: column; grid-template-rows: 8px; gap: 3px; }
+.nport-grp.two { grid-template-rows: repeat(2, 8px); }
+.nled { display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #33423c; }
+.nled.connected { background: var(--term-ok); }
+.nled.notconnect { background: #3a4a44; }
+.nled.disabled { background: transparent; box-shadow: inset 0 0 0 1px #56685f; }
+.nled.err-disabled { background: var(--term-err); box-shadow: 0 0 5px rgba(255, 138, 122, .8); }
+.ndev.on .nface { border-color: var(--term-ok); box-shadow: 0 0 0 2px rgba(94, 224, 160, .35), inset 0 1px 0 rgba(255, 255, 255, .06); }
+.ndev:focus-visible { outline: none; }
+.ndev:focus-visible .nface { outline: 3px solid var(--term-ok); outline-offset: 2px; }
+.ndev:active .nface { transform: scale(.98); transition: transform 100ms ease-out; }
+@media (hover: hover) and (pointer: fine) { .ndev:hover .nface { border-color: #5b7a6e; } }
+.nlinks { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 2px; font-size: 11.5px; color: var(--term-dim); }
+.nlinks li { overflow-wrap: anywhere; }
+.nlegend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+.nleg { display: inline-flex; align-items: center; gap: 6px; }
+.nlegend .nled.notconnect { background: #8b9a94; }
+.nlegend .nled.disabled { box-shadow: inset 0 0 0 1px var(--muted); }
+.net-summary { margin: 10px 0 4px; }
+.net-summary .tkt { margin-right: 6px; }
+@media (max-width: 520px) { .ndev { min-height: 44px; } .nrack { padding: 10px 8px 8px; } }
+@media (prefers-reduced-motion: reduce) { .nface, .ndev:active .nface { transition: none; transform: none; } }
 @media (max-width: 1100px) { .net-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 520px) { .net-diag-row .btn { width: 100%; min-height: 44px; } .net-detail .acts .btn { min-height: 44px; } }
 
