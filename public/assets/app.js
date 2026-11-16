@@ -133,15 +133,25 @@
       mClues: "The clues", mProcedure: "The right procedure", mRetry: "Try again", mBack: "← Inbox", mNext: "Next message",
       iOs: "Operating system", iOwner: "Owner", iPatched: "Last patched", iQueue: "Print server", iJobs: "Jobs in the queue", iNone: "No tickets.", iInDir: "Show in the directory",
       // v0.7a: the network room
-      nTitle: "Network room", nSub: "Contoso's switches, the Valencia branch router and the firewall. A device that belongs to an open ticket shows that ticket's state, and its CLI works on the ticket; outside tickets, what you change here lasts while the page is open.",
+      nTitle: "Network room", nSub: "Every comms room of Contoso, rack by rack and floor by floor, front and rear: switches, routers, firewalls, servers, UPS, PDUs and patch panels. A network device that belongs to an open ticket shows that ticket's state, and its CLI works on the ticket; outside tickets, what you change here lasts while the page is open.",
       nReset: "Reset the network room", nResetDone: "Network room reset: every device outside a ticket is back as it was at the start of the shift.",
       colDevice: "Device", colModel: "Model", colMgmt: "Management IP", nType: { switch: "Switch", router: "Router", firewall: "Firewall" },
       nTabs: { general: "General", health: "Health", diag: "Diagnostics" }, nPick: "Pick a device to see its details.",
       // v0.10: the room drawn as its racks
-      nViewMap: "Racks", nViewList: "List", nViewLabel: "How to show the room", nMapHint: "Click a device to see its details.",
+      nViewMap: "Racks", nViewList: "List", nViewLabel: "How to show the room", nMapHint: "Click any device, panel or power strip to see its details.",
       nPortSt: { connected: "link up", notconnect: "no link", disabled: "shut down", "err-disabled": "err-disabled" },
       nLegend: "Ports:", nTicketsN: (n) => n === 1 ? "1 ticket" : n + " tickets", nUnit: "U", nLinks: "Links",
-      nPeerWan: "Internet", nPeerTunnel: (x) => `IPsec tunnel to ${x}`, nPortWord: "port", nDevAria: (id, st, u, n) => `${id}: ${st}, ${u} of ${n} ports up`,
+      nPeerWan: "Internet", nPeerTunnel: (x) => `IPsec tunnel to ${x}`, nPortWord: "port",
+      rmOtherSites: "Other sites", rmGoLabel: "Go to the racks of:", rmGoTo: (x) => `Go to the racks of ${x}`, rmLevels: "Floors and rooms", rmRacksN: (n) => n === 1 ? "1 rack" : n + " racks",
+      rmSideLabel: "Side of the racks", rmFront: "Front", rmRear: "Rear", rmFrontOf: "front", rmRearOf: "rear", rmFree: (n) => `${n} U free`,
+      rmBehind: "rear", rmInFront: "front", rmOtherSide: "mounted on the other side", rmVms: (n) => `${n} virtual machines run on the hosts of this rack.`,
+      rmPick: "Pick a device in a rack to see its details.", rmPosition: "Position", rmRearMount: "mounted at the rear", rmRuns: "Runs",
+      rmPorts: "Ports", rmPatchN: (n) => `Patch panel, ${n} ports`, rmToSwitch: "Wired to", rmPortsFrom: (a, b) => `ports ${a}–${b}`,
+      rmJack: "Port", rmSocket: "Wall socket", rmSwPort: "Switch", rmDevice: "Device", rmParked: "parked (shut down)",
+      rmNoMap: (sw) => `The desks of this floor reach ${sw} through this panel; its port-by-port map is not kept in the simulator.`, rmPrinters: "Printers on this floor:",
+      rmOpenSw: (sw) => `Open ${sw}`, rmConnected: "Connected to", rmTape: (x) => `LTO-8 tape library (${x})`, rmPdu0: "Basic power strip (no network card)",
+      rmPdu0Short: "Power strip", rmBlank: "Blank panel", rmBlankShort: "Blank panel", rmBlankNote: "A blank panel covers a free unit so the cold air goes through the equipment and not around it.",
+      rmPdu0Note: "It feeds the equipment of the cabinet. It has no network card, so it does not appear in the inventory or in the monitoring.", rmPunch: "punch-down to the floor cabling", nDevAria: (id, st, u, n) => `${id}: ${st}, ${u} of ${n} ports up`,
       nModel: "Model", nSerial: "Serial number", nOs: "OS / firmware", nLocation: "Location and rack", nMgmt: "Management IP", nOwner: "Owner", nRole: "Role", nSite: "Site",
       nSites: { HQ: "Head office", VLC: "Valencia branch" },
       nCpu: "CPU (5 min)", nMem: "Memory", nUptime: "Uptime", nTemp: "Temperature", nPsu: "Power supplies", nFans: "Fans", nPorts: "Ports up", nPortsVal: (u, n) => `${u} of ${n}`,
@@ -338,14 +348,24 @@
       iOs: "Sistema operativo", iOwner: "Responsable", iPatched: "Último parcheo", iQueue: "Servidor de impresión", iJobs: "Trabajos en cola", iNone: "Sin tickets.", iInDir: "Ver en el directorio",
       // v0.6a: contactar al solicitante y la nota para el usuario
       // v0.7a: la sala de red
-      nTitle: "Sala de red", nSub: "Los switches de Contoso, el router de la sucursal de Valencia y el cortafuegos. Un equipo que forma parte de un ticket abierto muestra el estado de ese ticket, y su CLI trabaja sobre el ticket; fuera de los tickets, lo que cambies aquí dura mientras la página esté abierta.",
+      nTitle: "Sala de red", nSub: "Todas las salas de comunicaciones de Contoso, rack a rack y planta a planta, por delante y por detrás: switches, routers, cortafuegos, servidores, SAI, PDU y patch panels. Un equipo de red que forma parte de un ticket abierto muestra el estado de ese ticket, y su CLI trabaja sobre el ticket; fuera de los tickets, lo que cambies aquí dura mientras la página esté abierta.",
       nReset: "Restablecer la sala de red", nResetDone: "Sala de red restablecida: los equipos que no están en un ticket vuelven a estar como al empezar el turno.",
       colDevice: "Equipo", colModel: "Modelo", colMgmt: "IP de gestión", nType: { switch: "Switch", router: "Router", firewall: "Cortafuegos" },
       nTabs: { general: "General", health: "Salud", diag: "Diagnóstico" }, nPick: "Elige un equipo para ver sus detalles.",
-      nViewMap: "Racks", nViewList: "Lista", nViewLabel: "Cómo ver la sala", nMapHint: "Haz clic en un equipo para ver sus detalles.",
+      nViewMap: "Racks", nViewList: "Lista", nViewLabel: "Cómo ver la sala", nMapHint: "Haz clic en cualquier equipo, panel o regleta para ver sus detalles.",
       nPortSt: { connected: "con enlace", notconnect: "sin enlace", disabled: "apagado", "err-disabled": "err-disabled" },
       nLegend: "Puertos:", nTicketsN: (n) => n === 1 ? "1 ticket" : n + " tickets", nUnit: "U", nLinks: "Enlaces",
-      nPeerWan: "Internet", nPeerTunnel: (x) => `túnel IPsec a ${x}`, nPortWord: "puerto", nDevAria: (id, st, u, n) => `${id}: ${st}, ${u} de ${n} puertos activos`,
+      nPeerWan: "Internet", nPeerTunnel: (x) => `túnel IPsec a ${x}`, nPortWord: "puerto",
+      rmOtherSites: "Otras ubicaciones", rmGoLabel: "Ir a los racks de:", rmGoTo: (x) => `Ir a los racks de ${x}`, rmLevels: "Plantas y salas", rmRacksN: (n) => n === 1 ? "1 rack" : n + " racks",
+      rmSideLabel: "Cara de los racks", rmFront: "Delante", rmRear: "Detrás", rmFrontOf: "parte delantera", rmRearOf: "parte trasera", rmFree: (n) => `${n} U libres`,
+      rmBehind: "detrás", rmInFront: "delante", rmOtherSide: "montado en la otra cara", rmVms: (n) => `${n} máquinas virtuales corren en los hosts de este rack.`,
+      rmPick: "Elige un equipo de un rack para ver sus detalles.", rmPosition: "Posición", rmRearMount: "montado detrás", rmRuns: "Ejecuta",
+      rmPorts: "Puertos", rmPatchN: (n) => `Patch panel de ${n} puertos`, rmToSwitch: "Conectado a", rmPortsFrom: (a, b) => `puertos ${a}–${b}`,
+      rmJack: "Puerto", rmSocket: "Toma de pared", rmSwPort: "Switch", rmDevice: "Equipo", rmParked: "aparcado (apagado)",
+      rmNoMap: (sw) => `Los puestos de esta planta llegan a ${sw} por este panel; su mapa puerto a puerto no está en el simulador.`, rmPrinters: "Impresoras de esta planta:",
+      rmOpenSw: (sw) => `Abrir ${sw}`, rmConnected: "Conectada a", rmTape: (x) => `Librería de cintas LTO-8 (${x})`, rmPdu0: "Regleta básica (sin tarjeta de red)",
+      rmPdu0Short: "Regleta", rmBlank: "Panel ciego", rmBlankShort: "Panel ciego", rmBlankNote: "Un panel ciego tapa una unidad libre para que el aire frío pase por los equipos y no por el hueco.",
+      rmPdu0Note: "Alimenta los equipos del armario. No tiene tarjeta de red, así que no aparece en el inventario ni en la monitorización.", rmPunch: "regletas de inserción al cableado de planta", nDevAria: (id, st, u, n) => `${id}: ${st}, ${u} de ${n} puertos activos`,
       nModel: "Modelo", nSerial: "Número de serie", nOs: "Sistema / firmware", nLocation: "Ubicación y rack", nMgmt: "IP de gestión", nOwner: "Responsable", nRole: "Función", nSite: "Sede",
       nSites: { HQ: "Oficina central", VLC: "Sucursal de Valencia" },
       nCpu: "CPU (5 min)", nMem: "Memoria", nUptime: "Tiempo encendido", nTemp: "Temperatura", nPsu: "Fuentes de alimentación", nFans: "Ventiladores", nPorts: "Puertos activos", nPortsVal: (u, n) => `${u} de ${n}`,
@@ -2687,8 +2707,6 @@
   /* v0.10: the room drawn as its racks. Each device is a faceplate with one LED per port (the same port status the CLI shows),
      grouped by the cabinet in its location; clicking one selects it like a row of the list. */
   let netView = load("netview", "map") === "list" ? "list" : "map";
-  const cabinetOf = (dev) => t(dev.location, "en").replace(/,\s*U\d+$/, "");
-  const unitOf = (dev) => { const m = /U(\d+)$/.exec(t(dev.location, "en")); return m ? Number(m[1]) : 0; };
   function portLeds(net, dev) {
     const phys = (dev.ifaces || []).filter((p) => dev.os === "fortios" ? !p.tunnel : p.mode !== "svi");
     const fast = (p) => /^Ten|^Te\d/.test(p.name) || (p.type && /SFP/.test(p.type));
@@ -2714,42 +2732,196 @@
     });
     return out;
   }
-  function netMap(rows) {
-    const cabs = [];
-    rows.slice().sort((a, b) => unitOf(b.dev) - unitOf(a.dev)).forEach((x) => {
-      const key = cabinetOf(x.dev);
-      let c = cabs.find((y) => y.key === key);
-      if (!c) cabs.push(c = { key, label: t(x.dev.location, lang).replace(/,\s*U\d+$/, ""), site: x.dev.site, items: [] });
-      c.items.push(x);
+  /* v0.10: the comms rooms of every site, rack by rack (rooms.js), front and rear. Network-room devices keep their live state
+     and their CLI; servers, UPS, PDU and patch panels show what the inventory says about them. */
+  const RM = window.SDRooms;
+  let rmSite = "hq", rmLevel = "dataroom", rmSide = "front", rmSel = null;
+  function rmLinked(id) { return SCENARIOS.filter((sc) => (sc.bind || []).some((b) => b.id === id)); }
+  // what the room needs to draw and describe an item: its record, status, tickets and notes
+  function rmInfo(it, binds) {
+    const srv = (id) => Wd.SERVERS.find((x) => x.id === id);
+    const devRec = (id) => Wd.DEVICES.find((x) => x.id === id);
+    if (it.kind === "net") {
+      const st = netStatus(it.id);
+      const d = st.net.devices[it.id];
+      return { rec: d, net: st.net, tone: st.tone, health: st.health, tickets: netTickets(it.id), notes: st.notes, label: `${L().nType[d.kind]} · ${d.model}` };
+    }
+    if (it.kind === "srv" || it.kind === "dev") {
+      const rec = it.kind === "srv" ? srv(it.id) : devRec(it.id);
+      const ids = [it.id].concat(it.host ? [it.host] : []);
+      const b = binds.filter((y) => ids.includes(y.id) && (y.kind === "server" || y.kind === "device"));
+      const tone = b.map((y) => y.set.status).find((x) => x && x !== "ok") || "ok";
+      const tickets = ids.flatMap(rmLinked).filter((sc, i, arr) => arr.indexOf(sc) === i);
+      const label = it.kind === "srv" ? (/·\s*iDRAC|PowerEdge|ProLiant/.test(rec.os) ? rec.os.replace(/\s*·\s*iDRAC$/, "") : t(rec.role, lang).replace(/\s*\(.*$/, ""))
+        : `${L().iDev[rec.kind] || rec.kind} · ${rec.model}`;
+      return { rec, tone, tickets, notes: b.map((y) => y.note).filter(Boolean), label };
+    }
+    if (it.kind === "patch") return { tone: null, tickets: [], notes: [], label: L().rmPatchN(it.ports) };
+    if (it.kind === "tape") return { tone: null, tickets: [], notes: [], label: L().rmTape(it.of) };
+    if (it.kind === "pdu0") return { tone: null, tickets: [], notes: [], label: L().rmPdu0 };
+    return { tone: null, tickets: [], notes: [], label: L().rmBlank };
+  }
+  const rmName = (it) => it.kind === "blank" ? L().rmBlankShort : it.kind === "pdu0" ? L().rmPdu0Short : it.kind === "tape" ? "LTO-8" : it.id;
+  // the jacks of a patch panel, with the wall socket and the device behind each one when the switch is in the network room
+  function rmJacks(it) {
+    const sw = roomNet.devices[it.sw] ? netFor(it.sw).net.devices[it.sw] : null;
+    return Array.from({ length: it.ports }, (_, i) => {
+      const n = it.from + i;
+      const p = sw ? (sw.ifaces || []).find((x) => x.name === String(n) || new RegExp("^GigabitEthernet\\d/0/" + n + "$").test(x.name)) : null;
+      const jack = p && p.desc && !/PARKED/i.test(p.desc) ? p.desc.replace(/\s+\S*-?MFP-\S+$|\s+[a-z]+$/, "") : null;
+      const host = p && p.peer && p.peer.host ? p.peer.host : null;
+      return { n, port: p ? (p.short || p.name) : null, jack, host, parked: Boolean(p && /PARKED/i.test(p.desc)), known: Boolean(sw) };
     });
-    cabs.sort((a, b) => (a.site === b.site ? 0 : a.site === "HQ" ? -1 : 1) || b.items.length - a.items.length);
+  }
+  function rmFront(it, info, h) {
+    const k = it.kind;
+    if (k === "net") return [portLeds(info.net, info.rec)];
+    if (k === "srv") {
+      const bays = h >= 4 ? 8 : h >= 2 ? 8 : 4;
+      return [el("span", { class: "rbays", "aria-hidden": "true" }, Array.from({ length: bays }, () => el("span", { class: "rbay" })))];
+    }
+    if (k === "dev" && /ups/.test(info.rec.kind)) return [el("span", { class: "rlcd", "aria-hidden": "true", text: "ON LINE" })];
+    if (k === "dev" && /pdu/.test(info.rec.kind)) return [el("span", { class: "routlets", "aria-hidden": "true" }, Array.from({ length: 16 }, () => el("span", { class: "rout" })))];
+    if (k === "dev") {
+      const n = /48/.test(info.rec.model) ? 48 : /switch/.test(info.rec.kind) ? 24 : 4;
+      return [el("span", { class: "nports", "aria-hidden": "true" }, el("span", { class: "nport-grp" + (n > 6 ? " two" : "") }, Array.from({ length: n }, () => el("span", { class: "nled unknown" }))))];
+    }
+    if (k === "patch") return [el("span", { class: "rjacks" + (it.ports > 12 ? " two" : ""), "aria-hidden": "true" }, rmJacks(it).map((j) => el("span", { class: "rjack" + (j.host ? " cabled" : j.parked ? " parked" : ""), title: j.port ? `${j.n} · ${j.jack || "–"}${j.host ? " · " + j.host : ""}` : String(j.n) })))];
+    if (k === "tape") return [el("span", { class: "rtape", "aria-hidden": "true" }, el("span", { class: "rslot" }), el("span", { class: "rslot" }))];
+    if (k === "pdu0") return [el("span", { class: "routlets", "aria-hidden": "true" }, Array.from({ length: 8 }, () => el("span", { class: "rout" })))];
+    return [];
+  }
+  function rmRear(it, info) {
+    const k = it.kind;
+    const psu = (list) => el("span", { class: "rpsus" }, list.map(([name, st]) => el("span", { class: "rpsu " + (/^OK/i.test(st) ? "ok" : /not present|empty/i.test(st) ? "empty" : "bad"), title: `${name}: ${st}` }, name)));
+    if (k === "net") {
+      const hh = info.health;
+      return [el("span", { class: "rmgmt", title: "mgmt " + info.rec.mgmt }, "MGMT"), el("span", { class: "rmgmt" }, "CON"), psu(hh.psu.map((x) => [x[0], x.slice(1).join(" ")]))];
+    }
+    if (k === "srv") {
+      // a power supply the open tickets say is down shows it at the back too
+      const down = (n) => info.notes.some((x) => new RegExp("(PSU|fuente|power supply)\\s*" + n + "\\b[^,.;]*(no input|sin entrada|fail|averiad)", "i").test(x));
+      return [el("span", { class: "rnics", "aria-hidden": "true" }, Array.from({ length: 4 }, () => el("span", { class: "rnic" }))), el("span", { class: "rmgmt" }, /PowerEdge/.test(info.rec.role.en + info.rec.os) ? "iDRAC" : "BMC"),
+        psu([["PSU1", down(1) ? "no input" : "OK"], ["PSU2", down(2) ? "no input" : "OK"]])];
+    }
+    if (k === "dev" && /ups/.test(info.rec.kind)) return [el("span", { class: "rmgmt", title: info.rec.ip }, "NMC"), el("span", { class: "routlets" }, Array.from({ length: 8 }, () => el("span", { class: "rout" })))];
+    if (k === "dev" && /pdu/.test(info.rec.kind)) return [el("span", { class: "rmgmt", title: info.rec.ip }, "NET"), el("span", { class: "routlets" }, Array.from({ length: 16 }, (_, i) => el("span", { class: "rout", title: String(i + 1) })))];
+    if (k === "dev") return [el("span", { class: "rmgmt" }, "MGMT"), psu([["PS1", "OK"]])];
+    if (k === "patch") return [el("span", { class: "rpunch", "aria-hidden": "true" }), el("span", { class: "rnote", text: L().rmPunch })];
+    if (k === "pdu0") return [el("span", { class: "routlets" }, Array.from({ length: 8 }, () => el("span", { class: "rout" })))];
+    if (k === "tape") return [el("span", { class: "rnics" }, el("span", { class: "rnic" }), el("span", { class: "rnic" })), psu([["PSU", "OK"]])];
+    return [];
+  }
+  const RM_KIND = (it, info) => it.kind === "net" ? info.rec.kind : it.kind === "dev" ? info.rec.kind : it.kind;
+  function rmRack(rack, binds) {
+    const rows = RM.rows(rack, rmSide);
+    const vms = rack.loc ? Wd.SERVERS.filter((s) => s.location.en === rack.loc + " (VM)").length : 0;
+    const go = (id) => { rmSel = id; if (location.hash !== "#/network/" + id) location.hash = "#/network/" + id; else networkRoom(id); };
+    return el("figure", { class: "nrack rrack " + rmSide },
+      el("figcaption", { class: "nrack-name" }, el("span", { class: "nrack-site", text: `${t(rack.name, lang)} · ${rack.units}U` }),
+        el("span", { class: "sub-dim", text: rmSide === "front" ? L().rmFrontOf : L().rmRearOf })),
+      el("div", { class: "rbody" }, rows.map((r) => {
+        const ulabel = r.top === r.bottom ? "U" + r.top : `U${r.top}–${r.bottom}`;
+        if (r.type === "gap" || r.type === "free") return el("div", { class: "rrow " + r.type }, el("span", { class: "nu", text: ulabel }), el("span", { class: "rfree", text: r.type === "gap" ? L().rmFree(r.units) : "" }));
+        const it = r.item;
+        const info = rmInfo(it, binds);
+        const h = Math.min(it.h, 6);
+        const ghost = r.type === "ghost";
+        const tone = info.tone || "none";
+        return el("div", { class: `rrow h${h}` + (ghost ? " ghost" : "") }, el("span", { class: "nu", text: ulabel }),
+          el("button", { type: "button", class: `rdev k-${RM_KIND(it, info)} ${tone}` + (rmSel === it.id ? " on" : ""), "data-dev": it.id,
+            "aria-pressed": rmSel === it.id ? "true" : "false", "aria-label": `${rmName(it)}, ${info.label}${info.tone ? ", " + L().st[info.tone] : ""}${ghost ? ", " + L().rmOtherSide : ""}`,
+            title: `${rmName(it)} · ${info.label}`, onclick: () => go(it.id) },
+            el("span", { class: "rhead" }, info.tone ? el("span", { class: "nstat", "aria-hidden": "true" }) : null,
+              el("span", { class: "nid", text: rmName(it) }), it.host ? el("span", { class: "rhost", text: it.host }) : null,
+              info.tickets.length ? el("span", { class: "ntk", title: L().nTicketsN(info.tickets.length), text: it.h === 1 ? String(info.tickets.length) : L().nTicketsN(info.tickets.length) }) : null,
+              ghost ? el("span", { class: "rside", text: rmSide === "front" ? L().rmBehind : L().rmInFront }) : null),
+            ghost ? null : el("span", { class: "rface" }, rmSide === "front" ? rmFront(it, info, it.h) : rmRear(it, info)),
+            h >= 2 && !ghost ? el("span", { class: "nmodel", text: info.label }) : null));
+      })),
+      vms ? el("p", { class: "rvms", text: L().rmVms(vms) }) : null,
+      (() => { const ls = rack.items.filter((it) => it.kind === "net").flatMap((it) => devLinks(netFor(it.id).net, netFor(it.id).net.devices[it.id]).map((l) => `${it.id} ${l}`));
+        return ls.length ? el("ul", { class: "nlinks", "aria-label": L().nLinks }, ls.map((l) => el("li", { class: "mono", text: l }))) : null; })());
+  }
+  function netMap() {
+    const binds = bindings();
+    const site = RM.SITES.find((s) => s.id === rmSite) || RM.SITES[0];
+    const level = site.levels.find((l) => l.id === rmLevel) || site.levels[0];
+    const setSite = (id) => { const s = RM.SITES.find((x) => x.id === id); rmSite = id; rmLevel = s.levels[0].id; rmSel = null; netSel = null; if (location.hash !== "#/network") location.hash = "#/network"; else networkRoom(null); };
+    const levelTone = (l) => { const tones = l.racks.flatMap((r) => r.items).map((it) => rmInfo(it, binds).tone).filter(Boolean); return tones.includes("bad") ? "bad" : tones.includes("warn") ? "warn" : "ok"; };
+    // the building, top floor first, with the data room last (as in a riser diagram)
+    const levels = site.levels.slice().sort((a, b) => (b.floor ?? -1) - (a.floor ?? -1));
     const legend = el("p", { class: "nlegend" }, el("span", { text: L().nLegend }),
       ["connected", "notconnect", "disabled", "err-disabled"].map((k) => el("span", { class: "nleg" }, el("span", { class: "nled " + k, "aria-hidden": "true" }), L().nPortSt[k])));
     return el("div", { class: "nmap", id: "net-map" },
+      el("div", { class: "rsite" }, el("h2", { class: "rsite-name", text: t(site.name, lang) }),
+        el("p", { class: "rgo-label", id: "rm-go-label", text: L().rmGoLabel }), el("div", { class: "rgo", role: "group", "aria-labelledby": "rm-go-label" },
+          RM.SITES.filter((s) => s.id !== site.id).map((s) => el("button", { type: "button", class: "rgo-btn", id: "rm-site-" + s.id, "aria-label": L().rmGoTo(t(s.name, lang)), onclick: () => setSite(s.id) },
+            t(s.name, lang), el("span", { "aria-hidden": "true", text: " →" }))))),
+      site.levels.length > 1 ? el("div", { class: "rlevels", role: "group", "aria-label": L().rmLevels }, levels.map((l) => el("button", { type: "button", id: "rm-level-" + l.id,
+        class: "rlevel " + levelTone(l) + (l.id === level.id ? " on" : ""), "aria-pressed": l.id === level.id ? "true" : "false",
+        onclick: () => { rmLevel = l.id; networkRoom(null); } }, el("span", { class: "tdot", "aria-hidden": "true" }), el("span", { text: t(l.name, lang) }),
+        el("span", { class: "rlevel-n", text: L().rmRacksN(l.racks.length) })))) : null,
+      el("div", { class: "rbar" }, el("h3", { class: "rlevel-title", text: t(level.name, lang) }),
+        el("div", { class: "qtabs rsides", role: "group", "aria-label": L().rmSideLabel }, [["front", L().rmFront], ["rear", L().rmRear]].map(([k, x]) =>
+          el("button", { type: "button", class: "qtab" + (rmSide === k ? " on" : ""), id: "rm-side-" + k, "aria-pressed": rmSide === k ? "true" : "false",
+            onclick: () => { rmSide = k; networkRoom(null); } }, x)))),
       el("p", { class: "sub nmap-hint", text: L().nMapHint }),
-      el("div", { class: "nracks" }, cabs.map((c) => el("figure", { class: "nrack" },
-        el("figcaption", { class: "nrack-name" }, el("span", { class: "nrack-site", text: L().nSites[c.site] }), el("span", { text: c.label })),
-        el("div", { class: "nrack-body" }, c.items.map((x) => {
-          const tk = netTickets(x.dev.id);
-          return el("button", { type: "button", class: "ndev " + x.tone + (netSel === x.dev.id ? " on" : ""), "data-dev": x.dev.id,
-            "aria-pressed": netSel === x.dev.id ? "true" : "false", "aria-label": L().nDevAria(x.dev.id, L().st[x.tone], x.health.up, x.health.ports),
-            onclick: () => { netSel = x.dev.id; if (location.hash !== "#/network/" + x.dev.id) location.hash = "#/network/" + x.dev.id; else networkRoom(x.dev.id); } },
-            el("span", { class: "nu", "aria-hidden": "true", text: L().nUnit + unitOf(x.dev) }),
-            el("span", { class: "nface" },
-              el("span", { class: "nface-top" }, el("span", { class: "nstat", "aria-hidden": "true" }), el("span", { class: "nid", text: x.dev.id }),
-                tk.length ? el("span", { class: "ntk", text: L().nTicketsN(tk.length) }) : null),
-              portLeds(x.net, x.net.devices[x.dev.id]),
-              el("span", { class: "nmodel", text: `${L().nType[x.dev.kind]} · ${x.dev.model}` })));
-        })),
-        el("ul", { class: "nlinks", "aria-label": L().nLinks }, c.items.flatMap((x) => devLinks(x.net, x.net.devices[x.dev.id]).map((l) => el("li", { class: "mono", text: c.items.length > 1 ? `${x.dev.id} ${l}` : l }))))))),
+      el("div", { class: "nracks rracks" }, level.racks.map((r) => rmRack(r, binds))),
       legend);
+  }
+  // the detail of something in a rack that is not a network-room device
+  function renderRoomDetail(box) {
+    const where = rmSel && RM.find(rmSel);
+    if (!where) { box.replaceChildren(el("p", { class: "empty", text: L().rmPick })); return; }
+    const it = where.item;
+    const info = rmInfo(it, bindings());
+    const pos = `${t(where.site.name, lang)} · ${t(where.level.name, lang)} · ${t(where.rack.name, lang)} · ${RM.range(it)}${RM.shows(it, "front") ? "" : " (" + L().rmRearMount + ")"}`;
+    let fields = [{ label: L().rmPosition, value: pos }];
+    let extra = null;
+    if (it.kind === "srv") {
+      const d = info.rec;
+      fields = [{ label: L().colRole, value: t(d.role, lang) }, { label: L().iOs, value: d.os }, { label: "IP", value: d.ip }].concat(fields,
+        [{ label: L().iOwner, value: t(d.owner, lang) }, { label: L().iPatched, value: d.patched }]);
+      if (it.host) { const h = Wd.SERVERS.find((x) => x.id === it.host); fields.push({ label: L().rmRuns, value: `${h.id} · ${t(h.role, lang)} (${h.ip})` }); }
+    } else if (it.kind === "dev") {
+      const d = info.rec;
+      fields = [{ label: L().colType, value: L().iDev[d.kind] || d.kind }, { label: L().nModel, value: d.model }, { label: "IP", value: d.ip || "–" }].concat(fields);
+    } else if (it.kind === "patch") {
+      const jacks = rmJacks(it);
+      const sw = it.sw;
+      fields = [{ label: L().rmPorts, value: L().rmPatchN(it.ports) }, { label: L().rmToSwitch, value: `${sw} (${L().rmPortsFrom(it.from, it.from + it.ports - 1)})` }].concat(fields);
+      const floorPr = Wd.PRINTERS.filter((p) => where.level.floor != null && where.site.id === "hq" && new RegExp("^" + (where.level.floor === 0 ? "Ground floor" : where.level.floor + "(st|nd|rd|th) floor")).test(p.location.en));
+      extra = [jacks[0].known ? el("div", { class: "qwrap rjack-table" }, el("table", { class: "qtable inv" },
+        el("thead", {}, el("tr", {}, [L().rmJack, L().rmSocket, L().rmSwPort, L().rmDevice].map((x) => el("th", { scope: "col", text: x })))),
+        el("tbody", {}, jacks.map((j) => el("tr", {}, el("td", { class: "mono", text: String(j.n) }), el("td", { text: j.parked ? L().rmParked : j.jack || "–" }),
+          el("td", { class: "mono", text: j.port || "–" }), el("td", { class: "mono", text: j.host || "–" })))))) : el("p", { class: "sub", text: L().rmNoMap(sw) }),
+        floorPr.length ? el("p", { class: "sub" }, L().rmPrinters + " ", floorPr.map((p, i) => [i ? ", " : "", el("span", { class: "mono", text: p.id })])) : null,
+        roomNet.devices[sw] ? el("p", {}, el("a", { href: "#/network/" + sw, text: L().rmOpenSw(sw) })) : null];
+    } else if (it.kind === "tape") {
+      fields = [{ label: L().rmConnected, value: it.of }].concat(fields);
+    }
+    put(box,
+      el("div", { class: "row" }, el("h2", { class: "dtitle", text: rmName(it) }), info.tone ? stPillN(info.tone) : null),
+      el("p", { class: "sub", text: info.label }),
+      info.notes.length ? el("ul", { class: "inv-notes" }, info.notes.map((n) => el("li", { text: n }))) : null,
+      fieldsDl(fields),
+      extra,
+      it.kind === "srv" || it.kind === "dev" ? [el("h3", { text: L().colTickets }),
+        info.tickets.length ? el("ul", { class: "inv-tickets" }, info.tickets.map((sc) => el("li", {}, ticketPill(sc), el("span", { text: " " + t(sc.title, lang) })))) : el("p", { class: "sub", text: L().iNone })] : null,
+      it.kind === "blank" ? el("p", { class: "sub", text: L().rmBlankNote }) : null,
+      it.kind === "pdu0" ? el("p", { class: "sub", text: L().rmPdu0Note }) : null);
   }
 
   function networkRoom(selId) {
     const view = shell("network");
     document.title = L().nTitle + " · SysAdmin Desks";
     ensureRoom();
-    if (selId && roomNet.devices[selId]) netSel = selId;
+    if (selId) {
+      const w = RM.find(selId);
+      if (w) { rmSel = w.item.id; rmSite = w.site.id; rmLevel = w.level.id; }
+      netSel = roomNet.devices[selId] ? selId : (netView === "list" ? netSel : null);
+    }
     const devs = NN.list(roomNet);
     const rows = devs.map((d) => Object.assign({ d, dev: d }, netStatus(d.id)));
     const table = el("table", { class: "qtable inv net-table" },
@@ -2767,10 +2939,10 @@
       el("div", { class: "qtabs net-view", role: "group", "aria-label": L().nViewLabel }, [["map", L().nViewMap], ["list", L().nViewList]].map(([k, x]) =>
         el("button", { type: "button", class: "qtab" + (netView === k ? " on" : ""), id: "net-view-" + k, "aria-pressed": netView === k ? "true" : "false",
           onclick: () => { netView = k; save("netview", k); networkRoom(netSel); } }, x))),
-      el("div", { class: "inv-grid net-grid" + (netView === "map" ? " is-map" : "") }, netView === "map" ? netMap(rows) : el("div", { class: "qwrap" }, table), detail), cliBox);
-    renderNetDetail(detail, cliBox);
+      el("div", { class: "inv-grid net-grid" + (netView === "map" ? " is-map" : "") }, netView === "map" ? netMap() : el("div", { class: "qwrap" }, table), detail), cliBox);
+    if (netView === "map" && rmSel && !roomNet.devices[rmSel]) renderRoomDetail(detail); else renderNetDetail(detail, cliBox);
     if (selId && netView === "map") {
-      const b = view.querySelector(`.ndev[data-dev="${selId}"]`);
+      const b = view.querySelector(`.rdev[data-dev="${rmSel}"]`);
       if (b) b.focus({ preventScroll: true });
       if (window.matchMedia("(max-width: 1100px)").matches) detail.scrollIntoView({ behavior: motion(), block: "start" });
     }
