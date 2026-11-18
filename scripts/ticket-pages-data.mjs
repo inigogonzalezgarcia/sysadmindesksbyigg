@@ -50,11 +50,11 @@ export const TICKET_SEO = {
         "Choose a fix that does not make the user lose mail.", "Handle an executive's P1 with the speed and care it needs."] },
   },
   "intune-bitlocker": {
-    es: { title: "BitLocker e Intune: dispositivo no conforme", desc: "Practica cómo resolver un portátil que Intune marca como no conforme y que bloquea Outlook y Teams, confirmar el cumplimiento y documentarlo en el ticket.",
-      skills: ["Revisar el estado de cumplimiento de un dispositivo en Intune.", "Entender qué requisito impide abrir Outlook y Teams.",
+    es: { title: "Intune 'Encryption of data storage on device'", desc: "Practica gratis: Intune marca el portátil como no conforme por 'Require encryption of data storage on device'. Comprueba BitLocker y documéntalo.",
+      skills: ["Comprobar el requisito de cumplimiento de Intune «Require encryption of data storage on device» y por qué bloquea Outlook y Teams.", "Revisar el estado de cumplimiento de un dispositivo en Intune.", "Entender qué requisito impide abrir Outlook y Teams.",
         "Comprobar el cifrado BitLocker del disco con manage-bde y el registro del equipo con dsregcmd.", "Sincronizar el dispositivo y confirmar que vuelve a cumplir."] },
-    en: { title: "BitLocker and Intune: device not compliant", desc: "Practise how to fix a laptop that Intune marks as not compliant, blocking Outlook and Teams, confirm compliance and document it in the ticket.",
-      skills: ["Review a device's compliance state in Intune.", "Understand which requirement stops Outlook and Teams from opening.",
+    en: { title: "Intune 'Encryption of data storage on device'", desc: "Free practice: Intune marks the laptop as not compliant for 'Require encryption of data storage on device'. Check BitLocker and write it up.",
+      skills: ["Check the Intune compliance setting 'Require encryption of data storage on device' and why it blocks Outlook and Teams.", "Review a device's compliance state in Intune.", "Understand which requirement stops Outlook and Teams from opening.",
         "Check BitLocker disk encryption with manage-bde and the device registration with dsregcmd.", "Sync the device and confirm it is compliant again."] },
   },
   "vpn-anyconnect": {
@@ -252,10 +252,10 @@ export const TICKET_SEO = {
         "Understand when a group change reaches the user's session.", "Avoid the quick fixes that vanish at the next sign-in."] },
   },
   "epm-elevation": {
-    es: { title: "Intune EPM: instalar sin ser administrador", desc: "Practica cómo resolver la petición de una usuaria que quiere ser administradora para instalar un programa aprobado, y documentarlo en el ticket.",
+    es: { title: "Intune EPM: instalar sin ser administrador", desc: "Practica gratis: Intune Endpoint Privilege Management. Una usuaria pide ser admin para instalar un programa: crea una regla de elevación EPM y documéntalo.",
       skills: ["Revisar en el equipo qué permite Endpoint Privilege Management (EPM) de Intune.", "Identificar un instalador por su hash y su certificado.",
         "Dar solo la elevación que hace falta, sin permisos de administrador local.", "Comprobar la instalación con la usuaria y dejarlo documentado."] },
-    en: { title: "Intune EPM: install without local admin", desc: "Practise how to handle a user who asks to be an administrator to install an approved program, and document it in the ticket.",
+    en: { title: "Intune EPM: install without local admin", desc: "Free practice: Intune Endpoint Privilege Management. A user asks to be admin to install a program: create an EPM elevation rule and write it up.",
       skills: ["Review on the device what Intune Endpoint Privilege Management (EPM) allows.", "Identify an installer by its hash and its certificate.",
         "Grant only the elevation that is needed, without local administrator rights.", "Check the installation with the user and document it."] },
   },
