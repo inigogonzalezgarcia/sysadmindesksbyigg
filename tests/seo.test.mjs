@@ -17,7 +17,7 @@ const attr = (h, re) => (h.match(re) || [])[1];
 const jsonLd = (h) => [...h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
 // descriptions tuned to a query people really search: aadc-sync for "azure ad connect sync status" (position 2, Nov 2026);
 // disk-full, print-queue, dns-intranet and mailbox-full for the command names people search (Nov 2026)
-const SEARCH_TUNED = new Set(["aadc-sync", "vpn-anyconnect", "disk-full", "print-queue", "dns-intranet", "mailbox-full", "intune-bitlocker", "epm-elevation"]);
+const SEARCH_TUNED = new Set(["aadc-sync", "vpn-anyconnect", "disk-full", "print-queue", "dns-intranet", "mailbox-full", "intune-bitlocker", "epm-elevation", "citrix-session", "win-temp-profile"]);
 const PAGES = Object.entries(STATIC).map(([f, m]) => [f, m.path])
   .concat([["equipos.html", "/equipos"], ["tickets/index.html", "/tickets/"]], FAMILIES.map((f) => [`tickets/${f.slug}.html`, "/tickets/" + f.slug]),
     SCENARIOS.map((sc) => [`tickets/${sc.id}.html`, "/tickets/" + sc.id]));
