@@ -1,7 +1,7 @@
 /* SysAdmin Desks by IGG - the office map (v0.11): a floor plan of every Contoso site with its areas, desks, people,
    meeting rooms, printers and comms rooms. Pure data and logic, no DOM: the app and the Node tests use the same code.
    Floors and areas follow what the tickets say (Finance on the 2nd floor, Legal and the Cantábrico room on the 4th, the
-   executive floor on the 5th…); the desks that the network room wires to a person keep their number (SAL 1.01 is
+   executive floor on the 5th…); the IT area and the data room are in the basement and the trading floor is on the 6th; the desks that the network room wires to a person keep their number (SAL 1.01 is
    Javier Ruiz's, FIN 2.14 is David López's). Fictional company and people. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
@@ -20,6 +20,9 @@
 
   const SITES = [
     { id: "hq", name: n("Head office (Madrid)", "Oficina central (Madrid)"), levels: [
+      { id: "trading", floor: 6, name: n("6th floor · Trading floor", "6ª planta · Sala de trading"), zones: [
+        Z("team", n("Contoso Markets desks", "Mesas de Contoso Markets"), 8, 2, { users: ["rlarrea", "mgil.trd", "giturbe", "aurquijo", "lbengoa"], free: 3 }),
+        Z("comms", n("Comms room TRD-A", "Cuarto de comunicaciones TRD-A"), 4, 1, { rack: "TRD-A" }), CORE(4)] },
       { id: "f5", floor: 5, name: n("5th floor · Executive", "5ª planta · Dirección"), zones: [
         Z("team", n("Group executive", "Dirección del grupo"), 8, 2, { users: ["maldama", "iferrer", "jetxaniz", "cmendizabal", "agaray", "earrese"], free: 2 }),
         Z("meeting", n("Board room", "Sala del consejo"), 4, 2),
@@ -52,14 +55,12 @@
         Z("training", n("Training room", "Sala de formación"), 4, 2),
         Z("core", n("Main entrance, stairs and lifts", "Entrada principal, escaleras y ascensores"), 8, 1),
         Z("comms", n("Comms cabinet F0-A", "Armario de comunicaciones F0-A"), 4, 1, { rack: "F0-A" })] },
-      { id: "it", name: n("IT area and data room", "Área de IT y sala técnica"), zones: [
+      { id: "it", floor: -1, desk: "S", name: n("Basement · IT area and data room", "Sótano · Área de IT y sala técnica"), zones: [
         Z("team", n("Service desk and operations", "Service desk y operaciones"), 4, 2, { users: ["it.admin", "sgil", "lmendez", "dvega", "samolina", "sprieto", "aechevarria"] }),
         Z("team", n("Infrastructure, data and development", "Infraestructura, datos y desarrollo"), 4, 1, { users: ["olafuente", "rcalvo", "jsanz", "nlarranaga"] }),
         Z("dataroom", n("Data room (racks A, B and C)", "Sala técnica (racks A, B y C)"), 4, 2, { rack: "A" }),
-        Z("team", n("Information security", "Seguridad de la información"), 4, 1, { users: ["barana", "blasa", "bsalas"] })] },
-      { id: "trading", name: n("Trading floor", "Sala de trading"), zones: [
-        Z("team", n("Contoso Markets desks", "Mesas de Contoso Markets"), 8, 2, { users: ["rlarrea", "mgil.trd", "giturbe", "aurquijo", "lbengoa"], free: 3 }),
-        Z("comms", n("Comms room TRD-A", "Cuarto de comunicaciones TRD-A"), 4, 1, { rack: "TRD-A" }), CORE(4)] },
+        Z("team", n("Information security", "Seguridad de la información"), 4, 1, { users: ["barana", "blasa", "bsalas"] }),
+        CORE(), Z("area", n("IT store and spares", "Almacén de IT y repuestos"), 4, 1)] },
     ] },
     { id: "vlc", name: n("Valencia branch", "Sucursal de Valencia"), levels: [
       { id: "office", name: n("Office", "Oficina"), zones: [
@@ -114,8 +115,8 @@
       { id: "opening", name: n("Opening office", "Oficina de apertura"), zones: [Z("team", n("Opening team", "Equipo de apertura"), 12, 1, { users: ["alasa"], free: 3 })] }] },
   ];
 
-  /* the desks of a level: fixed numbers first, then the next free number of the floor; sites with no floor number
-     show no desk numbers */
+  /* the desks of a level: fixed numbers first, then the next free number of the floor (S.01 in the basement); sites
+     with no floor number show no desk numbers */
   function desks(level) {
     const used = new Set();
     level.zones.forEach((z) => z.users.concat(z.pcs).forEach((u) => { if (Array.isArray(u) && u[1]) used.add(u[1]); }));
@@ -123,7 +124,7 @@
     const num = () => {
       if (level.floor == null) return null;
       let d;
-      do { d = `${level.floor}.${String(next).padStart(2, "0")}`; next++; } while (used.has(d));
+      do { d = `${level.desk || level.floor}.${String(next).padStart(2, "0")}`; next++; } while (used.has(d));
       used.add(d);
       return d;
     };

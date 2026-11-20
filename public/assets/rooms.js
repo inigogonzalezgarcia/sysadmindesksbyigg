@@ -24,7 +24,7 @@
 
   const SITES = [
     { id: "hq", name: { en: "Head office (Madrid)", es: "Oficina central (Madrid)" }, levels: [
-      { id: "dataroom", name: { en: "Data room", es: "Sala técnica" }, racks: [
+      { id: "dataroom", floor: -1, name: { en: "Basement · Data room", es: "Sótano · Sala técnica" }, racks: [
         { id: "A", name: { en: "Rack A", es: "Rack A" }, loc: "Head office data room, rack A", units: 42, items: [
           N("FGT-HQ-01", 42), N("SW-CORE-01", 40), S("SPLUNK01", 38), S("VMH-01", 36, 2), S("VMH-02", 34, 2), S("VMH-03", 32, 2),
           S("INTRANET01", 31), S("PRT-SRV01", 30), S("PDQ01", 29), S("DC01", 28), S("VMH-04", 26, 2), S("ORION01", 24, 2),
@@ -40,6 +40,9 @@
           S("SQL-PE01", 16, 2, "SQL-ERP01"), S("ERP-RHEL01", 15), S("DB-MAR01", 14), S("CONTOSO400", 12, 2),
           S("PAY-SFTP01", 10), S("PAY-APP01", 9), S("PAY-DB01", 8), S("PGSQL-FIN01", 7), PDU0("PDU-C0", 1, 2)] },
       ] },
+      { id: "trading", floor: 6, name: { en: "6th floor · Trading floor", es: "6ª planta · Sala de trading" }, racks: [
+        { id: "TRD-A", name: { en: "Comms room, rack TRD-A", es: "Cuarto de comunicaciones, rack TRD-A" }, units: 24, items: [
+          P("PP-TRD-A", 23, "SW-TRD-01"), D("SW-TRD-01", 22), S("TRD-VOX01", 18), PDU0("PDU-TRD-A", 1)] }] },
       { id: "f0", floor: 0, name: { en: "Ground floor", es: "Planta baja" }, racks: [
         { id: "F0-A", name: { en: "Comms cabinet, rack F0-A", es: "Armario de comunicaciones, rack F0-A" }, units: 42, items: [
           P("PP-F0-A", 41, "SW-ACC-0F"), D("SW-ACC-0F", 40), PDU0("PDU-F0-A", 1)] }] },
@@ -62,10 +65,6 @@
     { id: "vlc", name: { en: "Valencia branch", es: "Sucursal de Valencia" }, levels: [
       { id: "comms", name: { en: "Comms cabinet", es: "Armario de comunicaciones" }, racks: [
         { id: "VLC-A", name: { en: "Wall cabinet", es: "Armario mural" }, units: 12, items: [N("RTR-VLC-01", 12), PDU0("PDU-VLC", 1)] }] }] },
-    { id: "trading", name: { en: "Madrid trading floor", es: "Sala de trading de Madrid" }, levels: [
-      { id: "comms", name: { en: "Comms room", es: "Cuarto de comunicaciones" }, racks: [
-        { id: "TRD-A", name: { en: "Rack TRD-A", es: "Rack TRD-A" }, units: 24, items: [
-          P("PP-TRD-A", 23, "SW-TRD-01"), D("SW-TRD-01", 22), S("TRD-VOX01", 18), PDU0("PDU-TRD-A", 1)] }] }] },
     { id: "warehouse", name: { en: "Central warehouse", es: "Almacén central" }, levels: [
       { id: "comms", name: { en: "Comms cabinet", es: "Armario de comunicaciones" }, racks: [
         { id: "ALM-A", name: { en: "Wall cabinet", es: "Armario mural" }, units: 12, items: [

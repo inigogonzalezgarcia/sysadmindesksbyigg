@@ -2862,8 +2862,8 @@
     const level = site.levels.find((l) => l.id === rmLevel) || site.levels[0];
     const setSite = (id) => { const s = RM.SITES.find((x) => x.id === id); rmSite = id; rmLevel = s.levels[0].id; rmSel = null; netSel = null; if (location.hash !== "#/network") location.hash = "#/network"; else networkRoom(null); };
     const levelTone = (l) => { const tones = l.racks.flatMap((r) => r.items).map((it) => rmInfo(it, binds).tone).filter(Boolean); return tones.includes("bad") ? "bad" : tones.includes("warn") ? "warn" : "ok"; };
-    // the building, top floor first, with the data room last (as in a riser diagram)
-    const levels = site.levels.slice().sort((a, b) => (b.floor ?? -1) - (a.floor ?? -1));
+    // the building, top floor first, down to the data room in the basement (as in a riser diagram)
+    const levels = site.levels.slice().sort((a, b) => (b.floor ?? -9) - (a.floor ?? -9));
     const legend = el("p", { class: "nlegend" }, el("span", { text: L().nLegend }),
       ["connected", "notconnect", "disabled", "err-disabled"].map((k) => el("span", { class: "nleg" }, el("span", { class: "nled " + k, "aria-hidden": "true" }), L().nPortSt[k])));
     return el("div", { class: "nmap", id: "net-map" },
@@ -2952,7 +2952,7 @@
     const go = (sel, hash) => { mapSel = sel; if (hash && location.hash !== hash) location.hash = hash; else officeMap(null); };
     const setSite = (id) => { const s = OF.SITES.find((x) => x.id === id); mapSite = id; mapLevel = s.levels[0].id; mapSel = null; if (location.hash !== "#/map") location.hash = "#/map"; else officeMap(null); };
     const isSel = (type, id) => mapSel && mapSel.type === type && mapSel.id === id;
-    const levels = site.levels.slice().sort((a, b) => (b.floor ?? -1) - (a.floor ?? -1));
+    const levels = site.levels.slice().sort((a, b) => (b.floor ?? -9) - (a.floor ?? -9));
     const zoneEl = (z, i) => {
       const head = el("span", { class: "fz-name", text: t(z.name, lang) });
       const things = z.things.map(mapThing).filter(Boolean).map((x) => el("button", { type: "button", class: "fthing" + (isSel("thing", x.id) ? " on" : ""), title: `${x.id} · ${x.label}`,
