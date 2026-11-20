@@ -501,7 +501,7 @@ function ticketArticle(sc, lang) {
   const art = lang === "es" ? '<article class="es" lang="es">' : '<article class="en" lang="en" id="en">';
   return `${art}
 <p class="tk-crumbs"><a href="/tickets/">${t.crumbs}</a> › <a href="${familyPath(familyOf(sc.id))}">${esc(familyOf(sc.id)[lang].name)}</a> › ${esc(tx(sc.topic, lang))}</p>
-<h1>${esc(tx(sc.title, lang))}</h1>
+<h1>${esc(seo.h1 || tx(sc.title, lang))}</h1>
 <p class="lead-p">${esc(seo.desc)}</p>
 <ul class="tk-meta">
   <li>${esc(LEVEL[lang](sc.level))}</li>

@@ -1,6 +1,7 @@
 // SEO copy for the public ticket pages (public/tickets/<id>.html), one entry per desk in public/assets/scenarios.js.
 // desc: the meta description (Spanish, at most 155 characters) and its English twin for the page;
 // title (optional): the words people search for, used in <title> instead of the ticket title (the H1 keeps the story);
+// h1 (optional): the H1 of the ticket page when the searched words belong there too (the queue and /tickets/ keep the ticket title);
 // skills: what the desk practises. The searched tool and command names are fine; never the exact solution steps, the hints or the tempting fix.
 export const TICKET_SEO = {
   "ad-lockout": {
@@ -58,10 +59,10 @@ export const TICKET_SEO = {
         "Check BitLocker disk encryption with manage-bde and the device registration with dsregcmd.", "Sync the device and confirm it is compliant again."] },
   },
   "vpn-anyconnect": {
-    es: { title: "AnyConnect: Certificate Validation Failure (VPN)", desc: "Practica gratis: resuelve 'Certificate Validation Failure' en Cisco AnyConnect: la VPN no conecta desde casa. Diagnostica el certificado y documéntalo.",
+    es: { title: "AnyConnect: Certificate Validation Failure (VPN)", h1: "AnyConnect «Certificate Validation Failure»: la VPN no conecta desde casa", desc: "Practica gratis: resuelve 'Certificate Validation Failure' en Cisco AnyConnect: la VPN no conecta desde casa. Diagnostica el certificado y documéntalo.",
       skills: ["Interpretar un error de validación de certificado en Cisco Secure Client (AnyConnect).", "Usar los avisos del navegador y lo que cuenta el usuario como pistas.",
         "Diagnosticar desde el propio portátil antes de culpar a la red de casa.", "Comprobar que la VPN conecta y que el arreglo se mantiene."] },
-    en: { title: "AnyConnect: Certificate Validation Failure (VPN)", desc: "Free practice: fix 'Certificate Validation Failure' in Cisco AnyConnect: the VPN will not connect from home. Diagnose the certificate and write it up.",
+    en: { title: "AnyConnect: Certificate Validation Failure (VPN)", h1: "AnyConnect 'Certificate Validation Failure': the VPN will not connect from home", desc: "Free practice: fix 'Certificate Validation Failure' in Cisco AnyConnect: the VPN will not connect from home. Diagnose the certificate and write it up.",
       skills: ["Interpret a certificate validation error in Cisco Secure Client (AnyConnect).", "Use the browser warnings and what the user says as clues.",
         "Diagnose on the laptop itself before blaming the home network.", "Check that the VPN connects and that the fix holds."] },
   },
@@ -82,10 +83,10 @@ export const TICKET_SEO = {
         "Grant only the access that was requested.", "Check that the mailbox shows up in Outlook."] },
   },
   "aadc-sync": {
-    es: { title: "Azure AD Connect sync status: usuario sin sincronizar", desc: "Practica gratis: una cuenta nueva de AD no llega a Microsoft 365. Revisa el sync status de Azure AD Connect (Entra Connect), arréglalo y documéntalo.",
+    es: { title: "Azure AD Connect sync status: usuario sin sincronizar", h1: "Azure AD Connect: la cuenta creada en AD no aparece en Microsoft 365", desc: "Practica gratis: una cuenta nueva de AD no llega a Microsoft 365. Revisa el sync status de Azure AD Connect (Entra Connect), arréglalo y documéntalo.",
       skills: ["Seguir una cuenta desde Active Directory hasta Entra ID.", "Revisar la configuración y el estado de la sincronización de Azure AD Connect (sync status).",
         "Comprobar el estado de la sincronización de Azure AD Connect (Entra Connect) y lanzar un ciclo delta con Start-ADSyncSyncCycle.", "Comprobar que la cuenta existe en Microsoft 365."] },
-    en: { title: "Azure AD Connect sync status: user not syncing", desc: "Free practice: a new AD account is not syncing to Microsoft 365. Check the Azure AD Connect (Entra Connect) sync status, fix the cause and write it up.",
+    en: { title: "Azure AD Connect sync status: user not syncing", h1: "Azure AD Connect: the account created in AD does not show up in Microsoft 365", desc: "Free practice: a new AD account is not syncing to Microsoft 365. Check the Azure AD Connect (Entra Connect) sync status, fix the cause and write it up.",
       skills: ["Follow an account from Active Directory to Entra ID.", "Check Azure AD Connect's configuration and sync status.",
         "Check Azure AD Connect (Entra Connect) sync status and run a delta cycle with Start-ADSyncSyncCycle.", "Check that the account exists in Microsoft 365."] },
   },
