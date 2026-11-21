@@ -597,7 +597,7 @@ function breadcrumbs(sc) {
     { "@type": "ListItem", position: 1, name: "SysAdmin Desks", item: SITE + "/" },
     { "@type": "ListItem", position: 2, name: T.es.crumbs, item: SITE + "/tickets/" },
     { "@type": "ListItem", position: 3, name: familyOf(sc.id).es.name, item: SITE + familyPath(familyOf(sc.id)) },
-    { "@type": "ListItem", position: 4, name: tx(sc.title, "es"), item: SITE + ticketPath(sc) }] };
+    { "@type": "ListItem", position: 4, name: TICKET_SEO[sc.id]?.es.crumb || TICKET_SEO[sc.id]?.es.h1 || tx(sc.title, "es"), item: SITE + ticketPath(sc) }] };
 }
 function collection() {
   return { "@context": "https://schema.org", "@graph": [

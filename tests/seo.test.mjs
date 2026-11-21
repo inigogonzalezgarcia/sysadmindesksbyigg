@@ -17,7 +17,7 @@ const attr = (h, re) => (h.match(re) || [])[1];
 const jsonLd = (h) => [...h.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
 // descriptions tuned to a query people really search: aadc-sync for "azure ad connect sync status" (position 2, Nov 2026);
 // disk-full, print-queue, dns-intranet and mailbox-full for the command names people search (Nov 2026)
-const SEARCH_TUNED = new Set(["aadc-sync", "vpn-anyconnect", "disk-full", "print-queue", "dns-intranet", "mailbox-full", "intune-bitlocker", "epm-elevation", "citrix-session", "win-temp-profile"]);
+const SEARCH_TUNED = new Set(["aadc-sync", "vpn-anyconnect", "disk-full", "print-queue", "dns-intranet", "mailbox-full", "intune-bitlocker", "epm-elevation", "citrix-session", "win-temp-profile", "apache-default-page"]);
 const PAGES = Object.entries(STATIC).map(([f, m]) => [f, m.path])
   .concat([["equipos.html", "/equipos"], ["tickets/index.html", "/tickets/"]], FAMILIES.map((f) => [`tickets/${f.slug}.html`, "/tickets/" + f.slug]),
     SCENARIOS.map((sc) => [`tickets/${sc.id}.html`, "/tickets/" + sc.id]));
@@ -93,7 +93,7 @@ test("JSON-LD: the tickets list is a CollectionPage of every desk, and each tick
     assert.deepEqual(bc.itemListElement.map((x) => x.position), [1, 2, 3, 4]);
     assert.equal(bc.itemListElement[2].item, "https://sysadmindesksbyigg.pages.dev/tickets/" + familyOf(sc.id).slug);
     assert.equal(bc.itemListElement[3].item, "https://sysadmindesksbyigg.pages.dev/tickets/" + sc.id);
-    assert.equal(bc.itemListElement[3].name, sc.title.es);
+    assert.equal(bc.itemListElement[3].name, TICKET_SEO[sc.id].es.crumb || TICKET_SEO[sc.id].es.h1 || sc.title.es);   // the short searched name when there is one
   }
 });
 

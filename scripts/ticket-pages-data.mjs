@@ -2,6 +2,7 @@
 // desc: the meta description (Spanish, at most 155 characters) and its English twin for the page;
 // title (optional): the words people search for, used in <title> instead of the ticket title (the H1 keeps the story);
 // h1 (optional): the H1 of the ticket page when the searched words belong there too (the queue and /tickets/ keep the ticket title);
+// crumb (optional, Spanish): the ticket's name in the BreadcrumbList, short and with the searched words (else the h1, else the ticket title);
 // skills: what the desk practises. The searched tool and command names are fine; never the exact solution steps, the hints or the tempting fix.
 export const TICKET_SEO = {
   "ad-lockout": {
@@ -59,7 +60,7 @@ export const TICKET_SEO = {
         "Check BitLocker disk encryption with manage-bde and the device registration with dsregcmd.", "Sync the device and confirm it is compliant again."] },
   },
   "vpn-anyconnect": {
-    es: { title: "AnyConnect: Certificate Validation Failure (VPN)", h1: "AnyConnect «Certificate Validation Failure»: la VPN no conecta desde casa", desc: "Practica gratis: resuelve 'Certificate Validation Failure' en Cisco AnyConnect: la VPN no conecta desde casa. Diagnostica el certificado y documéntalo.",
+    es: { title: "AnyConnect: Certificate Validation Failure (VPN)", crumb: "AnyConnect: Certificate Validation Failure", h1: "AnyConnect «Certificate Validation Failure»: la VPN no conecta desde casa", desc: "Practica gratis: resuelve 'Certificate Validation Failure' en Cisco AnyConnect: la VPN no conecta desde casa. Diagnostica el certificado y documéntalo.",
       skills: ["Interpretar un error de validación de certificado en Cisco Secure Client (AnyConnect).", "Usar los avisos del navegador y lo que cuenta el usuario como pistas.",
         "Diagnosticar desde el propio portátil antes de culpar a la red de casa.", "Comprobar que la VPN conecta y que el arreglo se mantiene."] },
     en: { title: "AnyConnect: Certificate Validation Failure (VPN)", h1: "AnyConnect 'Certificate Validation Failure': the VPN will not connect from home", desc: "Free practice: fix 'Certificate Validation Failure' in Cisco AnyConnect: the VPN will not connect from home. Diagnose the certificate and write it up.",
@@ -83,7 +84,7 @@ export const TICKET_SEO = {
         "Grant only the access that was requested.", "Check that the mailbox shows up in Outlook."] },
   },
   "aadc-sync": {
-    es: { title: "Azure AD Connect sync status: usuario sin sincronizar", h1: "Azure AD Connect: la cuenta creada en AD no aparece en Microsoft 365", desc: "Practica gratis: una cuenta nueva de AD no llega a Microsoft 365. Revisa el sync status de Azure AD Connect (Entra Connect), arréglalo y documéntalo.",
+    es: { title: "Azure AD Connect sync status: usuario sin sincronizar", crumb: "Azure AD Connect: cuenta sin sincronizar", h1: "Azure AD Connect: la cuenta creada en AD no aparece en Microsoft 365", desc: "Practica gratis: una cuenta nueva de AD no llega a Microsoft 365. Revisa el sync status de Azure AD Connect (Entra Connect), arréglalo y documéntalo.",
       skills: ["Seguir una cuenta desde Active Directory hasta Entra ID.", "Revisar la configuración y el estado de la sincronización de Azure AD Connect (sync status).",
         "Comprobar el estado de la sincronización de Azure AD Connect (Entra Connect) y lanzar un ciclo delta con Start-ADSyncSyncCycle.", "Comprobar que la cuenta existe en Microsoft 365."] },
     en: { title: "Azure AD Connect sync status: user not syncing", h1: "Azure AD Connect: the account created in AD does not show up in Microsoft 365", desc: "Free practice: a new AD account is not syncing to Microsoft 365. Check the Azure AD Connect (Entra Connect) sync status, fix the cause and write it up.",
@@ -609,9 +610,9 @@ export const TICKET_SEO = {
       skills: ["Read the Lifecycle log, the disks and the sensors with racadm.", "Run a SupportAssist collection for the vendor.", "Tell a failed part from a power feed fault.", "Follow a RAID rebuild."] },
   },
   "apache-default-page": {
-    es: { title: "Apache enseña la página por defecto", desc: "Practica cómo averiguar por qué una web nueva en Apache sobre Ubuntu enseña la página por defecto, corregirlo y documentarlo en el ticket.",
+    es: { title: "«Apache2 Ubuntu Default Page» en vez de tu web", crumb: "Apache: «Apache2 Ubuntu Default Page»", desc: "Practica gratis: tu web nueva en Apache sale como «Apache2 Ubuntu Default Page». Revisa el VirtualHost, corrígelo y documenta el ticket.",
       skills: ["Revisar los sitios disponibles y habilitados de Apache.", "Leer un virtual host y lo que carga Apache.", "Habilitar un sitio y recargar Apache sin cortes.", "Comprobar la página con curl y con el usuario."] },
-    en: { title: "Apache shows its default page", desc: "Practise how to find out why a new website on Apache and Ubuntu shows the default page, fix it and document it in the ticket.",
+    en: { title: "'Apache2 Ubuntu Default Page' instead of your site", crumb: "Apache: 'Apache2 Ubuntu Default Page'", desc: "Free practice: your new Apache site shows the 'Apache2 Ubuntu Default Page'. Check the VirtualHost, fix it and document the ticket.",
       skills: ["Review Apache's available and enabled sites.", "Read a virtual host and what Apache loads.", "Enable a site and reload Apache without downtime.", "Check the page with curl and with the user."] },
   },
   "zabbix-agent-unreachable": {
