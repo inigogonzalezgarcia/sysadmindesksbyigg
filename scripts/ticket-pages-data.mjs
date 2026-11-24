@@ -294,10 +294,10 @@ export const TICKET_SEO = {
         "Tell the battery's health apart from the alerts.", "Test the alert and the shutdown without a real power cut."] },
   },
   "android-work-profile": {
-    es: { title: "Android sin apps de empresa: perfil de trabajo", desc: "Practica cómo resolver un móvil Android nuevo de empresa al que no le llegan las apps del trabajo, con Intune, y documentarlo en el ticket.",
+    es: { title: "Android sin apps de empresa: perfil de trabajo", crumb: "Android: perfil de trabajo sin apps de empresa", h1: "Android con Intune: el perfil de trabajo no muestra las apps de empresa", desc: "Practica gratis: un Android nuevo de empresa no recibe las apps del trabajo en el perfil de trabajo. Revísalo en Intune, corrígelo y documenta el ticket.",
       skills: ["Leer el registro de un móvil en Intune con Microsoft Graph PowerShell.", "Relacionar las apps asignadas con los grupos de dispositivos.",
         "Distinguir los tipos de inscripción de Android Enterprise.", "Comprobar con la usuaria que tiene sus apps antes de cerrar."] },
-    en: { title: "Android without work apps: work profile", desc: "Practise how to fix a new company Android phone that never gets the work apps, with Intune, and document it in the ticket.",
+    en: { title: "Android without work apps: work profile", h1: "Android with Intune: the work profile shows no work apps", desc: "Free practice: a new company Android phone gets no work apps in the work profile. Check it in Intune, fix it and write up the ticket.",
       skills: ["Read a phone's record in Intune with Microsoft Graph PowerShell.", "Relate the assigned apps to the device groups.",
         "Tell the Android Enterprise enrollment types apart.", "Check with the user that her apps are there before closing."] },
   },
