@@ -60,10 +60,10 @@ export const TICKET_SEO = {
         "Check BitLocker disk encryption with manage-bde and the device registration with dsregcmd.", "Sync the device and confirm it is compliant again."] },
   },
   "vpn-anyconnect": {
-    es: { title: "AnyConnect: Certificate Validation Failure (VPN)", crumb: "AnyConnect: Certificate Validation Failure", h1: "AnyConnect «Certificate Validation Failure»: la VPN no conecta desde casa", desc: "Practica gratis: resuelve 'Certificate Validation Failure' en Cisco AnyConnect: la VPN no conecta desde casa. Diagnostica el certificado y documéntalo.",
+    es: { title: "Cisco AnyConnect: Certificate Validation Failure", crumb: "Cisco AnyConnect: Certificate Validation Failure", h1: "Cisco AnyConnect «Certificate Validation Failure»: la VPN no conecta desde casa", desc: "Practica gratis: resuelve 'Certificate Validation Failure' en Cisco AnyConnect: la VPN no conecta desde casa. Diagnostica el certificado y documéntalo.",
       skills: ["Interpretar un error de validación de certificado en Cisco Secure Client (AnyConnect).", "Usar los avisos del navegador y lo que cuenta el usuario como pistas.",
         "Diagnosticar desde el propio portátil antes de culpar a la red de casa.", "Comprobar que la VPN conecta y que el arreglo se mantiene."] },
-    en: { title: "AnyConnect: Certificate Validation Failure (VPN)", h1: "AnyConnect 'Certificate Validation Failure': the VPN will not connect from home", desc: "Free practice: fix 'Certificate Validation Failure' in Cisco AnyConnect: the VPN will not connect from home. Diagnose the certificate and write it up.",
+    en: { title: "Cisco AnyConnect: Certificate Validation Failure", h1: "Cisco AnyConnect 'Certificate Validation Failure': the VPN will not connect from home", desc: "Free practice: fix 'Certificate Validation Failure' in Cisco AnyConnect: the VPN will not connect from home. Diagnose the certificate and write it up.",
       skills: ["Interpret a certificate validation error in Cisco Secure Client (AnyConnect).", "Use the browser warnings and what the user says as clues.",
         "Diagnose on the laptop itself before blaming the home network.", "Check that the VPN connects and that the fix holds."] },
   },
