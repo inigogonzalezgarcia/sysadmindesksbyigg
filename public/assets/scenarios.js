@@ -2732,7 +2732,7 @@
     topic: { en: "Databases / SQL Server", es: "Bases de datos / SQL Server" },
     minutes: 20,
     title: { en: "The ERP cannot save: transaction log full", es: "El ERP no puede guardar: registro de transacciones lleno" },
-    guide: GUIDE + "postgresql-mysql-sql-server-tareas-de-operaciones-copia-restauracion-espacio-y-consulta-lenta.html",
+    guide: GUIDE + "sql-server-copias-y-restauracion-de-la-base-de-datos-del-erp.html",
     machine: { host: "ADM-WS01", user: "it.admin", domain: "CONTOSO", shell: "powershell", prompt: "PS C:\\Users\\it.admin> " },
     ticket: {
       id: "INC-20524", from: "Laura Pérez (Accounting)", priority: "P1",

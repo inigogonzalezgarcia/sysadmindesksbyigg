@@ -148,10 +148,10 @@ export const TICKET_SEO = {
         "Make the smallest change on a production server against a deadline.", "Check that domain accounts can sign in again."] },
   },
   "sql-log-full": {
-    es: { title: "SQL Server: registro de transacciones lleno", desc: "Practica cómo resolver en SQL Server un registro de transacciones lleno que impide guardar en el ERP, sin arriesgar los datos, y documentarlo en el ticket.",
+    es: { title: "SQL Server error 9002: log lleno por LOG_BACKUP", crumb: "SQL Server: error 9002, log de transacciones lleno", h1: "El ERP no puede guardar: registro de transacciones lleno (error 9002, LOG_BACKUP)", desc: "Practica cómo resolver en SQL Server un registro de transacciones lleno que impide guardar en el ERP, sin arriesgar los datos, y documentarlo en el ticket.",
       skills: ["Interpretar el error 9002 de SQL Server (registro de transacciones lleno) y medirlo con DBCC SQLPERF(LOGSPACE).", "Revisar los trabajos del Agente SQL Server y su historial.",
         "Proteger los datos mientras arreglas una base de datos de producción.", "Comprobar el espacio del registro antes de cerrar."] },
-    en: { title: "SQL Server: transaction log full (error 9002)", desc: "Practise how to fix a full SQL Server transaction log that stops the ERP saving, without putting the data at risk, and document it in the ticket.",
+    en: { title: "SQL Server error 9002: log full due to LOG_BACKUP", h1: "The ERP cannot save: transaction log full (error 9002, LOG_BACKUP)", desc: "Practise how to fix a full SQL Server transaction log that stops the ERP saving, without putting the data at risk, and document it in the ticket.",
       skills: ["Interpret SQL Server error 9002 (transaction log full) and measure it with DBCC SQLPERF(LOGSPACE).", "Review the SQL Server Agent jobs and their history.",
         "Protect the data while you fix a production database.", "Check the log space before closing."] },
   },
