@@ -398,10 +398,10 @@ export const TICKET_SEO = {
         "Balance the count without manual adjustments.", "Explain to the shift what to do next time."] },
   },
   "as400-user-disabled": {
-    es: { title: "AS400 (IBM i): perfil de usuario deshabilitado", desc: "Practica cómo devolver el acceso a un usuario del AS400 con el perfil deshabilitado, sin atajos, y documentarlo en el ticket.",
+    es: { title: "AS400 (IBM i): perfil de usuario deshabilitado", h1: "Un usuario del AS400 (IBM i) dice «perfil deshabilitado»", desc: "Practica cómo devolver el acceso a un usuario del AS400 (IBM i) con el perfil deshabilitado: averiguar el motivo, reactivarlo y documentarlo en el ticket.",
       skills: ["Consultar un perfil de usuario de IBM i con mandatos CL.", "Leer los mensajes del operador del sistema.",
         "Entender los valores del sistema de inicio de sesión.", "Habilitar un perfil de forma segura."] },
-    en: { title: "AS400 (IBM i): user profile disabled", desc: "Practise how to give an AS400 user with a disabled profile their access back, without shortcuts, and document it in the ticket.",
+    en: { title: "AS400 (IBM i): user profile disabled", h1: "An AS400 (IBM i) user gets 'profile disabled'", desc: "Practise how to restore access for an AS400 (IBM i) user with a disabled profile: find the cause, re-enable it safely and document it in the ticket.",
       skills: ["Display an IBM i user profile with CL commands.", "Read the system operator's messages.",
         "Understand the sign-on system values.", "Enable a profile safely."] },
   },
@@ -598,9 +598,9 @@ export const TICKET_SEO = {
       skills: ["Review SSIDs, networks and clients in Omada.", "Understand VLANs and guest isolation.", "Change an SSID without more disruption than needed.", "Test it from a guest's phone."] },
   },
   "ps-ad-weekly-report": {
-    es: { title: "PowerShell: el informe de inactivos sale vacío", desc: "Practica cómo arreglar un informe semanal de Active Directory en PowerShell que no lista las cuentas inactivas y documentarlo en el ticket.",
+    es: { title: "AD: el informe de usuarios inactivos sale vacío", h1: "El informe semanal de Active Directory no lista las cuentas inactivas", desc: "Practica cómo arreglar un informe de Active Directory que no lista usuarios inactivos, contrastarlo con Search-ADAccount y documentarlo en el ticket.",
       skills: ["Leer y ejecutar un script de informe de AD.", "Entender los atributos de último inicio de sesión de AD.", "Corregir una comparación de fechas en un script.", "Contrastar el informe con Search-ADAccount."] },
-    en: { title: "PowerShell: an empty inactive accounts report", desc: "Practise how to fix a weekly Active Directory report in PowerShell that lists no inactive accounts, and document it in the ticket.",
+    en: { title: "Active Directory report shows no inactive users", h1: "The weekly Active Directory report lists no inactive accounts", desc: "Practise how to fix a PowerShell Active Directory report that lists no inactive users, check it against Search-ADAccount and document it in the ticket.",
       skills: ["Read and run an AD report script.", "Understand AD's last logon attributes.", "Fix a date comparison in a script.", "Check the report against Search-ADAccount."] },
   },
   "server-psu-rma": {
